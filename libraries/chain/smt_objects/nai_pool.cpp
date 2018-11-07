@@ -1,14 +1,14 @@
-#include <steem/chain/database.hpp>
-#include <steem/protocol/asset_symbol.hpp>
-#include <steem/chain/smt_objects.hpp>
-#include <steem/chain/util/nai_generator.hpp>
-#include <steem/chain/util/smt_token.hpp>
+#include <colab/chain/database.hpp>
+#include <colab/protocol/asset_symbol.hpp>
+#include <colab/chain/smt_objects.hpp>
+#include <colab/chain/util/nai_generator.hpp>
+#include <colab/chain/util/smt_token.hpp>
 
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
 
 #define NAI_GENERATION_SEED_BLOCK_ID_HASH_INDEX 4
 
-namespace steem { namespace chain {
+namespace colab { namespace chain {
 
 /**
  * Refill the NAI pool with newly generated values
@@ -96,6 +96,6 @@ void remove_from_nai_pool( database &db, const asset_symbol_type& a )
    }
 }
 
-} } // steem::chain
+} } // colab::chain
 
 #endif

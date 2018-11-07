@@ -1,17 +1,17 @@
 #pragma once
-#include <steem/chain/account_object.hpp>
-#include <steem/chain/block_summary_object.hpp>
-#include <steem/chain/comment_object.hpp>
-#include <steem/chain/global_property_object.hpp>
-#include <steem/chain/history_object.hpp>
-#include <steem/chain/steem_objects.hpp>
-#include <steem/chain/transaction_object.hpp>
-#include <steem/chain/witness_objects.hpp>
-#include <steem/chain/database.hpp>
+#include <colab/chain/account_object.hpp>
+#include <colab/chain/block_summary_object.hpp>
+#include <colab/chain/comment_object.hpp>
+#include <colab/chain/global_property_object.hpp>
+#include <colab/chain/history_object.hpp>
+#include <colab/chain/colab_objects.hpp>
+#include <colab/chain/transaction_object.hpp>
+#include <colab/chain/witness_objects.hpp>
+#include <colab/chain/database.hpp>
 
-namespace steem { namespace plugins { namespace block_api {
+namespace colab { namespace plugins { namespace block_api {
 
-using namespace steem::chain;
+using namespace colab::chain;
 
 struct api_signed_block_object : public signed_block
 {
@@ -30,9 +30,9 @@ struct api_signed_block_object : public signed_block
    vector< transaction_id_type > transaction_ids;
 };
 
-} } } // steem::plugins::database_api
+} } } // colab::plugins::database_api
 
-FC_REFLECT_DERIVED( steem::plugins::block_api::api_signed_block_object, (steem::protocol::signed_block),
+FC_REFLECT_DERIVED( colab::plugins::block_api::api_signed_block_object, (colab::protocol::signed_block),
                      (block_id)
                      (signing_key)
                      (transaction_ids)

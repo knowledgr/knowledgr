@@ -1,10 +1,10 @@
 #pragma once
 
-#include <steem/protocol/steem_required_actions.hpp>
+#include <colab/protocol/colab_required_actions.hpp>
 
-#include <steem/protocol/operation_util.hpp>
+#include <colab/protocol/operation_util.hpp>
 
-namespace steem { namespace protocol {
+namespace colab { namespace protocol {
 
    /** NOTE: do not change the order of any actions or it will trigger a hardfork.
     */
@@ -12,7 +12,7 @@ namespace steem { namespace protocol {
             example_required_action
          > required_automated_action;
 
-} } // steem::protocol
+} } // colab::protocol
 
-STEEM_DECLARE_OPERATION_TYPE( steem::protocol::required_automated_action );
-FC_REFLECT_TYPENAME( steem::protocol::required_automated_action );
+COLAB_DECLARE_OPERATION_TYPE( colab::protocol::required_automated_action );
+FC_REFLECT_TYPENAME( colab::protocol::required_automated_action );

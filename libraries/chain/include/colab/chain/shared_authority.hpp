@@ -1,13 +1,13 @@
 #pragma once
-#include <steem/protocol/authority.hpp>
+#include <colab/protocol/authority.hpp>
 #include <chainbase/chainbase.hpp>
 #include <boost/interprocess/managed_mapped_file.hpp>
 
-namespace steem { namespace chain {
-   using steem::protocol::authority;
-   using steem::protocol::public_key_type;
-   using steem::protocol::account_name_type;
-   using steem::protocol::weight_type;
+namespace colab { namespace chain {
+   using colab::protocol::authority;
+   using colab::protocol::public_key_type;
+   using colab::protocol::account_name_type;
+   using colab::protocol::weight_type;
 
    using chainbase::t_flat_map;
    using chainbase::t_allocator_pair;
@@ -98,7 +98,7 @@ namespace steem { namespace chain {
    bool operator == ( const authority& a, const shared_authority& b );
    bool operator == ( const shared_authority& a, const authority& b );
 
-} } //steem::chain
+} } //colab::chain
 
-FC_REFLECT_TYPENAME( steem::chain::shared_authority::account_authority_map)
-FC_REFLECT( steem::chain::shared_authority, (weight_threshold)(account_auths)(key_auths) )
+FC_REFLECT_TYPENAME( colab::chain::shared_authority::account_authority_map)
+FC_REFLECT( colab::chain::shared_authority, (weight_threshold)(account_auths)(key_auths) )

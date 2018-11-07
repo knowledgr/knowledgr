@@ -1,13 +1,13 @@
 #pragma once
-#include <steem/protocol/required_automated_actions.hpp>
+#include <colab/protocol/required_automated_actions.hpp>
 
-#include <steem/chain/steem_object_types.hpp>
+#include <colab/chain/colab_object_types.hpp>
 
 #include <boost/multi_index/composite_key.hpp>
 
-namespace steem { namespace chain {
+namespace colab { namespace chain {
 
-using steem::protocol::required_automated_action;
+using colab::protocol::required_automated_action;
 
 class pending_required_action_object : public object< pending_required_action_object_type, pending_required_action_object >
 {
@@ -42,8 +42,8 @@ typedef multi_index_container<
    allocator< pending_required_action_object >
 > pending_required_action_index;
 
-} } //steem::chain
+} } //colab::chain
 
-FC_REFLECT( steem::chain::pending_required_action_object,
+FC_REFLECT( colab::chain::pending_required_action_object,
             (id)(execution_time)(action) )
-CHAINBASE_SET_INDEX_TYPE( steem::chain::pending_required_action_object, steem::chain::pending_required_action_index )
+CHAINBASE_SET_INDEX_TYPE( colab::chain::pending_required_action_object, colab::chain::pending_required_action_index )

@@ -1,24 +1,24 @@
 #pragma once
 
-#include <steem/protocol/authority.hpp>
-#include <steem/protocol/steem_operations.hpp>
+#include <colab/protocol/authority.hpp>
+#include <colab/protocol/colab_operations.hpp>
 
-#include <steem/chain/util/rd_dynamics.hpp>
+#include <colab/chain/util/rd_dynamics.hpp>
 
-#include <steem/chain/steem_object_types.hpp>
+#include <colab/chain/colab_object_types.hpp>
 
 #include <boost/multi_index/composite_key.hpp>
 
-namespace steem { namespace chain {
+namespace colab { namespace chain {
 
-   using steem::protocol::digest_type;
-   using steem::protocol::public_key_type;
-   using steem::protocol::version;
-   using steem::protocol::hardfork_version;
-   using steem::protocol::price;
-   using steem::protocol::asset;
-   using steem::protocol::asset_symbol_type;
-   using steem::chain::util::rd_dynamics_params;
+   using colab::protocol::digest_type;
+   using colab::protocol::public_key_type;
+   using colab::protocol::version;
+   using colab::protocol::hardfork_version;
+   using colab::protocol::price;
+   using colab::protocol::asset;
+   using colab::protocol::asset_symbol_type;
+   using colab::chain::util::rd_dynamics_params;
 
    /**
     * Witnesses must vote on how to set certain chain properties to ensure a smooth
@@ -28,32 +28,32 @@ namespace steem { namespace chain {
    struct chain_properties
    {
       /**
-       *  This fee, paid in STEEM, is converted into VESTING SHARES for the new account. Accounts
+       *  This fee, paid in CLC, is converted into VESTING SHARES for the new account. Accounts
        *  without vesting shares cannot earn usage rations and therefore are powerless. This minimum
        *  fee requires all accounts to have some kind of commitment to the network that includes the
        *  ability to vote and make transactions.
        */
       asset             account_creation_fee =
-         asset( STEEM_MIN_ACCOUNT_CREATION_FEE, STEEM_SYMBOL );
+         asset( COLAB_MIN_ACCOUNT_CREATION_FEE, CLC_SYMBOL );
 
       /**
        *  This witnesses vote for the maximum_block_size which is used by the network
        *  to tune rate limiting and capacity
        */
-      uint32_t          maximum_block_size = STEEM_MIN_BLOCK_SIZE_LIMIT * 2;
-      uint16_t          sbd_interest_rate  = STEEM_DEFAULT_SBD_INTEREST_RATE;
+      uint32_t          maximum_block_size = COLAB_MIN_BLOCK_SIZE_LIMIT * 2;
+      uint16_t          sbd_interest_rate  = COLAB_DEFAULT_SBD_INTEREST_RATE;
       /**
        * How many free accounts should be created per elected witness block.
-       * Scaled so that STEEM_ACCOUNT_SUBSIDY_PRECISION represents one account.
+       * Scaled so that COLAB_ACCOUNT_SUBSIDY_PRECISION represents one account.
        */
-      int32_t           account_subsidy_budget = STEEM_DEFAULT_ACCOUNT_SUBSIDY_BUDGET;
+      int32_t           account_subsidy_budget = COLAB_DEFAULT_ACCOUNT_SUBSIDY_BUDGET;
 
       /**
        * What fraction of the "stockpiled" free accounts "expire" per elected witness block.
-       * Scaled so that 1 << STEEM_RD_DECAY_DENOM_SHIFT represents 100% of accounts
+       * Scaled so that 1 << COLAB_RD_DECAY_DENOM_SHIFT represents 100% of accounts
        * expiring.
        */
-      uint32_t          account_subsidy_decay = STEEM_DEFAULT_ACCOUNT_SUBSIDY_DECAY;
+      uint32_t          account_subsidy_decay = COLAB_DEFAULT_ACCOUNT_SUBSIDY_DECAY;
    };
 
    /**
@@ -148,12 +148,12 @@ namespace steem { namespace chain {
          digest_type       last_work;
 
          /**
-          * This field represents the Steem blockchain version the witness is running.
+          * This field represents the Colab blockchain version the witness is running.
           */
          version           running_version;
 
          hardfork_version  hardfork_version_vote;
-         time_point_sec    hardfork_time_vote = STEEM_GENESIS_TIME;
+         time_point_sec    hardfork_time_vote = COLAB_GENESIS_TIME;
 
          int64_t           available_witness_account_subsidies = 0;
    };
@@ -191,7 +191,7 @@ namespace steem { namespace chain {
 
          fc::uint128                                                       current_virtual_time;
          uint32_t                                                          next_shuffle_block_num = 1;
-         fc::array< account_name_type, STEEM_MAX_WITNESSES >             current_shuffled_witnesses;
+         fc::array< account_name_type, COLAB_MAX_WITNESSES >             current_shuffled_witnesses;
          uint8_t                                                           num_scheduled_witnesses = 1;
          uint8_t                                                           elected_weight = 1;
          uint8_t                                                           timeshare_weight = 5;
@@ -200,10 +200,10 @@ namespace steem { namespace chain {
          chain_properties                                                  median_props;
          version                                                           majority_version;
 
-         uint8_t max_voted_witnesses            = STEEM_MAX_VOTED_WITNESSES_HF0;
-         uint8_t max_miner_witnesses            = STEEM_MAX_MINER_WITNESSES_HF0;
-         uint8_t max_runner_witnesses           = STEEM_MAX_RUNNER_WITNESSES_HF0;
-         uint8_t hardfork_required_witnesses    = STEEM_HARDFORK_REQUIRED_WITNESSES;
+         uint8_t max_voted_witnesses            = COLAB_MAX_VOTED_WITNESSES_HF0;
+         uint8_t max_miner_witnesses            = COLAB_MAX_MINER_WITNESSES_HF0;
+         uint8_t max_runner_witnesses           = COLAB_MAX_RUNNER_WITNESSES_HF0;
+         uint8_t hardfork_required_witnesses    = COLAB_HARDFORK_REQUIRED_WITNESSES;
 
          // Derived fields that are stored for easy caching and reading of values.
          rd_dynamics_params account_subsidy_rd;
@@ -278,9 +278,9 @@ namespace steem { namespace chain {
 
 } }
 
-FC_REFLECT_ENUM( steem::chain::witness_object::witness_schedule_type, (elected)(timeshare)(miner)(none) )
+FC_REFLECT_ENUM( colab::chain::witness_object::witness_schedule_type, (elected)(timeshare)(miner)(none) )
 
-FC_REFLECT( steem::chain::chain_properties,
+FC_REFLECT( colab::chain::chain_properties,
              (account_creation_fee)
              (maximum_block_size)
              (sbd_interest_rate)
@@ -288,7 +288,7 @@ FC_REFLECT( steem::chain::chain_properties,
              (account_subsidy_decay)
           )
 
-FC_REFLECT( steem::chain::witness_object,
+FC_REFLECT( colab::chain::witness_object,
              (id)
              (owner)
              (created)
@@ -301,12 +301,12 @@ FC_REFLECT( steem::chain::witness_object,
              (hardfork_version_vote)(hardfork_time_vote)
              (available_witness_account_subsidies)
           )
-CHAINBASE_SET_INDEX_TYPE( steem::chain::witness_object, steem::chain::witness_index )
+CHAINBASE_SET_INDEX_TYPE( colab::chain::witness_object, colab::chain::witness_index )
 
-FC_REFLECT( steem::chain::witness_vote_object, (id)(witness)(account) )
-CHAINBASE_SET_INDEX_TYPE( steem::chain::witness_vote_object, steem::chain::witness_vote_index )
+FC_REFLECT( colab::chain::witness_vote_object, (id)(witness)(account) )
+CHAINBASE_SET_INDEX_TYPE( colab::chain::witness_vote_object, colab::chain::witness_vote_index )
 
-FC_REFLECT( steem::chain::witness_schedule_object,
+FC_REFLECT( colab::chain::witness_schedule_object,
              (id)(current_virtual_time)(next_shuffle_block_num)(current_shuffled_witnesses)(num_scheduled_witnesses)
              (elected_weight)(timeshare_weight)(miner_weight)(witness_pay_normalization_factor)
              (median_props)(majority_version)
@@ -318,4 +318,4 @@ FC_REFLECT( steem::chain::witness_schedule_object,
              (account_subsidy_witness_rd)
              (min_witness_account_subsidy_decay)
           )
-CHAINBASE_SET_INDEX_TYPE( steem::chain::witness_schedule_object, steem::chain::witness_schedule_index )
+CHAINBASE_SET_INDEX_TYPE( colab::chain::witness_schedule_object, colab::chain::witness_schedule_index )

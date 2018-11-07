@@ -1,7 +1,7 @@
 #pragma once
-#include <steem/plugins/chain/chain_plugin.hpp>
+#include <colab/plugins/chain/chain_plugin.hpp>
 
-#include <steem/chain/steem_object_types.hpp>
+#include <colab/chain/colab_object_types.hpp>
 
 #include <boost/multi_index/composite_key.hpp>
 
@@ -15,24 +15,24 @@
 // various template automagic depends on them being known at compile
 // time.
 //
-#ifndef STEEM_MARKET_HISTORY_SPACE_ID
-#define STEEM_MARKET_HISTORY_SPACE_ID 7
+#ifndef COLAB_MARKET_HISTORY_SPACE_ID
+#define COLAB_MARKET_HISTORY_SPACE_ID 7
 #endif
 
-#ifndef STEEM_MARKET_HISTORY_PLUGIN_NAME
-#define STEEM_MARKET_HISTORY_PLUGIN_NAME "market_history"
+#ifndef COLAB_MARKET_HISTORY_PLUGIN_NAME
+#define COLAB_MARKET_HISTORY_PLUGIN_NAME "market_history"
 #endif
 
 
-namespace steem { namespace plugins { namespace market_history {
+namespace colab { namespace plugins { namespace market_history {
 
-using namespace steem::chain;
+using namespace colab::chain;
 using namespace appbase;
 
 enum market_history_object_types
 {
-   bucket_object_type        = ( STEEM_MARKET_HISTORY_SPACE_ID << 8 ),
-   order_history_object_type = ( STEEM_MARKET_HISTORY_SPACE_ID << 8 ) + 1
+   bucket_object_type        = ( COLAB_MARKET_HISTORY_SPACE_ID << 8 ),
+   order_history_object_type = ( COLAB_MARKET_HISTORY_SPACE_ID << 8 ) + 1
 };
 
 namespace detail { class market_history_plugin_impl; }
@@ -43,9 +43,9 @@ class market_history_plugin : public plugin< market_history_plugin >
       market_history_plugin();
       virtual ~market_history_plugin();
 
-      APPBASE_PLUGIN_REQUIRES( (steem::plugins::chain::chain_plugin) )
+      APPBASE_PLUGIN_REQUIRES( (colab::plugins::chain::chain_plugin) )
 
-      static const std::string& name() { static std::string name = STEEM_MARKET_HISTORY_PLUGIN_NAME; return name; }
+      static const std::string& name() { static std::string name = COLAB_MARKET_HISTORY_PLUGIN_NAME; return name; }
 
       flat_set< uint32_t > get_tracked_buckets() const;
       uint32_t get_max_history_per_bucket() const;
@@ -97,17 +97,17 @@ struct bucket_object : public object< bucket_object_type, bucket_object >
    fc::time_point_sec   open;
    uint32_t             seconds = 0;
 
-   bucket_object_details steem;
-   bucket_object_details non_steem;
+   bucket_object_details colab;
+   bucket_object_details non_colab;
 
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
    asset_symbol_type symbol = SBD_SYMBOL;
 
-   price high()const { return asset( non_steem.high, symbol ) / asset( steem.high, STEEM_SYMBOL ); }
-   price low()const { return asset( non_steem.low, symbol ) / asset( steem.low, STEEM_SYMBOL ); }
+   price high()const { return asset( non_colab.high, symbol ) / asset( colab.high, CLC_SYMBOL ); }
+   price low()const { return asset( non_colab.low, symbol ) / asset( colab.low, CLC_SYMBOL ); }
 #else
-   price high()const { return asset( non_steem.high, SBD_SYMBOL ) / asset( steem.high, STEEM_SYMBOL ); }
-   price low()const { return asset( non_steem.low, SBD_SYMBOL ) / asset( steem.low, STEEM_SYMBOL ); }
+   price high()const { return asset( non_colab.high, SBD_SYMBOL ) / asset( colab.high, CLC_SYMBOL ); }
+   price low()const { return asset( non_colab.low, SBD_SYMBOL ) / asset( colab.low, CLC_SYMBOL ); }
 #endif
 };
 
@@ -157,33 +157,33 @@ typedef multi_index_container<
    allocator< order_history_object >
 > order_history_index;
 
-} } } // steem::plugins::market_history
+} } } // colab::plugins::market_history
 
-FC_REFLECT( steem::plugins::market_history::bucket_object_details,
+FC_REFLECT( colab::plugins::market_history::bucket_object_details,
             (high)
             (low)
             (open)
             (close)
             (volume) )
 
-#if defined STEEM_ENABLE_SMT
-FC_REFLECT( steem::plugins::market_history::bucket_object,
+#if defined COLAB_ENABLE_SMT
+FC_REFLECT( colab::plugins::market_history::bucket_object,
                      (id)
                      (open)(seconds)
-                     (steem)(symbol)(non_steem)
+                     (colab)(symbol)(non_colab)
          )
 #else
-FC_REFLECT( steem::plugins::market_history::bucket_object,
+FC_REFLECT( colab::plugins::market_history::bucket_object,
                      (id)
                      (open)(seconds)
-                     (steem)(non_steem)
+                     (colab)(non_colab)
          )
 #endif
 
-CHAINBASE_SET_INDEX_TYPE( steem::plugins::market_history::bucket_object, steem::plugins::market_history::bucket_index )
+CHAINBASE_SET_INDEX_TYPE( colab::plugins::market_history::bucket_object, colab::plugins::market_history::bucket_index )
 
-FC_REFLECT( steem::plugins::market_history::order_history_object,
+FC_REFLECT( colab::plugins::market_history::order_history_object,
                      (id)
                      (time)
                      (op) )
-CHAINBASE_SET_INDEX_TYPE( steem::plugins::market_history::order_history_object, steem::plugins::market_history::order_history_index )
+CHAINBASE_SET_INDEX_TYPE( colab::plugins::market_history::order_history_object, colab::plugins::market_history::order_history_index )

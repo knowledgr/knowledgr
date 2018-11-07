@@ -1,11 +1,11 @@
 #pragma once
-#include <steem/protocol/operations.hpp>
-#include <steem/protocol/sign_state.hpp>
-#include <steem/protocol/types.hpp>
+#include <colab/protocol/operations.hpp>
+#include <colab/protocol/sign_state.hpp>
+#include <colab/protocol/types.hpp>
 
 #include <numeric>
 
-namespace steem { namespace protocol {
+namespace colab { namespace protocol {
 
 using fc::ecc::canonical_signature_type;
 
@@ -65,9 +65,9 @@ using fc::ecc::canonical_signature_type;
          const authority_getter& get_active,
          const authority_getter& get_owner,
          const authority_getter& get_posting,
-         uint32_t max_recursion = STEEM_MAX_SIG_CHECK_DEPTH,
-         uint32_t max_membership = STEEM_MAX_AUTHORITY_MEMBERSHIP,
-         uint32_t max_account_auths = STEEM_MAX_SIG_CHECK_ACCOUNTS,
+         uint32_t max_recursion = COLAB_MAX_SIG_CHECK_DEPTH,
+         uint32_t max_membership = COLAB_MAX_AUTHORITY_MEMBERSHIP,
+         uint32_t max_account_auths = COLAB_MAX_SIG_CHECK_ACCOUNTS,
          canonical_signature_type canon_type = fc::ecc::fc_canonical
          )const;
 
@@ -76,9 +76,9 @@ using fc::ecc::canonical_signature_type;
          const authority_getter& get_active,
          const authority_getter& get_owner,
          const authority_getter& get_posting,
-         uint32_t max_recursion/* = STEEM_MAX_SIG_CHECK_DEPTH*/,
-         uint32_t max_membership = STEEM_MAX_AUTHORITY_MEMBERSHIP,
-         uint32_t max_account_auths = STEEM_MAX_SIG_CHECK_ACCOUNTS,
+         uint32_t max_recursion/* = COLAB_MAX_SIG_CHECK_DEPTH*/,
+         uint32_t max_membership = COLAB_MAX_AUTHORITY_MEMBERSHIP,
+         uint32_t max_account_auths = COLAB_MAX_SIG_CHECK_ACCOUNTS,
          canonical_signature_type canon_type = fc::ecc::fc_canonical
          )const;
 
@@ -88,9 +88,9 @@ using fc::ecc::canonical_signature_type;
          const authority_getter& get_active,
          const authority_getter& get_owner,
          const authority_getter& get_posting,
-         uint32_t max_recursion = STEEM_MAX_SIG_CHECK_DEPTH,
-         uint32_t max_membership = STEEM_MAX_AUTHORITY_MEMBERSHIP,
-         uint32_t max_account_auths = STEEM_MAX_SIG_CHECK_ACCOUNTS,
+         uint32_t max_recursion = COLAB_MAX_SIG_CHECK_DEPTH,
+         uint32_t max_membership = COLAB_MAX_AUTHORITY_MEMBERSHIP,
+         uint32_t max_account_auths = COLAB_MAX_SIG_CHECK_ACCOUNTS,
          canonical_signature_type canon_type = fc::ecc::fc_canonical
          ) const;
 
@@ -116,8 +116,8 @@ using fc::ecc::canonical_signature_type;
 
    /// @} transactions group
 
-} } // steem::protocol
+} } // colab::protocol
 
-FC_REFLECT( steem::protocol::transaction, (ref_block_num)(ref_block_prefix)(expiration)(operations)(extensions) )
-FC_REFLECT_DERIVED( steem::protocol::signed_transaction, (steem::protocol::transaction), (signatures) )
-FC_REFLECT_DERIVED( steem::protocol::annotated_signed_transaction, (steem::protocol::signed_transaction), (transaction_id)(block_num)(transaction_num) );
+FC_REFLECT( colab::protocol::transaction, (ref_block_num)(ref_block_prefix)(expiration)(operations)(extensions) )
+FC_REFLECT_DERIVED( colab::protocol::signed_transaction, (colab::protocol::transaction), (signatures) )
+FC_REFLECT_DERIVED( colab::protocol::annotated_signed_transaction, (colab::protocol::signed_transaction), (transaction_id)(block_num)(transaction_num) );

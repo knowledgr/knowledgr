@@ -1,14 +1,14 @@
 #pragma once
-#include <steem/protocol/base.hpp>
+#include <colab/protocol/base.hpp>
 
-#include <steem/chain/evaluator.hpp>
+#include <colab/chain/evaluator.hpp>
 
 
-namespace steem { namespace plugins { namespace follow {
+namespace colab { namespace plugins { namespace follow {
 
 using namespace std;
-using steem::protocol::account_name_type;
-using steem::protocol::base_operation;
+using colab::protocol::account_name_type;
+using colab::protocol::base_operation;
 
 class follow_plugin;
 
@@ -39,14 +39,14 @@ typedef fc::static_variant<
          reblog_operation
       > follow_plugin_operation;
 
-STEEM_DEFINE_PLUGIN_EVALUATOR( follow_plugin, follow_plugin_operation, follow );
-STEEM_DEFINE_PLUGIN_EVALUATOR( follow_plugin, follow_plugin_operation, reblog );
+COLAB_DEFINE_PLUGIN_EVALUATOR( follow_plugin, follow_plugin_operation, follow );
+COLAB_DEFINE_PLUGIN_EVALUATOR( follow_plugin, follow_plugin_operation, reblog );
 
-} } } // steem::plugins::follow
+} } } // colab::plugins::follow
 
-FC_REFLECT( steem::plugins::follow::follow_operation, (follower)(following)(what) )
-FC_REFLECT( steem::plugins::follow::reblog_operation, (account)(author)(permlink) )
+FC_REFLECT( colab::plugins::follow::follow_operation, (follower)(following)(what) )
+FC_REFLECT( colab::plugins::follow::reblog_operation, (account)(author)(permlink) )
 
-STEEM_DECLARE_OPERATION_TYPE( steem::plugins::follow::follow_plugin_operation )
+COLAB_DECLARE_OPERATION_TYPE( colab::plugins::follow::follow_plugin_operation )
 
-FC_REFLECT_TYPENAME( steem::plugins::follow::follow_plugin_operation )
+FC_REFLECT_TYPENAME( colab::plugins::follow::follow_plugin_operation )

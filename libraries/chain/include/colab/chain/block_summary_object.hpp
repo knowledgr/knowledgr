@@ -1,9 +1,9 @@
 #pragma once
-#include <steem/chain/steem_object_types.hpp>
+#include <colab/chain/colab_object_types.hpp>
 
-namespace steem { namespace chain {
+namespace colab { namespace chain {
 
-   using steem::protocol::block_id_type;
+   using colab::protocol::block_id_type;
 
    /**
     *  @brief tracks minimal information about past blocks to implement TaPOS
@@ -38,7 +38,7 @@ namespace steem { namespace chain {
       allocator< block_summary_object >
    > block_summary_index;
 
-} } // steem::chain
+} } // colab::chain
 
-FC_REFLECT( steem::chain::block_summary_object, (id)(block_id) )
-CHAINBASE_SET_INDEX_TYPE( steem::chain::block_summary_object, steem::chain::block_summary_index )
+FC_REFLECT( colab::chain::block_summary_object, (id)(block_id) )
+CHAINBASE_SET_INDEX_TYPE( colab::chain::block_summary_object, colab::chain::block_summary_index )

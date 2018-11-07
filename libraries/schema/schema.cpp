@@ -1,9 +1,9 @@
 
-#include <steem/schema/schema.hpp>
+#include <colab/schema/schema.hpp>
 
 #include <set>
 
-namespace steem { namespace schema {
+namespace colab { namespace schema {
 
 namespace detail {
 

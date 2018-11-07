@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <steem/protocol/authority.hpp>
+#include <colab/protocol/authority.hpp>
 
 #include <fc/variant.hpp>
 
@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-namespace steem { namespace protocol {
+namespace colab { namespace protocol {
 
 struct get_required_auth_visitor
 {
@@ -44,15 +44,15 @@ struct get_required_auth_visitor
    }
 };
 
-} } // steem::protocol
+} } // colab::protocol
 
 //
-// Place STEEM_DECLARE_OPERATION_TYPE in a .hpp file to declare
+// Place COLAB_DECLARE_OPERATION_TYPE in a .hpp file to declare
 // functions related to your operation type
 //
-#define STEEM_DECLARE_OPERATION_TYPE( OperationType )                            \
+#define COLAB_DECLARE_OPERATION_TYPE( OperationType )                            \
                                                                                  \
-namespace steem { namespace protocol {                                           \
+namespace colab { namespace protocol {                                           \
                                                                                  \
 void operation_validate( const OperationType& o );                               \
 void operation_get_required_authorities( const OperationType& op,                \
@@ -61,4 +61,4 @@ void operation_get_required_authorities( const OperationType& op,               
                                          flat_set< account_name_type >& posting, \
                                          vector< authority >& other );           \
                                                                                  \
-} } /* steem::protocol */
+} } /* colab::protocol */

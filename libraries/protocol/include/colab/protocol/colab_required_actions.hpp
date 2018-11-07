@@ -1,13 +1,13 @@
 #pragma once
-#include <steem/protocol/base.hpp>
-#include <steem/protocol/block_header.hpp>
-#include <steem/protocol/asset.hpp>
-#include <steem/protocol/validation.hpp>
-#include <steem/protocol/legacy_asset.hpp>
+#include <colab/protocol/base.hpp>
+#include <colab/protocol/block_header.hpp>
+#include <colab/protocol/asset.hpp>
+#include <colab/protocol/validation.hpp>
+#include <colab/protocol/legacy_asset.hpp>
 
 #include <fc/crypto/equihash.hpp>
 
-namespace steem { namespace protocol {
+namespace colab { namespace protocol {
 
    struct example_required_action : public base_operation
    {
@@ -19,6 +19,6 @@ namespace steem { namespace protocol {
       friend bool operator==( const example_required_action& lhs, const example_required_action& rhs );
    };
 
-} } // steem::protocol
+} } // colab::protocol
 
-FC_REFLECT( steem::protocol::example_required_action, (account) )
+FC_REFLECT( colab::protocol::example_required_action, (account) )

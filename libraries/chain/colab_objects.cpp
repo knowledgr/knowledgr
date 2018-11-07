@@ -1,8 +1,8 @@
 
-#include <steem/chain/steem_objects.hpp>
+#include <colab/chain/colab_objects.hpp>
 
 #include <fc/uint128.hpp>
 
-namespace steem { namespace chain {
+namespace colab { namespace chain {
 
-} } // steem::chain
+} } // colab::chain

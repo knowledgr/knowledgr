@@ -1,14 +1,14 @@
 #pragma once
-#include <steem/protocol/transaction.hpp>
+#include <colab/protocol/transaction.hpp>
 
-#include <steem/chain/buffer_type.hpp>
-#include <steem/chain/steem_object_types.hpp>
+#include <colab/chain/buffer_type.hpp>
+#include <colab/chain/colab_object_types.hpp>
 
 #include <boost/multi_index/hashed_index.hpp>
 
-namespace steem { namespace chain {
+namespace colab { namespace chain {
 
-   using steem::protocol::signed_transaction;
+   using colab::protocol::signed_transaction;
    using chainbase::t_vector;
 
    /**
@@ -49,19 +49,19 @@ namespace steem { namespace chain {
       allocator< transaction_object >
    > transaction_index;
 
-} } // steem::chain
+} } // colab::chain
 
-FC_REFLECT( steem::chain::transaction_object, (id)(packed_trx)(trx_id)(expiration) )
-CHAINBASE_SET_INDEX_TYPE( steem::chain::transaction_object, steem::chain::transaction_index )
+FC_REFLECT( colab::chain::transaction_object, (id)(packed_trx)(trx_id)(expiration) )
+CHAINBASE_SET_INDEX_TYPE( colab::chain::transaction_object, colab::chain::transaction_index )
 
 namespace helpers
 {
    template <>
-   class index_statistic_provider<steem::chain::transaction_index>
+   class index_statistic_provider<colab::chain::transaction_index>
    {
    public:
-      typedef steem::chain::transaction_index IndexType;
-      typedef typename steem::chain::transaction_object::t_packed_trx t_packed_trx;
+      typedef colab::chain::transaction_index IndexType;
+      typedef typename colab::chain::transaction_object::t_packed_trx t_packed_trx;
 
       index_statistic_info gather_statistics(const IndexType& index, bool onlyStaticInfo) const
       {

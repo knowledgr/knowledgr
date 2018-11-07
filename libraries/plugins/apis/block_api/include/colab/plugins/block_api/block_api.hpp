@@ -1,12 +1,12 @@
 #pragma once
 
-#include <steem/plugins/json_rpc/utility.hpp>
+#include <colab/plugins/json_rpc/utility.hpp>
 
-#include <steem/plugins/block_api/block_api_args.hpp>
+#include <colab/plugins/block_api/block_api_args.hpp>
 
 #define BLOCK_API_SINGLE_QUERY_LIMIT 1000
 
-namespace steem { namespace plugins { namespace block_api {
+namespace colab { namespace plugins { namespace block_api {
 
 class block_api_impl;
 
@@ -41,5 +41,5 @@ class block_api
       std::unique_ptr< block_api_impl > my;
 };
 
-} } } //steem::plugins::block_api
+} } } //colab::plugins::block_api
 

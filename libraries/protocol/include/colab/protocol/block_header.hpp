@@ -1,9 +1,9 @@
 #pragma once
-#include <steem/protocol/base.hpp>
-#include <steem/protocol/required_automated_actions.hpp>
-#include <steem/protocol/optional_automated_actions.hpp>
+#include <colab/protocol/base.hpp>
+#include <colab/protocol/required_automated_actions.hpp>
+#include <colab/protocol/optional_automated_actions.hpp>
 
-namespace steem { namespace protocol {
+namespace colab { namespace protocol {
 
    typedef vector< required_automated_action > required_automated_actions;
    typedef vector< optional_automated_action > optional_automated_actions;
@@ -42,9 +42,9 @@ namespace steem { namespace protocol {
    };
 
 
-} } // steem::protocol
+} } // colab::protocol
 
-FC_REFLECT_TYPENAME( steem::protocol::block_header_extensions )
+FC_REFLECT_TYPENAME( colab::protocol::block_header_extensions )
 
-FC_REFLECT( steem::protocol::block_header, (previous)(timestamp)(witness)(transaction_merkle_root)(extensions) )
-FC_REFLECT_DERIVED( steem::protocol::signed_block_header, (steem::protocol::block_header), (witness_signature) )
+FC_REFLECT( colab::protocol::block_header, (previous)(timestamp)(witness)(transaction_merkle_root)(extensions) )
+FC_REFLECT_DERIVED( colab::protocol::signed_block_header, (colab::protocol::block_header), (witness_signature) )

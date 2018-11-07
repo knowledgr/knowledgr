@@ -1,13 +1,13 @@
 #pragma once
-#include <steem/plugins/json_rpc/utility.hpp>
+#include <colab/plugins/json_rpc/utility.hpp>
 
-#include <steem/protocol/types.hpp>
+#include <colab/protocol/types.hpp>
 
 #include <fc/optional.hpp>
 #include <fc/variant.hpp>
 #include <fc/vector.hpp>
 
-namespace steem { namespace plugins { namespace account_by_key {
+namespace colab { namespace plugins { namespace account_by_key {
 
 namespace detail
 {
@@ -16,12 +16,12 @@ namespace detail
 
 struct get_key_references_args
 {
-   std::vector< steem::protocol::public_key_type > keys;
+   std::vector< colab::protocol::public_key_type > keys;
 };
 
 struct get_key_references_return
 {
-   std::vector< std::vector< steem::protocol::account_name_type > > accounts;
+   std::vector< std::vector< colab::protocol::account_name_type > > accounts;
 };
 
 class account_by_key_api
@@ -36,10 +36,10 @@ class account_by_key_api
       std::unique_ptr< detail::account_by_key_api_impl > my;
 };
 
-} } } // steem::plugins::account_by_key
+} } } // colab::plugins::account_by_key
 
-FC_REFLECT( steem::plugins::account_by_key::get_key_references_args,
+FC_REFLECT( colab::plugins::account_by_key::get_key_references_args,
    (keys) )
 
-FC_REFLECT( steem::plugins::account_by_key::get_key_references_return,
+FC_REFLECT( colab::plugins::account_by_key::get_key_references_return,
    (accounts) )

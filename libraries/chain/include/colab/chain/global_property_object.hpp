@@ -1,14 +1,14 @@
 #pragma once
 #include <fc/uint128.hpp>
 
-#include <steem/chain/steem_object_types.hpp>
+#include <colab/chain/colab_object_types.hpp>
 
-#include <steem/protocol/asset.hpp>
+#include <colab/protocol/asset.hpp>
 
-namespace steem { namespace chain {
+namespace colab { namespace chain {
 
-   using steem::protocol::asset;
-   using steem::protocol::price;
+   using colab::protocol::asset;
+   using colab::protocol::price;
 
    /**
     * @class dynamic_global_property_object
@@ -49,30 +49,30 @@ namespace steem { namespace chain {
           */
          uint32_t num_pow_witnesses = 0;
 
-         asset       virtual_supply             = asset( 0, STEEM_SYMBOL );
-         asset       current_supply             = asset( 0, STEEM_SYMBOL );
-         asset       confidential_supply        = asset( 0, STEEM_SYMBOL ); ///< total asset held in confidential balances
+         asset       virtual_supply             = asset( 0, CLC_SYMBOL );
+         asset       current_supply             = asset( 0, CLC_SYMBOL );
+         asset       confidential_supply        = asset( 0, CLC_SYMBOL ); ///< total asset held in confidential balances
          asset       current_sbd_supply         = asset( 0, SBD_SYMBOL );
          asset       confidential_sbd_supply    = asset( 0, SBD_SYMBOL ); ///< total asset held in confidential balances
-         asset       total_vesting_fund_steem   = asset( 0, STEEM_SYMBOL );
+         asset       total_vesting_fund_clc   = asset( 0, CLC_SYMBOL );
          asset       total_vesting_shares       = asset( 0, VESTS_SYMBOL );
-         asset       total_reward_fund_steem    = asset( 0, STEEM_SYMBOL );
+         asset       total_reward_fund_colab    = asset( 0, CLC_SYMBOL );
          fc::uint128 total_reward_shares2; ///< the running total of REWARD^2
          asset       pending_rewarded_vesting_shares = asset( 0, VESTS_SYMBOL );
-         asset       pending_rewarded_vesting_steem = asset( 0, STEEM_SYMBOL );
+         asset       pending_rewarded_vesting_clc = asset( 0, CLC_SYMBOL );
 
          price       get_vesting_share_price() const
          {
-            if ( total_vesting_fund_steem.amount == 0 || total_vesting_shares.amount == 0 )
-               return price ( asset( 1000, STEEM_SYMBOL ), asset( 1000000, VESTS_SYMBOL ) );
+            if ( total_vesting_fund_clc.amount == 0 || total_vesting_shares.amount == 0 )
+               return price ( asset( 1000, CLC_SYMBOL ), asset( 1000000, VESTS_SYMBOL ) );
 
-            return price( total_vesting_shares, total_vesting_fund_steem );
+            return price( total_vesting_shares, total_vesting_fund_clc );
          }
 
          price get_reward_vesting_share_price() const
          {
             return price( total_vesting_shares + pending_rewarded_vesting_shares,
-               total_vesting_fund_steem + pending_rewarded_vesting_steem );
+               total_vesting_fund_clc + pending_rewarded_vesting_clc );
          }
 
          /**
@@ -80,7 +80,7 @@ namespace steem { namespace chain {
           */
          uint16_t sbd_interest_rate = 0;
 
-         uint16_t sbd_print_rate = STEEM_100_PERCENT;
+         uint16_t sbd_print_rate = COLAB_100_PERCENT;
 
          /**
           *  Maximum block size is decided by the set of active witnesses which change every round.
@@ -121,9 +121,9 @@ namespace steem { namespace chain {
           * "wasting" voting power through spillover; any user voting faster than this rate will have
           * their votes reduced.
           */
-         uint32_t vote_power_reserve_rate = STEEM_INITIAL_VOTE_POWER_RATE;
+         uint32_t vote_power_reserve_rate = COLAB_INITIAL_VOTE_POWER_RATE;
 
-         uint32_t delegation_return_period = STEEM_DELEGATION_RETURN_PERIOD_HF0;
+         uint32_t delegation_return_period = COLAB_DELEGATION_RETURN_PERIOD_HF0;
 
          uint64_t reverse_auction_seconds = 0;
 
@@ -131,7 +131,7 @@ namespace steem { namespace chain {
 
          uint16_t sbd_stop_percent = 0;
          uint16_t sbd_start_percent = 0;
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
          asset smt_creation_fee = asset( 1000, SBD_SYMBOL );
 #endif
    };
@@ -145,9 +145,9 @@ namespace steem { namespace chain {
       allocator< dynamic_global_property_object >
    > dynamic_global_property_index;
 
-} } // steem::chain
+} } // colab::chain
 
-FC_REFLECT( steem::chain::dynamic_global_property_object,
+FC_REFLECT( colab::chain::dynamic_global_property_object,
              (id)
              (head_block_number)
              (head_block_id)
@@ -160,12 +160,12 @@ FC_REFLECT( steem::chain::dynamic_global_property_object,
              (confidential_supply)
              (current_sbd_supply)
              (confidential_sbd_supply)
-             (total_vesting_fund_steem)
+             (total_vesting_fund_clc)
              (total_vesting_shares)
-             (total_reward_fund_steem)
+             (total_reward_fund_colab)
              (total_reward_shares2)
              (pending_rewarded_vesting_shares)
-             (pending_rewarded_vesting_steem)
+             (pending_rewarded_vesting_clc)
              (sbd_interest_rate)
              (sbd_print_rate)
              (maximum_block_size)
@@ -180,8 +180,8 @@ FC_REFLECT( steem::chain::dynamic_global_property_object,
              (available_account_subsidies)
              (sbd_stop_percent)
              (sbd_start_percent)
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
              (smt_creation_fee)
 #endif
           )
-CHAINBASE_SET_INDEX_TYPE( steem::chain::dynamic_global_property_object, steem::chain::dynamic_global_property_index )
+CHAINBASE_SET_INDEX_TYPE( colab::chain::dynamic_global_property_object, colab::chain::dynamic_global_property_index )

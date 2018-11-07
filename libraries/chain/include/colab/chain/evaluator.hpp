@@ -1,12 +1,12 @@
 #pragma once
-#include <steem/protocol/exceptions.hpp>
-#include <steem/protocol/operations.hpp>
+#include <colab/protocol/exceptions.hpp>
+#include <colab/protocol/operations.hpp>
 
-namespace steem { namespace chain {
+namespace colab { namespace chain {
 
 class database;
 
-template< typename OperationType=steem::protocol::operation >
+template< typename OperationType=colab::protocol::operation >
 class evaluator
 {
    public:
@@ -17,7 +17,7 @@ class evaluator
       virtual std::string get_name( const OperationType& op ) = 0;
 };
 
-template< typename EvaluatorType, typename OperationType=steem::protocol::operation >
+template< typename EvaluatorType, typename OperationType=colab::protocol::operation >
 class evaluator_impl : public evaluator<OperationType>
 {
    public:
@@ -53,27 +53,27 @@ class evaluator_impl : public evaluator<OperationType>
 
 } }
 
-#define STEEM_DEFINE_EVALUATOR( X ) \
-class X ## _evaluator : public steem::chain::evaluator_impl< X ## _evaluator > \
+#define COLAB_DEFINE_EVALUATOR( X ) \
+class X ## _evaluator : public colab::chain::evaluator_impl< X ## _evaluator > \
 {                                                                           \
    public:                                                                  \
       typedef X ## _operation operation_type;                               \
                                                                             \
       X ## _evaluator( database& db )                                       \
-         : steem::chain::evaluator_impl< X ## _evaluator >( db )          \
+         : colab::chain::evaluator_impl< X ## _evaluator >( db )          \
       {}                                                                    \
                                                                             \
       void do_apply( const X ## _operation& o );                            \
 };
 
-#define STEEM_DEFINE_PLUGIN_EVALUATOR( PLUGIN, OPERATION, X )               \
-class X ## _evaluator : public steem::chain::evaluator_impl< X ## _evaluator, OPERATION > \
+#define COLAB_DEFINE_PLUGIN_EVALUATOR( PLUGIN, OPERATION, X )               \
+class X ## _evaluator : public colab::chain::evaluator_impl< X ## _evaluator, OPERATION > \
 {                                                                           \
    public:                                                                  \
       typedef X ## _operation operation_type;                               \
                                                                             \
-      X ## _evaluator( steem::chain::database& db, PLUGIN* plugin )       \
-         : steem::chain::evaluator_impl< X ## _evaluator, OPERATION >( db ), \
+      X ## _evaluator( colab::chain::database& db, PLUGIN* plugin )       \
+         : colab::chain::evaluator_impl< X ## _evaluator, OPERATION >( db ), \
            _plugin( plugin )                                                \
       {}                                                                    \
                                                                             \
