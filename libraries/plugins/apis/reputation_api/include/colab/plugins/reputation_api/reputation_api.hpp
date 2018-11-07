@@ -1,17 +1,17 @@
 #pragma once
-#include <steem/plugins/json_rpc/utility.hpp>
-#include <steem/plugins/reputation/reputation_objects.hpp>
-#include <steem/plugins/database_api/database_api_objects.hpp>
+#include <colab/plugins/json_rpc/utility.hpp>
+#include <colab/plugins/reputation/reputation_objects.hpp>
+#include <colab/plugins/database_api/database_api_objects.hpp>
 
-#include <steem/protocol/types.hpp>
+#include <colab/protocol/types.hpp>
 
 #include <fc/optional.hpp>
 #include <fc/variant.hpp>
 #include <fc/vector.hpp>
 
-namespace steem { namespace plugins { namespace reputation {
+namespace colab { namespace plugins { namespace reputation {
 
-using steem::protocol::account_name_type;
+using colab::protocol::account_name_type;
 
 namespace detail
 {
@@ -21,7 +21,7 @@ namespace detail
 struct account_reputation
 {
    account_name_type             account;
-   steem::protocol::share_type   reputation;
+   colab::protocol::share_type   reputation;
 };
 
 struct get_account_reputations_args
@@ -49,13 +49,13 @@ class reputation_api
       std::unique_ptr< detail::reputation_api_impl > my;
 };
 
-} } } // steem::plugins::reputation
+} } } // colab::plugins::reputation
 
-FC_REFLECT( steem::plugins::reputation::account_reputation,
+FC_REFLECT( colab::plugins::reputation::account_reputation,
             (account)(reputation) );
 
-FC_REFLECT( steem::plugins::reputation::get_account_reputations_args,
+FC_REFLECT( colab::plugins::reputation::get_account_reputations_args,
             (account_lower_bound)(limit) );
 
-FC_REFLECT( steem::plugins::reputation::get_account_reputations_return,
+FC_REFLECT( colab::plugins::reputation::get_account_reputations_return,
             (reputations) );

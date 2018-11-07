@@ -1,13 +1,13 @@
 #pragma once
-#include <steem/protocol/base.hpp>
-#include <steem/protocol/block_header.hpp>
-#include <steem/protocol/asset.hpp>
-#include <steem/protocol/validation.hpp>
-#include <steem/protocol/legacy_asset.hpp>
+#include <colab/protocol/base.hpp>
+#include <colab/protocol/block_header.hpp>
+#include <colab/protocol/asset.hpp>
+#include <colab/protocol/validation.hpp>
+#include <colab/protocol/legacy_asset.hpp>
 
 #include <fc/crypto/equihash.hpp>
 
-namespace steem { namespace protocol {
+namespace colab { namespace protocol {
 
    struct example_optional_action : public base_operation
    {
@@ -17,6 +17,6 @@ namespace steem { namespace protocol {
       void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(account); }
    };
 
-} } // steem::protocol
+} } // colab::protocol
 
-FC_REFLECT( steem::protocol::example_optional_action, (account) )
+FC_REFLECT( colab::protocol::example_optional_action, (account) )

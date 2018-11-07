@@ -1,9 +1,9 @@
 #pragma once
 
-#include <steem/plugins/transaction_status_api/transaction_status_api_args.hpp>
-#include <steem/plugins/json_rpc/utility.hpp>
+#include <colab/plugins/transaction_status_api/transaction_status_api_args.hpp>
+#include <colab/plugins/json_rpc/utility.hpp>
 
-namespace steem { namespace plugins { namespace transaction_status_api {
+namespace colab { namespace plugins { namespace transaction_status_api {
 
 namespace detail { class transaction_status_api_impl; }
 
@@ -18,5 +18,5 @@ private:
    std::unique_ptr< detail::transaction_status_api_impl > my;
 };
 
-} } } //steem::plugins::transaction_status_api
+} } } //colab::plugins::transaction_status_api
 

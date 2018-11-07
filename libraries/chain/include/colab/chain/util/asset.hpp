@@ -1,25 +1,25 @@
 #pragma once
 
-#include <steem/protocol/asset.hpp>
+#include <colab/protocol/asset.hpp>
 
-namespace steem { namespace chain { namespace util {
+namespace colab { namespace chain { namespace util {
 
-using steem::protocol::asset;
-using steem::protocol::price;
+using colab::protocol::asset;
+using colab::protocol::price;
 
-inline asset to_sbd( const price& p, const asset& steem )
+inline asset to_sbd( const price& p, const asset& colab )
 {
-   FC_ASSERT( steem.symbol == STEEM_SYMBOL );
+   FC_ASSERT( colab.symbol == CLC_SYMBOL );
    if( p.is_null() )
       return asset( 0, SBD_SYMBOL );
-   return steem * p;
+   return colab * p;
 }
 
-inline asset to_steem( const price& p, const asset& sbd )
+inline asset to_colab( const price& p, const asset& sbd )
 {
    FC_ASSERT( sbd.symbol == SBD_SYMBOL );
    if( p.is_null() )
-      return asset( 0, STEEM_SYMBOL );
+      return asset( 0, CLC_SYMBOL );
    return sbd * p;
 }
 

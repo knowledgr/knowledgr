@@ -1,12 +1,12 @@
 
-#include <steem/plugins/rc/resource_count.hpp>
-#include <steem/plugins/rc/resource_sizes.hpp>
+#include <colab/plugins/rc/resource_count.hpp>
+#include <colab/plugins/rc/resource_sizes.hpp>
 
-#include <steem/protocol/operations.hpp>
+#include <colab/protocol/operations.hpp>
 
-namespace steem { namespace plugins { namespace rc {
+namespace colab { namespace plugins { namespace rc {
 
-using namespace steem::protocol;
+using namespace colab::protocol;
 
 struct count_operation_visitor
 {
@@ -294,7 +294,7 @@ struct count_operation_visitor
       execution_time_count += _e.witness_set_properties_operation_exec_time;
    }
 
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
    void operator()( const claim_reward_balance2_operation& op )const
    {
       FC_TODO( "Change RC state bytes computation to take SMT's into account" )
@@ -438,4 +438,4 @@ void count_resources(
    result.resource_count[ resource_execution_time ] += vtor.execution_time_count;
 }
 
-} } } // steem::plugins::rc
+} } } // colab::plugins::rc

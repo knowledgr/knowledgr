@@ -1,13 +1,13 @@
 
 #pragma once
 
-#include <steem/app/plugin.hpp>
+#include <colab/app/plugin.hpp>
 
-namespace steem { namespace plugin { namespace raw_block {
+namespace colab { namespace plugin { namespace raw_block {
 
-using steem::app::application;
+using colab::app::application;
 
-class raw_block_plugin : public steem::app::plugin
+class raw_block_plugin : public colab::app::plugin
 {
    public:
       raw_block_plugin( application* app );

@@ -22,18 +22,18 @@
  * THE SOFTWARE.
  */
 
-#include <steem/utilities/tempdir.hpp>
+#include <colab/utilities/tempdir.hpp>
 
 #include <cstdlib>
 
-namespace steem { namespace utilities {
+namespace colab { namespace utilities {
 
 fc::path temp_directory_path()
 {
-   const char* steemit_tempdir = getenv("STEEM_TEMPDIR");
-   if( steemit_tempdir != nullptr )
-      return fc::path( steemit_tempdir );
-   return fc::temp_directory_path() / "steem-tmp";
+   const char* colabit_tempdir = getenv("COLAB_TEMPDIR");
+   if( colabit_tempdir != nullptr )
+      return fc::path( colabit_tempdir );
+   return fc::temp_directory_path() / "colab-tmp";
 }
 
-} } // steem::utilities
+} } // colab::utilities

@@ -27,8 +27,8 @@
 
 #include <fc/filesystem.hpp>
 
-namespace steem { namespace utilities {
+namespace colab { namespace utilities {
 
 fc::path temp_directory_path();
 
-} } // steem::utilities
+} } // colab::utilities

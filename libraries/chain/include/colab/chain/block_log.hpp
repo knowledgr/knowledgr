@@ -1,10 +1,10 @@
 #pragma once
 #include <fc/filesystem.hpp>
-#include <steem/protocol/block.hpp>
+#include <colab/protocol/block.hpp>
 
-namespace steem { namespace chain {
+namespace colab { namespace chain {
 
-   using namespace steem::protocol;
+   using namespace colab::protocol;
 
    namespace detail { class block_log_impl; }
 

@@ -2,18 +2,18 @@
  * Copyright (c) 2015 Cryptonomex, Inc., and contributors.
  */
 #pragma once
-#include <steem/chain/block_log.hpp>
-#include <steem/chain/fork_database.hpp>
-#include <steem/chain/global_property_object.hpp>
-#include <steem/chain/hardfork_property_object.hpp>
-#include <steem/chain/node_property_object.hpp>
-#include <steem/chain/notifications.hpp>
+#include <colab/chain/block_log.hpp>
+#include <colab/chain/fork_database.hpp>
+#include <colab/chain/global_property_object.hpp>
+#include <colab/chain/hardfork_property_object.hpp>
+#include <colab/chain/node_property_object.hpp>
+#include <colab/chain/notifications.hpp>
 
-#include <steem/chain/util/advanced_benchmark_dumper.hpp>
-#include <steem/chain/util/signal.hpp>
+#include <colab/chain/util/advanced_benchmark_dumper.hpp>
+#include <colab/chain/util/signal.hpp>
 
-#include <steem/protocol/protocol.hpp>
-#include <steem/protocol/hardfork.hpp>
+#include <colab/protocol/protocol.hpp>
+#include <colab/protocol/hardfork.hpp>
 
 #include <appbase/plugin.hpp>
 
@@ -23,14 +23,14 @@
 
 #include <map>
 
-namespace steem { namespace chain {
+namespace colab { namespace chain {
 
-   using steem::protocol::signed_transaction;
-   using steem::protocol::operation;
-   using steem::protocol::authority;
-   using steem::protocol::asset;
-   using steem::protocol::asset_symbol_type;
-   using steem::protocol::price;
+   using colab::protocol::signed_transaction;
+   using colab::protocol::operation;
+   using colab::protocol::authority;
+   using colab::protocol::asset;
+   using colab::protocol::asset_symbol_type;
+   using colab::protocol::price;
    using abstract_plugin = appbase::abstract_plugin;
 
    class database_impl;
@@ -101,7 +101,7 @@ namespace steem { namespace chain {
          {
             fc::path data_dir;
             fc::path shared_mem_dir;
-            uint64_t initial_supply = STEEM_INIT_SUPPLY;
+            uint64_t initial_supply = COLAB_INIT_SUPPLY;
             uint64_t shared_file_size = 0;
             uint16_t shared_file_full_threshold = 0;
             uint16_t shared_file_scale_rate = 0;
@@ -160,7 +160,7 @@ namespace steem { namespace chain {
          const signed_transaction   get_recent_transaction( const transaction_id_type& trx_id )const;
          std::vector<block_id_type> get_block_ids_on_fork(block_id_type head_of_fork) const;
 
-         chain_id_type steem_chain_id = STEEM_CHAIN_ID;
+         chain_id_type colab_chain_id = COLAB_CHAIN_ID;
          chain_id_type get_chain_id() const;
          void set_chain_id( const chain_id_type& chain_id );
 
@@ -316,7 +316,7 @@ namespace steem { namespace chain {
           * Use the get_slot_time() and get_slot_at_time() functions
           * to convert between slot_num and timestamp.
           *
-          * Passing slot_num == 0 returns STEEM_NULL_WITNESS
+          * Passing slot_num == 0 returns COLAB_NULL_WITNESS
           */
          account_name_type get_scheduled_witness(uint32_t slot_num)const;
 
@@ -340,9 +340,9 @@ namespace steem { namespace chain {
           */
          uint32_t get_slot_at_time(fc::time_point_sec when)const;
 
-         /** @return the sbd created and deposited to_account, may return STEEM if there is no median feed */
-         std::pair< asset, asset > create_sbd( const account_object& to_account, asset steem, bool to_reward_balance=false );
-         asset create_vesting( const account_object& to_account, asset steem, bool to_reward_balance=false );
+         /** @return the sbd created and deposited to_account, may return CLC if there is no median feed */
+         std::pair< asset, asset > create_sbd( const account_object& to_account, asset colab, bool to_reward_balance=false );
+         asset create_vesting( const account_object& to_account, asset colab, bool to_reward_balance=false );
          void adjust_total_payout( const comment_object& a, const asset& sbd, const asset& curator_sbd_value, const asset& beneficiary_value );
 
          void        adjust_liquidity_reward( const account_object& owner, const asset& volume, bool is_bid );
@@ -363,7 +363,7 @@ namespace steem { namespace chain {
 
          /** this updates the votes for witnesses as a result of account voting proxy changing */
          void adjust_proxied_witness_votes( const account_object& a,
-                                            const std::array< share_type, STEEM_MAX_PROXY_RECURSION_DEPTH+1 >& delta,
+                                            const std::array< share_type, COLAB_MAX_PROXY_RECURSION_DEPTH+1 >& delta,
                                             int depth = 0 );
 
          /** this updates the votes for all witnesses as a result of account VESTS changing */
@@ -388,7 +388,7 @@ namespace steem { namespace chain {
          void process_conversions();
          void process_savings_withdraws();
          void process_subsidized_accounts();
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
          void process_smt_objects();
 #endif
          void account_recovery_processing();
@@ -410,10 +410,10 @@ namespace steem { namespace chain {
 
          /**
           * Helper method to return the current sbd value of a given amount of
-          * STEEM.  Return 0 SBD if there isn't a current_median_history
+          * CLC.  Return 0 SBD if there isn't a current_median_history
           */
-         asset to_sbd( const asset& steem )const;
-         asset to_steem( const asset& sbd )const;
+         asset to_sbd( const asset& colab )const;
+         asset to_colab( const asset& sbd )const;
 
          time_point_sec   head_block_time()const;
          uint32_t         head_block_num()const;
@@ -431,7 +431,7 @@ namespace steem { namespace chain {
          /// Reset the object graph in-memory
          void initialize_indexes();
          void init_schema();
-         void init_genesis(uint64_t initial_supply = STEEM_INIT_SUPPLY );
+         void init_genesis(uint64_t initial_supply = COLAB_INIT_SUPPLY );
 
          /**
           *  This method validates transactions without adding it to the pending state.
@@ -487,7 +487,7 @@ namespace steem { namespace chain {
          bool disable_low_mem_warning = true;
 #endif
 
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
          ///Smart Media Tokens related methods
          ///@{
          void validate_smt_invariants()const;
@@ -535,7 +535,7 @@ namespace steem { namespace chain {
          void apply_hardfork( uint32_t hardfork );
 
          ///@}
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
          template< typename smt_balance_object_type, class balance_operator_type >
          void adjust_smt_balance( const account_name_type& name, const asset& delta, bool check_account,
                                   balance_operator_type balance_operator );
@@ -556,8 +556,8 @@ namespace steem { namespace chain {
          std::unique_ptr< database_impl > _my;
 
          fork_database                 _fork_db;
-         fc::time_point_sec            _hardfork_times[ STEEM_NUM_HARDFORKS + 1 ];
-         protocol::hardfork_version    _hardfork_versions[ STEEM_NUM_HARDFORKS + 1 ];
+         fc::time_point_sec            _hardfork_times[ COLAB_NUM_HARDFORKS + 1 ];
+         protocol::hardfork_version    _hardfork_versions[ COLAB_NUM_HARDFORKS + 1 ];
 
          block_log                     _block_log;
 

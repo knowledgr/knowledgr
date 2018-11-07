@@ -1,8 +1,8 @@
-#include <steem/chain/util/smt_token.hpp>
+#include <colab/chain/util/smt_token.hpp>
 
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
 
-namespace steem { namespace chain { namespace util {
+namespace colab { namespace chain { namespace util {
 
 const smt_token_object* find_smt_token( database& db, uint32_t nai )
 {
@@ -10,7 +10,7 @@ const smt_token_object* find_smt_token( database& db, uint32_t nai )
 
    auto range = idx.range(
       [nai] ( const asset_symbol_type& a ) { return a >= asset_symbol_type::from_nai( nai, 0 ); },
-      [nai] ( const asset_symbol_type& a ) { return a <= asset_symbol_type::from_nai( nai, STEEM_ASSET_MAX_DECIMALS ); }
+      [nai] ( const asset_symbol_type& a ) { return a <= asset_symbol_type::from_nai( nai, COLAB_ASSET_MAX_DECIMALS ); }
    );
 
    /*
@@ -34,6 +34,6 @@ const smt_token_object* find_smt_token( database& db, asset_symbol_type symbol, 
       return db.find< smt_token_object, by_symbol >( s );
 }
 
-} } } // steem::chain::util
+} } } // colab::chain::util
 
 #endif

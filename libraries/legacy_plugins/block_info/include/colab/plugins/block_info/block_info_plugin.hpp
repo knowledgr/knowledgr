@@ -1,21 +1,21 @@
 
 #pragma once
 
-#include <steem/app/plugin.hpp>
-#include <steem/plugins/block_info/block_info.hpp>
+#include <colab/app/plugin.hpp>
+#include <colab/plugins/block_info/block_info.hpp>
 
 #include <string>
 #include <vector>
 
-namespace steem { namespace protocol {
+namespace colab { namespace protocol {
 struct signed_block;
 } }
 
-namespace steem { namespace plugin { namespace block_info {
+namespace colab { namespace plugin { namespace block_info {
 
-using steem::app::application;
+using colab::app::application;
 
-class block_info_plugin : public steem::app::plugin
+class block_info_plugin : public colab::app::plugin
 {
    public:
       block_info_plugin( application* app );

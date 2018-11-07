@@ -6,12 +6,12 @@
 
 #include <chainbase/chainbase.hpp>
 
-#include <steem/protocol/types.hpp>
-#include <steem/protocol/authority.hpp>
+#include <colab/protocol/types.hpp>
+#include <colab/protocol/authority.hpp>
 
-#include <steem/chain/buffer_type.hpp>
+#include <colab/chain/buffer_type.hpp>
 
-namespace steem { namespace chain {
+namespace colab { namespace chain {
 
 using namespace boost::multi_index;
 
@@ -21,11 +21,11 @@ using chainbase::object;
 using chainbase::oid;
 using chainbase::allocator;
 
-using steem::protocol::block_id_type;
-using steem::protocol::transaction_id_type;
-using steem::protocol::chain_id_type;
-using steem::protocol::account_name_type;
-using steem::protocol::share_type;
+using colab::protocol::block_id_type;
+using colab::protocol::transaction_id_type;
+using colab::protocol::chain_id_type;
+using colab::protocol::account_name_type;
+using colab::protocol::share_type;
 
 using chainbase::shared_string;
 
@@ -68,7 +68,7 @@ enum object_type
    vesting_delegation_expiration_object_type,
    pending_required_action_object_type,
    pending_optional_action_object_type,
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
    // SMT objects
    smt_token_object_type,
    smt_event_token_object_type,
@@ -110,7 +110,7 @@ class vesting_delegation_expiration_object;
 class pending_required_action_object;
 class pending_optional_action_object;
 
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
 class smt_token_object;
 class smt_event_token_object;
 class account_regular_balance_object;
@@ -150,7 +150,7 @@ typedef oid< vesting_delegation_expiration_object   > vesting_delegation_expirat
 typedef oid< pending_required_action_object         > pending_required_action_id_type;
 typedef oid< pending_optional_action_object         > pending_optional_action_id_type;
 
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
 typedef oid< smt_token_object                       > smt_token_id_type;
 typedef oid< smt_event_token_object                 > smt_event_token_id_type;
 typedef oid< account_regular_balance_object         > account_regular_balance_id_type;
@@ -165,18 +165,18 @@ enum bandwidth_type
    market   ///< Rate limiting for all other actions
 };
 
-} } //steem::chain
+} } //colab::chain
 
 namespace fc
 {
 class variant;
 
-inline void to_variant( const steem::chain::shared_string& s, variant& var )
+inline void to_variant( const colab::chain::shared_string& s, variant& var )
 {
-   var = fc::string( steem::chain::to_string( s ) );
+   var = fc::string( colab::chain::to_string( s ) );
 }
 
-inline void from_variant( const variant& var, steem::chain::shared_string& s )
+inline void from_variant( const variant& var, colab::chain::shared_string& s )
 {
    auto str = var.as_string();
    s.assign( str.begin(), str.end() );
@@ -212,7 +212,7 @@ void unpack( Stream& s, chainbase::oid<T>& id )
 template< typename Stream >
 void pack( Stream& s, const chainbase::shared_string& ss )
 {
-   std::string str = steem::chain::to_string( ss );
+   std::string str = colab::chain::to_string( ss );
    fc::raw::pack( s, str );
 }
 
@@ -221,7 +221,7 @@ void unpack( Stream& s, chainbase::shared_string& ss )
 {
    std::string str;
    fc::raw::unpack( s, str );
-   steem::chain::from_string( ss, str );
+   colab::chain::from_string( ss, str );
 }
 
 template< typename Stream, typename E, typename A >
@@ -273,7 +273,7 @@ void unpack( Stream& s, boost::interprocess::flat_map< K, V, C, A >& value )
 
 #ifndef ENABLE_STD_ALLOCATOR
 template< typename T >
-T unpack_from_vector( const steem::chain::buffer_type& s )
+T unpack_from_vector( const colab::chain::buffer_type& s )
 {
    try
    {
@@ -289,7 +289,7 @@ T unpack_from_vector( const steem::chain::buffer_type& s )
 #endif
 } } // namespace fc::raw
 
-FC_REFLECT_ENUM( steem::chain::object_type,
+FC_REFLECT_ENUM( colab::chain::object_type,
                  (dynamic_global_property_object_type)
                  (account_object_type)
                  (account_authority_object_type)
@@ -322,7 +322,7 @@ FC_REFLECT_ENUM( steem::chain::object_type,
                  (pending_required_action_object_type)
                  (pending_optional_action_object_type)
 
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
                  (smt_token_object_type)
                  (smt_event_token_object_type)
                  (account_regular_balance_object_type)
@@ -332,7 +332,7 @@ FC_REFLECT_ENUM( steem::chain::object_type,
                )
 
 #ifndef ENABLE_STD_ALLOCATOR
-FC_REFLECT_TYPENAME( steem::chain::shared_string )
+FC_REFLECT_TYPENAME( colab::chain::shared_string )
 #endif
 
-FC_REFLECT_ENUM( steem::chain::bandwidth_type, (post)(forum)(market) )
+FC_REFLECT_ENUM( colab::chain::bandwidth_type, (post)(forum)(market) )

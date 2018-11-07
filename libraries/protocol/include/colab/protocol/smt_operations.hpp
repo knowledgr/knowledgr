@@ -1,19 +1,19 @@
 #pragma once
 
-#include <steem/protocol/base.hpp>
-#include <steem/protocol/asset.hpp>
-#include <steem/protocol/misc_utilities.hpp>
+#include <colab/protocol/base.hpp>
+#include <colab/protocol/asset.hpp>
+#include <colab/protocol/misc_utilities.hpp>
 
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
 
 #define SMT_MAX_UNIT_ROUTES            10
 #define SMT_MAX_UNIT_COUNT             20
 #define SMT_MAX_DECIMAL_PLACES         8
-#define SMT_MIN_HARD_CAP_STEEM_UNITS   10000
-#define SMT_MIN_SATURATION_STEEM_UNITS 1000
-#define SMT_MIN_SOFT_CAP_STEEM_UNITS   1000
+#define SMT_MIN_HARD_CAP_COLAB_UNITS   10000
+#define SMT_MIN_SATURATION_COLAB_UNITS 1000
+#define SMT_MIN_SOFT_CAP_COLAB_UNITS   1000
 
-namespace steem { namespace protocol {
+namespace colab { namespace protocol {
 
 /**
  * Base of all smt operations issued by token creator, holding what's needed by all of them.
@@ -64,10 +64,10 @@ struct smt_create_operation : public smt_base_operation
 
 struct smt_generation_unit
 {
-   flat_map< account_name_type, uint16_t >        steem_unit;
+   flat_map< account_name_type, uint16_t >        colab_unit;
    flat_map< account_name_type, uint16_t >        token_unit;
 
-   uint32_t steem_unit_sum()const;
+   uint32_t colab_unit_sum()const;
    uint32_t token_unit_sum()const;
 
    void validate()const;
@@ -107,8 +107,8 @@ struct smt_capped_generation_policy
    smt_generation_unit pre_soft_cap_unit;
    smt_generation_unit post_soft_cap_unit;
 
-   smt_cap_commitment  min_steem_units_commitment;
-   smt_cap_commitment  hard_cap_steem_units_commitment;
+   smt_cap_commitment  min_colab_units_commitment;
+   smt_cap_commitment  hard_cap_colab_units_commitment;
 
    uint16_t            soft_cap_percent = 0;
 
@@ -127,7 +127,7 @@ typedef static_variant<
 struct smt_setup_operation : public smt_base_operation
 {
    uint8_t                 decimal_places = 0;
-   int64_t                 max_supply = STEEM_MAX_SHARE_SUPPLY;
+   int64_t                 max_supply = COLAB_MAX_SHARE_SUPPLY;
 
    smt_generation_policy   initial_generation_policy;
 
@@ -229,13 +229,13 @@ typedef static_variant<
 
 struct smt_param_windows_v1
 {
-   uint32_t cashout_window_seconds = 0;                // STEEM_CASHOUT_WINDOW_SECONDS
-   uint32_t reverse_auction_window_seconds = 0;        // STEEM_REVERSE_AUCTION_WINDOW_SECONDS
+   uint32_t cashout_window_seconds = 0;                // COLAB_CASHOUT_WINDOW_SECONDS
+   uint32_t reverse_auction_window_seconds = 0;        // COLAB_REVERSE_AUCTION_WINDOW_SECONDS
 };
 
 struct smt_param_vote_regeneration_period_seconds_v1
 {
-   uint32_t vote_regeneration_period_seconds = 0;      // STEEM_VOTE_REGENERATION_SECONDS
+   uint32_t vote_regeneration_period_seconds = 0;      // COLAB_VOTE_REGENERATION_SECONDS
    uint32_t votes_per_regeneration_period = 0;
 };
 
@@ -273,27 +273,27 @@ struct smt_set_runtime_parameters_operation : public smt_base_operation
 } }
 
 FC_REFLECT(
-   steem::protocol::smt_base_operation,
+   colab::protocol::smt_base_operation,
    (control_account)
    (symbol)
 )
 
 FC_REFLECT(
-   steem::protocol::smt_executor_base_operation,
+   colab::protocol::smt_executor_base_operation,
    (executor)
    (symbol)
 )
 
 FC_REFLECT_DERIVED(
-   steem::protocol::smt_create_operation,
-   (steem::protocol::smt_base_operation),
+   colab::protocol::smt_create_operation,
+   (colab::protocol::smt_base_operation),
    (smt_creation_fee)
    (extensions)
 )
 
 FC_REFLECT_DERIVED(
-   steem::protocol::smt_setup_operation,
-   (steem::protocol::smt_base_operation),
+   colab::protocol::smt_setup_operation,
+   (colab::protocol::smt_base_operation),
    (decimal_places)
    (max_supply)
    (initial_generation_policy)
@@ -305,37 +305,37 @@ FC_REFLECT_DERIVED(
    )
 
 FC_REFLECT(
-   steem::protocol::smt_generation_unit,
-   (steem_unit)
+   colab::protocol::smt_generation_unit,
+   (colab_unit)
    (token_unit)
    )
 
 FC_REFLECT(
-   steem::protocol::smt_cap_commitment,
+   colab::protocol::smt_cap_commitment,
    (lower_bound)
    (upper_bound)
    (hash)
    )
 
 FC_REFLECT(
-   steem::protocol::smt_revealed_cap,
+   colab::protocol::smt_revealed_cap,
    (amount)
    (nonce)
    )
 
 FC_REFLECT_DERIVED(
-   steem::protocol::smt_cap_reveal_operation,
-   (steem::protocol::smt_base_operation),
+   colab::protocol::smt_cap_reveal_operation,
+   (colab::protocol::smt_base_operation),
    (cap)
    (extensions)
    )
 
 FC_REFLECT(
-   steem::protocol::smt_capped_generation_policy,
+   colab::protocol::smt_capped_generation_policy,
    (pre_soft_cap_unit)
    (post_soft_cap_unit)
-   (min_steem_units_commitment)
-   (hard_cap_steem_units_commitment)
+   (min_colab_units_commitment)
+   (hard_cap_colab_units_commitment)
    (soft_cap_percent)
    (min_unit_ratio)
    (max_unit_ratio)
@@ -343,8 +343,8 @@ FC_REFLECT(
    )
 
 FC_REFLECT_DERIVED(
-   steem::protocol::smt_refund_operation,
-   (steem::protocol::smt_executor_base_operation),
+   colab::protocol::smt_refund_operation,
+   (colab::protocol::smt_executor_base_operation),
    (contributor)
    (contribution_id)
    (amount)
@@ -352,13 +352,13 @@ FC_REFLECT_DERIVED(
    )
 
 FC_REFLECT(
-   steem::protocol::smt_emissions_unit,
+   colab::protocol::smt_emissions_unit,
    (token_unit)
    )
 
 FC_REFLECT_DERIVED(
-   steem::protocol::smt_setup_emissions_operation,
-   (steem::protocol::smt_base_operation),
+   colab::protocol::smt_setup_emissions_operation,
+   (colab::protocol::smt_base_operation),
    (schedule_time)
    (emissions_unit)
    (interval_seconds)
@@ -374,31 +374,31 @@ FC_REFLECT_DERIVED(
    )
 
 FC_REFLECT(
-   steem::protocol::smt_param_allow_vesting,
+   colab::protocol::smt_param_allow_vesting,
    (value)
    )
 
 FC_REFLECT(
-   steem::protocol::smt_param_allow_voting,
+   colab::protocol::smt_param_allow_voting,
    (value)
    )
 
-FC_REFLECT_TYPENAME( steem::protocol::smt_setup_parameter )
+FC_REFLECT_TYPENAME( colab::protocol::smt_setup_parameter )
 
 FC_REFLECT(
-   steem::protocol::smt_param_windows_v1,
+   colab::protocol::smt_param_windows_v1,
    (cashout_window_seconds)
    (reverse_auction_window_seconds)
    )
 
 FC_REFLECT(
-   steem::protocol::smt_param_vote_regeneration_period_seconds_v1,
+   colab::protocol::smt_param_vote_regeneration_period_seconds_v1,
    (vote_regeneration_period_seconds)
    (votes_per_regeneration_period)
    )
 
 FC_REFLECT(
-   steem::protocol::smt_param_rewards_v1,
+   colab::protocol::smt_param_rewards_v1,
    (content_constant)
    (percent_curation_rewards)
    (percent_content_rewards)
@@ -407,19 +407,19 @@ FC_REFLECT(
    )
 
 FC_REFLECT_TYPENAME(
-   steem::protocol::smt_runtime_parameter
+   colab::protocol::smt_runtime_parameter
    )
 
 FC_REFLECT_DERIVED(
-   steem::protocol::smt_set_setup_parameters_operation,
-   (steem::protocol::smt_base_operation),
+   colab::protocol::smt_set_setup_parameters_operation,
+   (colab::protocol::smt_base_operation),
    (setup_parameters)
    (extensions)
    )
 
 FC_REFLECT_DERIVED(
-   steem::protocol::smt_set_runtime_parameters_operation,
-   (steem::protocol::smt_base_operation),
+   colab::protocol::smt_set_runtime_parameters_operation,
+   (colab::protocol::smt_base_operation),
    (runtime_parameters)
    (extensions)
    )

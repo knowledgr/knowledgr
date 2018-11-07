@@ -1,24 +1,24 @@
 
 #pragma once
 
-#include <steem/protocol/schema_types.hpp>
-#include <steem/chain/schema_types.hpp>
-#include <steem/schema/schema.hpp>
+#include <colab/protocol/schema_types.hpp>
+#include <colab/chain/schema_types.hpp>
+#include <colab/schema/schema.hpp>
 
-#include <steem/protocol/steem_operations.hpp>
-#include <steem/protocol/operation_util_impl.hpp>
-#include <steem/protocol/types.hpp>
+#include <colab/protocol/colab_operations.hpp>
+#include <colab/protocol/operation_util_impl.hpp>
+#include <colab/protocol/types.hpp>
 
-#include <steem/chain/evaluator.hpp>
-#include <steem/chain/evaluator_registry.hpp>
-#include <steem/chain/custom_operation_interpreter.hpp>
+#include <colab/chain/evaluator.hpp>
+#include <colab/chain/evaluator_registry.hpp>
+#include <colab/chain/custom_operation_interpreter.hpp>
 
 #include <fc/variant.hpp>
 
 #include <string>
 #include <vector>
 
-namespace steem { namespace chain {
+namespace colab { namespace chain {
 
 using protocol::operation;
 using protocol::authority;
@@ -218,9 +218,9 @@ class generic_custom_operation_interpreter
          FC_CAPTURE_AND_RETHROW( (outer_o) )
       }
 
-      virtual std::shared_ptr< steem::schema::abstract_schema > get_operation_schema() override
+      virtual std::shared_ptr< colab::schema::abstract_schema > get_operation_schema() override
       {
-         return steem::schema::get_schema_for_type< CustomOperationType >();
+         return colab::schema::get_schema_for_type< CustomOperationType >();
       }
 };
 

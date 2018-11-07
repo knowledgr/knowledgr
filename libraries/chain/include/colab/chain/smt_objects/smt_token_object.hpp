@@ -1,12 +1,12 @@
 #pragma once
 
-#include <steem/chain/steem_object_types.hpp>
-#include <steem/protocol/smt_operations.hpp>
+#include <colab/chain/colab_object_types.hpp>
+#include <colab/protocol/smt_operations.hpp>
 #include <boost/multi_index/composite_key.hpp>
 
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
 
-namespace steem { namespace chain {
+namespace colab { namespace chain {
 
 enum class smt_phase : uint8_t
 {
@@ -30,7 +30,7 @@ public:
 
    struct smt_market_maker_state
    {
-      asset    steem_balance;
+      asset    clc_balance;
       asset    token_balance;
       uint32_t reserve_ratio = 0;
    };
@@ -106,22 +106,22 @@ public:
    protocol::curve_id curation_reward_curve;
 
    /// smt_setup_emissions
-   time_point_sec       schedule_time = STEEM_GENESIS_TIME;
-   steem::protocol::
+   time_point_sec       schedule_time = COLAB_GENESIS_TIME;
+   colab::protocol::
    smt_emissions_unit   emissions_unit;
    uint32_t             interval_seconds = 0;
    uint32_t             interval_count = 0;
-   time_point_sec       lep_time = STEEM_GENESIS_TIME;
-   time_point_sec       rep_time = STEEM_GENESIS_TIME;
-   asset                lep_abs_amount = asset( 0, STEEM_SYMBOL );
-   asset                rep_abs_amount = asset( 0, STEEM_SYMBOL );
+   time_point_sec       lep_time = COLAB_GENESIS_TIME;
+   time_point_sec       rep_time = COLAB_GENESIS_TIME;
+   asset                lep_abs_amount = asset( 0, CLC_SYMBOL );
+   asset                rep_abs_amount = asset( 0, CLC_SYMBOL );
    uint32_t             lep_rel_amount_numerator = 0;
    uint32_t             rep_rel_amount_numerator = 0;
    uint8_t              rel_amount_denom_bits = 0;
 
    ///parameters for 'smt_setup_operation'
    int64_t                       max_supply = 0;
-   steem::protocol::
+   colab::protocol::
    smt_capped_generation_policy  capped_generation_policy;
    time_point_sec                generation_begin_time;
    time_point_sec                generation_end_time;
@@ -129,8 +129,8 @@ public:
    time_point_sec                launch_expiration_time;
 
    // smt_cap_reveal
-   share_type  steem_units_min_cap = -1;
-   share_type  steem_units_hard_cap = -1;
+   share_type  colab_units_min_cap = -1;
+   share_type  colab_units_hard_cap = -1;
 };
 
 class smt_event_token_object : public object< smt_event_token_object_type, smt_event_token_object >
@@ -211,9 +211,9 @@ typedef multi_index_container <
    allocator< smt_event_token_object >
 > smt_event_token_index;
 
-} } // namespace steem::chain
+} } // namespace colab::chain
 
-FC_REFLECT_ENUM( steem::chain::smt_phase,
+FC_REFLECT_ENUM( colab::chain::smt_phase,
                   (account_elevated)
                   (setup_completed)
                   (contribution_begin_time_completed)
@@ -223,13 +223,13 @@ FC_REFLECT_ENUM( steem::chain::smt_phase,
                   (launch_success)
 )
 
-FC_REFLECT( steem::chain::smt_token_object::smt_market_maker_state,
-   (steem_balance)
+FC_REFLECT( colab::chain::smt_token_object::smt_market_maker_state,
+   (clc_balance)
    (token_balance)
    (reserve_ratio)
 )
 
-FC_REFLECT( steem::chain::smt_token_object,
+FC_REFLECT( colab::chain::smt_token_object,
    (id)
    (liquid_symbol)
    (control_account)
@@ -259,11 +259,11 @@ FC_REFLECT( steem::chain::smt_token_object,
    (generation_end_time)
    (announced_launch_time)
    (launch_expiration_time)
-   (steem_units_min_cap)
-   (steem_units_hard_cap)
+   (colab_units_min_cap)
+   (colab_units_hard_cap)
 )
 
-FC_REFLECT( steem::chain::smt_event_token_object,
+FC_REFLECT( colab::chain::smt_event_token_object,
    (id)
    (parent)
    (phase)
@@ -273,7 +273,7 @@ FC_REFLECT( steem::chain::smt_event_token_object,
    (launch_expiration_time)
 )
 
-CHAINBASE_SET_INDEX_TYPE( steem::chain::smt_token_object, steem::chain::smt_token_index )
-CHAINBASE_SET_INDEX_TYPE( steem::chain::smt_event_token_object, steem::chain::smt_event_token_index )
+CHAINBASE_SET_INDEX_TYPE( colab::chain::smt_token_object, colab::chain::smt_token_index )
+CHAINBASE_SET_INDEX_TYPE( colab::chain::smt_event_token_object, colab::chain::smt_event_token_index )
 
 #endif

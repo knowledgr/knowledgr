@@ -1,9 +1,9 @@
 #pragma once
-#include <steem/protocol/types.hpp>
-#include <steem/protocol/config.hpp>
-#include <steem/protocol/asset_symbol.hpp>
+#include <colab/protocol/types.hpp>
+#include <colab/protocol/config.hpp>
+#include <colab/protocol/asset_symbol.hpp>
 
-namespace steem { namespace protocol {
+namespace colab { namespace protocol {
 
    struct asset
    {
@@ -14,7 +14,7 @@ namespace steem { namespace protocol {
          :amount(a),symbol(id){}
 
       asset()
-         :amount(0),symbol(STEEM_SYMBOL){}
+         :amount(0),symbol(CLC_SYMBOL){}
 
       share_type        amount;
       asset_symbol_type symbol;
@@ -148,12 +148,12 @@ namespace steem { namespace protocol {
    bool  operator != ( const price& a, const price& b );
    asset operator *  ( const asset& a, const price& b );
 
-} } // steem::protocol
+} } // colab::protocol
 
 namespace fc {
-    void to_variant( const steem::protocol::asset& var,  fc::variant& vo );
-    void from_variant( const fc::variant& var,  steem::protocol::asset& vo );
+    void to_variant( const colab::protocol::asset& var,  fc::variant& vo );
+    void from_variant( const fc::variant& var,  colab::protocol::asset& vo );
 }
 
-FC_REFLECT( steem::protocol::asset, (amount)(symbol) )
-FC_REFLECT( steem::protocol::price, (base)(quote) )
+FC_REFLECT( colab::protocol::asset, (amount)(symbol) )
+FC_REFLECT( colab::protocol::price, (base)(quote) )

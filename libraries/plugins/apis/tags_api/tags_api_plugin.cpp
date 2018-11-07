@@ -1,8 +1,8 @@
-#include <steem/plugins/tags_api/tags_api_plugin.hpp>
-#include <steem/plugins/tags_api/tags_api.hpp>
+#include <colab/plugins/tags_api/tags_api_plugin.hpp>
+#include <colab/plugins/tags_api/tags_api.hpp>
 
 
-namespace steem { namespace plugins { namespace tags {
+namespace colab { namespace plugins { namespace tags {
 
 tags_api_plugin::tags_api_plugin() {}
 tags_api_plugin::~tags_api_plugin() {}
@@ -17,4 +17,4 @@ void tags_api_plugin::plugin_initialize( const variables_map& options )
 void tags_api_plugin::plugin_startup() { api->api_startup(); }
 void tags_api_plugin::plugin_shutdown() {}
 
-} } } // steem::plugins::tags
+} } } // colab::plugins::tags

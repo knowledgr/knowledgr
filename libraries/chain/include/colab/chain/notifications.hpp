@@ -1,31 +1,31 @@
 #pragma once
 
-#include <steem/protocol/block.hpp>
+#include <colab/protocol/block.hpp>
 
-namespace steem { namespace chain {
+namespace colab { namespace chain {
 
 struct block_notification
 {
-   block_notification( const steem::protocol::signed_block& b ) : block(b)
+   block_notification( const colab::protocol::signed_block& b ) : block(b)
    {
       block_id = b.id();
       block_num = block_header::num_from_id( block_id );
    }
 
-   steem::protocol::block_id_type          block_id;
+   colab::protocol::block_id_type          block_id;
    uint32_t                                block_num = 0;
-   const steem::protocol::signed_block&    block;
+   const colab::protocol::signed_block&    block;
 };
 
 struct transaction_notification
 {
-   transaction_notification( const steem::protocol::signed_transaction& tx ) : transaction(tx)
+   transaction_notification( const colab::protocol::signed_transaction& tx ) : transaction(tx)
    {
       transaction_id = tx.id();
    }
 
-   steem::protocol::transaction_id_type          transaction_id;
-   const steem::protocol::signed_transaction&    transaction;
+   colab::protocol::transaction_id_type          transaction_id;
+   const colab::protocol::signed_transaction&    transaction;
 };
 
 struct operation_notification

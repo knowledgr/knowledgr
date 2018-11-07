@@ -1,11 +1,11 @@
 #pragma once
 
-#include <steem/chain/steem_object_types.hpp>
-#include <steem/protocol/asset_symbol.hpp>
+#include <colab/chain/colab_object_types.hpp>
+#include <colab/protocol/asset_symbol.hpp>
 
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
 
-namespace steem { namespace chain {
+namespace colab { namespace chain {
 
    class nai_pool_object : public object< nai_pool_object_type, nai_pool_object >
    {
@@ -43,10 +43,10 @@ namespace steem { namespace chain {
       allocator< nai_pool_object >
    > nai_pool_index;
 
-} } // namespace steem::chain
+} } // namespace colab::chain
 
-FC_REFLECT( steem::chain::nai_pool_object, (id)(num_available_nais)(nais) )
+FC_REFLECT( colab::chain::nai_pool_object, (id)(num_available_nais)(nais) )
 
-CHAINBASE_SET_INDEX_TYPE( steem::chain::nai_pool_object, steem::chain::nai_pool_index )
+CHAINBASE_SET_INDEX_TYPE( colab::chain::nai_pool_object, colab::chain::nai_pool_index )
 
 #endif

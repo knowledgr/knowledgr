@@ -1,7 +1,7 @@
-#include <steem/protocol/validation.hpp>
-#include <steem/protocol/steem_required_actions.hpp>
+#include <colab/protocol/validation.hpp>
+#include <colab/protocol/colab_required_actions.hpp>
 
-namespace steem { namespace protocol {
+namespace colab { namespace protocol {
 
 void example_required_action::validate()const
 {
@@ -13,4 +13,4 @@ bool operator==( const example_required_action& lhs, const example_required_acti
    return lhs.account == rhs.account;
 }
 
-} } //steem::protocol
+} } //colab::protocol

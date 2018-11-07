@@ -1,22 +1,22 @@
-#if defined IS_TEST_NET && defined STEEM_ENABLE_SMT
+#if defined IS_TEST_NET && defined COLAB_ENABLE_SMT
 #include <boost/test/unit_test.hpp>
 
-#include <steem/chain/account_object.hpp>
-#include <steem/chain/comment_object.hpp>
-#include <steem/protocol/steem_operations.hpp>
+#include <colab/chain/account_object.hpp>
+#include <colab/chain/comment_object.hpp>
+#include <colab/protocol/colab_operations.hpp>
 
-#include <steem/plugins/market_history/market_history_plugin.hpp>
+#include <colab/plugins/market_history/market_history_plugin.hpp>
 
 #include "../db_fixture/database_fixture.hpp"
 
-using namespace steem::chain;
-using namespace steem::protocol;
+using namespace colab::chain;
+using namespace colab::protocol;
 
 BOOST_FIXTURE_TEST_SUITE( smt_market_history, smt_database_fixture_for_plugin )
 
 BOOST_AUTO_TEST_CASE( smt_mh_test )
 {
-   using namespace steem::plugins::market_history;
+   using namespace colab::plugins::market_history;
 
    try
    {
@@ -32,32 +32,32 @@ BOOST_AUTO_TEST_CASE( smt_mh_test )
       }
 
       appbase::app().register_plugin< market_history_plugin >();
-      db_plugin = &appbase::app().register_plugin< steem::plugins::debug_node::debug_node_plugin >();
+      db_plugin = &appbase::app().register_plugin< colab::plugins::debug_node::debug_node_plugin >();
       init_account_pub_key = init_account_priv_key.get_public_key();
 
       db_plugin->logging = false;
       appbase::app().initialize<
-         steem::plugins::market_history::market_history_plugin,
-         steem::plugins::debug_node::debug_node_plugin
+         colab::plugins::market_history::market_history_plugin,
+         colab::plugins::debug_node::debug_node_plugin
       >( argc, argv );
 
-      db = &appbase::app().get_plugin< steem::plugins::chain::chain_plugin >().db();
+      db = &appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db();
       BOOST_REQUIRE( db );
 
       open_database();
 
       generate_block();
-      db->set_hardfork( STEEM_NUM_HARDFORKS );
+      db->set_hardfork( COLAB_NUM_HARDFORKS );
       generate_block();
 
       vest( "initminer", 10000 );
 
       // Fill up the rest of the required miners
-      for( int i = STEEM_NUM_INIT_MINERS; i < STEEM_MAX_WITNESSES; i++ )
+      for( int i = COLAB_NUM_INIT_MINERS; i < COLAB_MAX_WITNESSES; i++ )
       {
-         account_create( STEEM_INIT_MINER_NAME + fc::to_string( i ), init_account_pub_key );
-         fund( STEEM_INIT_MINER_NAME + fc::to_string( i ), STEEM_MIN_PRODUCER_REWARD.amount.value );
-         witness_create( STEEM_INIT_MINER_NAME + fc::to_string( i ), init_account_priv_key, "foo.bar", init_account_pub_key, STEEM_MIN_PRODUCER_REWARD.amount );
+         account_create( COLAB_INIT_MINER_NAME + fc::to_string( i ), init_account_pub_key );
+         fund( COLAB_INIT_MINER_NAME + fc::to_string( i ), COLAB_MIN_PRODUCER_REWARD.amount.value );
+         witness_create( COLAB_INIT_MINER_NAME + fc::to_string( i ), init_account_priv_key, "foo.bar", init_account_pub_key, COLAB_MIN_PRODUCER_REWARD.amount );
       }
 
       validate_database();
@@ -89,9 +89,9 @@ BOOST_AUTO_TEST_CASE( smt_mh_test )
       op.owner = "alice";
       op.amount_to_sell = asset( 1000, any_smt_symbol );
       op.min_to_receive = ASSET( "2.000 TESTS" );
-      op.expiration = db->head_block_time() + fc::seconds( STEEM_MAX_LIMIT_ORDER_EXPIRATION );
+      op.expiration = db->head_block_time() + fc::seconds( COLAB_MAX_LIMIT_ORDER_EXPIRATION );
       tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + STEEM_MAX_TIME_UNTIL_EXPIRATION );
+      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
       sign( tx, alice_private_key );
       db->push_transaction( tx, 0 );
 
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE( smt_mh_test )
       op.amount_to_sell = ASSET( "1.000 TESTS" );
       op.min_to_receive = asset( 500, any_smt_symbol );
       tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + STEEM_MAX_TIME_UNTIL_EXPIRATION );
+      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
       sign( tx, sam_private_key );
       db->push_transaction( tx, 0 );
 
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE( smt_mh_test )
       op.amount_to_sell = asset( 500, any_smt_symbol );
       op.min_to_receive = ASSET( "0.900 TESTS" );
       tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + STEEM_MAX_TIME_UNTIL_EXPIRATION );
+      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
       sign( tx, alice_private_key );
       db->push_transaction( tx, 0 );
 
@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE( smt_mh_test )
       op.amount_to_sell = ASSET( "0.450 TESTS" );
       op.min_to_receive = asset( 250, any_smt_symbol );
       tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + STEEM_MAX_TIME_UNTIL_EXPIRATION );
+      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
       sign( tx, bob_private_key );
       db->push_transaction( tx, 0 );
       validate_database();
@@ -151,156 +151,156 @@ BOOST_AUTO_TEST_CASE( smt_mh_test )
 
       BOOST_REQUIRE( bucket->seconds == 15 );
       BOOST_REQUIRE( bucket->open == time_a );
-      BOOST_REQUIRE( bucket->steem.high == ASSET( "1.500 TESTS " ).amount );
-      BOOST_REQUIRE( bucket->non_steem.high == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.low == ASSET( "1.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.low == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.open == ASSET( "1.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.open == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.close == ASSET( "1.500 TESTS").amount );
-      BOOST_REQUIRE( bucket->non_steem.close == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.volume == ASSET( "1.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.volume == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.high == ASSET( "1.500 TESTS " ).amount );
+      BOOST_REQUIRE( bucket->non_colab.high == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.low == ASSET( "1.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.low == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.open == ASSET( "1.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.open == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.close == ASSET( "1.500 TESTS").amount );
+      BOOST_REQUIRE( bucket->non_colab.close == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.volume == ASSET( "1.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.volume == asset( 750, any_smt_symbol ).amount );
       bucket++;
 
       BOOST_REQUIRE( bucket->seconds == 15 );
       BOOST_REQUIRE( bucket->open == time_a + ( 60 * 90 ) );
-      BOOST_REQUIRE( bucket->steem.high == ASSET( "0.500 TESTS " ).amount );
-      BOOST_REQUIRE( bucket->non_steem.high == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.low == ASSET( "0.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.low == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.open == ASSET( "0.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.open == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.close == ASSET( "0.500 TESTS").amount );
-      BOOST_REQUIRE( bucket->non_steem.close == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.volume == ASSET( "0.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.volume == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.high == ASSET( "0.500 TESTS " ).amount );
+      BOOST_REQUIRE( bucket->non_colab.high == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.low == ASSET( "0.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.low == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.open == ASSET( "0.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.open == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.close == ASSET( "0.500 TESTS").amount );
+      BOOST_REQUIRE( bucket->non_colab.close == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.volume == ASSET( "0.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.volume == asset( 250, any_smt_symbol ).amount );
       bucket++;
 
       BOOST_REQUIRE( bucket->seconds == 15 );
       BOOST_REQUIRE( bucket->open == time_a + ( 60 * 90 ) + 60 );
-      BOOST_REQUIRE( bucket->steem.high == ASSET( "0.450 TESTS " ).amount );
-      BOOST_REQUIRE( bucket->non_steem.high == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.low == ASSET( "0.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.low == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.open == ASSET( "0.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.open == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.close == ASSET( "0.450 TESTS").amount );
-      BOOST_REQUIRE( bucket->non_steem.close == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.volume == ASSET( "0.950 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.volume == asset( 500, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.high == ASSET( "0.450 TESTS " ).amount );
+      BOOST_REQUIRE( bucket->non_colab.high == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.low == ASSET( "0.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.low == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.open == ASSET( "0.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.open == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.close == ASSET( "0.450 TESTS").amount );
+      BOOST_REQUIRE( bucket->non_colab.close == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.volume == ASSET( "0.950 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.volume == asset( 500, any_smt_symbol ).amount );
       bucket++;
 
       BOOST_REQUIRE( bucket->seconds == 60 );
       BOOST_REQUIRE( bucket->open == time_a );
-      BOOST_REQUIRE( bucket->steem.high == ASSET( "1.500 TESTS " ).amount );
-      BOOST_REQUIRE( bucket->non_steem.high == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.low == ASSET( "1.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.low == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.open == ASSET( "1.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.open == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.close == ASSET( "1.500 TESTS").amount );
-      BOOST_REQUIRE( bucket->non_steem.close == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.volume == ASSET( "1.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.volume == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.high == ASSET( "1.500 TESTS " ).amount );
+      BOOST_REQUIRE( bucket->non_colab.high == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.low == ASSET( "1.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.low == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.open == ASSET( "1.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.open == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.close == ASSET( "1.500 TESTS").amount );
+      BOOST_REQUIRE( bucket->non_colab.close == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.volume == ASSET( "1.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.volume == asset( 750, any_smt_symbol ).amount );
       bucket++;
 
       BOOST_REQUIRE( bucket->seconds == 60 );
       BOOST_REQUIRE( bucket->open == time_a + ( 60 * 90 ) );
-      BOOST_REQUIRE( bucket->steem.high == ASSET( "0.500 TESTS " ).amount );
-      BOOST_REQUIRE( bucket->non_steem.high == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.low == ASSET( "0.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.low == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.open == ASSET( "0.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.open == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.close == ASSET( "0.500 TESTS").amount );
-      BOOST_REQUIRE( bucket->non_steem.close == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.volume == ASSET( "0.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.volume == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.high == ASSET( "0.500 TESTS " ).amount );
+      BOOST_REQUIRE( bucket->non_colab.high == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.low == ASSET( "0.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.low == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.open == ASSET( "0.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.open == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.close == ASSET( "0.500 TESTS").amount );
+      BOOST_REQUIRE( bucket->non_colab.close == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.volume == ASSET( "0.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.volume == asset( 250, any_smt_symbol ).amount );
       bucket++;
 
       BOOST_REQUIRE( bucket->seconds == 60 );
       BOOST_REQUIRE( bucket->open == time_a + ( 60 * 90 ) + 60 );
-      BOOST_REQUIRE( bucket->steem.high == ASSET( "0.450 TESTS " ).amount );
-      BOOST_REQUIRE( bucket->non_steem.high == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.low == ASSET( "0.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.low == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.open == ASSET( "0.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.open == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.close == ASSET( "0.450 TESTS").amount );
-      BOOST_REQUIRE( bucket->non_steem.close == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.volume == ASSET( "0.950 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.volume == asset( 500, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.high == ASSET( "0.450 TESTS " ).amount );
+      BOOST_REQUIRE( bucket->non_colab.high == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.low == ASSET( "0.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.low == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.open == ASSET( "0.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.open == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.close == ASSET( "0.450 TESTS").amount );
+      BOOST_REQUIRE( bucket->non_colab.close == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.volume == ASSET( "0.950 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.volume == asset( 500, any_smt_symbol ).amount );
       bucket++;
 
       BOOST_REQUIRE( bucket->seconds == 300 );
       BOOST_REQUIRE( bucket->open == time_a );
-      BOOST_REQUIRE( bucket->steem.high == ASSET( "1.500 TESTS " ).amount );
-      BOOST_REQUIRE( bucket->non_steem.high == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.low == ASSET( "1.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.low == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.open == ASSET( "1.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.open == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.close == ASSET( "1.500 TESTS").amount );
-      BOOST_REQUIRE( bucket->non_steem.close == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.volume == ASSET( "1.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.volume == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.high == ASSET( "1.500 TESTS " ).amount );
+      BOOST_REQUIRE( bucket->non_colab.high == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.low == ASSET( "1.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.low == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.open == ASSET( "1.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.open == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.close == ASSET( "1.500 TESTS").amount );
+      BOOST_REQUIRE( bucket->non_colab.close == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.volume == ASSET( "1.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.volume == asset( 750, any_smt_symbol ).amount );
       bucket++;
 
       BOOST_REQUIRE( bucket->seconds == 300 );
       BOOST_REQUIRE( bucket->open == time_a + ( 60 * 90 ) );
-      BOOST_REQUIRE( bucket->steem.high == ASSET( "0.450 TESTS " ).amount );
-      BOOST_REQUIRE( bucket->non_steem.high == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.low == ASSET( "0.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.low == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.open == ASSET( "0.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.open == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.close == ASSET( "0.450 TESTS").amount );
-      BOOST_REQUIRE( bucket->non_steem.close == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.volume == ASSET( "1.450 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.volume == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.high == ASSET( "0.450 TESTS " ).amount );
+      BOOST_REQUIRE( bucket->non_colab.high == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.low == ASSET( "0.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.low == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.open == ASSET( "0.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.open == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.close == ASSET( "0.450 TESTS").amount );
+      BOOST_REQUIRE( bucket->non_colab.close == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.volume == ASSET( "1.450 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.volume == asset( 750, any_smt_symbol ).amount );
       bucket++;
 
       BOOST_REQUIRE( bucket->seconds == 3600 );
       BOOST_REQUIRE( bucket->open == time_a );
-      BOOST_REQUIRE( bucket->steem.high == ASSET( "1.500 TESTS " ).amount );
-      BOOST_REQUIRE( bucket->non_steem.high == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.low == ASSET( "1.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.low == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.open == ASSET( "1.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.open == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.close == ASSET( "1.500 TESTS").amount );
-      BOOST_REQUIRE( bucket->non_steem.close == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.volume == ASSET( "1.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.volume == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.high == ASSET( "1.500 TESTS " ).amount );
+      BOOST_REQUIRE( bucket->non_colab.high == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.low == ASSET( "1.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.low == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.open == ASSET( "1.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.open == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.close == ASSET( "1.500 TESTS").amount );
+      BOOST_REQUIRE( bucket->non_colab.close == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.volume == ASSET( "1.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.volume == asset( 750, any_smt_symbol ).amount );
       bucket++;
 
       BOOST_REQUIRE( bucket->seconds == 3600 );
       BOOST_REQUIRE( bucket->open == time_a + ( 60 * 60 ) );
-      BOOST_REQUIRE( bucket->steem.high == ASSET( "0.450 TESTS " ).amount );
-      BOOST_REQUIRE( bucket->non_steem.high == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.low == ASSET( "0.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.low == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.open == ASSET( "0.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.open == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.close == ASSET( "0.450 TESTS").amount );
-      BOOST_REQUIRE( bucket->non_steem.close == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.volume == ASSET( "1.450 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.volume == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.high == ASSET( "0.450 TESTS " ).amount );
+      BOOST_REQUIRE( bucket->non_colab.high == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.low == ASSET( "0.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.low == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.open == ASSET( "0.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.open == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.close == ASSET( "0.450 TESTS").amount );
+      BOOST_REQUIRE( bucket->non_colab.close == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.volume == ASSET( "1.450 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.volume == asset( 750, any_smt_symbol ).amount );
       bucket++;
 
       BOOST_REQUIRE( bucket->seconds == 86400 );
-      BOOST_REQUIRE( bucket->open == STEEM_GENESIS_TIME );
-      BOOST_REQUIRE( bucket->steem.high == ASSET( "0.450 TESTS " ).amount );
-      BOOST_REQUIRE( bucket->non_steem.high == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.low == ASSET( "1.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.low == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.open == ASSET( "1.500 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.open == asset( 750, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.close == ASSET( "0.450 TESTS").amount );
-      BOOST_REQUIRE( bucket->non_steem.close == asset( 250, any_smt_symbol ).amount );
-      BOOST_REQUIRE( bucket->steem.volume == ASSET( "2.950 TESTS" ).amount );
-      BOOST_REQUIRE( bucket->non_steem.volume == asset( 1500, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->open == COLAB_GENESIS_TIME );
+      BOOST_REQUIRE( bucket->colab.high == ASSET( "0.450 TESTS " ).amount );
+      BOOST_REQUIRE( bucket->non_colab.high == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.low == ASSET( "1.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.low == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.open == ASSET( "1.500 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.open == asset( 750, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.close == ASSET( "0.450 TESTS").amount );
+      BOOST_REQUIRE( bucket->non_colab.close == asset( 250, any_smt_symbol ).amount );
+      BOOST_REQUIRE( bucket->colab.volume == ASSET( "2.950 TESTS" ).amount );
+      BOOST_REQUIRE( bucket->non_colab.volume == asset( 1500, any_smt_symbol ).amount );
       bucket++;
 
       BOOST_REQUIRE( bucket == bucket_idx.end() );

@@ -1,22 +1,22 @@
 #pragma once
 
 #include <fc/container/flat.hpp>
-#include <steem/protocol/operations.hpp>
-#include <steem/protocol/transaction.hpp>
+#include <colab/protocol/operations.hpp>
+#include <colab/protocol/transaction.hpp>
 
 #include <fc/string.hpp>
 
-namespace steem { namespace app {
+namespace colab { namespace app {
 
 using namespace fc;
 
 void operation_get_impacted_accounts(
-   const steem::protocol::operation& op,
+   const colab::protocol::operation& op,
    fc::flat_set<protocol::account_name_type>& result );
 
 void transaction_get_impacted_accounts(
-   const steem::protocol::transaction& tx,
+   const colab::protocol::transaction& tx,
    fc::flat_set<protocol::account_name_type>& result
    );
 
-} } // steem::app
+} } // colab::app

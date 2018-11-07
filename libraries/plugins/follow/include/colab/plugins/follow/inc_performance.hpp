@@ -1,15 +1,15 @@
 #pragma once
 
-#include <steem/protocol/types.hpp>
-#include <steem/chain/steem_object_types.hpp>
-#include <steem/chain/database.hpp>
+#include <colab/protocol/types.hpp>
+#include <colab/chain/colab_object_types.hpp>
+#include <colab/chain/database.hpp>
 
-namespace steem { namespace plugins{ namespace follow {
+namespace colab { namespace plugins{ namespace follow {
 
-using namespace steem::chain;
-using steem::chain::database;
+using namespace colab::chain;
+using colab::chain::database;
  
-using steem::protocol::account_name_type;
+using colab::protocol::account_name_type;
 
 class performance_impl;
 
@@ -133,4 +133,4 @@ class performance
       }
 };
 
-} } } //steem::follow
+} } } //colab::follow

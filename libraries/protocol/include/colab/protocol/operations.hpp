@@ -1,13 +1,13 @@
 #pragma once
 
-#include <steem/protocol/types.hpp>
+#include <colab/protocol/types.hpp>
 
-#include <steem/protocol/operation_util.hpp>
-#include <steem/protocol/steem_operations.hpp>
-#include <steem/protocol/steem_virtual_operations.hpp>
-#include <steem/protocol/smt_operations.hpp>
+#include <colab/protocol/operation_util.hpp>
+#include <colab/protocol/colab_operations.hpp>
+#include <colab/protocol/colab_virtual_operations.hpp>
+#include <colab/protocol/smt_operations.hpp>
 
-namespace steem { namespace protocol {
+namespace colab { namespace protocol {
 
    /** NOTE: do not change the order of any operations prior to the virtual operations
     * or it will trigger a hardfork.
@@ -66,7 +66,7 @@ namespace steem { namespace protocol {
             account_create_with_delegation_operation,
             witness_set_properties_operation,
 
-#ifdef STEEM_ENABLE_SMT
+#ifdef COLAB_ENABLE_SMT
             /// SMT operations
             claim_reward_balance2_operation,
 
@@ -109,12 +109,12 @@ namespace steem { namespace protocol {
 
    bool is_virtual_operation( const operation& op );
 
-} } // steem::protocol
+} } // colab::protocol
 
 /*namespace fc {
-    void to_variant( const steem::protocol::operation& var,  fc::variant& vo );
-    void from_variant( const fc::variant& var,  steem::protocol::operation& vo );
+    void to_variant( const colab::protocol::operation& var,  fc::variant& vo );
+    void from_variant( const fc::variant& var,  colab::protocol::operation& vo );
 }*/
 
-STEEM_DECLARE_OPERATION_TYPE( steem::protocol::operation )
-FC_REFLECT_TYPENAME( steem::protocol::operation )
+COLAB_DECLARE_OPERATION_TYPE( colab::protocol::operation )
+FC_REFLECT_TYPENAME( colab::protocol::operation )
