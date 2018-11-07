@@ -45,7 +45,7 @@
 
 #define COLAB_BLOCKCHAIN_VERSION              ( version(0, 20, 6) )
 
-#define COLAB_INIT_PUBLIC_KEY_STR             "NLG6YegkQ1bqQ3jzMdA87ekWBr4bFcUwc12hkVD5tWipVNXA1b14J"
+#define COLAB_INIT_PUBLIC_KEY_STR             "CLB6YegkQ1bqQ3jzMdA87ekWBr4bFcUwc12hkVD5tWipVNXA1b14J"
 #define COLAB_CHAIN_ID 							(fc::sha256::hash("CoLab Chain"))
 #define COLAB_ADDRESS_PREFIX                  "CLB"
 
