@@ -224,6 +224,9 @@ struct api_account_object
       auto smt_obj_itr = by_control_account_index.find( name );
       is_smt = smt_obj_itr != by_control_account_index.end();
 #endif
+	  for (auto& _expertise: a.disciplines) {//~~~~~CLC~~~~~
+		  disciplines.push_back(_expertise.to_string());
+	  }
    }
 
 
@@ -298,6 +301,8 @@ struct api_account_object
    share_type        pending_claimed_accounts = 0;
 
    bool              is_smt = false;
+
+   vector<std::string> disciplines; //~~~~~CLC~~~~~
 };
 
 struct api_owner_authority_history_object
@@ -579,6 +584,7 @@ FC_REFLECT( colab::plugins::database_api::api_account_object,
              (last_post)(last_root_post)(last_vote_time)
              (post_bandwidth)(pending_claimed_accounts)
              (is_smt)
+			 (disciplines)//~~~~~CLC~~~~~
           )
 
 FC_REFLECT( colab::plugins::database_api::api_owner_authority_history_object,

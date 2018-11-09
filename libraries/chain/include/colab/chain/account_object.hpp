@@ -13,6 +13,8 @@
 
 #include <numeric>
 
+#include <fc/variant_object.hpp>
+
 namespace colab { namespace chain {
 
    using colab::protocol::authority;
@@ -24,7 +26,8 @@ namespace colab { namespace chain {
       public:
          template<typename Constructor, typename Allocator>
          account_object( Constructor&& c, allocator< Allocator > a )
-            :json_metadata( a )
+            :json_metadata( a ), 
+			disciplines(a) //~~~~~CLC~~~~~
          {
             c(*this);
          };
@@ -109,7 +112,15 @@ namespace colab { namespace chain {
          uint32_t          post_bandwidth = 0;
 
          share_type        pending_claimed_accounts = 0;
-
+		 bip::vector< protocol::discipline, allocator< protocol::discipline > > disciplines; //~~~~~CLC~~~~~
+		 uint32_t expertise_rate(protocol::discipline::discipline_category _category) {  //~~~~~CLC~~~~~ begin
+			 for (auto & _discipline : disciplines) {
+				 if (_discipline.category == _category) {
+					 return _discipline.level;
+				 }
+			 }
+			 return 1;
+		 }; //~~~~~CLC~~~~~ end
          /// This function should be used only when the account votes for a witness directly
          share_type        witness_vote_weight()const {
             return std::accumulate( proxied_vsf_votes.begin(),
@@ -419,6 +430,7 @@ FC_REFLECT( colab::chain::account_object,
              (proxied_vsf_votes)(witnesses_voted_for)
              (last_post)(last_root_post)(last_vote_time)(post_bandwidth)
              (pending_claimed_accounts)
+			 (disciplines)//~~~~~CLC~~~~~
           )
 
 CHAINBASE_SET_INDEX_TYPE( colab::chain::account_object, colab::chain::account_index )

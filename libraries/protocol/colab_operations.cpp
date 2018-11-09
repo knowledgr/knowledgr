@@ -14,6 +14,14 @@ namespace colab { namespace protocol {
       FC_ASSERT( size <= COLAB_MAX_AUTHORITY_MEMBERSHIP, "Authority membership exceeded. Max: 10 Current: ${n}", ("n", size) );
    }
 
+   //~~~~~CLC~~~~~ begin
+   void account_discipline_update_operation::validate() const
+   {
+	   validate_account_name( new_account_name );
+
+   }
+   //~~~~~CLC~~~~~ end
+
    void account_create_operation::validate() const
    {
       validate_account_name( new_account_name );
