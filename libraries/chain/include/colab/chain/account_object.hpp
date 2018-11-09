@@ -17,7 +17,8 @@
 
 namespace colab { namespace chain {
 
-   using colab::protocol::authority;
+	using colab::protocol::authority;
+	using chainbase::t_vector;
 
    class account_object : public object< account_object_type, account_object >
    {
@@ -112,8 +113,9 @@ namespace colab { namespace chain {
          uint32_t          post_bandwidth = 0;
 
          share_type        pending_claimed_accounts = 0;
-		 bip::vector< protocol::discipline, allocator< protocol::discipline > > disciplines; //~~~~~CLC~~~~~
-		 uint32_t expertise_rate(protocol::discipline::discipline_category _category) {  //~~~~~CLC~~~~~ begin
+		 using t_disciplines = t_vector< protocol::discipline >; //~~~~~CLC~~~~~
+		 t_disciplines disciplines; //~~~~~CLC~~~~~
+		 uint32_t expertise_rate(protocol::discipline_category _category) {  //~~~~~CLC~~~~~ begin
 			 for (auto & _discipline : disciplines) {
 				 if (_discipline.category == _category) {
 					 return _discipline.level;

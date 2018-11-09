@@ -312,13 +312,12 @@ void initialize_account_object( account_object& acc, const account_name_type& na
 }
 
 //~~~~~NLG~~~~~ begin
-void account_discpline_update_evaluator::do_apply( const account_discipline_update_operation& o )
+void account_discipline_update_evaluator::do_apply( const account_discipline_update_operation& o )
 {
 
-	const auto& admin = _db.get_account( o.admin);
+//	const auto& admin = _db.get_account( o.admin);
 	const auto& account = _db.get_account( o.account );
-	const auto& account_auth = _db.get< account_authority_object, by_account >( o.account );
-
+	
 	_db.modify( account, [&]( account_object& acc )
 	{
 		for (auto & d0 : o.disciplines) {
