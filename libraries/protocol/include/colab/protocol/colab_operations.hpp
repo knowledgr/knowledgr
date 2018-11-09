@@ -6,10 +6,22 @@
 #include <colab/protocol/legacy_asset.hpp>
 
 #include <fc/crypto/equihash.hpp>
+#include <colab/protocol/discipline.hpp>
 
 namespace colab { namespace protocol {
 
    void validate_auth_size( const authority& a );
+   //~~~~~CLC~~~~~ begin
+   struct account_discipline_update_operation : public base_operation
+   {
+	   account_name_type             admin;
+	   account_name_type             account;
+	   vector<protocol::discipline> disciplines;
+
+	   void validate()const;
+	   void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(admin); }
+   };
+   //~~~~~CLC~~~~~ end
 
    struct account_create_operation : public base_operation
    {
@@ -21,7 +33,6 @@ namespace colab { namespace protocol {
       authority         posting;
       public_key_type   memo_key;
       string            json_metadata;
-
       void validate()const;
       void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(creator); }
    };
@@ -1078,6 +1089,13 @@ FC_REFLECT( colab::protocol::legacy_chain_properties,
 FC_REFLECT_TYPENAME( colab::protocol::pow2_work )
 FC_REFLECT( colab::protocol::pow_operation, (worker_account)(block_id)(nonce)(work)(props) )
 FC_REFLECT( colab::protocol::pow2_operation, (work)(new_owner_key)(props) )
+
+//~~~~~CLC~~~~~ begin
+FC_REFLECT( colab::protocol::account_discipline_update_operation,
+            (admin)
+            (account)
+            (disciplines) )
+//~~~~~CLC~~~~~ end
 
 FC_REFLECT( colab::protocol::account_create_operation,
             (fee)

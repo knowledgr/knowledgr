@@ -343,7 +343,6 @@ public:
 
       return result;
    }
-
    condenser_api::api_account_object get_account( string account_name ) const
    {
       auto accounts = _remote_api->get_accounts( { account_name } );
@@ -981,6 +980,17 @@ vector< condenser_api::api_account_object > wallet_api::list_my_accounts()
    return result;
 }
 
+//~~~~~CLC~~~~~ begin
+condenser_api::extended_dynamic_global_properties wallet_api::get_dynamic_global_properties() const
+{
+	return my->_remote_api->get_dynamic_global_properties();
+}
+
+condenser_api::api_witness_schedule_object	wallet_api::get_witness_schedule() const
+{
+	return my->_remote_api->get_witness_schedule();
+}
+//~~~~~CLC~~~~~ end
 vector< account_name_type > wallet_api::list_accounts(const string& lowerbound, uint32_t limit)
 {
    return my->_remote_api->lookup_accounts( lowerbound, limit );
@@ -1029,7 +1039,6 @@ string wallet_api::get_wallet_filename() const
 {
    return my->get_wallet_filename();
 }
-
 
 condenser_api::api_account_object wallet_api::get_account( string account_name ) const
 {
@@ -1336,6 +1345,33 @@ vector< database_api::api_owner_authority_history_object > wallet_api::get_owner
 {
    return my->_remote_api->get_owner_history( account );
 }
+//~~~~~CLC~~~~~ begin
+condenser_api::legacy_signed_transaction wallet_api::update_account_discipline(
+	string admin
+	string account,
+	vector<std::string> disciplines
+	bool broadcast )const
+{
+	try
+	{
+		FC_ASSERT( !is_locked() );
+
+		account_discipline_update_operation op;
+		op.admin = admin;
+		op.account = account_name;
+		for (auto & ex : disciplines) {
+			op.disciplines.push_back(protocol::discipline::from_string(ex));
+		}
+
+		signed_transaction tx;
+		tx.operations.push_back(op);
+		tx.validate();
+
+		return my->sign_transaction( tx, broadcast );
+	}
+	FC_CAPTURE_AND_RETHROW( (admin)(account)(disciplines)(broadcast) )
+}
+//~~~~~CLC~~~~~ end
 
 condenser_api::legacy_signed_transaction wallet_api::update_account(
    string account_name,

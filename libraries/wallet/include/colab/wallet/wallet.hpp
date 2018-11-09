@@ -174,6 +174,11 @@ class wallet_api
        */
       condenser_api::extended_dynamic_global_properties get_dynamic_global_properties() const;
 
+	  /** Returns the witness schedule information in detail.
+       *
+       */
+	  condenser_api::api_witness_schedule_object			get_witness_schedule() const;//~~~~~NLG~~~~~
+
       /** Returns information about the given account.
        *
        * @param account_name the name of the account to provide information about
@@ -447,6 +452,23 @@ class wallet_api
          public_key_type posting,
          public_key_type memo,
          bool broadcast )const;
+
+	  //~~~~~CLC~~~~~ begin
+	  /**
+       * This method updates the disciplines of an existing account.
+       *
+       * @param admin The name of the admin
+       * @param account The name of the account
+       * @param disciplines The information of discipline of the new account(["mathematics : 3", "science : 10"])
+       * @param broadcast true if you wish to broadcast the transaction
+       */
+      condenser_api::legacy_signed_transaction update_account_discipline(
+		  string admin
+         string account,
+		 vector<std::string> disciplines
+         bool broadcast )const;
+	  //~~~~~CLC~~~~~ end
+
 
       /**
        * This method updates the key of an authority for an exisiting account.
@@ -1116,12 +1138,16 @@ FC_API( colab::wallet::wallet_api,
         (get_account_history)
         (get_state)
         (get_withdraw_routes)
+		(get_dynamic_global_properties)//~~~~~CLC~~~~~
+		(get_witness_schedule)//~~~NLG~~~
+
 
         /// transaction api
         (create_account)
         (create_account_with_keys)
         (create_account_delegated)
         (create_account_with_keys_delegated)
+		(update_account_discipline)//~~~~~CLC~~~~~
         (update_account)
         (update_account_auth_key)
         (update_account_auth_account)
