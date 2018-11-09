@@ -1347,9 +1347,9 @@ vector< database_api::api_owner_authority_history_object > wallet_api::get_owner
 }
 //~~~~~CLC~~~~~ begin
 condenser_api::legacy_signed_transaction wallet_api::update_account_discipline(
-	string admin
+	string admin,
 	string account,
-	vector<std::string> disciplines
+	vector<std::string> disciplines,
 	bool broadcast )const
 {
 	try
@@ -1358,7 +1358,7 @@ condenser_api::legacy_signed_transaction wallet_api::update_account_discipline(
 
 		account_discipline_update_operation op;
 		op.admin = admin;
-		op.account = account_name;
+		op.account = account;
 		for (auto & ex : disciplines) {
 			op.disciplines.push_back(protocol::discipline::from_string(ex));
 		}

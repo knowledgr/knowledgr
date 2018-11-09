@@ -463,9 +463,9 @@ class wallet_api
        * @param broadcast true if you wish to broadcast the transaction
        */
       condenser_api::legacy_signed_transaction update_account_discipline(
-		  string admin
+		  string admin,
          string account,
-		 vector<std::string> disciplines
+		 vector<std::string> disciplines,
          bool broadcast )const;
 	  //~~~~~CLC~~~~~ end
 

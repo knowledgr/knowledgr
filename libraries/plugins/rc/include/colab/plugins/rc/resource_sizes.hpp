@@ -93,6 +93,7 @@ struct operation_exec_info
 {
    int64_t account_create_operation_exec_time                  =  57700;
    int64_t account_create_with_delegation_operation_exec_time  =  57700;
+   int64_t account_discipline_update_operation_exec_time       =  14000;//~~~~~CLC~~~~~
    int64_t account_update_operation_exec_time                  =  14000;
    int64_t account_witness_proxy_operation_exec_time           = 117000;
    int64_t account_witness_vote_operation_exec_time            =  23000;

@@ -1,4 +1,4 @@
-#include <knowledgrit/protocol/discipline.hpp>
+#include <colab/protocol/discipline.hpp>
 #include <boost/rational.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
 
@@ -7,15 +7,15 @@
 
 */
 
-namespace knowledgrit { namespace protocol {
+namespace colab { namespace protocol {
 
-	static std::map<protocol::discipline::discipline_category, std::string> category_str_map;
+	static std::map<protocol::discipline_category, std::string> category_str_map;
 	static void set_discipline_category_str_map() {
-		category_str_map[discipline::unknown] = "unknown";
-		category_str_map[discipline::science] = "science";
-		category_str_map[discipline::technology] = "technology";
-		category_str_map[discipline::engineering] = "engineering";
-		category_str_map[discipline::mathematics] = "mathematics";
+		category_str_map[unknown] = "unknown";
+		category_str_map[science] = "science";
+		category_str_map[technology] = "technology";
+		category_str_map[engineering] = "engineering";
+		category_str_map[mathematics] = "mathematics";
 	}
 	std::string discipline::category_str()const
 	{
@@ -27,7 +27,7 @@ namespace knowledgrit { namespace protocol {
 		return "unknown";
 	}
 
-	discipline::discipline_category discipline::category_from_str(const std::string& str)
+	discipline_category discipline::category_from_str(const std::string& str)
 	{
 		if (category_str_map.size() <= 0) {
 			set_discipline_category_str_map();
@@ -72,4 +72,4 @@ namespace knowledgrit { namespace protocol {
 		FC_CAPTURE_AND_RETHROW( (from) )
 	}
 
-} } // knowledgrit::protocol
+} } // colab::protocol
