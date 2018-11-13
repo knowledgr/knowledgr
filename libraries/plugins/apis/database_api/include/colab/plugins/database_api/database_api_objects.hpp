@@ -80,7 +80,7 @@ struct api_comment_object
       body = to_string( con.body );
       json_metadata = to_string( con.json_metadata );
 #endif
-	  for (auto& _id : o.citations) { //~~~~~NLG~~~~~
+	  for (auto& _id : o.citations) { //~~~~~CLC~~~~~
 		  citations.push_back(_id);
 	  }
    }
@@ -132,8 +132,8 @@ struct api_comment_object
    bool              allow_votes = false;
    bool              allow_curation_rewards = false;
    vector<beneficiary_route_type> beneficiaries;
-   comment_object::comment_type		 type; //~~~~~NLG~~~~~
-   vector<comment_id_type> citations; //~~~~~NLG~~~~~
+   comment_object::comment_type		 type; //~~~~~CLC~~~~~
+   vector<comment_id_type> citations; //~~~~~CLC~~~~~
 };
 
 struct api_comment_vote_object
@@ -439,7 +439,7 @@ struct api_witness_object
    hardfork_version  hardfork_version_vote;
    time_point_sec    hardfork_time_vote;
    int64_t           available_witness_account_subsidies = 0;
-   witness_object::witness_schedule_type schedule;
+   witness_object::witness_schedule_type schedule;//~~~~~CLC~~~~~
 };
 
 struct api_witness_schedule_object

@@ -149,7 +149,10 @@ struct api_account_object
       pending_claimed_accounts( a.pending_claimed_accounts )
    {
       voting_power = _compute_voting_power(a);
-      proxied_vsf_votes.insert( proxied_vsf_votes.end(), a.proxied_vsf_votes.begin(), a.proxied_vsf_votes.end() );
+	  proxied_vsf_votes.insert( proxied_vsf_votes.end(), a.proxied_vsf_votes.begin(), a.proxied_vsf_votes.end() );
+	  for (auto& _expertise: a.disciplines) {//~~~~~CLC~~~~~
+		  disciplines.push_back(_expertise);
+	  }
    }
 
    api_account_object(){}
@@ -224,6 +227,7 @@ struct api_account_object
    uint32_t          post_bandwidth = 0;
 
    share_type        pending_claimed_accounts = 0;
+   vector<std::string> disciplines; //~~~~~CLC~~~~~
 };
 
 struct extended_account : public api_account_object
@@ -287,12 +291,16 @@ struct api_comment_object
       percent_colab_dollars( c.percent_colab_dollars ),
       allow_replies( c.allow_replies ),
       allow_votes( c.allow_votes ),
-      allow_curation_rewards( c.allow_curation_rewards )
+      allow_curation_rewards( c.allow_curation_rewards ),
+	  type(c.type)//~~~~~CLC~~~~~
    {
       for( auto& route : c.beneficiaries )
       {
          beneficiaries.push_back( route );
-      }
+	  }
+	  for (auto& _id : c.citations) { //~~~~~CLC~~~~~
+		  citations.push_back(_id);
+	  }
    }
 
    api_comment_object(){}
@@ -342,6 +350,8 @@ struct api_comment_object
    bool              allow_votes = false;
    bool              allow_curation_rewards = false;
    vector< beneficiary_route_type > beneficiaries;
+   comment_object::comment_type		 type; //~~~~~CLC~~~~~
+   vector<comment_id_type> citations; //~~~~~CLC~~~~~
 };
 
 struct extended_dynamic_global_properties
@@ -443,7 +453,8 @@ struct api_witness_object
       running_version( w.running_version ),
       hardfork_version_vote( w.hardfork_version_vote ),
       hardfork_time_vote( w.hardfork_time_vote ),
-      available_witness_account_subsidies( w.available_witness_account_subsidies )
+      available_witness_account_subsidies( w.available_witness_account_subsidies ),
+	  schedule(w.schedule)//~~~~~CLC~~~~~
    {}
 
    witness_id_type  id;
@@ -467,6 +478,7 @@ struct api_witness_object
    hardfork_version        hardfork_version_vote;
    time_point_sec          hardfork_time_vote = COLAB_GENESIS_TIME;
    int64_t                 available_witness_account_subsidies = 0;
+   witness_object::witness_schedule_type schedule;//~~~~~CLC~~~~~
 };
 
 struct api_witness_schedule_object
@@ -1150,6 +1162,7 @@ FC_REFLECT( colab::plugins::condenser_api::api_account_object,
              (proxied_vsf_votes)(witnesses_voted_for)
              (last_post)(last_root_post)(last_vote_time)
              (post_bandwidth)(pending_claimed_accounts)
+			 (disciplines)//~~~~~CLC~~~~~
           )
 
 FC_REFLECT_DERIVED( colab::plugins::condenser_api::extended_account, (colab::plugins::condenser_api::api_account_object),
@@ -1166,6 +1179,7 @@ FC_REFLECT( colab::plugins::condenser_api::api_comment_object,
              (root_author)(root_permlink)
              (max_accepted_payout)(percent_colab_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)
+			 (type)(citations)//~~~~~CLC~~~~~
           )
 
 FC_REFLECT( colab::plugins::condenser_api::extended_dynamic_global_properties,
@@ -1190,6 +1204,7 @@ FC_REFLECT( colab::plugins::condenser_api::api_witness_object,
              (running_version)
              (hardfork_version_vote)(hardfork_time_vote)
              (available_witness_account_subsidies)
+			 (schedule)//~~~~~CLC~~~~~
           )
 
 FC_REFLECT( colab::plugins::condenser_api::api_witness_schedule_object,
