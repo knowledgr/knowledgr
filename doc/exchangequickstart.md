@@ -28,7 +28,7 @@ sh get-docker.sh
 
 Pull in the colab repo from the official source on github and then change into the directory that's created for it.
 ```
-git clone https://github.com/colabit/colab
+git clone https://github.com/norestlabs/colab
 cd colab
 ```
 
@@ -37,7 +37,7 @@ cd colab
 Docker isn't just for downloading already built images, it can be used to build from source the same way you would otherwise build. By doing this you ensure that your build environment is identical to what we use to develop the software. Use the below command to start the build:
 
 ```
-docker build -t=colabit/colab .
+docker build -t=norestlabs/colab .
 ```
 
 Don't forget the `.` at the end of the line which indicates the build target is in the current directory.
@@ -51,7 +51,7 @@ When the build completes you will see a message indicating that it is 'successfu
 If you'd like to use our already pre-built official binary images, it's as simple as downloading it from the Dockerhub registry with only one command:
 
 ```
-docker pull colabit/colab
+docker pull norestlabs/colab
 ```
 
 ### Running a binary build without a Docker container

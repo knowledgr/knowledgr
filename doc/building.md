@@ -32,7 +32,7 @@ huge gain if you do not need this functionality.
 
 We ship a Dockerfile.  This builds both common node type binaries.
 
-    git clone https://github.com/colabit/colab
+    git clone https://github.com/norestlabs/colab
     cd colab
     docker build -t colabit/colab .
 
@@ -80,7 +80,7 @@ will build out of the box without further effort:
         libreadline-dev \
         perl
 
-    git clone https://github.com/colabit/colab
+    git clone https://github.com/norestlabs/colab
     cd colab
     git checkout stable
     git submodule update --init --recursive
@@ -146,7 +146,7 @@ Here is how to build and install Boost 1.60 into your user's home directory
 
 Then the instructions are the same as for colab:
 
-    git clone https://github.com/colabit/colab
+    git clone https://github.com/norestlabs/colab
     cd colab
     git checkout stable
     git submodule update --init --recursive
@@ -203,7 +203,7 @@ colab. Until then, this will allow you to install boost 1.60.0.
 
 ### Clone the Repository
 
-    git clone https://github.com/colabit/colab.git
+    git clone https://github.com/norestlabs/colab.git
     cd colab
 
 ### Compile

@@ -24,7 +24,7 @@ Please do a keyword search to see if there is already an existing issue before o
 
 ## Colabit.com vs. Colab Blockchain
 
-This issue tracker is only intended to track issues for the Colab blockchain. If the issue is with the Colabit.com website, please open an issue in the [Colabit.com Repository](https://github.com/colabit/colabit.com/).
+This issue tracker is only intended to track issues for the Colab blockchain. If the issue is with the Colabit.com website, please open an issue in the [Colabit.com Repository](https://github.com/norestlabs/colabit.com/).
 
 ## Pull Requests
 

@@ -27,7 +27,7 @@ Then, inside the container:
 (These steps are taken from `/Dockerfile.test` in the
 repository root.)
 
-    git clone https://github.com/colabit/colab.git \
+    git clone https://github.com/norestlabs/colab.git \
         /usr/local/src/colab
     cd /usr/local/src/colab
     git checkout <branch> # e.g. 123-feature
