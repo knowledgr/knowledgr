@@ -17,6 +17,7 @@ namespace colab { namespace protocol {
    //~~~~~CLC~~~~~{
    void account_discipline_update_operation::validate() const
    {
+	   std::cerr<<"~~~ [account_discipline_update_operation::validate()] - account = "<<(std::string)account<<"\n";
 	   validate_account_name( account );
 
    }

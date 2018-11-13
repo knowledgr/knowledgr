@@ -100,7 +100,7 @@ int main( int argc, char** argv )
          wdump((allowed_ips));
       }
 
-      colab::protocol::chain_id_type _colab_chain_id;
+      colab::protocol::chain_id_type _colab_chain_id = COLAB_CHAIN_ID;
 
 #ifdef IS_TEST_NET
       if( options.count("chain-id") )
