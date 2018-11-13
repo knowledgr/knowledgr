@@ -131,7 +131,7 @@ namespace colab { namespace protocol {
 
    /** Allows to store all SMT tokens being allowed to use during voting process.
     *  Maps asset symbol (SMT) to the vote info.
-    *  @see SMT spec for details: https://github.com/colabit/smt-whitepaper/blob/master/smt-manual/manual.md
+    *  @see SMT spec for details: https://github.com/norestlabs/smt-whitepaper/blob/master/smt-manual/manual.md
     */
    struct allowed_vote_assets
    {
