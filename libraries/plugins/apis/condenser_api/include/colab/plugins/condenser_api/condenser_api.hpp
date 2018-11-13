@@ -989,6 +989,9 @@ DEFINE_API_ARGS( verify_account_authority,               vector< variant >,   bo
 DEFINE_API_ARGS( get_active_votes,                       vector< variant >,   vector< tags::vote_state > )
 DEFINE_API_ARGS( get_account_votes,                      vector< variant >,   vector< account_vote > )
 DEFINE_API_ARGS( get_content,                            vector< variant >,   discussion )
+DEFINE_API_ARGS( get_content_count,                      vector< variant >,   uint64_t )//~~~~~CLC~~~~~
+DEFINE_API_ARGS( list_comments,							 vector< variant >,   vector< discussion > )//~~~~~CLC~~~~~
+DEFINE_API_ARGS( get_content_parent_series,				 vector< variant >,   vector< discussion > )//~~~~~CLC~~~~~
 DEFINE_API_ARGS( get_content_replies,                    vector< variant >,   vector< discussion > )
 DEFINE_API_ARGS( get_tags_used_by_author,                vector< variant >,   vector< tags::tag_count_object > )
 DEFINE_API_ARGS( get_post_discussions_by_payout,         vector< variant >,   vector< discussion > )
@@ -1081,7 +1084,10 @@ public:
       (verify_account_authority)
       (get_active_votes)
       (get_account_votes)
-      (get_content)
+	  (get_content)
+	  (get_content_count)//~~~~~CLC~~~~~
+	  (list_comments)//~~~~~CLC~~~~~
+	  (get_content_parent_series)//~~~~~CLC~~~~~
       (get_content_replies)
       (get_tags_used_by_author)
       (get_post_discussions_by_payout)

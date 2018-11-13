@@ -93,6 +93,9 @@ namespace detail
             (get_active_votes)
             (get_account_votes)
             (get_content)
+			(get_content_count)//~~~~~CLC~~~~~
+			(list_comments)//~~~~~CLC~~~~~
+			(get_content_parent_series)//~~~~~CLC~~~~~
             (get_content_replies)
             (get_tags_used_by_author)
             (get_post_discussions_by_payout)
@@ -138,7 +141,7 @@ namespace detail
          void set_pending_payout( discussion& d );
 
          void on_post_apply_block( const signed_block& b );
-
+		 void set_url( discussion& d )const;//~~~~~CLC~~~~~
          colab::plugins::chain::chain_plugin&                              _chain;
 
          chain::database&                                                  _db;
@@ -1340,7 +1343,59 @@ namespace detail
 
       return content;
    }
+   //~~~~~CLC~~~~~{
+   DEFINE_API_IMPL( condenser_api_impl, get_content_count )
+   {
+	   CHECK_ARG_SIZE( 0 )
+		return _db.get_index< comment_index >().indices().size();
+   }
+   DEFINE_API_IMPL( condenser_api_impl, list_comments )
+   {
+	   CHECK_ARG_SIZE( 1 )
 
+	   vector<discussion> result;
+	   uint32_t limit = args[0].as< uint32_t >();
+	   result.reserve(limit);
+	   uint32_t count = 0;
+	   const auto& by_permlink_idx = _db.get_index< comment_index >().indices().get< by_id >();
+	   auto itr = by_permlink_idx.begin();
+	   while( itr != by_permlink_idx.end() && count < limit)
+	   {
+		   discussion x( database_api::api_comment_object( *itr, _db ) );
+		   set_url(x);
+		   result.push_back(x);
+		   ++itr;
+		   count ++;
+	   }
+	   return result;
+   }
+
+   DEFINE_API_IMPL( condenser_api_impl, get_content_parent_series )
+   {
+	   CHECK_ARG_SIZE( 2 )
+
+		vector<discussion> result;
+	   account_name_type author = args[0].as< account_name_type >();
+	   string permlink = args[1].as< string >();
+	   
+	   const auto& by_permlink_idx = _db.get_index< comment_index >().indices().get< by_permlink >();
+	   string parent_author = author;
+	   string parent_permlink = permlink;
+	   while (parent_author != COLAB_ROOT_POST_PARENT) {
+		   auto itr = by_permlink_idx.find( boost::make_tuple( parent_author, parent_permlink ) );
+		   if( itr != by_permlink_idx.end() )
+		   {
+			   discussion parent( database_api::api_comment_object( *itr, _db ) );
+			   result.push_back(parent);
+			   parent_author = parent.parent_author;
+			   parent_permlink = parent.parent_permlink;
+		   } else {
+			   return result;
+		   }
+	   }
+	   return result;
+   }
+   //~~~~~CLC~~~~~}
    DEFINE_API_IMPL( condenser_api_impl, get_content_replies )
    {
       CHECK_ARG_SIZE( 2 )
@@ -2013,7 +2068,16 @@ namespace detail
       if( root.id != d.id )
          d.url += "#@" + d.author + "/" + d.permlink;
    }
-
+   //~~~~~CLC~~~~~{
+   void condenser_api_impl::set_url( discussion& d )const
+   {
+	   const database_api::api_comment_object root( _db.get_comment( d.root_author, d.root_permlink ), _db );
+	   d.url = "/" + root.category + "/@" + root.author + "/" + root.permlink;
+	   d.root_title = root.title;
+	   if( root.id != d.id )
+		   d.url += "#@" + d.author + "/" + d.permlink;
+   }
+   //~~~~~CLC~~~~~}
    void condenser_api_impl::on_post_apply_block( const signed_block& b )
    { try {
       boost::lock_guard< boost::mutex > guard( _mtx );
@@ -2218,6 +2282,9 @@ DEFINE_READ_APIS( condenser_api,
    (get_active_votes)
    (get_account_votes)
    (get_content)
+   (get_content_count)//~~~~~CLC~~~~~
+   (list_comments)//~~~~~CLC~~~~~
+   (get_content_parent_series)//~~~~~CLC~~~~~
    (get_content_replies)
    (get_tags_used_by_author)
    (get_post_discussions_by_payout)
