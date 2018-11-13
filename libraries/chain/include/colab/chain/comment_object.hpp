@@ -55,10 +55,18 @@ namespace colab { namespace chain {
 #ifdef COLAB_ENABLE_SMT
             , allowed_vote_assets( a )
 #endif
+			, citations( a ) //~~~~~CLC~~~~~
          {
             c( *this );
          }
-
+		 enum comment_type
+		 {
+			 observation,
+			 question,
+			 hypothesis,
+			 review,
+			 none
+		 };//~~~~~CLC~~~~~
          id_type           id;
 
          shared_string     category;
@@ -111,6 +119,9 @@ namespace colab { namespace chain {
          using t_votable_assets = t_vector< t_pair< asset_symbol_type, votable_asset_info > >;
          t_votable_assets  allowed_vote_assets;
 #endif
+		 comment_type		type = none; //~~~~~CLC~~~~~
+		 using t_citations = t_vector< id_type >;//~~~~~CLC~~~~~
+		 t_citations citations; //~~~~~CLC~~~~~
    };
 
    class comment_content_object : public object< comment_content_object_type, comment_content_object >
@@ -260,6 +271,7 @@ namespace colab { namespace chain {
 
 } } // colab::chain
 
+FC_REFLECT_ENUM( colab::chain::comment_object::comment_type, (observation)(question)(hypothesis)(review)(none) )//~~~~~CLC~~~~~
 #ifdef COLAB_ENABLE_SMT
 FC_REFLECT( colab::chain::comment_object,
              (id)(author)(permlink)
@@ -271,6 +283,7 @@ FC_REFLECT( colab::chain::comment_object,
              (total_vote_weight)(reward_weight)(total_payout_value)(curator_payout_value)(beneficiary_payout_value)(author_rewards)(net_votes)(root_comment)
              (max_accepted_payout)(percent_colab_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)(allowed_vote_assets)
+			 (type)(citations)//~~~~~CLC~~~~~
           )
 #else
 FC_REFLECT( colab::chain::comment_object,
@@ -283,6 +296,7 @@ FC_REFLECT( colab::chain::comment_object,
              (total_vote_weight)(reward_weight)(total_payout_value)(curator_payout_value)(beneficiary_payout_value)(author_rewards)(net_votes)(root_comment)
              (max_accepted_payout)(percent_colab_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)
+			 (type)(citations)//~~~~~CLC~~~~~
           )
 #endif
 CHAINBASE_SET_INDEX_TYPE( colab::chain::comment_object, colab::chain::comment_index )

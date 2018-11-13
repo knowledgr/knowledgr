@@ -115,14 +115,14 @@ namespace colab { namespace chain {
          share_type        pending_claimed_accounts = 0;
 		 using t_disciplines = t_vector< protocol::discipline >; //~~~~~CLC~~~~~
 		 t_disciplines disciplines; //~~~~~CLC~~~~~
-		 uint32_t expertise_rate(protocol::discipline_category _category) {  //~~~~~CLC~~~~~ begin
+		 uint32_t expertise_rate(protocol::discipline_category _category) {  //~~~~~CLC~~~~~{
 			 for (auto & _discipline : disciplines) {
 				 if (_discipline.category == _category) {
 					 return _discipline.level;
 				 }
 			 }
 			 return 1;
-		 }; //~~~~~CLC~~~~~ end
+		 }; //~~~~~CLC~~~~~}
          /// This function should be used only when the account votes for a witness directly
          share_type        witness_vote_weight()const {
             return std::accumulate( proxied_vsf_votes.begin(),

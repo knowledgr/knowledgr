@@ -10,20 +10,21 @@
 namespace colab { namespace protocol {
 
 	static std::map<protocol::discipline_category, std::string> category_str_map;
-	static void set_discipline_category_str_map() {
-		category_str_map[unknown] = "unknown";
-		category_str_map[science] = "science";
-		category_str_map[technology] = "technology";
-		category_str_map[engineering] = "engineering";
-		category_str_map[mathematics] = "mathematics";
+	void discipline::set_discipline_category_str_map() {
+		category_str_map[dc_unknown] = "unknown";
+		category_str_map[dc_science] = "science";
+		category_str_map[dc_technology] = "technology";
+		category_str_map[dc_engineering] = "engineering";
+		category_str_map[dc_mathematics] = "mathematics";
 	}
+
 	std::string discipline::category_str()const
 	{
 		if (category_str_map.size() <= 0) {
 			set_discipline_category_str_map();
 		}
 
-		if ( category >= unknown && category <= mathematics ) return category_str_map[category];
+		if ( category >= dc_unknown && category <= dc_mathematics ) return category_str_map[category];
 		return "unknown";
 	}
 
@@ -39,7 +40,7 @@ namespace colab { namespace protocol {
 				return (*i1).first;
 			}
 		}
-		return unknown;
+		return dc_unknown;
 	}
 
 	std::string discipline::to_string()const

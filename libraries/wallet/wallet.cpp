@@ -980,7 +980,7 @@ vector< condenser_api::api_account_object > wallet_api::list_my_accounts()
    return result;
 }
 
-//~~~~~CLC~~~~~ begin
+//~~~~~CLC~~~~~{
 condenser_api::extended_dynamic_global_properties wallet_api::get_dynamic_global_properties() const
 {
 	return my->_remote_api->get_dynamic_global_properties();
@@ -990,7 +990,7 @@ condenser_api::api_witness_schedule_object	wallet_api::get_witness_schedule() co
 {
 	return my->_remote_api->get_witness_schedule();
 }
-//~~~~~CLC~~~~~ end
+//~~~~~CLC~~~~~}
 vector< account_name_type > wallet_api::list_accounts(const string& lowerbound, uint32_t limit)
 {
    return my->_remote_api->lookup_accounts( lowerbound, limit );
@@ -1345,7 +1345,7 @@ vector< database_api::api_owner_authority_history_object > wallet_api::get_owner
 {
    return my->_remote_api->get_owner_history( account );
 }
-//~~~~~CLC~~~~~ begin
+//~~~~~CLC~~~~~{
 condenser_api::legacy_signed_transaction wallet_api::update_account_discipline(
 	string admin,
 	string account,
@@ -1371,7 +1371,7 @@ condenser_api::legacy_signed_transaction wallet_api::update_account_discipline(
 	}
 	FC_CAPTURE_AND_RETHROW( (admin)(account)(disciplines)(broadcast) )
 }
-//~~~~~CLC~~~~~ end
+//~~~~~CLC~~~~~}
 
 condenser_api::legacy_signed_transaction wallet_api::update_account(
    string account_name,
@@ -2351,6 +2351,8 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
    string permlink,
    string parent_author,
    string parent_permlink,
+   string type, //~~~~~CLC~~~~~
+   const vector<citation>& citations, //~~~~~CLC~~~~~
    string title,
    string body,
    string json,
@@ -2358,6 +2360,20 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
 {
    FC_ASSERT( !is_locked() );
    comment_operation op;
+   if (type == "O") {//~~~~~CLC~~~~~
+	   op.type = 0;
+   } else if (type == "Q") {
+	   op.type = 1;
+   } else if (type == "H") {
+	   op.type = 2;
+   } else if (type == "R") {
+	   op.type = 3;
+   } else {
+	   op.type = 4;
+   }
+   for( const citation& cit : citations ) {//~~~~~CLC~~~~~
+	   op.citations.push_back(cit);
+   }
    op.parent_author =  parent_author;
    op.parent_permlink = parent_permlink;
    op.author = author;
@@ -2368,10 +2384,63 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
 
    signed_transaction tx;
    tx.operations.push_back( op );
+
+   if (op.type == 3) {//~~~~~CLC~~~~~
+	   vote_operation op2;
+	   op2.voter = author;
+	   op2.author = parent_author;
+	   op2.permlink = parent_permlink;
+	   op2.weight = 100 * COLAB_1_PERCENT; 
+	   tx.operations.push_back(op2);
+   }
+
    tx.validate();
 
    return my->sign_transaction( tx, broadcast );
 }
+
+//~~~~~CLC~~~~~ {
+condenser_api::legacy_signed_transaction wallet_api::post_review( 
+	string author, 
+	string permlink, 
+	string parent_author, 
+	string parent_permlink, 
+	const vector<citation>& citations, 
+	string title, string body, int16_t weight, string json, 
+	bool broadcast )
+{
+	FC_ASSERT( !is_locked() );
+	FC_ASSERT( abs(weight) <= 100, "Weight must be between -100 and 100 and not 0" );
+	comment_operation op;
+	vote_operation op2;
+
+	op.type = 3;
+
+	for( const citation& cit : citations) {
+		op.citations.push_back(cit);
+	}
+	op.parent_author =  parent_author;
+	op.parent_permlink = parent_permlink;
+	op.author = author;
+	op.permlink = permlink;
+	op.title = title;
+	op.body = body;
+	op.json_metadata = json;
+
+	op2.voter = author;
+	op2.author = parent_author;
+	op2.permlink = parent_permlink;
+	op2.weight = weight * COLAB_1_PERCENT; 
+
+	signed_transaction tx;
+	tx.operations.push_back( op );
+	tx.operations.push_back(op2);
+
+	tx.validate();
+
+	return my->sign_transaction( tx, broadcast );
+}
+//~~~~~CLC~~~~~ }
 
 condenser_api::legacy_signed_transaction wallet_api::vote(
    string voter,

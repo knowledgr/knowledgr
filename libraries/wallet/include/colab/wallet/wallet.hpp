@@ -453,7 +453,7 @@ class wallet_api
          public_key_type memo,
          bool broadcast )const;
 
-	  //~~~~~CLC~~~~~ begin
+	  //~~~~~CLC~~~~~{
 	  /**
        * This method updates the disciplines of an existing account.
        *
@@ -467,7 +467,7 @@ class wallet_api
          string account,
 		 vector<std::string> disciplines,
          bool broadcast )const;
-	  //~~~~~CLC~~~~~ end
+	  //~~~~~CLC~~~~~}
 
 
       /**
@@ -952,6 +952,8 @@ class wallet_api
        *  @param permlink the accountwide unique permlink for the comment
        *  @param parent_author can be null if this is a top level comment
        *  @param parent_permlink becomes category if parent_author is ""
+	   *  @param type can be one of the types - "O", "Q", "H", "R"
+	   *  @param citations the array of referenced comments - {"author": "name of author", "permlink": "permlink of comment"}
        *  @param title the title of the comment
        *  @param body the body of the comment
        *  @param json the json metadata of the comment
@@ -962,10 +964,37 @@ class wallet_api
          string permlink,
          string parent_author,
          string parent_permlink,
+		 string type, //~~~~~CLC~~~~~
+		 const vector<citation>& citations, //~~~~~CLC~~~~~
          string title,
          string body,
          string json,
          bool broadcast );
+
+	  //~~~~~CLC~~~~~{
+	  /**
+       *  Post or update a review for the comment.
+       *
+       *  @param author the name of the account authoring the comment
+       *  @param permlink the accountwide unique permlink for the comment
+       *  @param parent_author can be null if this is a top level comment
+       *  @param parent_permlink becomes category if parent_author is ""
+	   *  @param citations the array of referenced comments - {"author": "name of author", "permlink": "permlink of comment"}
+       *  @param title the title of the comment
+       *  @param body the body of the comment
+	   *  @param weight The weight [-100,100] of the vote
+       *  @param json the json metadata of the comment
+       *  @param broadcast true if you wish to broadcast the transaction
+       */
+      condenser_api::legacy_signed_transaction post_review( 
+		  string author, 
+		  string permlink, 
+		  string parent_author, 
+		  string parent_permlink, 
+		  const vector<citation>& citations, 
+		  string title, string body, int16_t weight, string json, 
+		  bool broadcast );
+	  //~~~~~CLC~~~~~}
 
       /**
        * Vote on a comment to be paid CLC
@@ -1139,7 +1168,7 @@ FC_API( colab::wallet::wallet_api,
         (get_state)
         (get_withdraw_routes)
 		(get_dynamic_global_properties)//~~~~~CLC~~~~~
-		(get_witness_schedule)//~~~NLG~~~
+		(get_witness_schedule)//~~~~~CLC~~~~~
 
 
         /// transaction api
@@ -1174,6 +1203,7 @@ FC_API( colab::wallet::wallet_api,
         (create_order)
         (cancel_order)
         (post_comment)
+		(post_review)//~~~~~CLC~~~~~
         (vote)
         (set_transaction_expiration)
         (request_account_recovery)

@@ -712,6 +712,7 @@ void comment_options_evaluator::do_apply( const comment_options_operation& o )
 
 void comment_evaluator::do_apply( const comment_operation& o )
 { try {
+	std::cerr<<"~~~ [comment_evaluator::do_apply()] - starting to evaluate the comment operation\n"; //~~~~~CLC~~~~~
    if( _db.has_hardfork( COLAB_HARDFORK_0_5__55 ) )
       FC_ASSERT( o.title.size() + o.body.size() + o.json_metadata.size(), "Cannot update comment because nothing appears to be changing." );
 
@@ -734,16 +735,54 @@ void comment_evaluator::do_apply( const comment_operation& o )
 
    FC_ASSERT( fc::is_utf8( o.json_metadata ), "JSON Metadata must be UTF-8" );
 
+   //~~~~~CLC~~~~~{
+   std::string type_str[] = {"O", "Q", "H", "R", "NONE"};
+   static comment_object::comment_type type_val[] = {
+	   comment_object::observation, 
+	   comment_object::question, 
+	   comment_object::hypothesis, 
+	   comment_object::review, 
+	   comment_object::none
+   };
+   comment_object::comment_type _type = type_val[o.type];
+   std::string _type_str = type_str[o.type];
+
+   vector<comment_id_type> _citations;
+
+   for (auto & cit : o.citations) {
+	   std::cerr<<"~~~ [comment_evaluator::do_apply()] - citation -> author = "<<(std::string)cit.author<<", permlink = "<<cit.permlink<<"\n"; //~~~~~CLC~~~~~		
+	   const comment_object* _citation = &_db.get_comment(cit.author, cit.permlink);
+	   FC_ASSERT( _citation, "The citation (author:${a}, permlink:${p}) cannot be found.", ("a",cit.author)("p",cit.permlink) );
+	   _citations.push_back(_citation->id);
+   }
+   //~~~~~CLC~~~~~}
+
    auto now = _db.head_block_time();
 
    if ( itr == by_permlink_idx.end() )
    {
+	   std::cerr<<"~~~ [comment_evaluator::do_apply()] - will create comment object\n";//~~~~~CLC~~~~~
+
       if( o.parent_author != COLAB_ROOT_POST_PARENT )
       {
          FC_ASSERT( _db.get( parent->root_comment ).allow_replies, "The parent comment has disabled replies." );
          if( _db.has_hardfork( COLAB_HARDFORK_0_12__177 ) && !_db.has_hardfork( COLAB_HARDFORK_0_17__869 ) )
             FC_ASSERT( _db.calculate_discussion_payout_time( *parent ) != fc::time_point_sec::maximum(), "Discussion is frozen." );
-      }
+
+		 //~~~~~CLC~~~~~{
+		 FC_ASSERT( parent->type != comment_object::review, "The parent comment has disabled replies because its type is REVIEW." );
+		 if ( _type == comment_object::review ) {
+			 FC_ASSERT( parent->type == comment_object::hypothesis,
+				 "The comment with REVIEW can only be able to post for the parent with HYPOTHESIS type." );
+		 }
+		 if ( _type == comment_object::observation || _type == comment_object::question ) {
+			 FC_ASSERT( parent->type == comment_object::observation || parent->type == comment_object::question || parent->type == comment_object::hypothesis,
+				 "The comment with OBSERVATION or QUESTION type can only be able to post for the parent with OBSERVATION, QUESTION or HYPOTHESIS type." );
+		 }
+		 //~~~~~CLC~~~~~}
+      } else {//~~~~~CLC~~~~~
+		  FC_ASSERT( _type == comment_object::observation || _type == comment_object::question, "The root comment must only be OBSERVATION or QUESTION type." );
+	  }
 
       FC_TODO( "Cleanup this logic after HF 20. Old ops don't need to check pre-hf20 times." )
       if( _db.has_hardfork( COLAB_HARDFORK_0_20__2019 ) )
@@ -809,7 +848,10 @@ void comment_evaluator::do_apply( const comment_operation& o )
          com.last_payout = fc::time_point_sec::min();
          com.max_cashout_time = fc::time_point_sec::maximum();
          com.reward_weight = reward_weight;
-
+		 com.type = _type;//~~~~~CLC~~~~~
+		 for (comment_id_type _id : _citations) {//~~~~~CLC~~~~~
+			 com.citations.push_back(_id);
+		 }
          if ( o.parent_author == COLAB_ROOT_POST_PARENT )
          {
             com.parent_author = "";
@@ -838,7 +880,7 @@ void comment_evaluator::do_apply( const comment_operation& o )
 
       id = new_comment.id;
 
-   #ifndef IS_LOW_MEM
+#ifndef IS_LOW_MEM
       _db.create< comment_content_object >( [&]( comment_content_object& con )
       {
          con.comment = id;
@@ -849,10 +891,23 @@ void comment_evaluator::do_apply( const comment_operation& o )
             from_string( con.body, o.body );
          }
          from_string( con.json_metadata, o.json_metadata );
-      });
-   #endif
+	  });
+#else
+	  //~~~~~CLC~~~~~{	  
+	  std::cerr<<"~~~ [comment_evaluator::do_apply()] - o.title = "<<o.title<<"\n";//~~~~~CLC~~~~~
+	  _db.create< comment_content_object >( [&]( comment_content_object& con )
+	  {
+		  con.comment = id;
 
-
+		  from_string( con.title, o.title );
+		  if( o.body.size() < 1024 ) {
+			  from_string( con.body, o.body );
+		  }
+		  from_string( con.json_metadata, o.json_metadata );
+	  });
+	  //~~~~~CLC~~~~~}
+#endif
+	  
 /// this loop can be skiped for validate-only nodes as it is merely gathering stats for indicies
       auto now = _db.head_block_time();
       while( parent ) {
@@ -871,7 +926,11 @@ void comment_evaluator::do_apply( const comment_operation& o )
    }
    else // start edit case
    {
+	   std::cerr<<"~~~ [comment_evaluator::do_apply()] - will EDIT existing comment object\n";//~~~~~CLC~~~~~
+
       const auto& comment = *itr;
+
+	  FC_ASSERT( _type == comment.type, "The type cannot change." );//~~~~~CLC~~~~~
 
       if( !_db.has_hardfork( COLAB_HARDFORK_0_17__772 ) )
       {
@@ -896,8 +955,12 @@ void comment_evaluator::do_apply( const comment_operation& o )
             FC_ASSERT( com.parent_author == o.parent_author, "The parent of a comment cannot change." );
             FC_ASSERT( equal( com.parent_permlink, o.parent_permlink ), "The permlink of a comment cannot change." );
          }
+		 com.citations.clear();//~~~~~CLC~~~~~
+		 for (comment_id_type _id : _citations) {//~~~~~CLC~~~~~
+			 com.citations.push_back(_id);
+		 }
       });
-   #ifndef IS_LOW_MEM
+#ifndef IS_LOW_MEM
       _db.modify( _db.get< comment_content_object, by_comment >( comment.id ), [&]( comment_content_object& con )
       {
          if( o.title.size() )         from_string( con.title, o.title );
@@ -924,7 +987,13 @@ void comment_evaluator::do_apply( const comment_operation& o )
             }
          }
       });
-   #endif
+#else
+	  //~~~~~CLC~~~~~{
+
+	  std::cerr<<"~~~ [comment_evaluator::do_apply()] - The title and body cannot be changed on LOW MEMORY mode.\n";//~~~~~CLC~~~~~
+
+	  //~~~~~CLC~~~~~}
+#endif
 
 
 

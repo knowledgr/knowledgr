@@ -11,7 +11,7 @@
 namespace colab { namespace protocol {
 
    void validate_auth_size( const authority& a );
-   //~~~~~CLC~~~~~ begin
+   //~~~~~CLC~~~~~{
    struct account_discipline_update_operation : public base_operation
    {
 	   account_name_type             admin;
@@ -21,7 +21,7 @@ namespace colab { namespace protocol {
 	   void validate()const;
 	   void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(admin); }
    };
-   //~~~~~CLC~~~~~ end
+   //~~~~~CLC~~~~~}
 
    struct account_create_operation : public base_operation
    {
@@ -74,7 +74,11 @@ namespace colab { namespace protocol {
       void get_required_active_authorities( flat_set<account_name_type>& a )const
       { if( !owner ) a.insert( account ); }
    };
-
+   
+   struct citation {
+	   account_name_type author;
+	   string permlink;
+   };//~~~~~CLC~~~~~
 
    struct comment_operation : public base_operation
    {
@@ -87,7 +91,8 @@ namespace colab { namespace protocol {
       string            title;
       string            body;
       string            json_metadata;
-
+	  uint32_t			type;//~~~~~CLC~~~~~   0-observation, 1-question, 2-hypothesis, 3-review, 4-none
+	  vector<citation>	citations;//~~~~~CLC~~~~~
       void validate()const;
       void get_required_posting_authorities( flat_set<account_name_type>& a )const{ a.insert(author); }
    };
@@ -1090,12 +1095,13 @@ FC_REFLECT_TYPENAME( colab::protocol::pow2_work )
 FC_REFLECT( colab::protocol::pow_operation, (worker_account)(block_id)(nonce)(work)(props) )
 FC_REFLECT( colab::protocol::pow2_operation, (work)(new_owner_key)(props) )
 
-//~~~~~CLC~~~~~ begin
+FC_REFLECT( colab::protocol::citation, (author)(permlink) ) //~~~~~NLG~~~~~
+//~~~~~CLC~~~~~{
 FC_REFLECT( colab::protocol::account_discipline_update_operation,
             (admin)
             (account)
             (disciplines) )
-//~~~~~CLC~~~~~ end
+//~~~~~CLC~~~~~}
 
 FC_REFLECT( colab::protocol::account_create_operation,
             (fee)
@@ -1135,7 +1141,9 @@ FC_REFLECT( colab::protocol::witness_update_operation, (owner)(url)(block_signin
 FC_REFLECT( colab::protocol::witness_set_properties_operation, (owner)(props)(extensions) )
 FC_REFLECT( colab::protocol::account_witness_vote_operation, (account)(witness)(approve) )
 FC_REFLECT( colab::protocol::account_witness_proxy_operation, (account)(proxy) )
-FC_REFLECT( colab::protocol::comment_operation, (parent_author)(parent_permlink)(author)(permlink)(title)(body)(json_metadata) )
+FC_REFLECT( colab::protocol::comment_operation, (parent_author)(parent_permlink)(author)(permlink)(title)(body)(json_metadata)
+			(type)(citations) //~~~~~CLC~~~~~
+			)
 FC_REFLECT( colab::protocol::vote_operation, (voter)(author)(permlink)(weight) )
 FC_REFLECT( colab::protocol::custom_operation, (required_auths)(id)(data) )
 FC_REFLECT( colab::protocol::custom_json_operation, (required_auths)(required_posting_auths)(id)(json) )
