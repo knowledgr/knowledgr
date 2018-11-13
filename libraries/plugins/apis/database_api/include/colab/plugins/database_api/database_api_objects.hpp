@@ -59,7 +59,8 @@ struct api_comment_object
       percent_colab_dollars( o.percent_colab_dollars ),
       allow_replies( o.allow_replies ),
       allow_votes( o.allow_votes ),
-      allow_curation_rewards( o.allow_curation_rewards )
+	  allow_curation_rewards( o.allow_curation_rewards ),
+	  type(o.type) //~~~~~CLC~~~~~
    {
       for( auto& route : o.beneficiaries )
       {
@@ -79,6 +80,9 @@ struct api_comment_object
       body = to_string( con.body );
       json_metadata = to_string( con.json_metadata );
 #endif
+	  for (auto& _id : o.citations) { //~~~~~NLG~~~~~
+		  citations.push_back(_id);
+	  }
    }
 
    api_comment_object(){}
@@ -127,7 +131,9 @@ struct api_comment_object
    bool              allow_replies = false;
    bool              allow_votes = false;
    bool              allow_curation_rewards = false;
-   vector< beneficiary_route_type > beneficiaries;
+   vector<beneficiary_route_type> beneficiaries;
+   comment_object::comment_type		 type; //~~~~~NLG~~~~~
+   vector<comment_id_type> citations; //~~~~~NLG~~~~~
 };
 
 struct api_comment_vote_object
@@ -406,7 +412,8 @@ struct api_witness_object
       running_version( w.running_version ),
       hardfork_version_vote( w.hardfork_version_vote ),
       hardfork_time_vote( w.hardfork_time_vote ),
-      available_witness_account_subsidies( w.available_witness_account_subsidies )
+      available_witness_account_subsidies( w.available_witness_account_subsidies ),
+	  schedule(w.schedule)//~~~~~CLC~~~~~
    {}
 
    api_witness_object() {}
@@ -432,6 +439,7 @@ struct api_witness_object
    hardfork_version  hardfork_version_vote;
    time_point_sec    hardfork_time_vote;
    int64_t           available_witness_account_subsidies = 0;
+   witness_object::witness_schedule_type schedule;
 };
 
 struct api_witness_schedule_object
@@ -561,6 +569,7 @@ FC_REFLECT( colab::plugins::database_api::api_comment_object,
              (root_author)(root_permlink)
              (max_accepted_payout)(percent_colab_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)
+			 (type)(citations)//~~~~~CLC~~~~~
           )
 
 FC_REFLECT( colab::plugins::database_api::api_comment_vote_object,
@@ -629,6 +638,7 @@ FC_REFLECT( colab::plugins::database_api::api_witness_object,
              (running_version)
              (hardfork_version_vote)(hardfork_time_vote)
              (available_witness_account_subsidies)
+			 (schedule)//~~~~~CLC~~~~~
           )
 
 FC_REFLECT( colab::plugins::database_api::api_witness_schedule_object,
