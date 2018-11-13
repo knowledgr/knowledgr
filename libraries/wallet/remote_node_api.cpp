@@ -233,7 +233,22 @@ condenser_api::discussion remote_node_api::get_content( account_name_type, strin
 {
    FC_ASSERT( false );
 }
+//~~~~~CLC~~~~~{
+uint64_t remote_node_api::get_content_count()
+{
+	FC_ASSERT( false );
+}
 
+vector<condenser_api::discussion> remote_node_api::list_comments(uint32_t)
+{
+	FC_ASSERT( false );
+}
+
+vector<condenser_api::discussion> remote_node_api::get_content_parent_series(account_name_type, string)
+{
+	FC_ASSERT( false );
+}
+//~~~~~CLC~~~~~}
 vector< condenser_api::discussion > remote_node_api::get_content_replies( account_name_type, string )
 {
    FC_ASSERT( false );

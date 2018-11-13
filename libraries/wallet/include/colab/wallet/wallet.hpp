@@ -186,6 +186,46 @@ class wallet_api
        */
       condenser_api::api_account_object get_account( string account_name ) const;
 
+	  //~~~~~CLC~~~~~{
+	  /** Returns information about the given account.
+       *
+       * @param account_name the name of the account to provide information about
+       * @returns the public account data stored in the blockchain
+       */
+      condenser_api::discussion get_comment( string author, string permlink ) const;
+	  /** Lists all votes for the comment.
+       *
+	   * @param author the name of the account to post the comment, will be parent.
+	   * @param permlink the permlink of parent comment.
+       * @returns a list of comment urls
+       */
+	  vector<string>			get_votes(string author, string permlink) const;
+	  /** Lists all parent series for the comment.
+       *
+	   * @param author the name of the account to post the comment, will be parent.
+	   * @param permlink the permlink of parent comment.
+       * @returns a list of comment urls
+       */
+	  vector<string>			list_parent_series(string author, string permlink) const;
+	  /** Lists all replies for the comment.
+       *
+	   * @param author the name of the account to post the comment, will be parent.
+	   * @param permlink the permlink of parent comment.
+       * @returns a list of comment urls
+       */
+	  vector<string>			list_comment_replies(string author, string permlink) const;
+	 /** Lists all comments registered in the blockchain.
+       *
+       * @param limit the maximum number of accounts to return (max: -)
+       * @returns a list of comment urls
+       */
+	  vector<string>			list_comments(uint32_t limits) const;
+	  /** Returns the count of comments.
+       *
+       */
+	  uint64_t					get_comment_count() const;
+	  //~~~~~CLC~~~~~}
+
       /** Returns the current wallet filename.
        *
        * This is the filename that will be used when automatically saving the wallet.
@@ -1169,7 +1209,12 @@ FC_API( colab::wallet::wallet_api,
         (get_withdraw_routes)
 		(get_dynamic_global_properties)//~~~~~CLC~~~~~
 		(get_witness_schedule)//~~~~~CLC~~~~~
-
+		(get_comment)//~~~~~CLC~~~~~
+		(get_votes)//~~~~~CLC~~~~~
+		(list_parent_series)//~~~~~CLC~~~~~
+		(list_comment_replies)//~~~~~CLC~~~~~
+		(list_comments)//~~~~~CLC~~~~~
+		(get_comment_count)//~~~~~CLC~~~~~
 
         /// transaction api
         (create_account)

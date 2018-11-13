@@ -321,6 +321,7 @@ void account_discipline_update_evaluator::do_apply( const account_discipline_upd
 	_db.modify( account, [&]( account_object& acc )
 	{
 		for (auto & d0 : o.disciplines) {
+			if (d0.category == colab::protocol::dc_unknown) continue;
 			bool _exist = false;
 			for (auto & d1 : acc.disciplines) {
 				if (d1.category == d0.category) {

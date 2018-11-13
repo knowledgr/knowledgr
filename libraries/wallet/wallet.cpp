@@ -1045,6 +1045,76 @@ condenser_api::api_account_object wallet_api::get_account( string account_name )
    return my->get_account( account_name );
 }
 
+//~~~~~CLC~~~~~{
+condenser_api::discussion wallet_api::get_comment( string author, string permlink ) const
+{
+	return my->_remote_api->get_content( author, permlink );
+}
+
+static string comment_to_string(condenser_api::discussion c)
+{
+	static string type_str[] = {"O", "Q", "H", "R", "NONE"};
+	stringstream ss;
+	char tmp[10];
+	sprintf(tmp, "id:%3d - ", (uint32_t)(c.id._id));
+	ss<<tmp<<type_str[(uint32_t)c.type]<<" - ";
+	ss<<"| /"<<c.category<<"@"<<(string)c.author<<"/"<<c.permlink;
+	ss<<" | title: '"<<c.title<<"'";
+	return ss.str();
+}
+vector<string> wallet_api::get_votes(string author, string permlink) const
+{
+	vector<tags::vote_state> votes = my->_remote_api->get_active_votes(author, permlink);
+	vector<string> urls;
+	for (auto v : votes) {
+		std::stringstream ss;
+		ss << v.voter << "|" << (fc::string)v.time <<"|w:"<<v.weight<<"|r:"<<v.rshares<<"|p:"<<v.percent;
+		urls.push_back(ss.str());
+	}
+	return urls;
+}
+
+vector<string> wallet_api::list_parent_series(string author, string permlink) const
+{
+	vector<condenser_api::discussion> comments = my->_remote_api->get_content_parent_series(author, permlink);
+	vector<string> urls;
+
+	///info/@choe01/ch01-1"
+	for (auto c : comments) {
+		string url = comment_to_string(c);
+		urls.push_back(url);
+	}
+	return urls;
+}
+
+vector<string> wallet_api::list_comment_replies(string author, string permlink) const
+{
+	vector<condenser_api::discussion> comments = my->_remote_api->get_content_replies(author, permlink);
+	vector<string> urls;
+	for (auto c : comments) {
+		string url = comment_to_string(c);
+		urls.push_back(url);
+	}
+	return urls;
+}
+
+vector<string> wallet_api::list_comments(uint32_t limits) const 
+{
+	vector<condenser_api::discussion> comments = my->_remote_api->list_comments(limits);
+	vector<string> urls;
+	for (auto c : comments) {
+		string url = comment_to_string(c);
+		urls.push_back(url);
+	}
+	return urls;
+}
+
+uint64_t wallet_api::get_comment_count() const
+{
+	return my->_remote_api->get_content_count();
+}
+//~~~~~CLC~~~~~}
+
 bool wallet_api::import_key(string wif_key)
 {
    FC_ASSERT(!is_locked());
@@ -2383,7 +2453,6 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
    op.json_metadata = json;
 
    signed_transaction tx;
-   tx.operations.push_back( op );
 
    if (op.type == 3) {//~~~~~CLC~~~~~
 	   vote_operation op2;
@@ -2393,6 +2462,7 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
 	   op2.weight = 100 * COLAB_1_PERCENT; 
 	   tx.operations.push_back(op2);
    }
+   tx.operations.push_back( op );
 
    tx.validate();
 

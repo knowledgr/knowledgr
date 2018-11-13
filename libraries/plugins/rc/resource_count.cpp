@@ -28,14 +28,6 @@ struct count_operation_visitor
            + _w.authority_account_member_size * auth.account_auths.size()
            + _w.authority_key_member_size * auth.key_auths.size();
    }
-   //~~~~~CLC~~~~~{
-   void operator()( const account_discipline_update_operation& op )const
-   {
-	   state_bytes_count +=
-		   _w.account_object_base_size;
-	   execution_time_count += _e.account_discipline_update_operation_exec_time;
-   }
-   //~~~~~CLC~~~~~}
    void operator()( const account_create_operation& op )const
    {
       state_bytes_count +=
@@ -207,6 +199,12 @@ struct count_operation_visitor
       execution_time_count += _e.withdraw_vesting_operation_exec_time;
    }
 
+   //~~~~~CLC~~~~~{
+   void operator()( const account_discipline_update_operation& op )const
+   {
+	   execution_time_count += _e.account_discipline_update_operation_exec_time;
+   }
+   //~~~~~CLC~~~~~}
    void operator()( const account_update_operation& )const
    {
       execution_time_count += _e.account_update_operation_exec_time;
