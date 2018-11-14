@@ -200,9 +200,9 @@ struct count_operation_visitor
    }
 
    //~~~~~CLC~~~~~{
-   void operator()( const account_discipline_update_operation& op )const
+   void operator()( const account_expertise_update_operation& op )const
    {
-	   execution_time_count += _e.account_discipline_update_operation_exec_time;
+	   execution_time_count += _e.account_expertise_update_operation_exec_time;
    }
    //~~~~~CLC~~~~~}
    void operator()( const account_update_operation& )const

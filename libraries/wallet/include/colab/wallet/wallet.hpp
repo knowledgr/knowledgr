@@ -495,17 +495,17 @@ class wallet_api
 
 	  //~~~~~CLC~~~~~{
 	  /**
-       * This method updates the disciplines of an existing account.
+       * This method updates the expertises of an existing account.
        *
        * @param admin The name of the admin
        * @param account The name of the account
-       * @param disciplines The information of discipline of the new account(["mathematics : 3", "science : 10"])
+       * @param expertises The information of expertise of the new account(["mathematics : 3", "science : 10"])
        * @param broadcast true if you wish to broadcast the transaction
        */
-      condenser_api::legacy_signed_transaction update_account_discipline(
+      condenser_api::legacy_signed_transaction update_account_expertise(
 		  string admin,
          string account,
-		 vector<std::string> disciplines,
+		 vector<std::string> expertises,
          bool broadcast )const;
 	  //~~~~~CLC~~~~~}
 
@@ -1221,7 +1221,7 @@ FC_API( colab::wallet::wallet_api,
         (create_account_with_keys)
         (create_account_delegated)
         (create_account_with_keys_delegated)
-		(update_account_discipline)//~~~~~CLC~~~~~
+		(update_account_expertise)//~~~~~CLC~~~~~
         (update_account)
         (update_account_auth_key)
         (update_account_auth_account)

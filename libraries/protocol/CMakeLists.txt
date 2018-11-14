@@ -35,7 +35,7 @@ add_library( colab_protocol
              asset.cpp
              version.cpp
              get_config.cpp
-             discipline.cpp
+             expertise.cpp
 
              ${HEADERS}
              ${hardfork_hpp_file}
