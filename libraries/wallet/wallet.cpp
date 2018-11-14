@@ -1416,21 +1416,21 @@ vector< database_api::api_owner_authority_history_object > wallet_api::get_owner
    return my->_remote_api->get_owner_history( account );
 }
 //~~~~~CLC~~~~~{
-condenser_api::legacy_signed_transaction wallet_api::update_account_discipline(
+condenser_api::legacy_signed_transaction wallet_api::update_account_expertise(
 	string admin,
 	string account,
-	vector<std::string> disciplines,
+	vector<std::string> expertises,
 	bool broadcast )const
 {
 	try
 	{
 		FC_ASSERT( !is_locked() );
 
-		account_discipline_update_operation op;
+		account_expertise_update_operation op;
 		op.admin = admin;
 		op.account = account;
-		for (auto & ex : disciplines) {
-			op.disciplines.push_back(protocol::discipline::from_string(ex));
+		for (auto & ex : expertises) {
+			op.expertises.push_back(protocol::expertise::from_string(ex));
 		}
 
 		signed_transaction tx;
@@ -1439,7 +1439,7 @@ condenser_api::legacy_signed_transaction wallet_api::update_account_discipline(
 
 		return my->sign_transaction( tx, broadcast );
 	}
-	FC_CAPTURE_AND_RETHROW( (admin)(account)(disciplines)(broadcast) )
+	FC_CAPTURE_AND_RETHROW( (admin)(account)(expertises)(broadcast) )
 }
 //~~~~~CLC~~~~~}
 

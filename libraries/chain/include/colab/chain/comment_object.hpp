@@ -56,6 +56,7 @@ namespace colab { namespace chain {
             , allowed_vote_assets( a )
 #endif
 			, citations( a ) //~~~~~CLC~~~~~
+			, exp_categories( a ) //~~~~~CLC~~~~~
          {
             c( *this );
          }
@@ -122,6 +123,8 @@ namespace colab { namespace chain {
 		 comment_type		type = none; //~~~~~CLC~~~~~
 		 using t_citations = t_vector< id_type >;//~~~~~CLC~~~~~
 		 t_citations citations; //~~~~~CLC~~~~~
+		 using t_exp_categories = t_vector< protocol::expertise_category >;//~~~~~CLC~~~~~
+		 t_exp_categories exp_categories; //~~~~~CLC~~~~~
    };
 
    class comment_content_object : public object< comment_content_object_type, comment_content_object >
@@ -283,7 +286,7 @@ FC_REFLECT( colab::chain::comment_object,
              (total_vote_weight)(reward_weight)(total_payout_value)(curator_payout_value)(beneficiary_payout_value)(author_rewards)(net_votes)(root_comment)
              (max_accepted_payout)(percent_colab_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)(allowed_vote_assets)
-			 (type)(citations)//~~~~~CLC~~~~~
+			 (type)(citations)(exp_categories)//~~~~~CLC~~~~~
           )
 #else
 FC_REFLECT( colab::chain::comment_object,
@@ -296,7 +299,7 @@ FC_REFLECT( colab::chain::comment_object,
              (total_vote_weight)(reward_weight)(total_payout_value)(curator_payout_value)(beneficiary_payout_value)(author_rewards)(net_votes)(root_comment)
              (max_accepted_payout)(percent_colab_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)
-			 (type)(citations)//~~~~~CLC~~~~~
+			 (type)(citations)(exp_categories)//~~~~~CLC~~~~~
           )
 #endif
 CHAINBASE_SET_INDEX_TYPE( colab::chain::comment_object, colab::chain::comment_index )

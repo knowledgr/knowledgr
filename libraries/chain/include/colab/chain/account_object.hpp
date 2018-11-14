@@ -28,7 +28,7 @@ namespace colab { namespace chain {
          template<typename Constructor, typename Allocator>
          account_object( Constructor&& c, allocator< Allocator > a )
             :json_metadata( a ), 
-			disciplines(a) //~~~~~CLC~~~~~
+			expertises(a) //~~~~~CLC~~~~~
          {
             c(*this);
          };
@@ -113,12 +113,12 @@ namespace colab { namespace chain {
          uint32_t          post_bandwidth = 0;
 
          share_type        pending_claimed_accounts = 0;
-		 using t_disciplines = t_vector< protocol::discipline >; //~~~~~CLC~~~~~
-		 t_disciplines disciplines; //~~~~~CLC~~~~~
-		 uint32_t expertise_rate(protocol::discipline_category _category) {  //~~~~~CLC~~~~~{
-			 for (auto & _discipline : disciplines) {
-				 if (_discipline.category == _category) {
-					 return _discipline.level;
+		 using t_expertises = t_vector< protocol::expertise >; //~~~~~CLC~~~~~
+		 t_expertises expertises; //~~~~~CLC~~~~~
+		 uint32_t expertise_rate(protocol::expertise_category _category) {  //~~~~~CLC~~~~~{
+			 for (auto & _expertise : expertises) {
+				 if (_expertise.category == _category) {
+					 return _expertise.level;
 				 }
 			 }
 			 return 1;
@@ -432,7 +432,7 @@ FC_REFLECT( colab::chain::account_object,
              (proxied_vsf_votes)(witnesses_voted_for)
              (last_post)(last_root_post)(last_vote_time)(post_bandwidth)
              (pending_claimed_accounts)
-			 (disciplines)//~~~~~CLC~~~~~
+			 (expertises)//~~~~~CLC~~~~~
           )
 
 CHAINBASE_SET_INDEX_TYPE( colab::chain::account_object, colab::chain::account_index )

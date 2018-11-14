@@ -312,7 +312,7 @@ void initialize_account_object( account_object& acc, const account_name_type& na
 }
 
 //~~~~~NLG~~~~~ begin
-void account_discipline_update_evaluator::do_apply( const account_discipline_update_operation& o )
+void account_expertise_update_evaluator::do_apply( const account_expertise_update_operation& o )
 {
 
 //	const auto& admin = _db.get_account( o.admin);
@@ -320,10 +320,10 @@ void account_discipline_update_evaluator::do_apply( const account_discipline_upd
 	
 	_db.modify( account, [&]( account_object& acc )
 	{
-		for (auto & d0 : o.disciplines) {
-			if (d0.category == colab::protocol::dc_unknown) continue;
+		for (auto & d0 : o.expertises) {
+			if (d0.category == colab::protocol::expctgry_unknown) continue;
 			bool _exist = false;
-			for (auto & d1 : acc.disciplines) {
+			for (auto & d1 : acc.expertises) {
 				if (d1.category == d0.category) {
 					d1.level = d0.level;
 					_exist = true;
@@ -331,7 +331,7 @@ void account_discipline_update_evaluator::do_apply( const account_discipline_upd
 				}
 			}
 			if (!_exist) {
-				acc.disciplines.push_back(d0);
+				acc.expertises.push_back(d0);
 			}
 		}
 
@@ -995,7 +995,6 @@ void comment_evaluator::do_apply( const comment_operation& o )
 
 	  //~~~~~CLC~~~~~}
 #endif
-
 
 
    } // end EDIT case
