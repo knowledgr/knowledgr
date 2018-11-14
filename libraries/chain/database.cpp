@@ -2532,7 +2532,7 @@ void database::initialize_evaluators()
    _my->_evaluator_registry.register_evaluator< withdraw_vesting_evaluator               >();
    _my->_evaluator_registry.register_evaluator< set_withdraw_vesting_route_evaluator     >();
    _my->_evaluator_registry.register_evaluator< account_create_evaluator                 >();
-   _my->_evaluator_registry.register_evaluator< account_discipline_update_evaluator      >();//~~~~~CLC~~~~~
+   _my->_evaluator_registry.register_evaluator< account_expertise_update_evaluator      >();//~~~~~CLC~~~~~
    _my->_evaluator_registry.register_evaluator< account_update_evaluator                 >();
    _my->_evaluator_registry.register_evaluator< witness_update_evaluator                 >();
    _my->_evaluator_registry.register_evaluator< account_witness_vote_evaluator           >();

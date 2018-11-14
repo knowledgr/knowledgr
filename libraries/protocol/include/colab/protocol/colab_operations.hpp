@@ -6,17 +6,17 @@
 #include <colab/protocol/legacy_asset.hpp>
 
 #include <fc/crypto/equihash.hpp>
-#include <colab/protocol/discipline.hpp>
+#include <colab/protocol/expertise.hpp>
 
 namespace colab { namespace protocol {
 
    void validate_auth_size( const authority& a );
    //~~~~~CLC~~~~~{
-   struct account_discipline_update_operation : public base_operation
+   struct account_expertise_update_operation : public base_operation
    {
 	   account_name_type             admin;
 	   account_name_type             account;
-	   vector<protocol::discipline> disciplines;
+	   vector<protocol::expertise> expertises;
 
 	   void validate()const;
 	   void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(admin); }
@@ -93,6 +93,8 @@ namespace colab { namespace protocol {
       string            json_metadata;
 	  uint32_t			type;//~~~~~CLC~~~~~   0-observation, 1-question, 2-hypothesis, 3-review, 4-none
 	  vector<citation>	citations;//~~~~~CLC~~~~~
+	  vector< protocol::expertise_category > categories;//~~~~~CLC~~~~~
+
       void validate()const;
       void get_required_posting_authorities( flat_set<account_name_type>& a )const{ a.insert(author); }
    };
@@ -131,7 +133,7 @@ namespace colab { namespace protocol {
 
    /** Allows to store all SMT tokens being allowed to use during voting process.
     *  Maps asset symbol (SMT) to the vote info.
-    *  @see SMT spec for details: https://github.com/norestlabs/smt-whitepaper/blob/master/smt-manual/manual.md
+    *  @see SMT spec for details: https://github.com/colabit/smt-whitepaper/blob/master/smt-manual/manual.md
     */
    struct allowed_vote_assets
    {
@@ -1097,10 +1099,10 @@ FC_REFLECT( colab::protocol::pow2_operation, (work)(new_owner_key)(props) )
 
 FC_REFLECT( colab::protocol::citation, (author)(permlink) ) //~~~~~NLG~~~~~
 //~~~~~CLC~~~~~{
-FC_REFLECT( colab::protocol::account_discipline_update_operation,
+FC_REFLECT( colab::protocol::account_expertise_update_operation,
             (admin)
             (account)
-            (disciplines) )
+            (expertises) )
 //~~~~~CLC~~~~~}
 
 FC_REFLECT( colab::protocol::account_create_operation,
@@ -1143,6 +1145,7 @@ FC_REFLECT( colab::protocol::account_witness_vote_operation, (account)(witness)(
 FC_REFLECT( colab::protocol::account_witness_proxy_operation, (account)(proxy) )
 FC_REFLECT( colab::protocol::comment_operation, (parent_author)(parent_permlink)(author)(permlink)(title)(body)(json_metadata)
 			(type)(citations) //~~~~~CLC~~~~~
+			(categories) //~~~~~CLC~~~~~
 			)
 FC_REFLECT( colab::protocol::vote_operation, (voter)(author)(permlink)(weight) )
 FC_REFLECT( colab::protocol::custom_operation, (required_auths)(id)(data) )

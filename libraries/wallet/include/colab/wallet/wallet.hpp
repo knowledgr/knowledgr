@@ -495,17 +495,17 @@ class wallet_api
 
 	  //~~~~~CLC~~~~~{
 	  /**
-       * This method updates the disciplines of an existing account.
+       * This method updates the expertises of an existing account.
        *
        * @param admin The name of the admin
        * @param account The name of the account
-       * @param disciplines The information of discipline of the new account(["mathematics : 3", "science : 10"])
+       * @param expertises The information of expertise of the new account(["mathematics : 3", "science : 10"])
        * @param broadcast true if you wish to broadcast the transaction
        */
-      condenser_api::legacy_signed_transaction update_account_discipline(
+      condenser_api::legacy_signed_transaction update_account_expertise(
 		  string admin,
          string account,
-		 vector<std::string> disciplines,
+		 vector<std::string> expertises,
          bool broadcast )const;
 	  //~~~~~CLC~~~~~}
 
@@ -991,7 +991,13 @@ class wallet_api
        *  @param author the name of the account authoring the comment
        *  @param permlink the accountwide unique permlink for the comment
        *  @param parent_author can be null if this is a top level comment
-       *  @param parent_permlink becomes category if parent_author is ""
+       *  @param parent_permlink becomes "colab" if parent_author is "", in other words, the case this comment is root.
+	   *  @param categories the array of categories by string. Follow categories are available;
+	   *			   "Logic", "Mathematics", "Astronomy and Astrophysics", "Physics", "Chemistry", "Life Sciences", "Earth and Space Sciences",
+	   *			   "Agricultural Sciences", "Medical Sciences", "Technological Sciences", "Anthropology", "Demographics", "Economic Sciences", 
+	   *			   "Geography", "History", "Juridical Sciences and Law", "Linguistics", "Pedagogy", "Political Science", "Psychology", 
+	   *			   "Science of Arts and Letters", "Sociology", "Ethics", "Philosophy"
+	   *			This param is valid only if parent_author is ""
 	   *  @param type can be one of the types - "O", "Q", "H", "R"
 	   *  @param citations the array of referenced comments - {"author": "name of author", "permlink": "permlink of comment"}
        *  @param title the title of the comment
@@ -1004,6 +1010,7 @@ class wallet_api
          string permlink,
          string parent_author,
          string parent_permlink,
+		 const vector<std::string>& categories, //~~~~~CLC~~~~~
 		 string type, //~~~~~CLC~~~~~
 		 const vector<citation>& citations, //~~~~~CLC~~~~~
          string title,
@@ -1221,7 +1228,7 @@ FC_API( colab::wallet::wallet_api,
         (create_account_with_keys)
         (create_account_delegated)
         (create_account_with_keys_delegated)
-		(update_account_discipline)//~~~~~CLC~~~~~
+		(update_account_expertise)//~~~~~CLC~~~~~
         (update_account)
         (update_account_auth_key)
         (update_account_auth_account)
