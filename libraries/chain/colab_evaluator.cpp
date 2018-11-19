@@ -312,10 +312,23 @@ void initialize_account_object( account_object& acc, const account_name_type& na
 }
 
 //~~~~~NLG~~~~~ begin
+void account_admin_update_evaluator::do_apply( const account_admin_update_operation& o )
+{
+	const auto& admin = _db.get_account( o.admin);
+	FC_ASSERT( admin.member_of == account_object::admin || (std::string)admin.name == COLAB_INIT_MINER_NAME, "Allocating expertise rate for an account can only be done by admin member." );
+	const auto& account = _db.get_account( o.account );
+
+	_db.modify( account, [&]( account_object& acc )
+	{
+		acc.member_of = account_object::admin;
+		acc.last_account_update = _db.head_block_time();
+	});
+}
+
 void account_expertise_update_evaluator::do_apply( const account_expertise_update_operation& o )
 {
-
-//	const auto& admin = _db.get_account( o.admin);
+	const auto& admin = _db.get_account( o.admin);
+	FC_ASSERT( admin.member_of == account_object::admin || (std::string)admin.name == COLAB_INIT_MINER_NAME, "Allocating expertise rate for an account can only be done by admin member." );
 	const auto& account = _db.get_account( o.account );
 	
 	_db.modify( account, [&]( account_object& acc )
@@ -413,6 +426,7 @@ void account_create_evaluator::do_apply( const account_create_operation& o )
       auth.active = o.active;
       auth.posting = o.posting;
       auth.last_owner_update = fc::time_point_sec::min();
+	  auth.member_of = account_object::user;//~~~~~CLC~~~~~
    });
 
    if( !_db.has_hardfork( COLAB_HARDFORK_0_20__1762 ) && o.fee.amount > 0 )
