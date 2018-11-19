@@ -312,10 +312,23 @@ void initialize_account_object( account_object& acc, const account_name_type& na
 }
 
 //~~~~~NLG~~~~~ begin
+void account_admin_update_evaluator::do_apply( const account_admin_update_operation& o )
+{
+	const auto& admin = _db.get_account( o.admin);
+	FC_ASSERT( admin.member_of == account_object::admin || (std::string)admin.name == COLAB_INIT_MINER_NAME, "Allocating expertise rate for an account can only be done by admin member." );
+	const auto& account = _db.get_account( o.account );
+
+	_db.modify( account, [&]( account_object& acc )
+	{
+		acc.member_of = account_object::admin;
+		acc.last_account_update = _db.head_block_time();
+	});
+}
+
 void account_expertise_update_evaluator::do_apply( const account_expertise_update_operation& o )
 {
-
-//	const auto& admin = _db.get_account( o.admin);
+	const auto& admin = _db.get_account( o.admin);
+	FC_ASSERT( admin.member_of == account_object::admin || (std::string)admin.name == COLAB_INIT_MINER_NAME, "Allocating expertise rate for an account can only be done by admin member." );
 	const auto& account = _db.get_account( o.account );
 	
 	_db.modify( account, [&]( account_object& acc )
@@ -413,6 +426,7 @@ void account_create_evaluator::do_apply( const account_create_operation& o )
       auth.active = o.active;
       auth.posting = o.posting;
       auth.last_owner_update = fc::time_point_sec::min();
+	  auth.member_of = account_object::user;//~~~~~CLC~~~~~
    });
 
    if( !_db.has_hardfork( COLAB_HARDFORK_0_20__1762 ) && o.fee.amount > 0 )
@@ -756,6 +770,32 @@ void comment_evaluator::do_apply( const comment_operation& o )
 	   FC_ASSERT( _citation, "The citation (author:${a}, permlink:${p}) cannot be found.", ("a",cit.author)("p",cit.permlink) );
 	   _citations.push_back(_citation->id);
    }
+   vector<protocol::expertise_category> exp_categories;
+   std::string str_category;
+   if (o.parent_author == COLAB_ROOT_POST_PARENT) {
+	   FC_ASSERT( o.parent_permlink == "colab", "The permlink of root comment must be \"colab\"");
+	   FC_ASSERT( o.categories.size() > 0, "The expertise category must be specified." );
+	   for (auto & c0 : o.categories) {
+		   if (c0 != protocol::expctgry_unknown) {
+			   exp_categories.push_back(c0);
+		   }
+	   }
+	   FC_ASSERT( exp_categories.size() > 0, "The expertise category must be specified." );
+	   if (exp_categories.size() == 1) {
+		   str_category = protocol::expertise::category_str(exp_categories.at(0));
+	   } else {
+		   str_category = protocol::expertise::category_str(exp_categories.at(0));
+		   for (size_t i = 1; i < exp_categories.size(); i ++) {
+			   str_category += " | ";
+			   str_category += protocol::expertise::category_str(exp_categories.at(i));
+		   }
+	   }
+   } else {
+	   for (auto & _e : parent->exp_categories) {
+		   exp_categories.push_back(_e);
+	   }
+	   str_category = to_string(parent->category);
+   }
    //~~~~~CLC~~~~~}
 
    auto now = _db.head_block_time();
@@ -853,11 +893,14 @@ void comment_evaluator::do_apply( const comment_operation& o )
 		 for (comment_id_type _id : _citations) {//~~~~~CLC~~~~~
 			 com.citations.push_back(_id);
 		 }
+		 for (auto & c0 : exp_categories) {//~~~~~CLC~~~~~
+			com.exp_categories.push_back(c0);
+		 }
          if ( o.parent_author == COLAB_ROOT_POST_PARENT )
          {
             com.parent_author = "";
             from_string( com.parent_permlink, o.parent_permlink );
-            from_string( com.category, o.parent_permlink );
+            from_string( com.category, str_category ); //from_string( com.category, o.parent_permlink ); //~~~~~CLC~~~~~
             com.root_comment = com.id;
             com.cashout_time = _db.has_hardfork( COLAB_HARDFORK_0_12__177 ) ?
                _db.head_block_time() + COLAB_CASHOUT_WINDOW_SECONDS_PRE_HF17 :
@@ -949,7 +992,7 @@ void comment_evaluator::do_apply( const comment_operation& o )
          if( !parent )
          {
             FC_ASSERT( com.parent_author == account_name_type(), "The parent of a comment cannot change." );
-            FC_ASSERT( equal( com.parent_permlink, o.parent_permlink ), "The permlink of a comment cannot change." );
+            FC_ASSERT( to_string(com.parent_permlink) == "colab", "The permlink of a comment cannot change." );
          }
          else
          {

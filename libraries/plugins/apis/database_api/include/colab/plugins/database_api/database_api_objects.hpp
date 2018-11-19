@@ -213,7 +213,8 @@ struct api_account_object
       last_root_post( a.last_root_post ),
       last_vote_time( a.last_vote_time ),
       post_bandwidth( a.post_bandwidth ),
-      pending_claimed_accounts( a.pending_claimed_accounts )
+      pending_claimed_accounts( a.pending_claimed_accounts ),
+	  member_of(a.member_of)//~~~~~CLC~~~~~
    {
       size_t n = a.proxied_vsf_votes.size();
       proxied_vsf_votes.reserve( n );
@@ -309,6 +310,7 @@ struct api_account_object
    bool              is_smt = false;
 
    vector<std::string> expertises; //~~~~~CLC~~~~~
+   account_object::account_member_of member_of; //~~~~~CLC~~~~~
 };
 
 struct api_owner_authority_history_object

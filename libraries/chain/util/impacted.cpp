@@ -31,6 +31,13 @@ struct get_impacted_account_visitor
       _impacted.insert( op.creator );
    }
    //~~~~~CLC~~~~~{
+
+   void operator()( const account_admin_update_operation& op )
+   {
+	   _impacted.insert( op.admin );
+	   _impacted.insert( op.account);
+   }
+
    void operator()( const account_expertise_update_operation& op )
    {
 	   _impacted.insert( op.admin );
