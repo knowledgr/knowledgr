@@ -1047,7 +1047,8 @@ namespace colab { namespace plugins { namespace condenser_api {
             legacy_limit_order_cancel_operation,
             legacy_feed_publish_operation,
             legacy_convert_operation,
-            legacy_account_create_operation,
+			legacy_account_create_operation,
+			legacy_account_admin_update_operation,//~~~~~CLC~~~~~
 			legacy_account_expertise_update_operation,//~~~~~CLC~~~~~
             legacy_account_update_operation,
             legacy_witness_update_operation,
