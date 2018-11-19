@@ -1415,6 +1415,7 @@ vector< database_api::api_owner_authority_history_object > wallet_api::get_owner
 {
    return my->_remote_api->get_owner_history( account );
 }
+
 //~~~~~CLC~~~~~{
 condenser_api::legacy_signed_transaction wallet_api::update_account_expertise(
 	string admin,
@@ -2421,6 +2422,7 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
    string permlink,
    string parent_author,
    string parent_permlink,
+   const vector<std::string>& categories, //~~~~~CLC~~~~~
    string type, //~~~~~CLC~~~~~
    const vector<citation>& citations, //~~~~~CLC~~~~~
    string title,
@@ -2451,7 +2453,12 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
    op.title = title;
    op.body = body;
    op.json_metadata = json;
-
+   //~~~~~CLC~~~~~{
+   for (auto & cs : categories) {
+	   protocol::expertise_category c = protocol::expertise::category_from_string(cs);
+	   op.categories.push_back(c);
+   }
+   //~~~~~CLC~~~~~}
    signed_transaction tx;
 
    if (op.type == 3) {//~~~~~CLC~~~~~

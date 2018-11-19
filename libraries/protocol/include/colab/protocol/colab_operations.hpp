@@ -93,6 +93,8 @@ namespace colab { namespace protocol {
       string            json_metadata;
 	  uint32_t			type;//~~~~~CLC~~~~~   0-observation, 1-question, 2-hypothesis, 3-review, 4-none
 	  vector<citation>	citations;//~~~~~CLC~~~~~
+	  vector< protocol::expertise_category > categories;//~~~~~CLC~~~~~
+
       void validate()const;
       void get_required_posting_authorities( flat_set<account_name_type>& a )const{ a.insert(author); }
    };
@@ -1143,6 +1145,7 @@ FC_REFLECT( colab::protocol::account_witness_vote_operation, (account)(witness)(
 FC_REFLECT( colab::protocol::account_witness_proxy_operation, (account)(proxy) )
 FC_REFLECT( colab::protocol::comment_operation, (parent_author)(parent_permlink)(author)(permlink)(title)(body)(json_metadata)
 			(type)(citations) //~~~~~CLC~~~~~
+			(categories) //~~~~~CLC~~~~~
 			)
 FC_REFLECT( colab::protocol::vote_operation, (voter)(author)(permlink)(weight) )
 FC_REFLECT( colab::protocol::custom_operation, (required_auths)(id)(data) )
