@@ -596,6 +596,7 @@ FC_REFLECT( colab::plugins::database_api::api_account_object,
              (post_bandwidth)(pending_claimed_accounts)
              (is_smt)
 			 (expertises)//~~~~~CLC~~~~~
+			 (member_of)//~~~~~CLC~~~~~
           )
 
 FC_REFLECT( colab::plugins::database_api::api_owner_authority_history_object,
