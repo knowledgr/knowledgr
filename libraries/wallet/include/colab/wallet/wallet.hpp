@@ -495,11 +495,23 @@ class wallet_api
 
 	  //~~~~~CLC~~~~~{
 	  /**
+       * This method updates the member of an account into admin.
+       *
+       * @param admin The name of the admin
+       * @param account The name of the account
+       * @param broadcast true if you wish to broadcast the transaction
+       */
+      condenser_api::legacy_signed_transaction update_account_admin(
+		  string admin,
+         string account,
+         bool broadcast )const;
+
+	  /**
        * This method updates the expertises of an existing account.
        *
        * @param admin The name of the admin
        * @param account The name of the account
-       * @param expertises The information of expertise of the new account(["mathematics : 3", "science : 10"])
+       * @param expertises The information of expertise of the new account(["mathematics : 3", "logic : 10"])
        * @param broadcast true if you wish to broadcast the transaction
        */
       condenser_api::legacy_signed_transaction update_account_expertise(
@@ -1228,6 +1240,7 @@ FC_API( colab::wallet::wallet_api,
         (create_account_with_keys)
         (create_account_delegated)
         (create_account_with_keys_delegated)
+		(update_account_admin)//~~~~~CLC~~~~~
 		(update_account_expertise)//~~~~~CLC~~~~~
         (update_account)
         (update_account_auth_key)
