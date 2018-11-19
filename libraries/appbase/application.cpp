@@ -179,13 +179,17 @@ bool application::initialize_impl(int argc, char** argv, vector<abstract_plugin*
          {
             vector<string> names;
             boost::split(names, arg, boost::is_any_of(" \t,"));
-            for(const std::string& name : names)
+            for(const std::string& name : names) {
                get_plugin(name).initialize(my->_args);
+			   std::cerr<<"~~~ [application::initialize_impl()] - plugin from config.ini "<<name<<" initialized.\n";//~~~~~CLC~~~~~
+			}
          }
       }
       for (const auto& plugin : autostart_plugins)
-         if (plugin != nullptr && plugin->get_state() == abstract_plugin::registered)
-            plugin->initialize(my->_args);
+         if (plugin != nullptr && plugin->get_state() == abstract_plugin::registered) {
+			 plugin->initialize(my->_args);
+			 std::cerr<<"~~~ [application::initialize_impl()] - autostart_plugin "<<plugin->get_name()<<" initialized.\n";//~~~~~CLC~~~~~
+		 }
 
       bpo::notify(my->_args);
 

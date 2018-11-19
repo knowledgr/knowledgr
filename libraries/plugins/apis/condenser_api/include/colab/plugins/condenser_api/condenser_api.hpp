@@ -146,7 +146,8 @@ struct api_account_object
       last_root_post( a.last_root_post ),
       last_vote_time( a.last_vote_time ),
       post_bandwidth( a.post_bandwidth ),
-      pending_claimed_accounts( a.pending_claimed_accounts )
+      pending_claimed_accounts( a.pending_claimed_accounts ),
+	  member_of(a.member_of)//~~~~~CLC~~~~~
    {
       voting_power = _compute_voting_power(a);
 	  proxied_vsf_votes.insert( proxied_vsf_votes.end(), a.proxied_vsf_votes.begin(), a.proxied_vsf_votes.end() );
@@ -228,6 +229,7 @@ struct api_account_object
 
    share_type        pending_claimed_accounts = 0;
    vector<std::string> expertises; //~~~~~CLC~~~~~
+   account_object::account_member_of member_of; //~~~~~CLC~~~~~
 };
 
 struct extended_account : public api_account_object
@@ -1169,6 +1171,7 @@ FC_REFLECT( colab::plugins::condenser_api::api_account_object,
              (last_post)(last_root_post)(last_vote_time)
              (post_bandwidth)(pending_claimed_accounts)
 			 (expertises)//~~~~~CLC~~~~~
+			 (member_of)//~~~~~CLC~~~~~
           )
 
 FC_REFLECT_DERIVED( colab::plugins::condenser_api::extended_account, (colab::plugins::condenser_api::api_account_object),
