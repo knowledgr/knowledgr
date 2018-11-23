@@ -123,14 +123,25 @@ namespace colab { namespace chain {
 		 using t_expertises = t_vector< protocol::expertise >; //~~~~~CLC~~~~~
 		 t_expertises expertises; //~~~~~CLC~~~~~
 		 account_member_of member_of = user; //~~~~~CLC~~~~~
-		 uint32_t expertise_rate(protocol::expertise_category _category) {  //~~~~~CLC~~~~~{
+		 ///~~~~~CLC~~~~~{
+		 uint32_t expertise_rate(protocol::expertise_category _category) { 
 			 for (auto & _expertise : expertises) {
 				 if (_expertise.category == _category) {
 					 return _expertise.level;
 				 }
 			 }
 			 return 1;
-		 }; //~~~~~CLC~~~~~}
+		 };
+		 uint32_t calculate_power(const vector<protocol::expertise_category> _categories) { 
+			 uint32_t sum = 0;
+			 for (auto & _category : _categories) {
+				 sum += expertise_rate(_category);
+			 }
+			 double avg = (sum * 100.0) / (double)_categories.size();
+			 return (uint32_t)avg;
+		 };
+
+		 ///~~~~~CLC~~~~~}
          /// This function should be used only when the account votes for a witness directly
          share_type        witness_vote_weight()const {
             return std::accumulate( proxied_vsf_votes.begin(),
