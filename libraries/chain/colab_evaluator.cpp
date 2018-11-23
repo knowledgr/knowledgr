@@ -1546,7 +1546,7 @@ void colab_vote_evaluator( const vote_operation& o, database& _db )
       a.voting_manabar.regenerate_mana( params, now );
 #endif///~~~~~CLC~~~~~
 
-	  int64_t elapsed_seconds = (_db.head_block_time() - voter.voting_manabar.last_update_time).to_seconds();
+	  int64_t elapsed_seconds = (_db.head_block_time().sec_since_epoch() - voter.voting_manabar.last_update_time);
 	  int64_t regenerated_power = (COLAB_100_PERCENT * elapsed_seconds) / COLAB_VOTING_MANA_REGENERATION_SECONDS;
 	  a.voting_manabar.current_mana = std::min( int64_t(voter.voting_manabar.current_mana) + regenerated_power, int64_t(COLAB_100_PERCENT) );
 	  a.voting_manabar.last_update_time = now.sec_since_epoch();
@@ -1569,7 +1569,7 @@ void colab_vote_evaluator( const vote_operation& o, database& _db )
    std::cerr<<"~~~ [colab_vote_evaluator()] - used_mana = "<<used_mana.to_uint64()<<"\n";
    FC_ASSERT( voter.voting_manabar.has_mana( used_mana.to_uint64() ), "Account does not have enough mana to vote." );
 
-   int64_t abs_rshares = used_mana.to_uint64()/* * voter.calculate_power(comment.exp_categories)*/ / COLAB_100_PERCENT;
+   int64_t abs_rshares = used_mana.to_uint64() * voter.calculate_power(comment.exp_categories) / COLAB_100_PERCENT;
 
    std::cerr<<"~~~ [colab_vote_evaluator()] - abs_rshares = "<<abs_rshares<<"\n";
 
@@ -1580,8 +1580,8 @@ void colab_vote_evaluator( const vote_operation& o, database& _db )
 
    std::cerr<<"~~~ [colab_vote_evaluator()] - abs_rshares = "<<abs_rshares<<"\n";
 
-   uint32_t cashout_delta = ( comment.cashout_time - _db.head_block_time() ).to_seconds();
 #if 0/// no need here
+   uint32_t cashout_delta = ( comment.cashout_time - _db.head_block_time() ).to_seconds();
    if( cashout_delta < COLAB_UPVOTE_LOCKOUT_SECONDS )
    {
       abs_rshares = (int64_t) ( ( uint128_t( abs_rshares ) * cashout_delta ) / COLAB_UPVOTE_LOCKOUT_SECONDS ).to_uint64();
