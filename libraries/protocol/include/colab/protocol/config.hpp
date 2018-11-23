@@ -51,14 +51,14 @@
 
 #define COLAB_GENESIS_TIME                    (fc::time_point_sec(1458835200))
 #define COLAB_MINING_TIME                     (fc::time_point_sec(1458838800))
-#define COLAB_CASHOUT_WINDOW_SECONDS_PRE_HF12 (60*60*24)    /// 1 day
-#define COLAB_CASHOUT_WINDOW_SECONDS_PRE_HF17 (60*60*12)    /// 12 hours
-#define COLAB_CASHOUT_WINDOW_SECONDS          (60*60*24*7)  /// 7 days
-#define COLAB_SECOND_CASHOUT_WINDOW           (60*60*24*30) /// 30 days
-#define COLAB_MAX_CASHOUT_WINDOW_SECONDS      (60*60*24*14) /// 2 weeks
-#define COLAB_UPVOTE_LOCKOUT_HF7              (fc::minutes(1))
-#define COLAB_UPVOTE_LOCKOUT_SECONDS          (60*60*12)    /// 12 hours
-#define COLAB_UPVOTE_LOCKOUT_HF17             (fc::hours(12))
+#define COLAB_CASHOUT_WINDOW_SECONDS_PRE_HF12 300///(60*60*24)    /// 1 day
+#define COLAB_CASHOUT_WINDOW_SECONDS_PRE_HF17 300///(60*60*12)    /// 12 hours
+#define COLAB_CASHOUT_WINDOW_SECONDS          300///(60*60*24*7)  /// 7 days
+#define COLAB_SECOND_CASHOUT_WINDOW           300///(60*60*24*30) /// 30 days
+#define COLAB_MAX_CASHOUT_WINDOW_SECONDS      600///(60*60*24*14) /// 2 weeks
+#define COLAB_UPVOTE_LOCKOUT_HF7              90///(fc::minutes(1))
+#define COLAB_UPVOTE_LOCKOUT_SECONDS          90///(60*60*12)    /// 12 hours
+#define COLAB_UPVOTE_LOCKOUT_HF17             90///(fc::hours(12))
 
 #define COLAB_MIN_ACCOUNT_CREATION_FEE           1
 #define COLAB_MAX_ACCOUNT_CREATION_FEE           int64_t(1000000000)
