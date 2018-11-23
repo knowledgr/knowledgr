@@ -204,6 +204,11 @@ struct count_operation_visitor
    {
 	   execution_time_count += _e.account_expertise_update_operation_exec_time;
    }
+
+   void operator()( const account_admin_update_operation& op )const
+   {
+	   execution_time_count += _e.account_admin_update_operation_exec_time;
+   }
    //~~~~~CLC~~~~~}
    void operator()( const account_update_operation& )const
    {

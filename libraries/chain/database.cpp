@@ -2532,6 +2532,7 @@ void database::initialize_evaluators()
    _my->_evaluator_registry.register_evaluator< withdraw_vesting_evaluator               >();
    _my->_evaluator_registry.register_evaluator< set_withdraw_vesting_route_evaluator     >();
    _my->_evaluator_registry.register_evaluator< account_create_evaluator                 >();
+   _my->_evaluator_registry.register_evaluator< account_admin_update_evaluator			>();//~~~~~CLC~~~~~
    _my->_evaluator_registry.register_evaluator< account_expertise_update_evaluator      >();//~~~~~CLC~~~~~
    _my->_evaluator_registry.register_evaluator< account_update_evaluator                 >();
    _my->_evaluator_registry.register_evaluator< witness_update_evaluator                 >();
@@ -2729,6 +2730,7 @@ void database::init_genesis( uint64_t init_supply )
          {
             a.name = COLAB_INIT_MINER_NAME + ( i ? fc::to_string( i ) : std::string() );
             a.memo_key = init_public_key;
+			a.member_of = account_object::admin;//~~~~~CLC~~~~~
             a.balance  = asset( i ? 0 : init_supply, CLC_SYMBOL );
          } );
 

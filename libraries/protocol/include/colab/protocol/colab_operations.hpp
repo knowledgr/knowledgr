@@ -21,6 +21,15 @@ namespace colab { namespace protocol {
 	   void validate()const;
 	   void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(admin); }
    };
+
+   struct account_admin_update_operation : public base_operation
+   {
+	   account_name_type             admin;
+	   account_name_type             account;
+
+	   void validate()const;
+	   void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(admin); }
+   };
    //~~~~~CLC~~~~~}
 
    struct account_create_operation : public base_operation
@@ -1103,6 +1112,10 @@ FC_REFLECT( colab::protocol::account_expertise_update_operation,
             (admin)
             (account)
             (expertises) )
+
+FC_REFLECT( colab::protocol::account_admin_update_operation,
+            (admin)
+            (account) )
 //~~~~~CLC~~~~~}
 
 FC_REFLECT( colab::protocol::account_create_operation,

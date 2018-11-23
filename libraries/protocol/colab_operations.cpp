@@ -19,7 +19,12 @@ namespace colab { namespace protocol {
    {
 	   std::cerr<<"~~~ [account_expertise_update_operation::validate()] - account = "<<(std::string)account<<"\n";
 	   validate_account_name( account );
+   }
 
+   void account_admin_update_operation::validate() const
+   {
+	   std::cerr<<"~~~ [account_admin_update_operation::validate()] - account = "<<(std::string)account<<"\n";
+	   validate_account_name( account );
    }
    //~~~~~CLC~~~~~}
 

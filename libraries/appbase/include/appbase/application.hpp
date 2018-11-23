@@ -149,7 +149,7 @@ namespace appbase {
                _state = initialized;
                this->plugin_for_each_dependency( [&]( abstract_plugin& plug ){ plug.initialize( options ); } );
                this->plugin_initialize( options );
-               // std::cout << "Initializing plugin " << Impl::name() << std::endl;
+               std::cout << "Initializing plugin " << Impl::name() << std::endl;//~~~~~CLC~~~~~
                app().plugin_initialized( *this );
             }
             if (_state != initialized)

@@ -25,6 +25,13 @@ namespace colab { namespace chain {
       account_object() = delete;
 
       public:
+		  //~~~~~CLC~~~~~{
+		  enum account_member_of
+		  {
+			  user = 0,
+			  admin = 1,
+		  };
+		  //~~~~~CLC~~~~~}
          template<typename Constructor, typename Allocator>
          account_object( Constructor&& c, allocator< Allocator > a )
             :json_metadata( a ), 
@@ -115,14 +122,26 @@ namespace colab { namespace chain {
          share_type        pending_claimed_accounts = 0;
 		 using t_expertises = t_vector< protocol::expertise >; //~~~~~CLC~~~~~
 		 t_expertises expertises; //~~~~~CLC~~~~~
-		 uint32_t expertise_rate(protocol::expertise_category _category) {  //~~~~~CLC~~~~~{
+		 account_member_of member_of = user; //~~~~~CLC~~~~~
+		 ///~~~~~CLC~~~~~{
+		 uint32_t expertise_rate(protocol::expertise_category _category) { 
 			 for (auto & _expertise : expertises) {
 				 if (_expertise.category == _category) {
 					 return _expertise.level;
 				 }
 			 }
 			 return 1;
-		 }; //~~~~~CLC~~~~~}
+		 };
+		 uint32_t calculate_power(const vector<protocol::expertise_category> _categories) { 
+			 uint32_t sum = 0;
+			 for (auto & _category : _categories) {
+				 sum += expertise_rate(_category);
+			 }
+			 double avg = (sum * 100.0) / (double)_categories.size();
+			 return (uint32_t)avg;
+		 };
+
+		 ///~~~~~CLC~~~~~}
          /// This function should be used only when the account votes for a witness directly
          share_type        witness_vote_weight()const {
             return std::accumulate( proxied_vsf_votes.begin(),
@@ -415,6 +434,7 @@ namespace colab { namespace chain {
    > change_recovery_account_request_index;
 } }
 
+FC_REFLECT_ENUM( colab::chain::account_object::account_member_of, (user)(admin) )
 FC_REFLECT( colab::chain::account_object,
              (id)(name)(memo_key)(json_metadata)(proxy)(last_account_update)
              (created)(mined)
@@ -433,6 +453,7 @@ FC_REFLECT( colab::chain::account_object,
              (last_post)(last_root_post)(last_vote_time)(post_bandwidth)
              (pending_claimed_accounts)
 			 (expertises)//~~~~~CLC~~~~~
+			 (member_of)//~~~~~CLC~~~~~
           )
 
 CHAINBASE_SET_INDEX_TYPE( colab::chain::account_object, colab::chain::account_index )

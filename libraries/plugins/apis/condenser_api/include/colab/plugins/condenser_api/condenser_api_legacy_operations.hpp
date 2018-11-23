@@ -135,7 +135,27 @@ namespace colab { namespace plugins { namespace condenser_api {
 	   account_name_type             account;
 	   vector<protocol::expertise> expertises;
    };
+
+   struct legacy_account_admin_update_operation
+   {
+	   legacy_account_admin_update_operation() {}
+	   legacy_account_admin_update_operation( const account_admin_update_operation& op ) :
+			admin( op.admin ),
+		   account( op.account ) {}
+
+	   operator account_admin_update_operation()const
+	   {
+		   account_admin_update_operation op;
+		   op.admin = admin;
+		   op.account = account;
+		   return op;
+	   }
+
+	   account_name_type             admin;
+	   account_name_type             account;
+   };
    //~~~~~CLC~~~~~}
+
    struct legacy_account_create_operation
    {
       legacy_account_create_operation() {}
@@ -1027,7 +1047,8 @@ namespace colab { namespace plugins { namespace condenser_api {
             legacy_limit_order_cancel_operation,
             legacy_feed_publish_operation,
             legacy_convert_operation,
-            legacy_account_create_operation,
+			legacy_account_create_operation,
+			legacy_account_admin_update_operation,//~~~~~CLC~~~~~
 			legacy_account_expertise_update_operation,//~~~~~CLC~~~~~
             legacy_account_update_operation,
             legacy_witness_update_operation,
@@ -1158,6 +1179,12 @@ namespace colab { namespace plugins { namespace condenser_api {
       }
 
 	  //~~~~~CLC~~~~~{
+	  bool operator()( const account_admin_update_operation& op )const
+	  {
+		  l_op = legacy_account_admin_update_operation( op );
+		  return true;
+	  }
+
 	  bool operator()( const account_expertise_update_operation& op )const
 	  {
 		  l_op = legacy_account_expertise_update_operation( op );
@@ -1355,12 +1382,19 @@ struct convert_from_legacy_operation_visitor
    {
       return operation( account_create_operation( op ) );
    }
+
    //~~~~~CLC~~~~~{
+   operation operator()( const legacy_account_admin_update_operation& op )const
+   {
+	   return operation( account_admin_update_operation( op ) );
+   }
+
    operation operator()( const legacy_account_expertise_update_operation& op )const
    {
 	   return operation( account_expertise_update_operation( op ) );
    }
    //~~~~~CLC~~~~~}
+
    operation operator()( const legacy_witness_update_operation& op )const
    {
       return operation( witness_update_operation( op ) );
@@ -1561,6 +1595,10 @@ FC_REFLECT( colab::plugins::condenser_api::legacy_account_expertise_update_opera
             (admin)
             (account)
             (expertises) )
+
+FC_REFLECT( colab::plugins::condenser_api::legacy_account_admin_update_operation,
+            (admin)
+            (account) )
 //~~~~~CLC~~~~~}
 
 FC_REFLECT( colab::plugins::condenser_api::legacy_account_create_operation,
