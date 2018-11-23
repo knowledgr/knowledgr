@@ -2125,6 +2125,8 @@ namespace detail
 
 uint16_t api_account_object::_compute_voting_power( const database_api::api_account_object& a )
 {
+	return 0;
+#if 0///~~~~~CLC~~~~~{
    if( a.voting_manabar.last_update_time < COLAB_HARDFORK_0_20_TIME )
       return (uint16_t) a.voting_manabar.current_mana;
 
@@ -2156,6 +2158,7 @@ uint16_t api_account_object::_compute_voting_power( const database_api::api_acco
    uint16_t vp_t1 = uint16_t( vp_t2u ) - uint16_t( std::min( vp_t2u, vp_dt ) );
 
    return vp_t1;
+#endif///~~~~~CLC~~~~~}
 }
 
 condenser_api::condenser_api()
