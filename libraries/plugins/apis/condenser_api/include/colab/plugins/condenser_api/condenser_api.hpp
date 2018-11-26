@@ -148,7 +148,7 @@ struct api_account_object
       post_bandwidth( a.post_bandwidth ),
       pending_claimed_accounts( a.pending_claimed_accounts ),
 	  member_of(a.member_of), ///~~~~~CLC~~~~~
-	  stake_balance(a.stake_balance) ///~~~~~CLC~~~~~
+	  stake_balance( legacy_asset::from_asset(a.stake_balance) ) ///~~~~~CLC~~~~~
    {
       //voting_power = _compute_voting_power(a);//////~~~~~CLC~~~~~
 	  proxied_vsf_votes.insert( proxied_vsf_votes.end(), a.proxied_vsf_votes.begin(), a.proxied_vsf_votes.end() );
@@ -231,7 +231,7 @@ struct api_account_object
    share_type        pending_claimed_accounts = 0;
    vector<std::string>					expertises; ///~~~~~CLC~~~~~
    account_object::account_member_of	member_of; ///~~~~~CLC~~~~~
-   asset								stake_balance; ///~~~~~CLC~~~~~
+   legacy_asset							stake_balance; ///~~~~~CLC~~~~~
 };
 
 struct extended_account : public api_account_object

@@ -29,11 +29,9 @@ namespace colab { namespace protocol {
 
    void stake_request_operation::validate() const
    {	  
-	   try {
-		   validate_account_name( account );
-		   FC_ASSERT( amount.symbol != CLC_SYMBOL, "Unknown token symbol." );
-		   FC_ASSERT( amount.amount != 0, "0 Token staking is not allowed." );
-		} FC_CAPTURE_AND_RETHROW( (*this) ) 
+		validate_account_name( account );
+		FC_ASSERT( amount.symbol == CLC_SYMBOL, "Unknown token symbol." );
+		FC_ASSERT( amount.amount != 0, "Must stake/unstake a nonzero amount." );
    }
    ///~~~~~CLC~~~~~}
 
