@@ -161,6 +161,8 @@ typedef oid< account_rewards_balance_object         > account_rewards_balance_id
 typedef oid< nai_pool_object                        > nai_pool_id_type;
 #endif
 
+typedef oid< stake_pending_object					> stake_pending_id_type;///~~~~~CLC~~~~~
+
 enum bandwidth_type
 {
    post,    ///< Rate limiting posting reward eligibility over time

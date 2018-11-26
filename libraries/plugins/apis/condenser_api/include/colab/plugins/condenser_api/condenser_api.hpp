@@ -259,6 +259,23 @@ struct extended_account : public api_account_object
    optional< vector< string > >                             recommended;      /// posts recommened for this user
 };
 
+///~~~~~CLC~~~~~{
+struct api_stake_pending_object
+{
+	api_stake_pending_object(const database_api::api_stake_pending_object& a) : 
+		id(a.id),
+		account(a.account),
+		amount( legacy_asset::from_asset(a.amount) ),
+		created(a.created) {}
+	api_stake_pending_object() {}
+
+	stake_pending_id_type				id;
+	account_name_type	account;
+	legacy_asset		amount;
+	time_point_sec		created;
+};
+///~~~~~CLC~~~~~}
+
 struct api_comment_object
 {
    api_comment_object( const database_api::api_comment_object& c ):
@@ -993,9 +1010,11 @@ DEFINE_API_ARGS( verify_account_authority,               vector< variant >,   bo
 DEFINE_API_ARGS( get_active_votes,                       vector< variant >,   vector< tags::vote_state > )
 DEFINE_API_ARGS( get_account_votes,                      vector< variant >,   vector< account_vote > )
 DEFINE_API_ARGS( get_content,                            vector< variant >,   discussion )
-DEFINE_API_ARGS( get_content_count,                      vector< variant >,   uint64_t )//~~~~~CLC~~~~~
-DEFINE_API_ARGS( list_comments,							 vector< variant >,   vector< discussion > )//~~~~~CLC~~~~~
-DEFINE_API_ARGS( get_content_parent_series,				 vector< variant >,   vector< discussion > )//~~~~~CLC~~~~~
+DEFINE_API_ARGS( get_content_count,                      vector< variant >,   uint64_t )///~~~~~CLC~~~~~
+DEFINE_API_ARGS( list_comments,							 vector< variant >,   vector< discussion > )///~~~~~CLC~~~~~
+DEFINE_API_ARGS( get_content_parent_series,				 vector< variant >,   vector< discussion > )///~~~~~CLC~~~~~
+DEFINE_API_ARGS( list_pending_stakes,					 vector< variant >,   vector< api_stake_pending_object > )///~~~~~CLC~~~~~
+DEFINE_API_ARGS( find_pending_stake,					 vector< variant >,   vector< api_stake_pending_object > )///~~~~~CLC~~~~~
 DEFINE_API_ARGS( get_content_replies,                    vector< variant >,   vector< discussion > )
 DEFINE_API_ARGS( get_tags_used_by_author,                vector< variant >,   vector< tags::tag_count_object > )
 DEFINE_API_ARGS( get_post_discussions_by_payout,         vector< variant >,   vector< discussion > )
@@ -1092,6 +1111,8 @@ public:
 	  (get_content_count)//~~~~~CLC~~~~~
 	  (list_comments)//~~~~~CLC~~~~~
 	  (get_content_parent_series)//~~~~~CLC~~~~~
+	  (list_pending_stakes)///~~~~~CLC~~~~~
+	  (find_pending_stake)///~~~~~CLC~~~~~
       (get_content_replies)
       (get_tags_used_by_author)
       (get_post_discussions_by_payout)
@@ -1327,3 +1348,11 @@ FC_REFLECT( colab::plugins::condenser_api::order_book,
 
 FC_REFLECT( colab::plugins::condenser_api::market_trade,
             (date)(current_pays)(open_pays) )
+///~~~~~CLC~~~~~{
+FC_REFLECT( colab::plugins::condenser_api::api_stake_pending_object,
+				(id)
+				(account)
+				(amount)
+				(created)
+		  )
+///~~~~~CLC~~~~~}

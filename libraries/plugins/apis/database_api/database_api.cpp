@@ -33,7 +33,9 @@ class database_api_impl
          (find_witnesses)
          (list_witness_votes)
          (get_active_witnesses)
-         (list_accounts)
+		 (list_accounts)
+		 (list_pending_stakes)///~~~~~CLC~~~~~
+		 (find_pending_stake)///~~~~~CLC~~~~~
          (find_accounts)
          (list_owner_histories)
          (find_owner_histories)
@@ -293,6 +295,38 @@ DEFINE_API_IMPL( database_api_impl, get_active_witnesses )
    return result;
 }
 
+
+///~~~~~CLC~~~~~{
+//////////////////////////////////////////////////////////////////////
+//                                                                  //
+// Stakes                                                           //
+//                                                                  //
+//////////////////////////////////////////////////////////////////////
+DEFINE_API_IMPL( database_api_impl, find_pending_stake )
+{
+	find_pending_stake_return result;
+	const auto& sk_idx = _db.get_index< chain::stake_pending_index >().indices().get< chain::by_account >();
+	auto itr = sk_idx.find( args.account );
+	if (itr != sk_idx.end()) {
+		result.pending_stakes.push_back(api_stake_pending_object(*itr));
+	}
+
+	return result;
+}
+DEFINE_API_IMPL( database_api_impl, list_pending_stakes )
+{
+	list_pending_stakes_return result;
+	FC_ASSERT( args.limit <= DATABASE_API_SINGLE_QUERY_LIMIT );
+	const auto& sk_idx = _db.get_index< chain::stake_pending_index >().indices().get< chain::by_account >();
+	auto itr = sk_idx.begin();
+	while( itr != sk_idx.end() && result.pending_stakes.size() < args.limit )
+	{
+		result.pending_stakes.push_back( api_stake_pending_object(*itr) );
+		++itr;
+	}
+	return result;
+}
+///~~~~~CLC~~~~~}
 
 //////////////////////////////////////////////////////////////////////
 //                                                                  //
@@ -1469,6 +1503,8 @@ DEFINE_READ_APIS( database_api,
    (list_witness_votes)
    (get_active_witnesses)
    (list_accounts)
+   (list_pending_stakes)///~~~~~CLC~~~~~
+   (find_pending_stake)///~~~~~CLC~~~~~
    (find_accounts)
    (list_owner_histories)
    (find_owner_histories)

@@ -224,6 +224,20 @@ class wallet_api
        *
        */
 	  uint64_t					get_comment_count() const;
+
+	  /** Returns list of pending stakes given by limit.
+       *
+       * @param limit the maximum number of stake_pending_objects
+       * @returns the public stake data stored in the blockchain
+       */
+      vector<condenser_api::api_stake_pending_object> list_pending_stakes( uint32_t limit ) const;
+
+	  /** Returns list of pending stakes given by limit.
+       *
+       * @param account the account name of stake_pending_object
+       * @returns the public stake data stored in the blockchain
+       */
+      vector<condenser_api::api_stake_pending_object> find_pending_stake( string account ) const;
 	  //~~~~~CLC~~~~~}
 
       /** Returns the current wallet filename.
@@ -1257,6 +1271,8 @@ FC_API( colab::wallet::wallet_api,
 		(list_comment_replies)//~~~~~CLC~~~~~
 		(list_comments)//~~~~~CLC~~~~~
 		(get_comment_count)//~~~~~CLC~~~~~
+		(list_pending_stakes)///~~~~~CLC~~~~~
+		(find_pending_stake)///~~~~~CLC~~~~~
 
         /// transaction api
         (create_account)

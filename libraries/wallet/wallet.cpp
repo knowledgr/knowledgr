@@ -569,8 +569,9 @@ public:
                  req_owner_approvals.begin() , req_owner_approvals.end(),
                  std::back_inserter( v_approving_account_names ) );
 
-      for( const auto& a : req_posting_approvals )
+      for( const auto& a : req_posting_approvals ) {
          v_approving_account_names.push_back(a);
+	  }
 
       /// TODO: fetch the accounts specified via other_auths as well.
 
@@ -721,6 +722,8 @@ public:
       {
          auto it = available_private_keys.find(k);
          FC_ASSERT( it != available_private_keys.end() );
+		 std::cerr<<"~~~ [sign_transaction()] - pubkey : "<<(std::string)k<<"\n";
+		 std::cerr<<"~~~ [sign_transaction()] - privkey: "<<(std::string)key_to_wif(it->second)<<"\n";
          tx.sign( it->second, colab_chain_id, fc::ecc::fc_canonical );
       }
 
@@ -1112,6 +1115,16 @@ vector<string> wallet_api::list_comments(uint32_t limits) const
 uint64_t wallet_api::get_comment_count() const
 {
 	return my->_remote_api->get_content_count();
+}
+
+vector<condenser_api::api_stake_pending_object> wallet_api::list_pending_stakes( uint32_t limit ) const
+{
+	return my->_remote_api->list_pending_stakes(limit);
+}
+
+vector<condenser_api::api_stake_pending_object> wallet_api::find_pending_stake( string account ) const
+{
+	return my->_remote_api->find_pending_stake(account);
 }
 //~~~~~CLC~~~~~}
 

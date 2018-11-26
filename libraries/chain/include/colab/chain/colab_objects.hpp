@@ -288,7 +288,7 @@ namespace colab { namespace chain {
 	   }
 	   stake_pending_object() {}
 
-	   id_type				id;
+	   stake_pending_id_type				id;
 	   account_name_type	account;
 	   asset				amount; /// if less than 0, it means unstake. if greater than 0, it means stake
 	   time_point_sec		created;
@@ -481,7 +481,7 @@ namespace colab { namespace chain {
    typedef multi_index_container<
 	   stake_pending_object,
 	   indexed_by<
-		   ordered_unique< tag< by_id >, member< stake_pending_object, stake_pending_object::id_type, &stake_pending_object::id > >,
+		   ordered_unique< tag< by_id >, member< stake_pending_object, stake_pending_id_type, &stake_pending_object::id > >,
 		   ordered_unique< tag< by_account >, member< stake_pending_object, account_name_type, &stake_pending_object::account > >,
 		   ordered_unique< tag< by_created_before>,
 			   composite_key< stake_pending_object,

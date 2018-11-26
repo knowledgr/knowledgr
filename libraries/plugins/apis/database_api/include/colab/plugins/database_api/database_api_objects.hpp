@@ -315,6 +315,23 @@ struct api_account_object
    asset								stake_balance; ///~~~~~CLC~~~~~
 };
 
+///~~~~~CLC~~~~~{
+struct api_stake_pending_object
+{
+	api_stake_pending_object(const stake_pending_object& a) : 
+		id(a.id),
+		account(a.account),
+		amount(a.amount),
+		created(a.created) {}
+	api_stake_pending_object() {}
+
+	stake_pending_id_type				id;
+	account_name_type	account;
+	asset				amount;
+	time_point_sec		created;
+};
+///~~~~~CLC~~~~~}
+
 struct api_owner_authority_history_object
 {
    api_owner_authority_history_object( const owner_authority_history_object& o ) :
@@ -601,6 +618,15 @@ FC_REFLECT( colab::plugins::database_api::api_account_object,
 			 (member_of)///~~~~~CLC~~~~~
 			 (stake_balance)///~~~~~CLC~~~~~
           )
+
+///~~~~~CLC~~~~~{
+FC_REFLECT( colab::plugins::database_api::api_stake_pending_object,
+				(id)
+				(account)
+				(amount)
+				(created)
+		  )
+///~~~~~CLC~~~~~}
 
 FC_REFLECT( colab::plugins::database_api::api_owner_authority_history_object,
              (id)
