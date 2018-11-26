@@ -289,38 +289,34 @@ void initialize_account_object( account_object& acc, const account_name_type& na
    acc.name = name;
    acc.memo_key = key;
    acc.created = props.time;
-   acc.voting_manabar.last_update_time = props.time.sec_since_epoch();
    acc.mined = mined;
-   acc.member_of = account_object::user;//~~~~~CLC~~~~~
+   acc.voting_manabar.last_update_time = props.time.sec_since_epoch();
+   acc.voting_manabar.current_mana = COLAB_100_PERCENT;///~~~~~CLC~~~~~
+   acc.member_of = account_object::user;///~~~~~CLC~~~~~
 
-   if( hardfork < COLAB_HARDFORK_0_20__2539 )
-   {
+   if( hardfork < COLAB_HARDFORK_0_20__2539 ) {
       acc.voting_manabar.current_mana = COLAB_100_PERCENT;
    }
 
-   if( hardfork >= COLAB_HARDFORK_0_11 )
-   {
+   if( hardfork >= COLAB_HARDFORK_0_11 ) {
       FC_TODO( "If after HF 20, there are no temp account creations, the HF check can be removed." )
       if( ( hardfork < COLAB_HARDFORK_0_20__1782 ) || ( recovery_account != COLAB_TEMP_ACCOUNT ) )
       {
          acc.recovery_account = recovery_account;
       }
-   }
-   else
-   {
+   } else {
       acc.recovery_account = "colab";
    }
 }
 
-//~~~~~NLG~~~~~ begin
+///~~~~~CLC~~~~~{
 void account_admin_update_evaluator::do_apply( const account_admin_update_operation& o )
 {
 	const auto& admin = _db.get_account( o.admin);
 	FC_ASSERT( admin.member_of == account_object::admin || (std::string)admin.name == COLAB_INIT_MINER_NAME, "Allocating expertise rate for an account can only be done by admin member." );
 	const auto& account = _db.get_account( o.account );
 
-	_db.modify( account, [&]( account_object& acc )
-	{
+	_db.modify( account, [&]( account_object& acc ) {
 		acc.member_of = account_object::admin;
 		acc.last_account_update = _db.head_block_time();
 	});
@@ -332,8 +328,7 @@ void account_expertise_update_evaluator::do_apply( const account_expertise_updat
 	FC_ASSERT( admin.member_of == account_object::admin || (std::string)admin.name == COLAB_INIT_MINER_NAME, "Allocating expertise rate for an account can only be done by admin member." );
 	const auto& account = _db.get_account( o.account );
 	
-	_db.modify( account, [&]( account_object& acc )
-	{
+	_db.modify( account, [&]( account_object& acc ) {
 		for (auto & d0 : o.expertises) {
 			if (d0.category == colab::protocol::expctgry_unknown) continue;
 			bool _exist = false;
@@ -350,10 +345,9 @@ void account_expertise_update_evaluator::do_apply( const account_expertise_updat
 		}
 
 		acc.last_account_update = _db.head_block_time();
-
 	});
 }
-//~~~~~NLG~~~~~ end
+///~~~~~CLC~~~~~}
 
 void account_create_evaluator::do_apply( const account_create_operation& o )
 {
@@ -1219,6 +1213,46 @@ void escrow_release_evaluator::do_apply( const escrow_release_operation& o )
    FC_CAPTURE_AND_RETHROW( (o) )
 }
 
+///~~~~~CLC~~~~~{
+void stake_request_evaluator::do_apply( const stake_request_operation& o )
+{
+	std::cerr<<"~~~ [stake_request_evaluator::do_apply()] - \n";
+	
+	const auto& account = _db.get_account( o.account );
+	const auto& sk_idx = _db.get_index< stake_pending_index >().indices().get< by_account >();
+
+	FC_ASSERT( o.amount.amount != 0 && o.amount.symbol == CLC_SYMBOL, "Invalid staking amount" );
+	
+	bool is_neg = o.amount.amount < 0;
+	asset abs_amount = (is_neg) ? -o.amount : o.amount;
+
+	auto itr = sk_idx.find( o.account );
+
+	FC_ASSERT( itr == sk_idx.end(), "You can make new request after processing of pending stake." );
+	if (itr == sk_idx.end()) {
+		if (is_neg) {
+			FC_ASSERT( account.stake_balance >= abs_amount, "You requested too big amount to unstake" );
+		} else {
+			FC_ASSERT( account.balance >= abs_amount, "You requested too big amount to stake" );
+		}
+		_db.create< stake_pending_object >( [&]( stake_pending_object& spo )
+		{
+			spo.account = o.account;
+			spo.amount = o.amount;
+			spo.created = _db.head_block_time();
+		});
+		_db.modify( account, [&]( account_object& a )
+		{
+			if (is_neg) {
+				a.stake_balance -= abs_amount;
+			} else {
+				a.balance -= abs_amount;
+			}			
+		});
+	}	
+}
+///~~~~~CLC~~~~~}
+
 void transfer_evaluator::do_apply( const transfer_operation& o )
 {
    FC_ASSERT( _db.get_balance( o.from, o.amount.symbol ) >= o.amount, "Account does not have sufficient funds for transfer." );
@@ -1485,6 +1519,7 @@ void account_witness_vote_evaluator::do_apply( const account_witness_vote_operat
       _db.remove( *itr );
    }
 }
+
 ///~~~~~CLC~~~~~{
 void colab_vote_evaluator( const vote_operation& o, database& _db )
 {
@@ -1569,7 +1604,11 @@ void colab_vote_evaluator( const vote_operation& o, database& _db )
    std::cerr<<"~~~ [colab_vote_evaluator()] - used_mana = "<<used_mana.to_uint64()<<"\n";
    FC_ASSERT( voter.voting_manabar.has_mana( used_mana.to_uint64() ), "Account does not have enough mana to vote." );
 
-   int64_t abs_rshares = used_mana.to_uint64() * voter.calculate_power(comment.exp_categories) / COLAB_100_PERCENT;
+   uint32_t voter_power = comment_object::voter_power(voter, comment);
+
+   std::cerr<<"~~~ [colab_vote_evaluator()] - voter_power = "<<voter_power<<"\n";
+
+   int64_t abs_rshares = used_mana.to_uint64() * voter_power / COLAB_100_PERCENT;
 
    std::cerr<<"~~~ [colab_vote_evaluator()] - abs_rshares = "<<abs_rshares<<"\n";
 
@@ -1764,6 +1803,7 @@ void colab_vote_evaluator( const vote_operation& o, database& _db )
 }
 ///~~~~~CLC~~~~~}
 
+#if 0//////~~~~~CLC~~~~~{
 void hf20_vote_evaluator( const vote_operation& o, database& _db )
 {
 	const auto& comment = _db.get_comment( o.author, o.permlink );
@@ -2409,6 +2449,7 @@ void pre_hf20_vote_evaluator( const vote_operation& o, database& _db )
          _db.adjust_rshares2( comment, old_rshares, new_rshares );
    }
 }
+#endif//////~~~~~CLC~~~~~}
 
 void vote_evaluator::do_apply( const vote_operation& o )
 { try {

@@ -46,6 +46,7 @@ void initialize_core_indexes( database& db )
    add_core_index< vesting_delegation_expiration_index     >( db );
    add_core_index< pending_required_action_index           >( db );
    add_core_index< pending_optional_action_index           >( db );
+   add_core_index< stake_pending_index			           >( db );///~~~~~CLC~~~~~
 #ifdef COLAB_ENABLE_SMT
    add_core_index< smt_token_index                         >( db );
    add_core_index< smt_event_token_index                   >( db );

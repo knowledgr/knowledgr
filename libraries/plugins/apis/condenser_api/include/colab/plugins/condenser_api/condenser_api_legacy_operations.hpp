@@ -107,7 +107,7 @@ namespace colab { namespace plugins { namespace condenser_api {
       int32_t        account_subsidy_budget = COLAB_DEFAULT_ACCOUNT_SUBSIDY_BUDGET;
       uint32_t       account_subsidy_decay = COLAB_DEFAULT_ACCOUNT_SUBSIDY_DECAY;
    };
-   //~~~~~CLC~~~~~{
+   ///~~~~~CLC~~~~~{
    struct legacy_account_expertise_update_operation
    {
 	   legacy_account_expertise_update_operation() {}
@@ -154,7 +154,26 @@ namespace colab { namespace plugins { namespace condenser_api {
 	   account_name_type             admin;
 	   account_name_type             account;
    };
-   //~~~~~CLC~~~~~}
+
+   struct legacy_stake_request_operation
+   {
+	   legacy_stake_request_operation() {}
+	   legacy_stake_request_operation( const stake_request_operation& op ) :
+			account( op.account ),
+		   amount( op.amount ) {}
+
+	   operator stake_request_operation()const
+	   {
+		   stake_request_operation op;
+		   op.account = account;
+		   op.amount = amount;
+		   return op;
+	   }
+
+	   account_name_type             account;
+	   asset						amount;
+   };
+   ///~~~~~CLC~~~~~}
 
    struct legacy_account_create_operation
    {
@@ -1048,8 +1067,9 @@ namespace colab { namespace plugins { namespace condenser_api {
             legacy_feed_publish_operation,
             legacy_convert_operation,
 			legacy_account_create_operation,
-			legacy_account_admin_update_operation,//~~~~~CLC~~~~~
-			legacy_account_expertise_update_operation,//~~~~~CLC~~~~~
+			legacy_account_admin_update_operation,///~~~~~CLC~~~~~
+			legacy_account_expertise_update_operation,///~~~~~CLC~~~~~
+			legacy_stake_request_operation,///~~~~~CLC~~~~~
             legacy_account_update_operation,
             legacy_witness_update_operation,
             legacy_account_witness_vote_operation,
@@ -1178,7 +1198,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          return true;
       }
 
-	  //~~~~~CLC~~~~~{
+	  ///~~~~~CLC~~~~~{
 	  bool operator()( const account_admin_update_operation& op )const
 	  {
 		  l_op = legacy_account_admin_update_operation( op );
@@ -1190,7 +1210,13 @@ namespace colab { namespace plugins { namespace condenser_api {
 		  l_op = legacy_account_expertise_update_operation( op );
 		  return true;
 	  }
-	  //~~~~~CLC~~~~~}
+
+	  bool operator()( const stake_request_operation& op )const
+	  {
+		  l_op = legacy_stake_request_operation( op );
+		  return true;
+	  }
+	  ///~~~~~CLC~~~~~}
 
       bool operator()( const witness_update_operation& op )const
       {
@@ -1393,6 +1419,11 @@ struct convert_from_legacy_operation_visitor
    {
 	   return operation( account_expertise_update_operation( op ) );
    }
+
+   operation operator()( const legacy_stake_request_operation& op )const
+   {
+	   return operation( stake_request_operation( op ) );
+   }
    //~~~~~CLC~~~~~}
 
    operation operator()( const legacy_witness_update_operation& op )const
@@ -1590,7 +1621,7 @@ FC_REFLECT( colab::plugins::condenser_api::legacy_transfer_from_savings_operatio
 FC_REFLECT( colab::plugins::condenser_api::legacy_convert_operation, (owner)(requestid)(amount) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_feed_publish_operation, (publisher)(exchange_rate) )
 
-//~~~~~CLC~~~~~{
+///~~~~~CLC~~~~~{
 FC_REFLECT( colab::plugins::condenser_api::legacy_account_expertise_update_operation,
             (admin)
             (account)
@@ -1599,7 +1630,11 @@ FC_REFLECT( colab::plugins::condenser_api::legacy_account_expertise_update_opera
 FC_REFLECT( colab::plugins::condenser_api::legacy_account_admin_update_operation,
             (admin)
             (account) )
-//~~~~~CLC~~~~~}
+
+FC_REFLECT( colab::plugins::condenser_api::legacy_stake_request_operation,
+            (account)
+            (amount) )
+///~~~~~CLC~~~~~}
 
 FC_REFLECT( colab::plugins::condenser_api::legacy_account_create_operation,
             (fee)

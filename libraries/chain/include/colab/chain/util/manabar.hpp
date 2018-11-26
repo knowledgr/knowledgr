@@ -34,6 +34,8 @@ struct manabar
    manabar( int64_t m, uint32_t t )
       : current_mana(m), last_update_time(t) {}
 
+#if 1 ///~~~~~CLC~~~~~{
+
    template< bool skip_cap_regen = false >
    void regenerate_mana( const manabar_params& params, uint32_t now )
    {
@@ -66,6 +68,7 @@ struct manabar
    {
       regenerate_mana< skip_cap_regen >( params, now.sec_since_epoch() );
    }
+#endif ///~~~~~CLC~~~~~}
 
    bool has_mana( int64_t mana_needed )const
    {
@@ -95,6 +98,7 @@ struct manabar
    }
 };
 
+#if 1 ///~~~~~CLC~~~~~{
 template< typename T >
 int64_t get_effective_vesting_shares( const T& account )
 {
@@ -115,6 +119,7 @@ int64_t get_effective_vesting_shares( const T& account )
 
    return effective_vesting_shares;
 }
+#endif ///~~~~~CLC~~~~~}
 
 } } } // colab::chain::util
 

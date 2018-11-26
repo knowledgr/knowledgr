@@ -199,7 +199,7 @@ struct count_operation_visitor
       execution_time_count += _e.withdraw_vesting_operation_exec_time;
    }
 
-   //~~~~~CLC~~~~~{
+   ///~~~~~CLC~~~~~{
    void operator()( const account_expertise_update_operation& op )const
    {
 	   execution_time_count += _e.account_expertise_update_operation_exec_time;
@@ -209,7 +209,13 @@ struct count_operation_visitor
    {
 	   execution_time_count += _e.account_admin_update_operation_exec_time;
    }
-   //~~~~~CLC~~~~~}
+
+   void operator()( const stake_request_operation& op )const
+   {
+	   execution_time_count += _e.stake_request_operation_exec_time;
+   }
+   ///~~~~~CLC~~~~~}
+
    void operator()( const account_update_operation& )const
    {
       execution_time_count += _e.account_update_operation_exec_time;

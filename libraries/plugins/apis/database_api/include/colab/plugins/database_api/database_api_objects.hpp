@@ -214,7 +214,8 @@ struct api_account_object
       last_vote_time( a.last_vote_time ),
       post_bandwidth( a.post_bandwidth ),
       pending_claimed_accounts( a.pending_claimed_accounts ),
-	  member_of(a.member_of)//~~~~~CLC~~~~~
+	  member_of(a.member_of),///~~~~~CLC~~~~~
+	  stake_balance(a.stake_balance)///~~~~~CLC~~~~~
    {
       size_t n = a.proxied_vsf_votes.size();
       proxied_vsf_votes.reserve( n );
@@ -231,7 +232,7 @@ struct api_account_object
       auto smt_obj_itr = by_control_account_index.find( name );
       is_smt = smt_obj_itr != by_control_account_index.end();
 #endif
-	  for (auto& _expertise: a.expertises) {//~~~~~CLC~~~~~
+	  for (auto& _expertise: a.expertises) {///~~~~~CLC~~~~~
 		  expertises.push_back(_expertise.to_string());
 	  }
    }
@@ -309,8 +310,9 @@ struct api_account_object
 
    bool              is_smt = false;
 
-   vector<std::string> expertises; //~~~~~CLC~~~~~
-   account_object::account_member_of member_of; //~~~~~CLC~~~~~
+   vector<std::string>					expertises; ///~~~~~CLC~~~~~
+   account_object::account_member_of	member_of; ///~~~~~CLC~~~~~
+   asset								stake_balance; ///~~~~~CLC~~~~~
 };
 
 struct api_owner_authority_history_object
@@ -595,8 +597,9 @@ FC_REFLECT( colab::plugins::database_api::api_account_object,
              (last_post)(last_root_post)(last_vote_time)
              (post_bandwidth)(pending_claimed_accounts)
              (is_smt)
-			 (expertises)//~~~~~CLC~~~~~
-			 (member_of)//~~~~~CLC~~~~~
+			 (expertises)///~~~~~CLC~~~~~
+			 (member_of)///~~~~~CLC~~~~~
+			 (stake_balance)///~~~~~CLC~~~~~
           )
 
 FC_REFLECT( colab::plugins::database_api::api_owner_authority_history_object,

@@ -2498,7 +2498,7 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
    return my->sign_transaction( tx, broadcast );
 }
 
-//~~~~~CLC~~~~~ {
+///~~~~~CLC~~~~~{
 condenser_api::legacy_signed_transaction wallet_api::post_review( 
 	string author, 
 	string permlink, 
@@ -2539,7 +2539,43 @@ condenser_api::legacy_signed_transaction wallet_api::post_review(
 
 	return my->sign_transaction( tx, broadcast );
 }
-//~~~~~CLC~~~~~ }
+
+condenser_api::legacy_signed_transaction wallet_api::stake(
+		  string account,
+		  condenser_api::legacy_asset amount,
+         bool broadcast ) const
+{ try {
+	FC_ASSERT( !is_locked() );
+	FC_ASSERT( amount.to_asset().amount > 0 );
+
+	stake_request_operation op;
+	op.account = account;
+	op.amount = amount.to_asset();
+	signed_transaction tx;
+	tx.operations.push_back( op );
+	tx.validate();
+
+	return my->sign_transaction( tx, broadcast );
+} FC_CAPTURE_AND_RETHROW( (account)(amount)(broadcast) ) }
+
+condenser_api::legacy_signed_transaction wallet_api::unstake(
+	string account,
+	condenser_api::legacy_asset amount,
+	bool broadcast ) const
+{ try {
+	FC_ASSERT( !is_locked() );
+	FC_ASSERT( amount.to_asset().amount > 0 );
+
+	stake_request_operation op;
+	op.account = account;
+	op.amount = -amount.to_asset();
+	signed_transaction tx;
+	tx.operations.push_back( op );
+	tx.validate();
+
+	return my->sign_transaction( tx, broadcast );
+} FC_CAPTURE_AND_RETHROW( (account)(amount)(broadcast) ) }
+///~~~~~CLC~~~~~}
 
 condenser_api::legacy_signed_transaction wallet_api::vote(
    string voter,

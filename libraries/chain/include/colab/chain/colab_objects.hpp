@@ -277,6 +277,24 @@ namespace colab { namespace chain {
          protocol::curve_id                curation_reward_curve;
    };
 
+   ///~~~~~CLC~~~~~{
+   class stake_pending_object : public object< stake_pending_object_type, stake_pending_object >
+   {
+   public:
+	   template< typename Constructor, typename Allocator >
+	   stake_pending_object( Constructor&& c, allocator< Allocator > a )
+	   {
+		   c( *this );
+	   }
+	   stake_pending_object() {}
+
+	   id_type				id;
+	   account_name_type	account;
+	   asset				amount; /// if less than 0, it means unstake. if greater than 0, it means stake
+	   time_point_sec		created;
+   };
+   ///~~~~~CLC~~~~~}
+
    struct by_price;
    struct by_expiration;
    struct by_account;
@@ -458,6 +476,24 @@ namespace colab { namespace chain {
       allocator< reward_fund_object >
    > reward_fund_index;
 
+   ///~~~~~CLC~~~~~{
+   struct by_created_before;
+   typedef multi_index_container<
+	   stake_pending_object,
+	   indexed_by<
+		   ordered_unique< tag< by_id >, member< stake_pending_object, stake_pending_object::id_type, &stake_pending_object::id > >,
+		   ordered_unique< tag< by_account >, member< stake_pending_object, account_name_type, &stake_pending_object::account > >,
+		   ordered_unique< tag< by_created_before>,
+			   composite_key< stake_pending_object,
+					member< stake_pending_object, time_point_sec, &stake_pending_object::created >
+			   >,
+			   composite_key_compare< std::less< time_point_sec > >
+		   >
+	   >,
+	   allocator< stake_pending_object >
+   > stake_pending_index;
+   ///~~~~~CLC~~~~~}
+
 } } // colab::chain
 
 #include <colab/chain/comment_object.hpp>
@@ -511,3 +547,14 @@ FC_REFLECT( colab::chain::reward_fund_object,
             (curation_reward_curve)
          )
 CHAINBASE_SET_INDEX_TYPE( colab::chain::reward_fund_object, colab::chain::reward_fund_index )
+
+///~~~~~CLC~~~~~{
+FC_REFLECT( colab::chain::stake_pending_object,
+			(id)
+			(account)
+			(amount)
+			(created)
+		)
+CHAINBASE_SET_INDEX_TYPE( colab::chain::stake_pending_object, colab::chain::stake_pending_index)
+///~~~~~CLC~~~~~}
+

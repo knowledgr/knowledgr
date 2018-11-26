@@ -26,8 +26,7 @@ namespace colab { namespace chain {
 
       public:
 		  //~~~~~CLC~~~~~{
-		  enum account_member_of
-		  {
+		  enum account_member_of {
 			  user = 0,
 			  admin = 1,
 		  };
@@ -120,28 +119,23 @@ namespace colab { namespace chain {
          uint32_t          post_bandwidth = 0;
 
          share_type        pending_claimed_accounts = 0;
-		 using t_expertises = t_vector< protocol::expertise >; //~~~~~CLC~~~~~
-		 t_expertises expertises; //~~~~~CLC~~~~~
-		 account_member_of member_of = user; //~~~~~CLC~~~~~
+		 
 		 ///~~~~~CLC~~~~~{
-		 uint32_t expertise_rate(protocol::expertise_category _category) { 
-			 for (auto & _expertise : expertises) {
+		 using t_expertises =	t_vector< protocol::expertise >;
+		 t_expertises			expertises;
+		 account_member_of		member_of = user;
+		 asset					stake_balance = asset( 0, CLC_SYMBOL );
+
+		 static uint32_t expertise_rate(const account_object& account, protocol::expertise_category _category) { 
+			 for (auto & _expertise : account.expertises) {
 				 if (_expertise.category == _category) {
 					 return _expertise.level;
 				 }
 			 }
 			 return 1;
 		 };
-		 uint32_t calculate_power(const vector<protocol::expertise_category> _categories) { 
-			 uint32_t sum = 0;
-			 for (auto & _category : _categories) {
-				 sum += expertise_rate(_category);
-			 }
-			 double avg = (sum * 100.0) / (double)_categories.size();
-			 return (uint32_t)avg;
-		 };
-
 		 ///~~~~~CLC~~~~~}
+
          /// This function should be used only when the account votes for a witness directly
          share_type        witness_vote_weight()const {
             return std::accumulate( proxied_vsf_votes.begin(),
@@ -452,8 +446,9 @@ FC_REFLECT( colab::chain::account_object,
              (proxied_vsf_votes)(witnesses_voted_for)
              (last_post)(last_root_post)(last_vote_time)(post_bandwidth)
              (pending_claimed_accounts)
-			 (expertises)//~~~~~CLC~~~~~
-			 (member_of)//~~~~~CLC~~~~~
+			 (expertises)///~~~~~CLC~~~~~
+			 (member_of)///~~~~~CLC~~~~~
+			 (stake_balance)///~~~~~CLC~~~~~
           )
 
 CHAINBASE_SET_INDEX_TYPE( colab::chain::account_object, colab::chain::account_index )
