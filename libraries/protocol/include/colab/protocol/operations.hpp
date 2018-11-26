@@ -27,8 +27,9 @@ namespace colab { namespace protocol {
             convert_operation,
 
 			account_create_operation,
-			account_admin_update_operation,//~~~~~CLC~~~~~
-			account_expertise_update_operation,//~~~~~CLC~~~~~
+			account_admin_update_operation,///~~~~~CLC~~~~~
+			account_expertise_update_operation,///~~~~~CLC~~~~~
+			stake_request_operation,///~~~~~CLC~~~~~
             account_update_operation,
 
             witness_update_operation,

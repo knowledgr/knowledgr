@@ -14,7 +14,7 @@ namespace colab { namespace protocol {
       FC_ASSERT( size <= COLAB_MAX_AUTHORITY_MEMBERSHIP, "Authority membership exceeded. Max: 10 Current: ${n}", ("n", size) );
    }
 
-   //~~~~~CLC~~~~~{
+   ///~~~~~CLC~~~~~{
    void account_expertise_update_operation::validate() const
    {
 	   std::cerr<<"~~~ [account_expertise_update_operation::validate()] - account = "<<(std::string)account<<"\n";
@@ -26,7 +26,14 @@ namespace colab { namespace protocol {
 	   std::cerr<<"~~~ [account_admin_update_operation::validate()] - account = "<<(std::string)account<<"\n";
 	   validate_account_name( account );
    }
-   //~~~~~CLC~~~~~}
+
+   void stake_request_operation::validate() const
+   {	  
+		validate_account_name( account );
+		FC_ASSERT( amount.symbol == CLC_SYMBOL, "Unknown token symbol." );
+		FC_ASSERT( amount.amount != 0, "Must stake/unstake a nonzero amount." );
+   }
+   ///~~~~~CLC~~~~~}
 
    void account_create_operation::validate() const
    {

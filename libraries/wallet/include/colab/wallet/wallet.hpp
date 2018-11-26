@@ -224,6 +224,20 @@ class wallet_api
        *
        */
 	  uint64_t					get_comment_count() const;
+
+	  /** Returns list of pending stakes given by limit.
+       *
+       * @param limit the maximum number of stake_pending_objects
+       * @returns the public stake data stored in the blockchain
+       */
+      vector<condenser_api::api_stake_pending_object> list_pending_stakes( uint32_t limit ) const;
+
+	  /** Returns list of pending stakes given by limit.
+       *
+       * @param account the account name of stake_pending_object
+       * @returns the public stake data stored in the blockchain
+       */
+      vector<condenser_api::api_stake_pending_object> find_pending_stake( string account ) const;
 	  //~~~~~CLC~~~~~}
 
       /** Returns the current wallet filename.
@@ -493,7 +507,31 @@ class wallet_api
          public_key_type memo,
          bool broadcast )const;
 
-	  //~~~~~CLC~~~~~{
+	  ///~~~~~CLC~~~~~{
+	  /**
+       * Stake the token from CLC balance.
+       *
+       * @param account The name of the requester
+       * @param amount The amount to stake. i.e. "100.000 CLC"
+       * @param broadcast true if you wish to broadcast the transaction
+       */
+      condenser_api::legacy_signed_transaction stake(
+		  string account,
+		  condenser_api::legacy_asset amount,
+         bool broadcast ) const;
+
+	  /**
+       * Untake the token from stake balance.
+       *
+       * @param account The name of the requester
+       * @param amount The amount to stake. i.e. "100.000 CLC"
+       * @param broadcast true if you wish to broadcast the transaction
+       */
+      condenser_api::legacy_signed_transaction unstake(
+		  string account,
+		  condenser_api::legacy_asset amount,
+         bool broadcast ) const;
+
 	  /**
        * This method updates the member of an account into admin.
        *
@@ -519,8 +557,7 @@ class wallet_api
          string account,
 		 vector<std::string> expertises,
          bool broadcast )const;
-	  //~~~~~CLC~~~~~}
-
+	  ///~~~~~CLC~~~~~}
 
       /**
        * This method updates the key of an authority for an exisiting account.
@@ -1234,14 +1271,18 @@ FC_API( colab::wallet::wallet_api,
 		(list_comment_replies)//~~~~~CLC~~~~~
 		(list_comments)//~~~~~CLC~~~~~
 		(get_comment_count)//~~~~~CLC~~~~~
+		(list_pending_stakes)///~~~~~CLC~~~~~
+		(find_pending_stake)///~~~~~CLC~~~~~
 
         /// transaction api
         (create_account)
         (create_account_with_keys)
         (create_account_delegated)
         (create_account_with_keys_delegated)
-		(update_account_admin)//~~~~~CLC~~~~~
-		(update_account_expertise)//~~~~~CLC~~~~~
+		(update_account_admin)///~~~~~CLC~~~~~
+		(update_account_expertise)///~~~~~CLC~~~~~
+		(stake)///~~~~~CLC~~~~~
+		(unstake)///~~~~~CLC~~~~~
         (update_account)
         (update_account_auth_key)
         (update_account_auth_account)
@@ -1268,7 +1309,7 @@ FC_API( colab::wallet::wallet_api,
         (create_order)
         (cancel_order)
         (post_comment)
-		(post_review)//~~~~~CLC~~~~~
+		(post_review)///~~~~~CLC~~~~~
         (vote)
         (set_transaction_expiration)
         (request_account_recovery)

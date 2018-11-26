@@ -152,6 +152,24 @@ struct get_active_witnesses_return
    vector< account_name_type > witnesses;
 };
 
+///~~~~~CLC~~~~~{
+/* Stakes */
+struct list_pending_stakes_return {
+	vector<api_stake_pending_object> pending_stakes;
+};
+
+struct find_pending_stake_return {
+	vector<api_stake_pending_object> pending_stakes;
+};
+
+struct list_pending_stakes_args {
+	uint32_t limit;
+};
+
+struct find_pending_stake_args {
+	account_name_type account;
+};
+///~~~~~CLC~~~~~}
 
 /* Account */
 
@@ -806,3 +824,14 @@ FC_REFLECT( colab::plugins::database_api::verify_signatures_return,
 FC_REFLECT( colab::plugins::database_api::get_nai_pool_return,
    (nai_pool) )
 #endif
+
+///~~~~~CLC~~~~~{
+FC_REFLECT( colab::plugins::database_api::list_pending_stakes_return,
+   (pending_stakes) )
+FC_REFLECT( colab::plugins::database_api::find_pending_stake_return,
+   (pending_stakes) )
+FC_REFLECT( colab::plugins::database_api::list_pending_stakes_args,
+   (limit) )
+FC_REFLECT( colab::plugins::database_api::find_pending_stake_args,
+   (account) )
+///~~~~~CLC~~~~~}

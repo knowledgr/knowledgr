@@ -93,9 +93,11 @@ namespace detail
             (get_active_votes)
             (get_account_votes)
             (get_content)
-			(get_content_count)//~~~~~CLC~~~~~
-			(list_comments)//~~~~~CLC~~~~~
-			(get_content_parent_series)//~~~~~CLC~~~~~
+			(get_content_count)///~~~~~CLC~~~~~
+			(list_comments)///~~~~~CLC~~~~~
+			(get_content_parent_series)///~~~~~CLC~~~~~
+			(list_pending_stakes)///~~~~~CLC~~~~~
+			(find_pending_stake)///~~~~~CLC~~~~~
             (get_content_replies)
             (get_tags_used_by_author)
             (get_post_discussions_by_payout)
@@ -293,8 +295,9 @@ namespace detail
                            break;
                         case operation::tag<account_create_operation>::value:
 						case operation::tag<account_update_operation>::value:
-						case operation::tag<account_admin_update_operation>::value://~~~~~CLC~~~~~
-						case operation::tag<account_expertise_update_operation>::value://~~~~~CLC~~~~~
+						case operation::tag<account_admin_update_operation>::value:///~~~~~CLC~~~~~
+						case operation::tag<account_expertise_update_operation>::value:///~~~~~CLC~~~~~
+						case operation::tag<stake_request_operation>::value:///~~~~~CLC~~~~~
                         case operation::tag<witness_update_operation>::value:
                         case operation::tag<pow_operation>::value:
                         case operation::tag<custom_operation>::value:
@@ -1344,7 +1347,7 @@ namespace detail
 
       return content;
    }
-   //~~~~~CLC~~~~~{
+   ///~~~~~CLC~~~~~{
    DEFINE_API_IMPL( condenser_api_impl, get_content_count )
    {
 	   CHECK_ARG_SIZE( 0 )
@@ -1396,7 +1399,31 @@ namespace detail
 	   }
 	   return result;
    }
-   //~~~~~CLC~~~~~}
+   DEFINE_API_IMPL( condenser_api_impl, find_pending_stake )
+   {
+	   CHECK_ARG_SIZE( 1 )
+		
+	   account_name_type account = args[0].as< account_name_type >();
+	   vector<api_stake_pending_object> result;
+	   auto stakes = _database_api->find_pending_stake({account}).pending_stakes;
+	   for (auto& s : stakes) {
+		   result.push_back(api_stake_pending_object(s));
+	   }
+	   return result;
+   }
+   DEFINE_API_IMPL( condenser_api_impl, list_pending_stakes )
+   {
+	   CHECK_ARG_SIZE( 1 )
+	   
+	   uint32_t limit = args[0].as< uint32_t >();
+	   vector<api_stake_pending_object> result;
+	   auto stakes = _database_api->list_pending_stakes({limit}).pending_stakes;
+	   for (auto& s : stakes) {
+		   result.push_back(api_stake_pending_object(s));
+	   }
+	   return result;
+   }
+   ///~~~~~CLC~~~~~}
    DEFINE_API_IMPL( condenser_api_impl, get_content_replies )
    {
       CHECK_ARG_SIZE( 2 )
@@ -2286,9 +2313,11 @@ DEFINE_READ_APIS( condenser_api,
    (get_active_votes)
    (get_account_votes)
    (get_content)
-   (get_content_count)//~~~~~CLC~~~~~
-   (list_comments)//~~~~~CLC~~~~~
-   (get_content_parent_series)//~~~~~CLC~~~~~
+   (get_content_count)///~~~~~CLC~~~~~
+   (list_comments)///~~~~~CLC~~~~~
+   (get_content_parent_series)///~~~~~CLC~~~~~
+   (list_pending_stakes)///~~~~~CLC~~~~~
+   (find_pending_stake)///~~~~~CLC~~~~~
    (get_content_replies)
    (get_tags_used_by_author)
    (get_post_discussions_by_payout)
