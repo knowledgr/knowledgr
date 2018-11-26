@@ -76,6 +76,7 @@ enum object_type
    account_rewards_balance_object_type,
    nai_pool_object_type
 #endif
+   stake_pending_object_type///~~~~~CLC~~~~~
 };
 
 class dynamic_global_property_object;
@@ -117,6 +118,8 @@ class account_regular_balance_object;
 class account_rewards_balance_object;
 class nai_pool_object;
 #endif
+
+class stake_pending_object; ///~~~~~CLC~~~~~
 
 typedef oid< dynamic_global_property_object         > dynamic_global_property_id_type;
 typedef oid< account_object                         > account_id_type;
@@ -329,6 +332,7 @@ FC_REFLECT_ENUM( colab::chain::object_type,
                  (account_rewards_balance_object_type)
                  (nai_pool_object_type)
 #endif
+				 (stake_pending_object_type) ///~~~~~CLC~~~~~
                )
 
 #ifndef ENABLE_STD_ALLOCATOR

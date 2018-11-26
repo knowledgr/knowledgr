@@ -11,7 +11,7 @@
 namespace colab { namespace protocol {
 
    void validate_auth_size( const authority& a );
-   //~~~~~CLC~~~~~{
+   ///~~~~~CLC~~~~~{
    struct account_expertise_update_operation : public base_operation
    {
 	   account_name_type             admin;
@@ -30,7 +30,16 @@ namespace colab { namespace protocol {
 	   void validate()const;
 	   void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(admin); }
    };
-   //~~~~~CLC~~~~~}
+
+   struct stake_request_operation : public base_operation
+   {
+	   account_name_type account;
+	   asset             amount;
+
+	   void              validate()const;
+	   void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(from); }
+   };
+   ///~~~~~CLC~~~~~}
 
    struct account_create_operation : public base_operation
    {
@@ -1106,8 +1115,8 @@ FC_REFLECT_TYPENAME( colab::protocol::pow2_work )
 FC_REFLECT( colab::protocol::pow_operation, (worker_account)(block_id)(nonce)(work)(props) )
 FC_REFLECT( colab::protocol::pow2_operation, (work)(new_owner_key)(props) )
 
-FC_REFLECT( colab::protocol::citation, (author)(permlink) ) //~~~~~NLG~~~~~
-//~~~~~CLC~~~~~{
+FC_REFLECT( colab::protocol::citation, (author)(permlink) ) ///~~~~~CLC~~~~~
+///~~~~~CLC~~~~~{
 FC_REFLECT( colab::protocol::account_expertise_update_operation,
             (admin)
             (account)
@@ -1116,7 +1125,10 @@ FC_REFLECT( colab::protocol::account_expertise_update_operation,
 FC_REFLECT( colab::protocol::account_admin_update_operation,
             (admin)
             (account) )
-//~~~~~CLC~~~~~}
+FC_REFLECT( colab::protocol::stake_request_operation,
+            (account)
+            (amount) )
+///~~~~~CLC~~~~~}
 
 FC_REFLECT( colab::protocol::account_create_operation,
             (fee)

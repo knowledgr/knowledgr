@@ -1213,6 +1213,46 @@ void escrow_release_evaluator::do_apply( const escrow_release_operation& o )
    FC_CAPTURE_AND_RETHROW( (o) )
 }
 
+///~~~~~CLC~~~~~{
+void stake_request_evaluator::do_apply( const stake_request_operation& o )
+{
+	std::cerr<<"~~~ [stake_request_evaluator::do_apply()] - \n";
+	
+	const auto& account = _db.get_account( o.account );
+	const auto& sk_idx = _db.get_index< stake_pending_index >().indices().get< by_account >();
+
+	FC_ASSERT( o.amount.amount != 0 && o.amount.symbol == CLC_SYMBOL, "Invalid staking amount" );
+	
+	bool is_neg = o.amount.amount < 0;
+	asset abs_amount = (is_neg) ? -o.amount : o.amount;
+
+	auto itr = sk_idx.find( o.account );
+
+	FC_ASSERT( itr == sk_idx.end(), "You can make new request after processing of pending stake." );
+	if (itr == sk_idx.end()) {
+		if (is_neg) {
+			FC_ASSERT( account.stake_balance >= abs_amount, "You requested too big amount to unstake" );
+		} else {
+			FC_ASSERT( account.balance >= abs_amount, "You requested too big amount to stake" );
+		}
+		const auto& new_stake = _db.create< stake_pending_object >( [&]( stake_pending_object& spo )
+		{
+			spo.account = o.account;
+			spo.amount = o.amount;
+			spo.created = _db.head_block_time();
+		});
+		_db.modify( account, [&]( account_object& a )
+		{
+			if (is_neg) {
+				a.stake_balance -= abs_amount;
+			} else {
+				a.balance -= abs_amount;
+			}			
+		});
+	}	
+}
+///~~~~~CLC~~~~~}
+
 void transfer_evaluator::do_apply( const transfer_operation& o )
 {
    FC_ASSERT( _db.get_balance( o.from, o.amount.symbol ) >= o.amount, "Account does not have sufficient funds for transfer." );

@@ -147,11 +147,12 @@ struct api_account_object
       last_vote_time( a.last_vote_time ),
       post_bandwidth( a.post_bandwidth ),
       pending_claimed_accounts( a.pending_claimed_accounts ),
-	  member_of(a.member_of)//~~~~~CLC~~~~~
+	  member_of(a.member_of), ///~~~~~CLC~~~~~
+	  stake_balance(a.stake_balance) ///~~~~~CLC~~~~~
    {
       //voting_power = _compute_voting_power(a);//////~~~~~CLC~~~~~
 	  proxied_vsf_votes.insert( proxied_vsf_votes.end(), a.proxied_vsf_votes.begin(), a.proxied_vsf_votes.end() );
-	  for (auto& _expertise: a.expertises) {//~~~~~CLC~~~~~
+	  for (auto& _expertise: a.expertises) {///~~~~~CLC~~~~~
 		  expertises.push_back(_expertise);
 	  }
    }
@@ -228,8 +229,9 @@ struct api_account_object
    uint32_t          post_bandwidth = 0;
 
    share_type        pending_claimed_accounts = 0;
-   vector<std::string> expertises; //~~~~~CLC~~~~~
-   account_object::account_member_of member_of; //~~~~~CLC~~~~~
+   vector<std::string>					expertises; ///~~~~~CLC~~~~~
+   account_object::account_member_of	member_of; ///~~~~~CLC~~~~~
+   asset								stake_balance; ///~~~~~CLC~~~~~
 };
 
 struct extended_account : public api_account_object
@@ -294,13 +296,13 @@ struct api_comment_object
       allow_replies( c.allow_replies ),
       allow_votes( c.allow_votes ),
       allow_curation_rewards( c.allow_curation_rewards ),
-	  type(c.type)//~~~~~CLC~~~~~
+	  type(c.type)///~~~~~CLC~~~~~
    {
       for( auto& route : c.beneficiaries )
       {
          beneficiaries.push_back( route );
 	  }
-	  for (auto& _id : c.citations) { //~~~~~CLC~~~~~
+	  for (auto& _id : c.citations) { ///~~~~~CLC~~~~~
 		  citations.push_back(_id);
 	  }
    }
@@ -1171,8 +1173,9 @@ FC_REFLECT( colab::plugins::condenser_api::api_account_object,
              (proxied_vsf_votes)(witnesses_voted_for)
              (last_post)(last_root_post)(last_vote_time)
              (post_bandwidth)(pending_claimed_accounts)
-			 (expertises)//~~~~~CLC~~~~~
-			 (member_of)//~~~~~CLC~~~~~
+			 (expertises)///~~~~~CLC~~~~~
+			 (member_of)///~~~~~CLC~~~~~
+			 (stake_balance)///~~~~~CLC~~~~~
           )
 
 FC_REFLECT_DERIVED( colab::plugins::condenser_api::extended_account, (colab::plugins::condenser_api::api_account_object),

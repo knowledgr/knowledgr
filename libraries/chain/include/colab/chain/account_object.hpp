@@ -26,8 +26,7 @@ namespace colab { namespace chain {
 
       public:
 		  //~~~~~CLC~~~~~{
-		  enum account_member_of
-		  {
+		  enum account_member_of {
 			  user = 0,
 			  admin = 1,
 		  };
@@ -120,11 +119,13 @@ namespace colab { namespace chain {
          uint32_t          post_bandwidth = 0;
 
          share_type        pending_claimed_accounts = 0;
-
-		 using t_expertises = t_vector< protocol::expertise >; //~~~~~CLC~~~~~
-		 t_expertises expertises; //~~~~~CLC~~~~~
-		 account_member_of member_of = user; //~~~~~CLC~~~~~
+		 
 		 ///~~~~~CLC~~~~~{
+		 using t_expertises =	t_vector< protocol::expertise >;
+		 t_expertises			expertises;
+		 account_member_of		member_of = user;
+		 asset					stake_balance = asset( 0, CLC_SYMBOL );
+
 		 static uint32_t expertise_rate(const account_object& account, protocol::expertise_category _category) { 
 			 for (auto & _expertise : account.expertises) {
 				 if (_expertise.category == _category) {
@@ -445,8 +446,9 @@ FC_REFLECT( colab::chain::account_object,
              (proxied_vsf_votes)(witnesses_voted_for)
              (last_post)(last_root_post)(last_vote_time)(post_bandwidth)
              (pending_claimed_accounts)
-			 (expertises)//~~~~~CLC~~~~~
-			 (member_of)//~~~~~CLC~~~~~
+			 (expertises)///~~~~~CLC~~~~~
+			 (member_of)///~~~~~CLC~~~~~
+			 (stake_balance)///~~~~~CLC~~~~~
           )
 
 CHAINBASE_SET_INDEX_TYPE( colab::chain::account_object, colab::chain::account_index )
