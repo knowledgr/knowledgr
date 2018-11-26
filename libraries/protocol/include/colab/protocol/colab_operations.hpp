@@ -37,7 +37,7 @@ namespace colab { namespace protocol {
 	   asset             amount;
 
 	   void              validate()const;
-	   void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(from); }
+	   void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(account); }
    };
    ///~~~~~CLC~~~~~}
 

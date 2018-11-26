@@ -31,7 +31,6 @@ namespace colab { namespace protocol {
    {	  
 	   try {
 		   validate_account_name( account );
-		   validate_account_name( to );
 		   FC_ASSERT( amount.symbol != CLC_SYMBOL, "Unknown token symbol." );
 		   FC_ASSERT( amount.amount != 0, "0 Token staking is not allowed." );
 		} FC_CAPTURE_AND_RETHROW( (*this) ) 

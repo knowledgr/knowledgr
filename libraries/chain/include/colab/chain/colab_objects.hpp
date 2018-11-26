@@ -282,7 +282,7 @@ namespace colab { namespace chain {
    {
    public:
 	   template< typename Constructor, typename Allocator >
-	   reward_fund_object( Constructor&& c, allocator< Allocator > a )
+	   stake_pending_object( Constructor&& c, allocator< Allocator > a )
 	   {
 		   c( *this );
 	   }
@@ -483,7 +483,7 @@ namespace colab { namespace chain {
 	   indexed_by<
 		   ordered_unique< tag< by_id >, member< stake_pending_object, stake_pending_object::id_type, &stake_pending_object::id > >,
 		   ordered_unique< tag< by_account >, member< stake_pending_object, account_name_type, &stake_pending_object::account > >,
-		   ordered_unique< tag< by_created_befores>,
+		   ordered_unique< tag< by_created_before>,
 			   composite_key< stake_pending_object,
 					member< stake_pending_object, time_point_sec, &stake_pending_object::created >
 			   >,

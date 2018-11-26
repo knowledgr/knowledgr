@@ -1235,7 +1235,7 @@ void stake_request_evaluator::do_apply( const stake_request_operation& o )
 		} else {
 			FC_ASSERT( account.balance >= abs_amount, "You requested too big amount to stake" );
 		}
-		const auto& new_stake = _db.create< stake_pending_object >( [&]( stake_pending_object& spo )
+		_db.create< stake_pending_object >( [&]( stake_pending_object& spo )
 		{
 			spo.account = o.account;
 			spo.amount = o.amount;
