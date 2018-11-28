@@ -287,11 +287,16 @@ namespace colab { namespace chain {
 		   c( *this );
 	   }
 	   stake_pending_object() {}
+	   enum stake_type {
+		   staking,
+		   unstaking
+	   };
 
 	   stake_pending_id_type				id;
 	   account_name_type	account;
 	   asset				amount; /// if less than 0, it means unstake. if greater than 0, it means stake
 	   time_point_sec		created;
+	   stake_type			type;
    };
    ///~~~~~CLC~~~~~}
 
@@ -549,11 +554,13 @@ FC_REFLECT( colab::chain::reward_fund_object,
 CHAINBASE_SET_INDEX_TYPE( colab::chain::reward_fund_object, colab::chain::reward_fund_index )
 
 ///~~~~~CLC~~~~~{
+FC_REFLECT_ENUM( colab::chain::stake_pending_object::stake_type, (staking)(unstaking) )//~~~~~CLC~~~~~
 FC_REFLECT( colab::chain::stake_pending_object,
 			(id)
 			(account)
 			(amount)
 			(created)
+			(type)
 		)
 CHAINBASE_SET_INDEX_TYPE( colab::chain::stake_pending_object, colab::chain::stake_pending_index)
 ///~~~~~CLC~~~~~}

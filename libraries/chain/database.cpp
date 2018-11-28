@@ -2535,6 +2535,7 @@ void database::initialize_evaluators()
    _my->_evaluator_registry.register_evaluator< account_admin_update_evaluator			>();///~~~~~CLC~~~~~
    _my->_evaluator_registry.register_evaluator< account_expertise_update_evaluator      >();///~~~~~CLC~~~~~
    _my->_evaluator_registry.register_evaluator< stake_request_evaluator					>();///~~~~~CLC~~~~~
+   _my->_evaluator_registry.register_evaluator< stake_process_evaluator					>();///~~~~~CLC~~~~~
    _my->_evaluator_registry.register_evaluator< account_update_evaluator                 >();
    _my->_evaluator_registry.register_evaluator< witness_update_evaluator                 >();
    _my->_evaluator_registry.register_evaluator< account_witness_vote_evaluator           >();

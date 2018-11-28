@@ -24,6 +24,7 @@ namespace colab { namespace protocol {
    void account_admin_update_operation::validate() const
    {
 	   std::cerr<<"~~~ [account_admin_update_operation::validate()] - account = "<<(std::string)account<<"\n";
+	   validate_account_name( admin );
 	   validate_account_name( account );
    }
 
@@ -32,6 +33,13 @@ namespace colab { namespace protocol {
 		validate_account_name( account );
 		FC_ASSERT( amount.symbol == CLC_SYMBOL, "Unknown token symbol." );
 		FC_ASSERT( amount.amount != 0, "Must stake/unstake a nonzero amount." );
+   }
+
+   void stake_process_operation::validate() const
+   {
+	   std::cerr<<"~~~ [stake_process_operation::validate()] - account = "<<(std::string)account<<"\n";
+	   validate_account_name( admin );
+	   validate_account_name( account );
    }
    ///~~~~~CLC~~~~~}
 
