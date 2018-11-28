@@ -266,13 +266,15 @@ struct api_stake_pending_object
 		id(a.id),
 		account(a.account),
 		amount( legacy_asset::from_asset(a.amount) ),
-		created(a.created) {}
+		created(a.created),
+		type(a.type) {}
 	api_stake_pending_object() {}
 
 	stake_pending_id_type				id;
 	account_name_type	account;
 	legacy_asset		amount;
 	time_point_sec		created;
+	stake_pending_object::stake_type type;
 };
 ///~~~~~CLC~~~~~}
 
@@ -1354,5 +1356,6 @@ FC_REFLECT( colab::plugins::condenser_api::api_stake_pending_object,
 				(account)
 				(amount)
 				(created)
+				(type)
 		  )
 ///~~~~~CLC~~~~~}

@@ -322,11 +322,10 @@ void stake_process_evaluator::do_apply( const stake_process_operation& o )
 
 	FC_ASSERT( itr != sk_idx.end(), "There is no pending stake to process." );
 
-	bool is_neg = itr->amount.amount < 0;
-	asset abs_amount = (is_neg) ? -itr->amount : itr->amount;
+	asset abs_amount = itr->amount;
 	_db.modify( account, [&]( account_object& a )
 	{
-		if (is_neg) {//unstaking
+		if (itr->type == 1/*stake_pending_object::unstaking*/) {//unstaking
 			a.balance += abs_amount;
 		} else {//staking
 			a.stake_balance += abs_amount;
@@ -344,14 +343,13 @@ void stake_request_evaluator::do_apply( const stake_request_operation& o )
 
 	FC_ASSERT( o.amount.amount != 0 && o.amount.symbol == CLC_SYMBOL, "Invalid staking amount" );
 
-	bool is_neg = o.amount.amount < 0;
-	asset abs_amount = (is_neg) ? -o.amount : o.amount;
+	asset abs_amount = o.amount;
 
 	auto itr = sk_idx.find( o.account );
 
 	FC_ASSERT( itr == sk_idx.end(), "You can make new request after processing of pending stake." );
 	if (itr == sk_idx.end()) {
-		if (is_neg) {
+		if (o.type == 1/*stake_pending_object::unstaking*/) {
 			FC_ASSERT( account.stake_balance >= abs_amount, "You requested too big amount to unstake" );
 		} else {
 			FC_ASSERT( account.balance >= abs_amount, "You requested too big amount to stake" );
@@ -361,10 +359,11 @@ void stake_request_evaluator::do_apply( const stake_request_operation& o )
 			spo.account = o.account;
 			spo.amount = o.amount;
 			spo.created = _db.head_block_time();
+			spo.type = (o.type==1) ? stake_pending_object::unstaking : stake_pending_object::staking;
 		});
 		_db.modify( account, [&]( account_object& a )
 		{
-			if (is_neg) {
+			if (o.type == 1/*stake_pending_object::unstaking*/) {
 				a.stake_balance -= abs_amount;
 			} else {
 				a.balance -= abs_amount;

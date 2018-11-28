@@ -188,8 +188,9 @@ class wallet_api
 
 	  //~~~~~CLC~~~~~{
 	  /** Returns information about the given account.
-       *
-       * @param author the name of the account to provide information about
+	   *
+	   * @param author the name of the account to post the comment.
+	   * @param permlink the permlink of the comment.
        * @returns the public account data stored in the blockchain
        */
       condenser_api::discussion get_comment( string author, string permlink ) const;

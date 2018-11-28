@@ -35,6 +35,7 @@ namespace colab { namespace protocol {
    {
 	   account_name_type account;
 	   asset             amount;
+	   uint32_t type;
 
 	   void              validate()const;
 	   void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(account); }
@@ -1125,6 +1126,7 @@ FC_REFLECT( colab::protocol::pow_operation, (worker_account)(block_id)(nonce)(wo
 FC_REFLECT( colab::protocol::pow2_operation, (work)(new_owner_key)(props) )
 
 FC_REFLECT( colab::protocol::citation, (author)(permlink) ) ///~~~~~CLC~~~~~
+
 ///~~~~~CLC~~~~~{
 FC_REFLECT( colab::protocol::account_expertise_update_operation,
             (admin)
@@ -1137,7 +1139,8 @@ FC_REFLECT( colab::protocol::account_admin_update_operation,
 
 FC_REFLECT( colab::protocol::stake_request_operation,
             (account)
-            (amount) )
+            (amount) 
+			(type) )
 
 FC_REFLECT( colab::protocol::stake_process_operation,
 			(admin)

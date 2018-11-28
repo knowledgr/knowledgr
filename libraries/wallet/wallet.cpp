@@ -2564,6 +2564,7 @@ condenser_api::legacy_signed_transaction wallet_api::stake(
 	stake_request_operation op;
 	op.account = account;
 	op.amount = amount.to_asset();
+	op.type = 0;//staking;
 	signed_transaction tx;
 	tx.operations.push_back( op );
 	tx.validate();
@@ -2581,7 +2582,8 @@ condenser_api::legacy_signed_transaction wallet_api::unstake(
 
 	stake_request_operation op;
 	op.account = account;
-	op.amount = -amount.to_asset();
+	op.amount = amount.to_asset();
+	op.type = 1;//unstaking
 	signed_transaction tx;
 	tx.operations.push_back( op );
 	tx.validate();

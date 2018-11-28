@@ -161,18 +161,21 @@ namespace colab { namespace plugins { namespace condenser_api {
 	   legacy_stake_request_operation() {}
 	   legacy_stake_request_operation( const stake_request_operation& op ) :
 			account( op.account ),
-		   amount( op.amount ) {}
+		   amount( op.amount ),
+			type(op.type) {}
 
 	   operator stake_request_operation()const
 	   {
 		   stake_request_operation op;
 		   op.account = account;
 		   op.amount = amount;
+		   op.type = type;
 		   return op;
 	   }
 
 	   account_name_type             account;
 	   asset						amount;
+	   uint32_t						type;
    };
 
    struct legacy_stake_process_operation
@@ -1666,7 +1669,12 @@ FC_REFLECT( colab::plugins::condenser_api::legacy_account_admin_update_operation
 
 FC_REFLECT( colab::plugins::condenser_api::legacy_stake_request_operation,
             (account)
-            (amount) )
+			(amount)
+			(type) )
+
+FC_REFLECT( colab::plugins::condenser_api::legacy_stake_process_operation,
+			(admin)
+			(account) )
 ///~~~~~CLC~~~~~}
 
 FC_REFLECT( colab::plugins::condenser_api::legacy_account_create_operation,
