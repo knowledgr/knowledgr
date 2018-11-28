@@ -189,7 +189,7 @@ class wallet_api
 	  //~~~~~CLC~~~~~{
 	  /** Returns information about the given account.
        *
-       * @param account_name the name of the account to provide information about
+       * @param author the name of the account to provide information about
        * @returns the public account data stored in the blockchain
        */
       condenser_api::discussion get_comment( string author, string permlink ) const;
@@ -216,7 +216,7 @@ class wallet_api
 	  vector<string>			list_comment_replies(string author, string permlink) const;
 	 /** Lists all comments registered in the blockchain.
        *
-       * @param limit the maximum number of accounts to return (max: -)
+       * @param limits the maximum number of accounts to return (max: -)
        * @returns a list of comment urls
        */
 	  vector<string>			list_comments(uint32_t limits) const;
@@ -543,7 +543,7 @@ class wallet_api
 		  string admin,
          string account,
          bool broadcast )const;
-
+	  
 	  /**
        * This method updates the expertises of an existing account.
        *
@@ -553,10 +553,23 @@ class wallet_api
        * @param broadcast true if you wish to broadcast the transaction
        */
       condenser_api::legacy_signed_transaction update_account_expertise(
-		  string admin,
+		 string admin,
          string account,
 		 vector<std::string> expertises,
          bool broadcast )const;
+
+	  /**
+       * Process the pending stakes.
+       *
+       * @param admin The name of the admin
+       * @param account The name of the account to request the stake
+       * @param broadcast true if you wish to broadcast the transaction
+       */
+      condenser_api::legacy_signed_transaction process_pending_stake(
+		 string admin,
+         string account,
+         bool broadcast )const;
+
 	  ///~~~~~CLC~~~~~}
 
       /**
@@ -1283,6 +1296,7 @@ FC_API( colab::wallet::wallet_api,
 		(update_account_expertise)///~~~~~CLC~~~~~
 		(stake)///~~~~~CLC~~~~~
 		(unstake)///~~~~~CLC~~~~~
+		(process_pending_stake)///~~~~~CLC~~~~~
         (update_account)
         (update_account_auth_key)
         (update_account_auth_account)

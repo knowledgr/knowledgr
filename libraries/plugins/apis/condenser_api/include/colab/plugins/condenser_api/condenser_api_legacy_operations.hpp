@@ -107,6 +107,7 @@ namespace colab { namespace plugins { namespace condenser_api {
       int32_t        account_subsidy_budget = COLAB_DEFAULT_ACCOUNT_SUBSIDY_BUDGET;
       uint32_t       account_subsidy_decay = COLAB_DEFAULT_ACCOUNT_SUBSIDY_DECAY;
    };
+
    ///~~~~~CLC~~~~~{
    struct legacy_account_expertise_update_operation
    {
@@ -172,6 +173,26 @@ namespace colab { namespace plugins { namespace condenser_api {
 
 	   account_name_type             account;
 	   asset						amount;
+   };
+
+   struct legacy_stake_process_operation
+   {
+	   legacy_stake_process_operation() {}
+	   legacy_stake_process_operation( const stake_process_operation& op ) :
+			admin( op.admin ),
+		    account( op.account ) 
+			{}
+
+	   operator stake_process_operation()const
+	   {
+		   stake_process_operation op;
+		   op.admin = admin;
+		   op.account = account;
+		   return op;
+	   }
+
+	   account_name_type             admin;
+	   account_name_type             account;
    };
    ///~~~~~CLC~~~~~}
 
@@ -1070,6 +1091,7 @@ namespace colab { namespace plugins { namespace condenser_api {
 			legacy_account_admin_update_operation,///~~~~~CLC~~~~~
 			legacy_account_expertise_update_operation,///~~~~~CLC~~~~~
 			legacy_stake_request_operation,///~~~~~CLC~~~~~
+			legacy_stake_process_operation,///~~~~~CLC~~~~~
             legacy_account_update_operation,
             legacy_witness_update_operation,
             legacy_account_witness_vote_operation,
@@ -1214,6 +1236,12 @@ namespace colab { namespace plugins { namespace condenser_api {
 	  bool operator()( const stake_request_operation& op )const
 	  {
 		  l_op = legacy_stake_request_operation( op );
+		  return true;
+	  }
+
+	  bool operator()( const stake_process_operation& op )const
+	  {
+		  l_op = legacy_stake_process_operation( op );
 		  return true;
 	  }
 	  ///~~~~~CLC~~~~~}
@@ -1423,6 +1451,11 @@ struct convert_from_legacy_operation_visitor
    operation operator()( const legacy_stake_request_operation& op )const
    {
 	   return operation( stake_request_operation( op ) );
+   }
+
+   operation operator()( const legacy_stake_process_operation& op )const
+   {
+	   return operation( stake_process_operation( op ) );
    }
    //~~~~~CLC~~~~~}
 

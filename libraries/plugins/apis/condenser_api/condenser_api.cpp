@@ -298,6 +298,7 @@ namespace detail
 						case operation::tag<account_admin_update_operation>::value:///~~~~~CLC~~~~~
 						case operation::tag<account_expertise_update_operation>::value:///~~~~~CLC~~~~~
 						case operation::tag<stake_request_operation>::value:///~~~~~CLC~~~~~
+						case operation::tag<stake_process_operation>::value:///~~~~~CLC~~~~~
                         case operation::tag<witness_update_operation>::value:
                         case operation::tag<pow_operation>::value:
                         case operation::tag<custom_operation>::value:

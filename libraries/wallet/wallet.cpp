@@ -2588,6 +2588,28 @@ condenser_api::legacy_signed_transaction wallet_api::unstake(
 
 	return my->sign_transaction( tx, broadcast );
 } FC_CAPTURE_AND_RETHROW( (account)(amount)(broadcast) ) }
+
+condenser_api::legacy_signed_transaction wallet_api::process_pending_stake(
+	string admin,
+	string account,
+	bool broadcast )const
+{
+	try
+	{
+		FC_ASSERT( !is_locked() );
+
+		stake_process_operation op;
+		op.admin = admin;
+		op.account = account;
+		signed_transaction tx;
+		tx.operations.push_back(op);
+		tx.validate();
+
+		return my->sign_transaction( tx, broadcast );
+	}
+	FC_CAPTURE_AND_RETHROW( (admin)(account)(broadcast) )
+}
+
 ///~~~~~CLC~~~~~}
 
 condenser_api::legacy_signed_transaction wallet_api::vote(

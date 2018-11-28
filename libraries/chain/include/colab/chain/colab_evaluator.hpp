@@ -12,6 +12,7 @@ COLAB_DEFINE_EVALUATOR( account_create )
 COLAB_DEFINE_EVALUATOR( account_admin_update ) ///~~~~~CLC~~~~~
 COLAB_DEFINE_EVALUATOR( account_expertise_update ) ///~~~~~CLC~~~~~
 COLAB_DEFINE_EVALUATOR( stake_request ) ///~~~~~CLC~~~~~
+COLAB_DEFINE_EVALUATOR( stake_process ) ///~~~~~CLC~~~~~
 COLAB_DEFINE_EVALUATOR( account_create_with_delegation )
 COLAB_DEFINE_EVALUATOR( account_update )
 COLAB_DEFINE_EVALUATOR( transfer )

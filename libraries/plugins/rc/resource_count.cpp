@@ -214,6 +214,11 @@ struct count_operation_visitor
    {
 	   execution_time_count += _e.stake_request_operation_exec_time;
    }
+
+   void operator()( const stake_process_operation& op )const
+   {
+	   execution_time_count += _e.stake_process_operation_exec_time;
+   }
    ///~~~~~CLC~~~~~}
 
    void operator()( const account_update_operation& )const
