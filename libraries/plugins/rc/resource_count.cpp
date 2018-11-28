@@ -388,6 +388,7 @@ struct count_operation_visitor
    void operator()( const fill_order_operation& ) const {}
    void operator()( const shutdown_witness_operation& ) const {}
    void operator()( const fill_transfer_from_savings_operation& ) const {}
+   void operator()( const stake_process_time_operation& ) const {}///~~~~~CLC~~~~~
    void operator()( const hardfork_operation& ) const {}
    void operator()( const comment_payout_update_operation& ) const {}
    void operator()( const return_vesting_delegation_operation& ) const {}

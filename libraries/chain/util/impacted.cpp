@@ -260,7 +260,12 @@ struct get_impacted_account_visitor
       _impacted.insert( op.from );
       _impacted.insert( op.to );
    }
-
+   ///~~~~~CLC~~~~~{
+   void operator()( const stake_process_time_operation& op )
+   {
+	   _impacted.insert( op.account );
+   }
+   ///~~~~~CLC~~~~~}
    void operator()( const return_vesting_delegation_operation& op )
    {
       _impacted.insert( op.account );

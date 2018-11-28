@@ -93,6 +93,7 @@ namespace colab { namespace protocol {
             fill_order_operation,
             shutdown_witness_operation,
             fill_transfer_from_savings_operation,
+			stake_process_time_operation,///~~~~~CLC~~~~~
             hardfork_operation,
             comment_payout_update_operation,
             return_vesting_delegation_operation,

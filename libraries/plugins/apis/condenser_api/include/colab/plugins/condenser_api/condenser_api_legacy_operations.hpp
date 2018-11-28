@@ -984,6 +984,29 @@ namespace colab { namespace plugins { namespace condenser_api {
       string            memo;
    };
 
+   ///~~~~~CLC~~~~~}
+   struct legacy_stake_process_time_operation
+   {
+	   legacy_stake_process_time_operation() {}
+	   legacy_stake_process_time_operation( const stake_process_time_operation& op ) :
+		   account(op.account), amount(op.amount), type(op.type), created(op.created) {}
+
+	   operator stake_process_time_operation() const
+	   {
+		   stake_process_time_operation op;
+		   op.account = account;
+		   op.amount = amount;
+		   op.type = type;
+		   op.created = created;
+		   return op;
+	   }
+	   account_name_type             account;
+	   asset             amount;
+	   uint32_t          type;///0-stake, 1-unstake
+	   time_point_sec    created;
+   };
+   ///~~~~~CLC~~~~~}
+
    struct legacy_return_vesting_delegation_operation
    {
       legacy_return_vesting_delegation_operation() {}
@@ -1138,6 +1161,7 @@ namespace colab { namespace plugins { namespace condenser_api {
             legacy_fill_order_operation,
             legacy_shutdown_witness_operation,
             legacy_fill_transfer_from_savings_operation,
+			legacy_stake_process_time_operation, ///~~~~~CLC~~~~~
             legacy_hardfork_operation,
             legacy_comment_payout_update_operation,
             legacy_return_vesting_delegation_operation,
@@ -1369,6 +1393,14 @@ namespace colab { namespace plugins { namespace condenser_api {
          return true;
       }
 
+	  ///~~~~~CLC~~~~~{
+	  bool operator()( const stake_process_time_operation& op )const
+	  {
+		  l_op = legacy_stake_process_time_operation( op );
+		  return true;
+	  }
+	  ///~~~~~CLC~~~~~}
+
       bool operator()( const return_vesting_delegation_operation& op )const
       {
          l_op = legacy_return_vesting_delegation_operation( op );
@@ -1562,6 +1594,13 @@ struct convert_from_legacy_operation_visitor
       return operation( fill_transfer_from_savings_operation( op ) );
    }
 
+///~~~~~CLC~~~~~{
+   operation operator()( const legacy_stake_process_time_operation& op )const
+   {
+	   return operation( stake_process_time_operation( op ) );
+   }
+///~~~~~CLC~~~~~}
+
    operation operator()( const legacy_return_vesting_delegation_operation& op )const
    {
       return operation( return_vesting_delegation_operation( op ) );
@@ -1720,6 +1759,7 @@ FC_REFLECT( colab::plugins::condenser_api::legacy_interest_operation, (owner)(in
 FC_REFLECT( colab::plugins::condenser_api::legacy_fill_vesting_withdraw_operation, (from_account)(to_account)(withdrawn)(deposited) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_fill_order_operation, (current_owner)(current_orderid)(current_pays)(open_owner)(open_orderid)(open_pays) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_fill_transfer_from_savings_operation, (from)(to)(amount)(request_id)(memo) )
+FC_REFLECT( colab::plugins::condenser_api::legacy_stake_process_time_operation, (account)(amount)(type)(created) )///~~~~~CLC~~~~~
 FC_REFLECT( colab::plugins::condenser_api::legacy_return_vesting_delegation_operation, (account)(vesting_shares) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_comment_benefactor_reward_operation, (benefactor)(author)(permlink)(sbd_payout)(clc_payout)(vesting_payout) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_producer_reward_operation, (producer)(vesting_shares) )
