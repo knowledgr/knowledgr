@@ -30,6 +30,7 @@ namespace colab { namespace protocol {
 			account_admin_update_operation,///~~~~~CLC~~~~~
 			account_expertise_update_operation,///~~~~~CLC~~~~~
 			stake_request_operation,///~~~~~CLC~~~~~
+			stake_process_operation,///~~~~~CLC~~~~~
             account_update_operation,
 
             witness_update_operation,
@@ -92,6 +93,7 @@ namespace colab { namespace protocol {
             fill_order_operation,
             shutdown_witness_operation,
             fill_transfer_from_savings_operation,
+			stake_process_time_operation,///~~~~~CLC~~~~~
             hardfork_operation,
             comment_payout_update_operation,
             return_vesting_delegation_operation,

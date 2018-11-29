@@ -128,6 +128,20 @@ namespace colab { namespace protocol {
       string            memo;
    };
 
+   ///~~~~~CLC~~~~~}
+   struct stake_process_time_operation : public virtual_operation
+   {
+	   stake_process_time_operation() {}
+	   stake_process_time_operation( const account_name_type& t, const asset& a, const uint32_t r, const time_point_sec& m )
+		   : account(t), amount(a), type(r), created(m) {}
+
+	   account_name_type             account;
+	   asset             amount;
+	   uint32_t          type;///0-stake, 1-unstake
+	   time_point_sec    created;
+   };
+   ///~~~~~CLC~~~~~}
+
    struct hardfork_operation : public virtual_operation
    {
       hardfork_operation() {}
@@ -195,6 +209,7 @@ FC_REFLECT( colab::protocol::fill_vesting_withdraw_operation, (from_account)(to_
 FC_REFLECT( colab::protocol::shutdown_witness_operation, (owner) )
 FC_REFLECT( colab::protocol::fill_order_operation, (current_owner)(current_orderid)(current_pays)(open_owner)(open_orderid)(open_pays) )
 FC_REFLECT( colab::protocol::fill_transfer_from_savings_operation, (from)(to)(amount)(request_id)(memo) )
+FC_REFLECT( colab::protocol::stake_process_time_operation, (account)(amount)(type)(created) )///~~~~~CLC~~~~~
 FC_REFLECT( colab::protocol::hardfork_operation, (hardfork_id) )
 FC_REFLECT( colab::protocol::comment_payout_update_operation, (author)(permlink) )
 FC_REFLECT( colab::protocol::return_vesting_delegation_operation, (account)(vesting_shares) )

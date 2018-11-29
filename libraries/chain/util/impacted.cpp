@@ -48,7 +48,14 @@ struct get_impacted_account_visitor
    {
 	   _impacted.insert( op.account);
    }
+
+   void operator()( const stake_process_operation& op )
+   {
+	   _impacted.insert( op.admin );
+	   _impacted.insert( op.account);
+   }
    ///~~~~~CLC~~~~~}
+
    void operator()( const account_create_with_delegation_operation& op )
    {
       _impacted.insert( op.new_account_name );
@@ -253,7 +260,12 @@ struct get_impacted_account_visitor
       _impacted.insert( op.from );
       _impacted.insert( op.to );
    }
-
+   ///~~~~~CLC~~~~~{
+   void operator()( const stake_process_time_operation& op )
+   {
+	   _impacted.insert( op.account );
+   }
+   ///~~~~~CLC~~~~~}
    void operator()( const return_vesting_delegation_operation& op )
    {
       _impacted.insert( op.account );

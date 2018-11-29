@@ -391,6 +391,7 @@ namespace colab { namespace chain {
 #ifdef COLAB_ENABLE_SMT
          void process_smt_objects();
 #endif
+		 void process_pending_stakes();///~~~~~CLC~~~~~
          void account_recovery_processing();
          void expire_escrow_ratification();
          void process_decline_voting_rights();
