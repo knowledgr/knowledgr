@@ -27,7 +27,7 @@ namespace colab { namespace protocol {
          :curator(c), reward(r), comment_author(a), comment_permlink(p) {}
 
       account_name_type curator;
-      asset             reward;
+      asset             reward; /// Reward by CLC Token
       account_name_type comment_author;
       string            comment_permlink;
    };
