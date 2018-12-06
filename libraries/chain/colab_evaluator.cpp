@@ -1631,7 +1631,7 @@ void colab_vote_evaluator( const vote_operation& o, database& _db )
 
    std::cerr<<"~~~ [colab_vote_evaluator()] - voter_power = "<<voter_power<<"\n";
 
-   int64_t abs_rshares = used_mana.to_uint64() * voter_power / COLAB_100_PERCENT;
+   int64_t abs_rshares = used_mana.to_uint64() * voter_power;// / COLAB_100_PERCENT;
 
    std::cerr<<"~~~ [colab_vote_evaluator()] - abs_rshares = "<<abs_rshares<<"\n";
 
