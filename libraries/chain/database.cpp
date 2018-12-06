@@ -1,4 +1,4 @@
-
+﻿
 #include <colab/protocol/colab_operations.hpp>
 
 #include <colab/chain/block_summary_object.hpp>
@@ -1765,6 +1765,10 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
 {
    try
    {
+	   std::cerr<<"~~~ [database::cashout_comment_helper()] - comment->author = "<<(std::string)comment.author<<"\n";
+	   std::cerr<<"~~~ [database::cashout_comment_helper()] - comment->permlink = "<<to_string(comment.permlink)<<"\n";
+	   std::cerr<<"~~~ [database::cashout_comment_helper()] - forward_curation_remainder = "<<forward_curation_remainder<<"\n";
+
       share_type claimed_reward = 0;
 
       if( comment.net_rshares > 0 )
@@ -1777,14 +1781,27 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
             ctx.reward_curve = rf.author_reward_curve;
             ctx.content_constant = rf.content_constant;
          }
+		 
+		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.rshares = "<<ctx.rshares.value<<"\n";
+		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.reward_weight = "<<ctx.reward_weight<<"\n";
+		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.max_sbd = "<<ctx.max_sbd.amount.value<<"\n";
+		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.total_reward_shares2 = "<<(std::string)ctx.total_reward_shares2<<"\n";
+		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.total_reward_fund_colab = "<<ctx.total_reward_fund_colab.amount.value<<"\n";
+		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.current_clc_price.base = "<<ctx.current_clc_price.base.amount.value<<"\n";
+		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.current_clc_price.quote = "<<ctx.current_clc_price.quote.amount.value<<"\n";
+		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.reward_curve = "<<(int)ctx.reward_curve<<"\n";
 
-         const share_type reward = util::get_rshare_reward( ctx );
+		 const share_type reward = util::get_rshare_reward( ctx );
+		 std::cerr<<"~~~ [database::cashout_comment_helper()] - reward = "<<reward.value<<"\n";
+
          uint128_t reward_tokens = uint128_t( reward.value );
 
          if( reward_tokens > 0 )
          {
             share_type curation_tokens = ( ( reward_tokens * get_curation_rewards_percent( comment ) ) / COLAB_100_PERCENT ).to_uint64();
-            share_type author_tokens = reward_tokens.to_uint64() - curation_tokens;
+			share_type author_tokens = reward_tokens.to_uint64() - curation_tokens;
+			std::cerr<<"~~~ [database::cashout_comment_helper()] - curation_tokens = "<<curation_tokens.value<<"\n";
+			std::cerr<<"~~~ [database::cashout_comment_helper()] - author_tokens = "<<author_tokens.value<<"\n";
 
             share_type curation_remainder = pay_curators( comment, curation_tokens );
 
@@ -1923,12 +1940,17 @@ void database::process_comment_cashout()
    /// don't allow any content to get paid out until the website is ready to launch
    /// and people have had a week to start posting.  The first cashout will be the biggest because it
    /// will represent 2+ months of rewards.
+
+	std::cerr<<"~~~ [database::process_comment_cashout()] -\n";///~~~~~CLC~~~~~
    if( !has_hardfork( COLAB_FIRST_CASHOUT_TIME ) )
       return;
-
+   std::cerr<<"~~~ [database::process_comment_cashout()] --\n";
    const auto& gpo = get_dynamic_global_properties();
    util::comment_reward_context ctx;
    ctx.current_clc_price = get_feed_history().current_median_history;
+
+   std::cerr<<"~~~ [database::process_comment_cashout()] - current_median_history.current_clc_price.base = "<<ctx.current_clc_price.base.amount.value<<"\n";
+   std::cerr<<"~~~ [database::process_comment_cashout()] - current_median_history.current_clc_price.quote = "<<ctx.current_clc_price.quote.amount.value<<"\n";
 
    vector< reward_fund_context > funds;
    vector< share_type > colab_awarded;
@@ -1938,6 +1960,14 @@ void database::process_comment_cashout()
    for( auto itr = reward_idx.begin(); itr != reward_idx.end(); ++itr )
    {
       // Add all reward funds to the local cache and decay their recent rshares
+
+	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->id = "<<(size_t)itr->id._id<<"\n";///~~~~~CLC~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->name = "<<(std::string)itr->name<<"\n";///~~~~~CLC~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->reward_balance = "<<(int64_t)itr->reward_balance.amount.value<<"\n";///~~~~~CLC~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~CLC~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] - reward_fund_object->percent_curation_rewards = "<<itr->percent_curation_rewards<<"\n";///~~~~~CLC~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] - reward_fund_object->percent_content_rewards = "<<itr->percent_content_rewards<<"\n";///~~~~~CLC~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~CLC~~~~~
       modify( *itr, [&]( reward_fund_object& rfo )
       {
          fc::microseconds decay_time;
@@ -1950,6 +1980,7 @@ void database::process_comment_cashout()
          rfo.recent_claims -= ( rfo.recent_claims * ( head_block_time() - rfo.last_update ).to_seconds() ) / decay_time.to_seconds();
          rfo.last_update = head_block_time();
       });
+	  std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~CLC~~~~~
 
       reward_fund_context rf_ctx;
       rf_ctx.recent_claims = itr->recent_claims;
@@ -1969,10 +2000,24 @@ void database::process_comment_cashout()
    if( has_hardfork( COLAB_HARDFORK_0_17__771 ) )
    {
       while( current != cidx.end() && current->cashout_time <= head_block_time() )
-      {
+	  {
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->author = "<<(std::string)current->author<<"\n";///~~~~~CLC~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->permlink = "<<to_string(current->permlink)<<"\n";///~~~~~CLC~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->net_rshares = "<<(int64_t)current->net_rshares.value<<"\n";///~~~~~CLC~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->abs_rshares = "<<(int64_t)current->abs_rshares.value<<"\n";///~~~~~CLC~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->vote_rshares = "<<(int64_t)current->vote_rshares.value<<"\n";///~~~~~CLC~~~~~
+
          if( current->net_rshares > 0 )
          {
             const auto& rf = get_reward_fund( *current );
+
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->id = "<<(size_t)rf.id._id<<"\n";///~~~~~CLC~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->name = "<<(std::string)rf.name<<"\n";///~~~~~CLC~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->reward_balance = "<<(int64_t)rf.reward_balance.amount.value<<"\n";///~~~~~CLC~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->percent_curation_rewards = "<<rf.percent_curation_rewards<<"\n";///~~~~~CLC~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->percent_content_rewards = "<<rf.percent_content_rewards<<"\n";///~~~~~CLC~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->recent_claims = "<<(std::string)rf.recent_claims<<"\n";///~~~~~CLC~~~~~
+
             funds[ rf.id._id ].recent_claims += util::evaluate_reward_curve( current->net_rshares.value, rf.author_reward_curve, rf.content_constant );
          }
 
@@ -1998,7 +2043,9 @@ void database::process_comment_cashout()
    while( current != cidx.end() && current->cashout_time <= head_block_time() )
    {
       if( has_hardfork( COLAB_HARDFORK_0_17__771 ) )
-      {
+	  {
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->author = "<<(std::string)current->author<<"\n";///~~~~~CLC~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->permlink = "<<to_string(current->permlink)<<"\n";///~~~~~CLC~~~~~
          auto fund_id = get_reward_fund( *current ).id._id;
          ctx.total_reward_shares2 = funds[ fund_id ].recent_claims;
          ctx.total_reward_fund_colab = funds[ fund_id ].reward_balance;
@@ -2008,7 +2055,10 @@ void database::process_comment_cashout()
          funds[ fund_id ].colab_awarded += cashout_comment_helper( ctx, *current, forward_curation_remainder );
       }
       else
-      {
+	  {
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - --------------- -\n";///~~~~~CLC~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->author = "<<(std::string)current->author<<"\n";///~~~~~CLC~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->permlink = "<<to_string(current->permlink)<<"\n";///~~~~~CLC~~~~~
          auto itr = com_by_root.lower_bound( current->root_comment );
          while( itr != com_by_root.end() && itr->root_comment == current->root_comment )
          {
@@ -2059,9 +2109,9 @@ void database::process_funds()
 {
    const auto& props = get_dynamic_global_properties();
    const auto& wso = get_witness_schedule_object();
-
+   std::cerr<<"~~~ [database::process_funds()] --\n";
    if( has_hardfork( COLAB_HARDFORK_0_16__551) )
-   {
+   {///~~~~~CLC~~~~~ All is going with this case...
       /**
        * At block 7,000,000 have a 9.5% instantaneous inflation rate, decreasing to 0.95% at a rate of 0.01%
        * every 250k blocks. This narrowing will take approximately 20.5 years and will complete on block 220,750,000
@@ -2075,10 +2125,17 @@ void database::process_funds()
 
       auto new_colab = ( props.virtual_supply.amount * current_inflation_rate ) / ( int64_t( COLAB_100_PERCENT ) * int64_t( COLAB_BLOCKS_PER_YEAR ) );
       auto content_reward = ( new_colab * COLAB_CONTENT_REWARD_PERCENT ) / COLAB_100_PERCENT;
-      if( has_hardfork( COLAB_HARDFORK_0_17__774 ) )
-         content_reward = pay_reward_funds( content_reward ); /// 75% to content creator
+      if( has_hardfork( COLAB_HARDFORK_0_17__774 ) ) {
+		  std::cerr<<"~~~ [database::process_funds()] --> content_reward = "<<content_reward.value<<"\n";
+		  content_reward = pay_reward_funds( content_reward ); /// 75% to content creator
+	  }
       auto vesting_reward = ( new_colab * COLAB_VESTING_FUND_PERCENT ) / COLAB_100_PERCENT; /// 15% to vesting fund
       auto witness_reward = new_colab - content_reward - vesting_reward; /// Remaining 10% to witness pay
+
+	  std::cerr<<"~~~ [database::process_funds()] -- new_colab = "<<new_colab.value<<"\n";
+	  std::cerr<<"~~~ [database::process_funds()] -- content_reward = "<<content_reward.value<<"\n";
+	  std::cerr<<"~~~ [database::process_funds()] -- vesting_reward = "<<vesting_reward.value<<"\n";
+	  std::cerr<<"~~~ [database::process_funds()] -- witness_reward = "<<witness_reward.value<<"\n";
 
       const auto& cwit = get_witness( props.current_witness );
       witness_reward *= COLAB_MAX_WITNESSES;
@@ -2113,6 +2170,11 @@ void database::process_funds()
             pre_push_virtual_operation( vop );
          } );
       post_push_virtual_operation( vop );
+
+	  std::cerr<<"~~~ [database::process_funds()] -- new_colab = "<<new_colab.value<<"\n";
+	  std::cerr<<"~~~ [database::process_funds()] -- content_reward = "<<content_reward.value<<"\n";
+	  std::cerr<<"~~~ [database::process_funds()] -- vesting_reward = "<<vesting_reward.value<<"\n";
+	  std::cerr<<"~~~ [database::process_funds()] -- witness_reward = "<<witness_reward.value<<"\n";
    }
    else
    {
@@ -2121,6 +2183,10 @@ void database::process_funds()
       auto witness_pay = get_producer_reward();
       auto vesting_reward = content_reward + curate_reward + witness_pay;
 
+	  std::cerr<<"~~~ [database::process_funds()] - content_reward = "<<content_reward.amount.value<<" "<<content_reward.symbol.to_string()<<"\n";
+	  std::cerr<<"~~~ [database::process_funds()] - curate_reward = "<<curate_reward.amount.value<<" "<<curate_reward.symbol.to_string()<<"\n";
+	  std::cerr<<"~~~ [database::process_funds()] - witness_pay = "<<witness_pay.amount.value<<" "<<witness_pay.symbol.to_string()<<"\n";
+	  std::cerr<<"~~~ [database::process_funds()] - vesting_reward = "<<vesting_reward.amount.value<<" "<<vesting_reward.symbol.to_string()<<"\n";
       content_reward = content_reward + curate_reward;
 
       if( props.head_block_number < COLAB_START_VESTING_BLOCK )
@@ -2128,6 +2194,8 @@ void database::process_funds()
       else
          vesting_reward.amount.value *= 9;
 
+	  std::cerr<<"~~~ [database::process_funds()] - witness_pay = "<<witness_pay.amount.value<<" "<<witness_pay.symbol.to_string()<<"\n";
+	  std::cerr<<"~~~ [database::process_funds()] - vesting_reward = "<<vesting_reward.amount.value<<" "<<vesting_reward.symbol.to_string()<<"\n";
       modify( props, [&]( dynamic_global_property_object& p )
       {
           p.total_vesting_fund_clc += vesting_reward;
@@ -3113,12 +3181,14 @@ void database::_apply_block( const signed_block& next_block )
    clear_expired_delegations();
    update_witness_schedule(*this);
 
+#if 0///~~~~~CLC~~~~~{NO NEED for CoLab
    update_median_feed();
+#endif///~~~~~CLC~~~~~}
    update_virtual_supply();
 
    clear_null_account_balance();
-   process_funds();
-   process_conversions();
+   process_funds();///
+   process_conversions();/// WILL NOT NEED for CoLab
    process_comment_cashout();
    process_vesting_withdrawals();
    process_savings_withdraws();
@@ -4913,15 +4983,21 @@ void database::apply_hardfork( uint32_t hardfork )
 
             auto post_rf = create< reward_fund_object >( [&]( reward_fund_object& rfo )
             {
+
+				std::cerr<<"~~~ [database::apply_hardfork()] -- hardfork = "<<hardfork<<"\n";
+				std::cerr<<"~~~ [database::apply_hardfork()] -- gpo.total_reward_fund_colab = "<<gpo.total_reward_fund_colab.amount.value<<"\n";
+
                rfo.name = COLAB_POST_REWARD_FUND_NAME;
                rfo.last_update = head_block_time();
                rfo.content_constant = COLAB_CONTENT_CONSTANT_HF0;
                rfo.percent_curation_rewards = COLAB_1_PERCENT * 25;
                rfo.percent_content_rewards = COLAB_100_PERCENT;
-               rfo.reward_balance = gpo.total_reward_fund_colab;
+			   rfo.reward_balance = gpo.total_reward_fund_colab;
+#if 0///~~~~~CLC~~~~~{ NOT NEED for pioneer CoLab
 #ifndef IS_TEST_NET
                rfo.recent_claims = COLAB_HF_17_RECENT_CLAIMS;
 #endif
+#endif///~~~~~CLC~~~~~} NOT NEED for pioneer CoLab
                rfo.author_reward_curve = curve_id::quadratic;
                rfo.curation_reward_curve = curve_id::quadratic_curation;
             });
@@ -4988,14 +5064,18 @@ void database::apply_hardfork( uint32_t hardfork )
          {
             modify( get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
             {
-               gpo.vote_power_reserve_rate = COLAB_REDUCED_VOTE_POWER_RATE;
-            });
+				gpo.vote_power_reserve_rate = COLAB_REDUCED_VOTE_POWER_RATE;
+				std::cerr<<"~~~ [database::apply_hardfork()] -- hardfork = "<<hardfork<<"\n";
+				std::cerr<<"~~~ [database::apply_hardfork()] -- gpo.total_reward_fund_colab = "<<gpo.total_reward_fund_colab.amount.value<<"\n";
+			});
 
             modify( get< reward_fund_object, by_name >( COLAB_POST_REWARD_FUND_NAME ), [&]( reward_fund_object &rfo )
             {
+#if 0///~~~~~CLC~~~~~{ NOT NEED for pioneer CoLab
 #ifndef IS_TEST_NET
                rfo.recent_claims = COLAB_HF_19_RECENT_CLAIMS;
 #endif
+#endif///~~~~~CLC~~~~~} NOT NEED for pioneer CoLab
                rfo.author_reward_curve = curve_id::linear;
                rfo.curation_reward_curve = curve_id::square_root;
             });
