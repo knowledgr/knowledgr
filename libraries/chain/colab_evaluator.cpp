@@ -310,6 +310,68 @@ void initialize_account_object( account_object& acc, const account_name_type& na
 }
 
 ///~~~~~CLC~~~~~{
+void stake_process_evaluator::do_apply( const stake_process_operation& o )
+{
+	std::cerr<<"~~~ [stake_process_evaluator::do_apply()] - \n";
+	const auto& admin = _db.get_account(o.admin);
+	FC_ASSERT( admin.member_of == account_object::admin || (std::string)admin.name == COLAB_INIT_MINER_NAME, "Processing pending stakes can only be done by admin member." );
+	const auto& account = _db.get_account( o.account );
+
+	const auto& sk_idx = _db.get_index< stake_pending_index >().indices().get< by_account >();
+	auto itr = sk_idx.find( o.account );
+
+	FC_ASSERT( itr != sk_idx.end(), "There is no pending stake to process." );
+
+	asset abs_amount = itr->amount;
+	_db.modify( account, [&]( account_object& a )
+	{
+		if (itr->type == 1/*stake_pending_object::unstaking*/) {//unstaking
+			a.balance += abs_amount;
+		} else {//staking
+			a.stake_balance += abs_amount;
+		}			
+	});
+	_db.remove(*itr);
+}
+
+void stake_request_evaluator::do_apply( const stake_request_operation& o )
+{
+	std::cerr<<"~~~ [stake_request_evaluator::do_apply()] - \n";
+
+	const auto& account = _db.get_account( o.account );
+	const auto& sk_idx = _db.get_index< stake_pending_index >().indices().get< by_account >();
+
+	FC_ASSERT( o.amount.amount != 0 && o.amount.symbol == CLC_SYMBOL, "Invalid staking amount" );
+
+	asset abs_amount = o.amount;
+
+	auto itr = sk_idx.find( o.account );
+
+	FC_ASSERT( itr == sk_idx.end(), "You can make new request after processing of pending stake." );
+	if (itr == sk_idx.end()) {
+		if (o.type == 1/*stake_pending_object::unstaking*/) {
+			FC_ASSERT( account.stake_balance >= abs_amount, "You requested too big amount to unstake" );
+		} else {
+			FC_ASSERT( account.balance >= abs_amount, "You requested too big amount to stake" );
+		}
+		_db.create< stake_pending_object >( [&]( stake_pending_object& spo )
+		{
+			spo.account = o.account;
+			spo.amount = o.amount;
+			spo.created = _db.head_block_time();
+			spo.type = (o.type==1) ? stake_pending_object::unstaking : stake_pending_object::staking;
+		});
+		_db.modify( account, [&]( account_object& a )
+		{
+			if (o.type == 1/*stake_pending_object::unstaking*/) {
+				a.stake_balance -= abs_amount;
+			} else {
+				a.balance -= abs_amount;
+			}			
+		});
+	}
+}
+
 void account_admin_update_evaluator::do_apply( const account_admin_update_operation& o )
 {
 	const auto& admin = _db.get_account( o.admin);

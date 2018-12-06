@@ -233,7 +233,7 @@ condenser_api::discussion remote_node_api::get_content( account_name_type, strin
 {
    FC_ASSERT( false );
 }
-//~~~~~CLC~~~~~{
+///~~~~~CLC~~~~~{
 uint64_t remote_node_api::get_content_count()
 {
 	FC_ASSERT( false );
@@ -248,7 +248,17 @@ vector<condenser_api::discussion> remote_node_api::get_content_parent_series(acc
 {
 	FC_ASSERT( false );
 }
-//~~~~~CLC~~~~~}
+
+vector< condenser_api::api_stake_pending_object > remote_node_api::list_pending_stakes(uint32_t)
+{
+	FC_ASSERT( false );
+}
+
+vector< condenser_api::api_stake_pending_object > remote_node_api::find_pending_stake(account_name_type)
+{
+	FC_ASSERT( false );
+}
+///~~~~~CLC~~~~~}
 vector< condenser_api::discussion > remote_node_api::get_content_replies( account_name_type, string )
 {
    FC_ASSERT( false );

@@ -93,8 +93,10 @@ struct operation_exec_info
 {
    int64_t account_create_operation_exec_time                  =  57700;
    int64_t account_create_with_delegation_operation_exec_time  =  57700;
-   int64_t account_expertise_update_operation_exec_time       =  14000;//~~~~~CLC~~~~~
-   int64_t account_admin_update_operation_exec_time			    =  14000;//~~~~~CLC~~~~~
+   int64_t account_expertise_update_operation_exec_time       =  14000;///~~~~~CLC~~~~~
+   int64_t account_admin_update_operation_exec_time			    =  14000;///~~~~~CLC~~~~~
+   int64_t stake_request_operation_exec_time			    =  14000;///~~~~~CLC~~~~~
+   int64_t stake_process_operation_exec_time			    =  14000;///~~~~~CLC~~~~~
    int64_t account_update_operation_exec_time                  =  14000;
    int64_t account_witness_proxy_operation_exec_time           = 117000;
    int64_t account_witness_vote_operation_exec_time            =  23000;
@@ -221,4 +223,8 @@ FC_REFLECT( colab::plugins::rc::operation_exec_info,
    ( smt_set_runtime_parameters_operation_exec_time )
    ( smt_create_operation_exec_time )
 #endif
+	(account_expertise_update_operation_exec_time)///~~~~~CLC~~~~~
+	(account_admin_update_operation_exec_time)///~~~~~CLC~~~~~
+	(stake_request_operation_exec_time)///~~~~~CLC~~~~~
+	(stake_process_operation_exec_time)///~~~~~CLC~~~~~
    )

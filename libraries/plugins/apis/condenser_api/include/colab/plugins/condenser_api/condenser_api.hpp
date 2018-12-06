@@ -147,11 +147,12 @@ struct api_account_object
       last_vote_time( a.last_vote_time ),
       post_bandwidth( a.post_bandwidth ),
       pending_claimed_accounts( a.pending_claimed_accounts ),
-	  member_of(a.member_of)//~~~~~CLC~~~~~
+	  member_of(a.member_of), ///~~~~~CLC~~~~~
+	  stake_balance( legacy_asset::from_asset(a.stake_balance) ) ///~~~~~CLC~~~~~
    {
       //voting_power = _compute_voting_power(a);//////~~~~~CLC~~~~~
 	  proxied_vsf_votes.insert( proxied_vsf_votes.end(), a.proxied_vsf_votes.begin(), a.proxied_vsf_votes.end() );
-	  for (auto& _expertise: a.expertises) {//~~~~~CLC~~~~~
+	  for (auto& _expertise: a.expertises) {///~~~~~CLC~~~~~
 		  expertises.push_back(_expertise);
 	  }
    }
@@ -228,8 +229,9 @@ struct api_account_object
    uint32_t          post_bandwidth = 0;
 
    share_type        pending_claimed_accounts = 0;
-   vector<std::string> expertises; //~~~~~CLC~~~~~
-   account_object::account_member_of member_of; //~~~~~CLC~~~~~
+   vector<std::string>					expertises; ///~~~~~CLC~~~~~
+   account_object::account_member_of	member_of; ///~~~~~CLC~~~~~
+   legacy_asset							stake_balance; ///~~~~~CLC~~~~~
 };
 
 struct extended_account : public api_account_object
@@ -256,6 +258,25 @@ struct extended_account : public api_account_object
    optional< vector< string > >                             recent_replies;   /// blog posts for this user
    optional< vector< string > >                             recommended;      /// posts recommened for this user
 };
+
+///~~~~~CLC~~~~~{
+struct api_stake_pending_object
+{
+	api_stake_pending_object(const database_api::api_stake_pending_object& a) : 
+		id(a.id),
+		account(a.account),
+		amount( legacy_asset::from_asset(a.amount) ),
+		created(a.created),
+		type(a.type) {}
+	api_stake_pending_object() {}
+
+	stake_pending_id_type				id;
+	account_name_type	account;
+	legacy_asset		amount;
+	time_point_sec		created;
+	stake_pending_object::stake_type type;
+};
+///~~~~~CLC~~~~~}
 
 struct api_comment_object
 {
@@ -294,13 +315,13 @@ struct api_comment_object
       allow_replies( c.allow_replies ),
       allow_votes( c.allow_votes ),
       allow_curation_rewards( c.allow_curation_rewards ),
-	  type(c.type)//~~~~~CLC~~~~~
+	  type(c.type)///~~~~~CLC~~~~~
    {
       for( auto& route : c.beneficiaries )
       {
          beneficiaries.push_back( route );
 	  }
-	  for (auto& _id : c.citations) { //~~~~~CLC~~~~~
+	  for (auto& _id : c.citations) { ///~~~~~CLC~~~~~
 		  citations.push_back(_id);
 	  }
    }
@@ -991,9 +1012,11 @@ DEFINE_API_ARGS( verify_account_authority,               vector< variant >,   bo
 DEFINE_API_ARGS( get_active_votes,                       vector< variant >,   vector< tags::vote_state > )
 DEFINE_API_ARGS( get_account_votes,                      vector< variant >,   vector< account_vote > )
 DEFINE_API_ARGS( get_content,                            vector< variant >,   discussion )
-DEFINE_API_ARGS( get_content_count,                      vector< variant >,   uint64_t )//~~~~~CLC~~~~~
-DEFINE_API_ARGS( list_comments,							 vector< variant >,   vector< discussion > )//~~~~~CLC~~~~~
-DEFINE_API_ARGS( get_content_parent_series,				 vector< variant >,   vector< discussion > )//~~~~~CLC~~~~~
+DEFINE_API_ARGS( get_content_count,                      vector< variant >,   uint64_t )///~~~~~CLC~~~~~
+DEFINE_API_ARGS( list_comments,							 vector< variant >,   vector< discussion > )///~~~~~CLC~~~~~
+DEFINE_API_ARGS( get_content_parent_series,				 vector< variant >,   vector< discussion > )///~~~~~CLC~~~~~
+DEFINE_API_ARGS( list_pending_stakes,					 vector< variant >,   vector< api_stake_pending_object > )///~~~~~CLC~~~~~
+DEFINE_API_ARGS( find_pending_stake,					 vector< variant >,   vector< api_stake_pending_object > )///~~~~~CLC~~~~~
 DEFINE_API_ARGS( get_content_replies,                    vector< variant >,   vector< discussion > )
 DEFINE_API_ARGS( get_tags_used_by_author,                vector< variant >,   vector< tags::tag_count_object > )
 DEFINE_API_ARGS( get_post_discussions_by_payout,         vector< variant >,   vector< discussion > )
@@ -1090,6 +1113,8 @@ public:
 	  (get_content_count)//~~~~~CLC~~~~~
 	  (list_comments)//~~~~~CLC~~~~~
 	  (get_content_parent_series)//~~~~~CLC~~~~~
+	  (list_pending_stakes)///~~~~~CLC~~~~~
+	  (find_pending_stake)///~~~~~CLC~~~~~
       (get_content_replies)
       (get_tags_used_by_author)
       (get_post_discussions_by_payout)
@@ -1171,8 +1196,9 @@ FC_REFLECT( colab::plugins::condenser_api::api_account_object,
              (proxied_vsf_votes)(witnesses_voted_for)
              (last_post)(last_root_post)(last_vote_time)
              (post_bandwidth)(pending_claimed_accounts)
-			 (expertises)//~~~~~CLC~~~~~
-			 (member_of)//~~~~~CLC~~~~~
+			 (expertises)///~~~~~CLC~~~~~
+			 (member_of)///~~~~~CLC~~~~~
+			 (stake_balance)///~~~~~CLC~~~~~
           )
 
 FC_REFLECT_DERIVED( colab::plugins::condenser_api::extended_account, (colab::plugins::condenser_api::api_account_object),
@@ -1324,3 +1350,12 @@ FC_REFLECT( colab::plugins::condenser_api::order_book,
 
 FC_REFLECT( colab::plugins::condenser_api::market_trade,
             (date)(current_pays)(open_pays) )
+///~~~~~CLC~~~~~{
+FC_REFLECT( colab::plugins::condenser_api::api_stake_pending_object,
+				(id)
+				(account)
+				(amount)
+				(created)
+				(type)
+		  )
+///~~~~~CLC~~~~~}

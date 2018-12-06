@@ -199,7 +199,7 @@ struct count_operation_visitor
       execution_time_count += _e.withdraw_vesting_operation_exec_time;
    }
 
-   //~~~~~CLC~~~~~{
+   ///~~~~~CLC~~~~~{
    void operator()( const account_expertise_update_operation& op )const
    {
 	   execution_time_count += _e.account_expertise_update_operation_exec_time;
@@ -209,7 +209,18 @@ struct count_operation_visitor
    {
 	   execution_time_count += _e.account_admin_update_operation_exec_time;
    }
-   //~~~~~CLC~~~~~}
+
+   void operator()( const stake_request_operation& op )const
+   {
+	   execution_time_count += _e.stake_request_operation_exec_time;
+   }
+
+   void operator()( const stake_process_operation& op )const
+   {
+	   execution_time_count += _e.stake_process_operation_exec_time;
+   }
+   ///~~~~~CLC~~~~~}
+
    void operator()( const account_update_operation& )const
    {
       execution_time_count += _e.account_update_operation_exec_time;
@@ -377,6 +388,7 @@ struct count_operation_visitor
    void operator()( const fill_order_operation& ) const {}
    void operator()( const shutdown_witness_operation& ) const {}
    void operator()( const fill_transfer_from_savings_operation& ) const {}
+   void operator()( const stake_process_time_operation& ) const {}///~~~~~CLC~~~~~
    void operator()( const hardfork_operation& ) const {}
    void operator()( const comment_payout_update_operation& ) const {}
    void operator()( const return_vesting_delegation_operation& ) const {}

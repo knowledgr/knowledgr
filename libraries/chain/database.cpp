@@ -2159,6 +2159,33 @@ void database::process_savings_withdraws()
   }
 }
 
+///~~~~~CLC~~~~~{
+void database::process_pending_stakes()
+{
+	const auto& sk_idx = get_index< stake_pending_index >().indices().get<by_account>();
+	auto itr = sk_idx.begin();
+	while (itr != sk_idx.end()) {
+		if (head_block_time() - 10 * 60 >= itr->created) {
+			const auto& account = get_account( itr->account );
+			asset abs_amount = itr->amount;
+			modify( account, [&]( account_object& a )
+			{
+				if (itr->type == stake_pending_object::unstaking) {//unstaking
+					a.balance += abs_amount;
+				} else {//staking
+					a.stake_balance += abs_amount;
+				}
+			});
+			push_virtual_operation( stake_process_time_operation( itr->account, itr->amount, itr->type, itr->created ) );
+			remove(*itr);
+			itr = sk_idx.begin();
+		} else {
+			itr ++;
+		}
+	}
+}
+///~~~~~CLC~~~~~}
+
 void database::process_subsidized_accounts()
 {
    const witness_schedule_object& wso = get_witness_schedule_object();
@@ -2532,8 +2559,10 @@ void database::initialize_evaluators()
    _my->_evaluator_registry.register_evaluator< withdraw_vesting_evaluator               >();
    _my->_evaluator_registry.register_evaluator< set_withdraw_vesting_route_evaluator     >();
    _my->_evaluator_registry.register_evaluator< account_create_evaluator                 >();
-   _my->_evaluator_registry.register_evaluator< account_admin_update_evaluator			>();//~~~~~CLC~~~~~
-   _my->_evaluator_registry.register_evaluator< account_expertise_update_evaluator      >();//~~~~~CLC~~~~~
+   _my->_evaluator_registry.register_evaluator< account_admin_update_evaluator			>();///~~~~~CLC~~~~~
+   _my->_evaluator_registry.register_evaluator< account_expertise_update_evaluator      >();///~~~~~CLC~~~~~
+   _my->_evaluator_registry.register_evaluator< stake_request_evaluator					>();///~~~~~CLC~~~~~
+   _my->_evaluator_registry.register_evaluator< stake_process_evaluator					>();///~~~~~CLC~~~~~
    _my->_evaluator_registry.register_evaluator< account_update_evaluator                 >();
    _my->_evaluator_registry.register_evaluator< witness_update_evaluator                 >();
    _my->_evaluator_registry.register_evaluator< account_witness_vote_evaluator           >();
@@ -3096,6 +3125,8 @@ void database::_apply_block( const signed_block& next_block )
    process_subsidized_accounts();
    pay_liquidity_reward();
    update_virtual_supply();
+
+   process_pending_stakes();///~~~~~CLC~~~~~
 
    account_recovery_processing();
    expire_escrow_ratification();
