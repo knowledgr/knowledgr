@@ -1643,8 +1643,9 @@ share_type database::pay_curators( const comment_object& c, share_type& max_rewa
                unclaimed_rewards -= claim;
 			   const auto& voter = get( item->voter );
 			   std::cerr<<"~~~ [database::pay_curators()] -- claim = "<<claim<<"\n";
-               operation vop = curation_reward_operation( voter.name, asset(0, VESTS_SYMBOL), c.author, to_string( c.permlink ) );
-               create_vesting2( *this, voter, asset( claim, CLC_SYMBOL ), has_hardfork( COLAB_HARDFORK_0_17__659 ),
+               operation vop = curation_reward_operation( voter.name, asset(0, CLC_SYMBOL), c.author, to_string( c.permlink ) );///~~~~~CLC~~~~~ changed by 'CLC_SYMBOL' instead of 'VESTS_SYMBOL'
+               create_vesting2( *this, voter, asset( claim, CLC_SYMBOL ), 
+				   false/*has_hardfork( COLAB_HARDFORK_0_17__659 )*/, ///~~~ WILL REMOVE this param in short days...
                   [&]( const asset& reward )
                   {
 					  std::cerr<<"~~~ [database::pay_curators()] - voter = "<<(std::string)voter.name<<", reward = "<<reward.amount.value<<"\n";
@@ -1726,7 +1727,7 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
             claimed_reward = author_tokens + curation_tokens;
 
             for( auto& b : comment.beneficiaries )
-            {
+            {/// ~~~ I WILL CHANGE HERE SOON ~~~:)
                auto benefactor_tokens = ( author_tokens * b.weight ) / COLAB_100_PERCENT;
                auto benefactor_vesting_colab = benefactor_tokens;
                auto vop = comment_benefactor_reward_operation( b.account, comment.author, to_string( comment.permlink ), asset( 0, SBD_SYMBOL ), asset( 0, CLC_SYMBOL ), asset( 0, VESTS_SYMBOL ) );
