@@ -483,7 +483,6 @@ void account_create_evaluator::do_apply( const account_create_operation& o )
       auth.active = o.active;
       auth.posting = o.posting;
       auth.last_owner_update = fc::time_point_sec::min();
-	  auth.member_of = account_object::user;//~~~~~CLC~~~~~
    });
 
    if( !_db.has_hardfork( COLAB_HARDFORK_0_20__1762 ) && o.fee.amount > 0 )

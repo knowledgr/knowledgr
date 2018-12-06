@@ -1099,119 +1099,31 @@ std::pair< asset, asset > database::create_sbd( const account_object& to_account
 
    return assets;
 }
-
-
-// Create vesting, then a caller-supplied callback after determining how many shares to create, but before
+// pay to_account new token(liquid), then a caller-supplied callback after determining how many shares to create, but before
 // we modify the database.
 // This allows us to implement virtual op pre-notifications in the Before function.
 template< typename Before >
-asset create_vesting2( database& db, const account_object& to_account, asset liquid, bool to_reward_balance, Before&& before_vesting_callback )
+asset create_vesting2( database& db, const account_object& to_account, asset liquid, bool to_reward_balance, Before&& before_token_callback )
 {
    try
    {
-      auto calculate_new_vesting = [ liquid ] ( price vesting_share_price ) -> asset
-         {
-         /**
-          *  The ratio of total_vesting_shares / total_vesting_fund_clc should not
-          *  change as the result of the user adding funds
-          *
-          *  V / C  = (V+Vn) / (C+Cn)
-          *
-          *  Simplifies to Vn = (V * Cn ) / C
-          *
-          *  If Cn equals o.amount, then we must solve for Vn to know how many new vesting shares
-          *  the user should receive.
-          *
-          *  128 bit math is requred due to multiplying of 64 bit numbers. This is done in asset and price.
-          */
-         asset new_vesting = liquid * ( vesting_share_price );
-         return new_vesting;
-         };
-
-#ifdef COLAB_ENABLE_SMT
-      if( liquid.symbol.space() == asset_symbol_type::smt_nai_space )
-      {
-         FC_ASSERT( liquid.symbol.is_vesting() == false );
-         // Get share price.
-         const auto& smt = db.get< smt_token_object, by_symbol >( liquid.symbol );
-         FC_ASSERT( smt.allow_voting == to_reward_balance, "No voting - no rewards" );
-         price vesting_share_price = to_reward_balance ? smt.get_reward_vesting_share_price() : smt.get_vesting_share_price();
-         // Calculate new vesting from provided liquid using share price.
-         asset new_vesting = calculate_new_vesting( vesting_share_price );
-         before_vesting_callback( new_vesting );
-         // Add new vesting to owner's balance.
-         if( to_reward_balance )
-            db.adjust_reward_balance( to_account, liquid, new_vesting );
-         else
-            db.adjust_balance( to_account, new_vesting );
-         // Update global vesting pool numbers.
-         db.modify( smt, [&]( smt_token_object& smt_object )
-         {
-            if( to_reward_balance )
-            {
-               smt_object.pending_rewarded_vesting_shares += new_vesting.amount;
-               smt_object.pending_rewarded_vesting_smt += liquid.amount;
-            }
-            else
-            {
-               smt_object.total_vesting_fund_smt += liquid.amount;
-               smt_object.total_vesting_shares += new_vesting.amount;
-            }
-         } );
-
-         // NOTE that SMT vesting does not impact witness voting.
-
-         return new_vesting;
-      }
-#endif
-
       FC_ASSERT( liquid.symbol == CLC_SYMBOL );
-      // ^ A novelty, needed but risky in case someone managed to slip SBD/TESTS here in blockchain history.
-      // Get share price.
-      const auto& cprops = db.get_dynamic_global_properties();
-      price vesting_share_price = to_reward_balance ? cprops.get_reward_vesting_share_price() : cprops.get_vesting_share_price();
-      // Calculate new vesting from provided liquid using share price.
-      asset new_vesting = calculate_new_vesting( vesting_share_price );
-      before_vesting_callback( new_vesting );
-      // Add new vesting to owner's balance.
-      if( to_reward_balance )
-      {
-         db.adjust_reward_balance( to_account, liquid, new_vesting );
-      }
-      else
-      {
-         if( db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-         {
-            db.modify( to_account, [&]( account_object& a )
-            {
-               util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
-FC_TODO( "Set skip_cap_regen=true without breaking consensus" );
-               a.voting_manabar.regenerate_mana( params, db.head_block_time() );
-               a.voting_manabar.use_mana( -new_vesting.amount.value );
-            });
-         }
 
-         db.adjust_balance( to_account, new_vesting );
-      }
+      asset new_token = liquid;
+      before_token_callback( new_token );      
+	  db.adjust_balance( to_account, new_token);
+      
       // Update global vesting pool numbers.
       db.modify( cprops, [&]( dynamic_global_property_object& props )
       {
-         if( to_reward_balance )
-         {
-            props.pending_rewarded_vesting_shares += new_vesting;
-            props.pending_rewarded_vesting_clc += liquid;
-         }
-         else
-         {
-            props.total_vesting_fund_clc += liquid;
-            props.total_vesting_shares += new_vesting;
-         }
+		  props.total_vesting_fund_clc += new_token;///~~~ ???
+		  props.total_vesting_shares += new_token;///~~~ ???
       } );
       // Update witness voting numbers.
       if( !to_reward_balance )
-         db.adjust_proxied_witness_votes( to_account, new_vesting.amount );
+         db.adjust_proxied_witness_votes( to_account, new_token.amount );///~~~ ???
 
-      return new_vesting;
+      return new_token;
    }
    FC_CAPTURE_AND_RETHROW( (to_account.name)(liquid) )
 }
@@ -1729,11 +1641,13 @@ share_type database::pay_curators( const comment_object& c, share_type& max_rewa
             if( claim > 0 ) // min_amt is non-zero satoshis
             {
                unclaimed_rewards -= claim;
-               const auto& voter = get( item->voter );
+			   const auto& voter = get( item->voter );
+			   std::cerr<<"~~~ [database::pay_curators()] -- claim = "<<claim<<"\n";
                operation vop = curation_reward_operation( voter.name, asset(0, VESTS_SYMBOL), c.author, to_string( c.permlink ) );
                create_vesting2( *this, voter, asset( claim, CLC_SYMBOL ), has_hardfork( COLAB_HARDFORK_0_17__659 ),
                   [&]( const asset& reward )
                   {
+					  std::cerr<<"~~~ [database::pay_curators()] - voter = "<<(std::string)voter.name<<", reward = "<<reward.amount.value<<"\n";
                      vop.get< curation_reward_operation >().reward = reward;
                      pre_push_virtual_operation( vop );
                   } );
