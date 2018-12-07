@@ -152,10 +152,10 @@ struct operation_process
    void operator()( const author_reward_operation& op )const
    {
       _db.modify( _bucket, [&]( bucket_object& b )
-      {
+      {///~~~~~CLC~~~~~
          b.payouts++;
-         b.sbd_paid_to_authors += op.sbd_payout.amount;
-         b.vests_paid_to_authors += op.vesting_payout.amount;
+         b.sbd_paid_to_authors += op.payout;
+         b.vests_paid_to_authors += op.payout;
       });
    }
 

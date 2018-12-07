@@ -7,16 +7,14 @@
 
 namespace colab { namespace protocol {
 
-   struct author_reward_operation : public virtual_operation {
+   struct author_reward_operation : public virtual_operation {///~~~~~CLC~~~~~ I Changed here, remove sbd, vesting tokens...
       author_reward_operation(){}
-      author_reward_operation( const account_name_type& a, const string& p, const asset& s, const asset& st, const asset& v )
-         :author(a), permlink(p), sbd_payout(s), clc_payout(st), vesting_payout(v){}
+      author_reward_operation( const account_name_type& a, const string& p, const asset& clc )
+         :author(a), permlink(p), payout(clc) {}
 
       account_name_type author;
       string            permlink;
-      asset             sbd_payout;
-      asset             clc_payout;
-      asset             vesting_payout;
+      asset             payout; /// Reward by CLC Token
    };
 
 
@@ -199,7 +197,7 @@ namespace colab { namespace protocol {
 
 } } //colab::protocol
 
-FC_REFLECT( colab::protocol::author_reward_operation, (author)(permlink)(sbd_payout)(clc_payout)(vesting_payout) )
+FC_REFLECT( colab::protocol::author_reward_operation, (author)(permlink)(payout) )///~~~~~CLC~~~~~ remove sbd, vesting...
 FC_REFLECT( colab::protocol::curation_reward_operation, (curator)(reward)(comment_author)(comment_permlink) )
 FC_REFLECT( colab::protocol::comment_reward_operation, (author)(permlink)(payout) )
 FC_REFLECT( colab::protocol::fill_convert_request_operation, (owner)(requestid)(amount_in)(amount_out) )

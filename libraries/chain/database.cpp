@@ -1760,7 +1760,7 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
 
             const auto& author = get_account( comment.author );
             auto sbd_payout = create_sbd( author, asset( sbd_colab, CLC_SYMBOL ), has_hardfork( COLAB_HARDFORK_0_17__659 ) );
-            operation vop = author_reward_operation( comment.author, to_string( comment.permlink ), sbd_payout.first, sbd_payout.second, asset( 0, VESTS_SYMBOL ) );
+            operation vop = author_reward_operation( comment.author, to_string( comment.permlink ), asset( 0, CLC_SYMBOL ) );
 
             create_vesting2( *this, author, asset( vesting_colab, CLC_SYMBOL ), has_hardfork( COLAB_HARDFORK_0_17__659 ),
                [&]( const asset& vesting_payout )
