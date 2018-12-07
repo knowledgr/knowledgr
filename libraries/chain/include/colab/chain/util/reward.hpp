@@ -24,7 +24,7 @@ struct comment_reward_context
 {
    share_type rshares;
    uint16_t   reward_weight = 0;
-   asset      max_sbd;
+   asset      max_clc;
    uint128_t  total_reward_shares2;
    asset      total_reward_fund_colab;
    price      current_clc_price;
@@ -51,7 +51,7 @@ inline bool is_comment_payout_dust( const price& p, uint64_t clc_payout )
 FC_REFLECT( colab::chain::util::comment_reward_context,
    (rshares)
    (reward_weight)
-   (max_sbd)
+   (max_clc)
    (total_reward_shares2)
    (total_reward_fund_colab)
    (current_clc_price)

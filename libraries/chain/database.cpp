@@ -1673,7 +1673,7 @@ void fill_comment_reward_context_local_state( util::comment_reward_context& ctx,
 {
    ctx.rshares = comment.net_rshares;
    ctx.reward_weight = comment.reward_weight;
-   ctx.max_sbd = comment.max_accepted_payout;
+   ctx.max_clc = comment.max_accepted_payout;
 }
 
 share_type database::cashout_comment_helper( util::comment_reward_context& ctx, const comment_object& comment, bool forward_curation_remainder )
@@ -1699,7 +1699,7 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
 		 
 		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.rshares = "<<ctx.rshares.value<<"\n";
 		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.reward_weight = "<<ctx.reward_weight<<"\n";
-		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.max_sbd = "<<ctx.max_sbd.amount.value<<"\n";
+		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.max_clc = "<<ctx.max_clc.amount.value<<"\n";
 		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.total_reward_shares2 = "<<(std::string)ctx.total_reward_shares2<<"\n";
 		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.total_reward_fund_colab = "<<ctx.total_reward_fund_colab.amount.value<<"\n";
 		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.current_clc_price.base = "<<ctx.current_clc_price.base.amount.value<<"\n";
