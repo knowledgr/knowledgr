@@ -7,16 +7,14 @@
 
 namespace colab { namespace protocol {
 
-   struct author_reward_operation : public virtual_operation {
+   struct author_reward_operation : public virtual_operation {///~~~~~CLC~~~~~ I Changed here, remove sbd, vesting tokens...
       author_reward_operation(){}
-      author_reward_operation( const account_name_type& a, const string& p, const asset& s, const asset& st, const asset& v )
-         :author(a), permlink(p), sbd_payout(s), clc_payout(st), vesting_payout(v){}
+      author_reward_operation( const account_name_type& a, const string& p, const asset& clc )
+         :author(a), permlink(p), payout(clc) {}
 
       account_name_type author;
       string            permlink;
-      asset             sbd_payout;
-      asset             clc_payout;
-      asset             vesting_payout;
+      asset             payout; /// Reward by CLC Token
    };
 
 
@@ -27,7 +25,7 @@ namespace colab { namespace protocol {
          :curator(c), reward(r), comment_author(a), comment_permlink(p) {}
 
       account_name_type curator;
-      asset             reward;
+      asset             reward; /// Reward by CLC Token
       account_name_type comment_author;
       string            comment_permlink;
    };
@@ -169,17 +167,15 @@ namespace colab { namespace protocol {
    };
 
    struct comment_benefactor_reward_operation : public virtual_operation
-   {
+   {///~~~~~CLC~~~~~ HERE, TOO, removed sbd, vesting ...
       comment_benefactor_reward_operation() {}
-      comment_benefactor_reward_operation( const account_name_type& b, const account_name_type& a, const string& p, const asset& s, const asset& st, const asset& v )
-         : benefactor( b ), author( a ), permlink( p ), sbd_payout( s ), clc_payout( st ), vesting_payout( v ) {}
+      comment_benefactor_reward_operation( const account_name_type& b, const account_name_type& a, const string& p, const asset& s )
+         : benefactor( b ), author( a ), permlink( p ), payout( s ) {}
 
       account_name_type benefactor;
       account_name_type author;
       string            permlink;
-      asset             sbd_payout;
-      asset             clc_payout;
-      asset             vesting_payout;
+      asset             payout;
    };
 
    struct producer_reward_operation : public virtual_operation
@@ -199,7 +195,7 @@ namespace colab { namespace protocol {
 
 } } //colab::protocol
 
-FC_REFLECT( colab::protocol::author_reward_operation, (author)(permlink)(sbd_payout)(clc_payout)(vesting_payout) )
+FC_REFLECT( colab::protocol::author_reward_operation, (author)(permlink)(payout) )///~~~~~CLC~~~~~ remove sbd, vesting...
 FC_REFLECT( colab::protocol::curation_reward_operation, (curator)(reward)(comment_author)(comment_permlink) )
 FC_REFLECT( colab::protocol::comment_reward_operation, (author)(permlink)(payout) )
 FC_REFLECT( colab::protocol::fill_convert_request_operation, (owner)(requestid)(amount_in)(amount_out) )
@@ -213,6 +209,6 @@ FC_REFLECT( colab::protocol::stake_process_time_operation, (account)(amount)(typ
 FC_REFLECT( colab::protocol::hardfork_operation, (hardfork_id) )
 FC_REFLECT( colab::protocol::comment_payout_update_operation, (author)(permlink) )
 FC_REFLECT( colab::protocol::return_vesting_delegation_operation, (account)(vesting_shares) )
-FC_REFLECT( colab::protocol::comment_benefactor_reward_operation, (benefactor)(author)(permlink)(sbd_payout)(clc_payout)(vesting_payout) )
+FC_REFLECT( colab::protocol::comment_benefactor_reward_operation, (benefactor)(author)(permlink)(payout)/*(clc_payout)(vesting_payout)*/ )///~~~~~CLC~~~~~
 FC_REFLECT( colab::protocol::producer_reward_operation, (producer)(vesting_shares) )
 FC_REFLECT( colab::protocol::clear_null_account_balance_operation, (total_cleared) )
