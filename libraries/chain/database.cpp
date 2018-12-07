@@ -1581,7 +1581,7 @@ void database::process_vesting_withdrawals()
 }
 
 void database::adjust_total_payout( const comment_object& cur, const asset& sbd_created, const asset& curator_sbd_value, const asset& beneficiary_value )
-{
+{///~~~~~CLC~~~~~ HERE, TOO ~~~:)
    modify( cur, [&]( comment_object& c )
    {
       // input assets should be in sbd
@@ -1727,25 +1727,14 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
             claimed_reward = author_tokens + curation_tokens;
 
             for( auto& b : comment.beneficiaries )
-            {/// ~~~ I WILL CHANGE HERE SOON ~~~:)
+            {
                auto benefactor_tokens = ( author_tokens * b.weight ) / COLAB_100_PERCENT;
-               auto benefactor_vesting_colab = benefactor_tokens;
-               auto vop = comment_benefactor_reward_operation( b.account, comment.author, to_string( comment.permlink ), asset( 0, SBD_SYMBOL ), asset( 0, CLC_SYMBOL ), asset( 0, VESTS_SYMBOL ) );
+               auto vop = comment_benefactor_reward_operation( b.account, comment.author, asset( 0, CLC_SYMBOL ) );
 
-               if( has_hardfork( COLAB_HARDFORK_0_20__2022 ) )
-               {
-                  auto benefactor_sbd_colab = ( benefactor_tokens * comment.percent_colab_dollars ) / ( 2 * COLAB_100_PERCENT ) ;
-                  benefactor_vesting_colab  = benefactor_tokens - benefactor_sbd_colab;
-                  auto sbd_payout           = create_sbd( get_account( b.account ), asset( benefactor_sbd_colab, CLC_SYMBOL ), true );
-
-                  vop.sbd_payout   = sbd_payout.first; // SBD portion
-                  vop.clc_payout = sbd_payout.second; // CLC portion
-               }
-
-               create_vesting2( *this, get_account( b.account ), asset( benefactor_vesting_colab, CLC_SYMBOL ), has_hardfork( COLAB_HARDFORK_0_17__659 ),
+               create_vesting2( *this, get_account( b.account ), asset( benefactor_tokens, CLC_SYMBOL ), false/*has_hardfork( COLAB_HARDFORK_0_17__659 )*/,
                [&]( const asset& reward )
                {
-                  vop.vesting_payout = reward;
+                  vop.payout = reward;
                   pre_push_virtual_operation( vop );
                });
 
@@ -1754,25 +1743,21 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
             }
 
             author_tokens -= total_beneficiary;
-
-            auto sbd_colab     = ( author_tokens * comment.percent_colab_dollars ) / ( 2 * COLAB_100_PERCENT ) ;
-            auto vesting_colab = author_tokens - sbd_colab;
-
+			
             const auto& author = get_account( comment.author );
-            auto sbd_payout = create_sbd( author, asset( sbd_colab, CLC_SYMBOL ), has_hardfork( COLAB_HARDFORK_0_17__659 ) );
             operation vop = author_reward_operation( comment.author, to_string( comment.permlink ), asset( 0, CLC_SYMBOL ) );
 
-            create_vesting2( *this, author, asset( vesting_colab, CLC_SYMBOL ), has_hardfork( COLAB_HARDFORK_0_17__659 ),
-               [&]( const asset& vesting_payout )
+            create_vesting2( *this, author, asset( author_tokens, CLC_SYMBOL ), false,
+               [&]( const asset& payout )
                {
-                  vop.get< author_reward_operation >().vesting_payout = vesting_payout;
+                  vop.get< author_reward_operation >().payout = payout;
                   pre_push_virtual_operation( vop );
                } );
 
-            adjust_total_payout( comment, sbd_payout.first + to_sbd( sbd_payout.second + asset( vesting_colab, CLC_SYMBOL ) ), to_sbd( asset( curation_tokens, CLC_SYMBOL ) ), to_sbd( asset( total_beneficiary, CLC_SYMBOL ) ) );
+            adjust_total_payout( comment, asset( author_tokens, CLC_SYMBOL ), asset( curation_tokens, CLC_SYMBOL ), asset( total_beneficiary, CLC_SYMBOL ) );
 
             post_push_virtual_operation( vop );
-            vop = comment_reward_operation( comment.author, to_string( comment.permlink ), to_sbd( asset( claimed_reward, CLC_SYMBOL ) ) );
+            vop = comment_reward_operation( comment.author, to_string( comment.permlink ), asset( claimed_reward, CLC_SYMBOL ) );
             pre_push_virtual_operation( vop );
             post_push_virtual_operation( vop );
 
