@@ -167,17 +167,15 @@ namespace colab { namespace protocol {
    };
 
    struct comment_benefactor_reward_operation : public virtual_operation
-   {
+   {///~~~~~CLC~~~~~ HERE, TOO, removed sbd, vesting ...
       comment_benefactor_reward_operation() {}
-      comment_benefactor_reward_operation( const account_name_type& b, const account_name_type& a, const string& p, const asset& s, const asset& st, const asset& v )
-         : benefactor( b ), author( a ), permlink( p ), sbd_payout( s ), clc_payout( st ), vesting_payout( v ) {}
+      comment_benefactor_reward_operation( const account_name_type& b, const account_name_type& a, const string& p, const asset& s )
+         : benefactor( b ), author( a ), permlink( p ), payout( s ) {}
 
       account_name_type benefactor;
       account_name_type author;
       string            permlink;
-      asset             sbd_payout;
-      asset             clc_payout;
-      asset             vesting_payout;
+      asset             payout;
    };
 
    struct producer_reward_operation : public virtual_operation
@@ -211,6 +209,6 @@ FC_REFLECT( colab::protocol::stake_process_time_operation, (account)(amount)(typ
 FC_REFLECT( colab::protocol::hardfork_operation, (hardfork_id) )
 FC_REFLECT( colab::protocol::comment_payout_update_operation, (author)(permlink) )
 FC_REFLECT( colab::protocol::return_vesting_delegation_operation, (account)(vesting_shares) )
-FC_REFLECT( colab::protocol::comment_benefactor_reward_operation, (benefactor)(author)(permlink)(sbd_payout)(clc_payout)(vesting_payout) )
+FC_REFLECT( colab::protocol::comment_benefactor_reward_operation, (benefactor)(author)(permlink)(payout)/*(clc_payout)(vesting_payout)*/ )///~~~~~CLC~~~~~
 FC_REFLECT( colab::protocol::producer_reward_operation, (producer)(vesting_shares) )
 FC_REFLECT( colab::protocol::clear_null_account_balance_operation, (total_cleared) )

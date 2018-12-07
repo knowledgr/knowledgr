@@ -1022,15 +1022,13 @@ namespace colab { namespace plugins { namespace condenser_api {
    };
 
    struct legacy_comment_benefactor_reward_operation
-   {
+   {///~~~~~CLC~~~~~ HERE, TOO. 
       legacy_comment_benefactor_reward_operation() {}
       legacy_comment_benefactor_reward_operation( const comment_benefactor_reward_operation& op ) :
          benefactor( op.benefactor ),
          author( op.author ),
          permlink( op.permlink ),
-         sbd_payout( legacy_asset::from_asset( op.sbd_payout ) ),
-         clc_payout( legacy_asset::from_asset( op.clc_payout ) ),
-         vesting_payout( legacy_asset::from_asset( op.vesting_payout ) )
+         payout( legacy_asset::from_asset( op.payout ) )
       {}
 
       operator comment_benefactor_reward_operation()const
@@ -1039,18 +1037,14 @@ namespace colab { namespace plugins { namespace condenser_api {
          op.benefactor = benefactor;
          op.author = author;
          op.permlink = permlink;
-         op.sbd_payout = sbd_payout;
-         op.clc_payout = clc_payout;
-         op.vesting_payout = vesting_payout;
+         op.payout = payout;
          return op;
       }
 
       account_name_type benefactor;
       account_name_type author;
       string            permlink;
-      legacy_asset      sbd_payout;
-      legacy_asset      clc_payout;
-      legacy_asset      vesting_payout;
+      legacy_asset      payout;
    };
 
    struct legacy_producer_reward_operation
@@ -1755,7 +1749,7 @@ FC_REFLECT( colab::plugins::condenser_api::legacy_fill_order_operation, (current
 FC_REFLECT( colab::plugins::condenser_api::legacy_fill_transfer_from_savings_operation, (from)(to)(amount)(request_id)(memo) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_stake_process_time_operation, (account)(amount)(type)(created) )///~~~~~CLC~~~~~
 FC_REFLECT( colab::plugins::condenser_api::legacy_return_vesting_delegation_operation, (account)(vesting_shares) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_comment_benefactor_reward_operation, (benefactor)(author)(permlink)(sbd_payout)(clc_payout)(vesting_payout) )
+FC_REFLECT( colab::plugins::condenser_api::legacy_comment_benefactor_reward_operation, (benefactor)(author)(permlink)(payout)/*(clc_payout)(vesting_payout)*/ )///~~~~~CLC~~~~~
 FC_REFLECT( colab::plugins::condenser_api::legacy_producer_reward_operation, (producer)(vesting_shares) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_claim_account_operation, (creator)(fee)(extensions) )
 
