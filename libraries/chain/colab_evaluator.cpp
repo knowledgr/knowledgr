@@ -1112,17 +1112,17 @@ void escrow_transfer_evaluator::do_apply( const escrow_transfer_operation& o )
       FC_ASSERT( o.escrow_expiration > _db.head_block_time(), "The escrow expiration must be after head block time." );
 
       asset clc_spent = o.clc_amount;
-      asset sbd_spent = o.sbd_amount;
+//      asset sbd_spent = o.sbd_amount;
       if( o.fee.symbol == CLC_SYMBOL )
          clc_spent += o.fee;
-      else
-         sbd_spent += o.fee;
+//       else
+//          sbd_spent += o.fee;
 
       FC_ASSERT( from_account.balance >= clc_spent, "Account cannot cover CLC costs of escrow. Required: ${r} Available: ${a}", ("r",clc_spent)("a",from_account.balance) );
-      FC_ASSERT( from_account.sbd_balance >= sbd_spent, "Account cannot cover SBD costs of escrow. Required: ${r} Available: ${a}", ("r",sbd_spent)("a",from_account.sbd_balance) );
+      //FC_ASSERT( from_account.sbd_balance >= sbd_spent, "Account cannot cover SBD costs of escrow. Required: ${r} Available: ${a}", ("r",sbd_spent)("a",from_account.sbd_balance) );
 
       _db.adjust_balance( from_account, -clc_spent );
-      _db.adjust_balance( from_account, -sbd_spent );
+      //_db.adjust_balance( from_account, -sbd_spent );
 
       _db.create<escrow_object>([&]( escrow_object& esc )
       {
@@ -1132,7 +1132,7 @@ void escrow_transfer_evaluator::do_apply( const escrow_transfer_operation& o )
          esc.agent                  = o.agent;
          esc.ratification_deadline  = o.ratification_deadline;
          esc.escrow_expiration      = o.escrow_expiration;
-         esc.sbd_balance            = o.sbd_amount;
+         //esc.sbd_balance            = o.sbd_amount;
          esc.clc_balance          = o.clc_amount;
          esc.pending_fee            = o.fee;
       });
@@ -1181,7 +1181,7 @@ void escrow_approve_evaluator::do_apply( const escrow_approve_operation& o )
       if( reject_escrow )
       {
          _db.adjust_balance( o.from, escrow.clc_balance );
-         _db.adjust_balance( o.from, escrow.sbd_balance );
+         //_db.adjust_balance( o.from, escrow.sbd_balance );
          _db.adjust_balance( o.from, escrow.pending_fee );
 
          _db.remove( escrow );
@@ -1228,7 +1228,7 @@ void escrow_release_evaluator::do_apply( const escrow_release_operation& o )
 
       const auto& e = _db.get_escrow( o.from, o.escrow_id );
       FC_ASSERT( e.clc_balance >= o.clc_amount, "Release amount exceeds escrow balance. Amount: ${a}, Balance: ${b}", ("a", o.clc_amount)("b", e.clc_balance) );
-      FC_ASSERT( e.sbd_balance >= o.sbd_amount, "Release amount exceeds escrow balance. Amount: ${a}, Balance: ${b}", ("a", o.sbd_amount)("b", e.sbd_balance) );
+      //FC_ASSERT( e.sbd_balance >= o.sbd_amount, "Release amount exceeds escrow balance. Amount: ${a}, Balance: ${b}", ("a", o.sbd_amount)("b", e.sbd_balance) );
       FC_ASSERT( e.to == o.to, "Operation 'to' (${o}) does not match escrow 'to' (${e}).", ("o", o.to)("e", e.to) );
       FC_ASSERT( e.agent == o.agent, "Operation 'agent' (${a}) does not match escrow 'agent' (${e}).", ("o", o.agent)("e", e.agent) );
       FC_ASSERT( o.receiver == e.from || o.receiver == e.to, "Funds must be released to 'from' (${f}) or 'to' (${t})", ("f", e.from)("t", e.to) );
@@ -1264,10 +1264,10 @@ void escrow_release_evaluator::do_apply( const escrow_release_operation& o )
       _db.modify( e, [&]( escrow_object& esc )
       {
          esc.clc_balance -= o.clc_amount;
-         esc.sbd_balance -= o.sbd_amount;
+         //esc.sbd_balance -= o.sbd_amount;
       });
 
-      if( e.clc_balance.amount == 0 && e.sbd_balance.amount == 0 )
+      if( e.clc_balance.amount == 0 /*&& e.sbd_balance.amount == 0 */)
       {
          _db.remove( e );
       }
