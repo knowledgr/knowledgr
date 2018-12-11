@@ -346,7 +346,7 @@ namespace colab { namespace protocol {
       account_name_type agent;
       uint32_t          escrow_id = 30;
 
-      asset             sbd_amount = asset( 0, SBD_SYMBOL );
+//      asset             sbd_amount = asset( 0, SBD_SYMBOL );
       asset             clc_amount = asset( 0, CLC_SYMBOL );
       asset             fee;
 
@@ -418,7 +418,7 @@ namespace colab { namespace protocol {
       account_name_type receiver; ///< the account that should receive funds (might be from, might be to)
 
       uint32_t          escrow_id = 30;
-      asset             sbd_amount = asset( 0, SBD_SYMBOL ); ///< the amount of sbd to release
+//      asset             sbd_amount = asset( 0, SBD_SYMBOL ); ///< the amount of sbd to release
       asset             clc_amount = asset( 0, CLC_SYMBOL ); ///< the amount of colab to release
 
       void validate()const;
@@ -431,15 +431,15 @@ namespace colab { namespace protocol {
     *  VESTS or vesting SMT) at the current exchange rate. With this operation it is possible to
     *  give another account vesting shares so that faucets can pre-fund new accounts with vesting shares.
     */
-   struct transfer_to_vesting_operation : public base_operation
-   {
-      account_name_type from;
-      account_name_type to;      ///< if null, then same as from
-      asset             amount;  ///< must be CLC or liquid variant of SMT
-
-      void validate()const;
-      void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(from); }
-   };
+//    struct transfer_to_vesting_operation : public base_operation
+//    {
+//       account_name_type from;
+//       account_name_type to;      ///< if null, then same as from
+//       asset             amount;  ///< must be CLC or liquid variant of SMT
+// 
+//       void validate()const;
+//       void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(from); }
+//    };
 
 
    /**
@@ -453,14 +453,14 @@ namespace colab { namespace protocol {
     *
     * This operation is not valid if the user has no vesting shares.
     */
-   struct withdraw_vesting_operation : public base_operation
-   {
-      account_name_type account;
-      asset             vesting_shares;
-
-      void validate()const;
-      void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(account); }
-   };
+//    struct withdraw_vesting_operation : public base_operation
+//    {
+//       account_name_type account;
+//       asset             vesting_shares;
+// 
+//       void validate()const;
+//       void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(account); }
+//    };
 
 
    /**
@@ -470,16 +470,16 @@ namespace colab { namespace protocol {
     * can be immediately vested again, circumventing the conversion from
     * vests to colab and back, guaranteeing they maintain their value.
     */
-   struct set_withdraw_vesting_route_operation : public base_operation
-   {
-      account_name_type from_account;
-      account_name_type to_account;
-      uint16_t          percent = 0;
-      bool              auto_vest = false;
-
-      void validate()const;
-      void get_required_active_authorities( flat_set<account_name_type>& a )const { a.insert( from_account ); }
-   };
+//    struct set_withdraw_vesting_route_operation : public base_operation
+//    {
+//       account_name_type from_account;
+//       account_name_type to_account;
+//       uint16_t          percent = 0;
+//       bool              auto_vest = false;
+// 
+//       void validate()const;
+//       void get_required_active_authorities( flat_set<account_name_type>& a )const { a.insert( from_account ); }
+//    };
 
 
    /**
@@ -1178,9 +1178,9 @@ FC_REFLECT( colab::protocol::account_update_operation,
             (json_metadata) )
 
 FC_REFLECT( colab::protocol::transfer_operation, (from)(to)(amount)(memo) )
-FC_REFLECT( colab::protocol::transfer_to_vesting_operation, (from)(to)(amount) )
-FC_REFLECT( colab::protocol::withdraw_vesting_operation, (account)(vesting_shares) )
-FC_REFLECT( colab::protocol::set_withdraw_vesting_route_operation, (from_account)(to_account)(percent)(auto_vest) )
+//FC_REFLECT( colab::protocol::transfer_to_vesting_operation, (from)(to)(amount) )
+//FC_REFLECT( colab::protocol::withdraw_vesting_operation, (account)(vesting_shares) )
+//FC_REFLECT( colab::protocol::set_withdraw_vesting_route_operation, (from_account)(to_account)(percent)(auto_vest) )
 FC_REFLECT( colab::protocol::witness_update_operation, (owner)(url)(block_signing_key)(props)(fee) )
 FC_REFLECT( colab::protocol::witness_set_properties_operation, (owner)(props)(extensions) )
 FC_REFLECT( colab::protocol::account_witness_vote_operation, (account)(witness)(approve) )
@@ -1210,10 +1210,10 @@ FC_REFLECT( colab::protocol::allowed_vote_assets, (votable_assets) )
 FC_REFLECT_TYPENAME( colab::protocol::comment_options_extension )
 FC_REFLECT( colab::protocol::comment_options_operation, (author)(permlink)(max_accepted_payout)(percent_colab_dollars)(allow_votes)(allow_curation_rewards)(extensions) )
 
-FC_REFLECT( colab::protocol::escrow_transfer_operation, (from)(to)(sbd_amount)(clc_amount)(escrow_id)(agent)(fee)(json_meta)(ratification_deadline)(escrow_expiration) );
+FC_REFLECT( colab::protocol::escrow_transfer_operation, (from)(to)/*(sbd_amount)*/(clc_amount)(escrow_id)(agent)(fee)(json_meta)(ratification_deadline)(escrow_expiration) );
 FC_REFLECT( colab::protocol::escrow_approve_operation, (from)(to)(agent)(who)(escrow_id)(approve) );
 FC_REFLECT( colab::protocol::escrow_dispute_operation, (from)(to)(agent)(who)(escrow_id) );
-FC_REFLECT( colab::protocol::escrow_release_operation, (from)(to)(agent)(who)(receiver)(escrow_id)(sbd_amount)(clc_amount) );
+FC_REFLECT( colab::protocol::escrow_release_operation, (from)(to)(agent)(who)(receiver)(escrow_id)/*(sbd_amount)*/(clc_amount) );
 FC_REFLECT( colab::protocol::claim_account_operation, (creator)(fee)(extensions) );
 FC_REFLECT( colab::protocol::create_claimed_account_operation, (creator)(new_account_name)(owner)(active)(posting)(memo_key)(json_metadata)(extensions) );
 FC_REFLECT( colab::protocol::request_account_recovery_operation, (recovery_account)(account_to_recover)(new_owner_authority)(extensions) );

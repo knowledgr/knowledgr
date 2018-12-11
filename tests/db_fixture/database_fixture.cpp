@@ -84,7 +84,7 @@ clean_database_fixture::clean_database_fixture()
    db->set_hardfork( COLAB_BLOCKCHAIN_VERSION.minor_v() );
    generate_block();
 
-   vest( "initminer", 10000 );
+   //vest( "initminer", 10000 );
 
    // Fill up the rest of the required miners
    for( int i = COLAB_NUM_INIT_MINERS; i < COLAB_MAX_WITNESSES; i++ )
@@ -157,7 +157,7 @@ void clean_database_fixture::resize_shared_mem( uint64_t size )
    db->set_hardfork( COLAB_BLOCKCHAIN_VERSION.minor_v() );
    generate_block();
 
-   vest( "initminer", 10000 );
+   //vest( "initminer", 10000 );
 
    // Fill up the rest of the required miners
    for( int i = COLAB_NUM_INIT_MINERS; i < COLAB_MAX_WITNESSES; i++ )
@@ -313,7 +313,7 @@ const account_object& database_fixture::account_create(
 
       if( fee_remainder > 0 )
       {
-         vest( COLAB_INIT_MINER_NAME, name, asset( fee_remainder, CLC_SYMBOL ) );
+         //vest( COLAB_INIT_MINER_NAME, name, asset( fee_remainder, CLC_SYMBOL ) );
       }
 
       const account_object& acct = db->get_account( name );
@@ -411,11 +411,13 @@ void database_fixture::fund(
          {
             if( amount.symbol == CLC_SYMBOL )
                a.balance += amount;
-            else if( amount.symbol == SBD_SYMBOL )
-            {
-               a.sbd_balance += amount;
-               a.sbd_seconds_last_update = db.head_block_time();
-            }
+///~~~~~CLC~~~~~{ NO NEED for CoLab
+//             else if( amount.symbol == SBD_SYMBOL )
+//             {
+//                a.sbd_balance += amount;
+//                a.sbd_seconds_last_update = db.head_block_time();
+//             }
+///~~~~~CLC~~~~~} NO NEED for CoLab
          });
 
          db.modify( db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
@@ -455,13 +457,13 @@ void database_fixture::convert(
          db->adjust_supply( -amount );
          db->adjust_supply( db->to_sbd( amount ) );
       }
-      else if ( amount.symbol == SBD_SYMBOL )
-      {
-         db->adjust_balance( account_name, -amount );
-         db->adjust_balance( account_name, db->to_colab( amount ) );
-         db->adjust_supply( -amount );
-         db->adjust_supply( db->to_colab( amount ) );
-      }
+//       else if ( amount.symbol == SBD_SYMBOL )
+//       {
+//          db->adjust_balance( account_name, -amount );
+//          db->adjust_balance( account_name, db->to_colab( amount ) );
+//          db->adjust_supply( -amount );
+//          db->adjust_supply( db->to_colab( amount ) );
+//       }
    } FC_CAPTURE_AND_RETHROW( (account_name)(amount) )
 }
 
@@ -491,55 +493,55 @@ void database_fixture::transfer(
    } FC_CAPTURE_AND_RETHROW( (from)(to)(amount) )
 }
 
-void database_fixture::vest( const string& from, const string& to, const asset& amount )
-{
-   try
-   {
-      FC_ASSERT( amount.symbol == CLC_SYMBOL, "Can only vest TESTS" );
-
-      transfer_to_vesting_operation op;
-      op.from = from;
-      op.to = to;
-      op.amount = amount;
-
-      trx.operations.push_back( op );
-      trx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      trx.validate();
-
-      // This sign() call fixes some tests, like withdraw_vesting_apply, that use this method
-      //   with debug_plugin such that trx may be re-applied with less generous skip flags.
-      if( from == COLAB_INIT_MINER_NAME )
-      {
-         sign( trx, init_account_priv_key );
-      }
-
-      db->push_transaction( trx, ~0 );
-      trx.clear();
-   } FC_CAPTURE_AND_RETHROW( (from)(to)(amount) )
-}
-
-void database_fixture::vest( const string& from, const share_type& amount )
-{
-   try
-   {
-      transfer_to_vesting_operation op;
-      op.from = from;
-      op.to = "";
-      op.amount = asset( amount, CLC_SYMBOL );
-
-      trx.operations.push_back( op );
-      trx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      trx.validate();
-
-      if( from == COLAB_INIT_MINER_NAME )
-      {
-         sign( trx, init_account_priv_key );
-      }
-
-      db->push_transaction( trx, ~0 );
-      trx.clear();
-   } FC_CAPTURE_AND_RETHROW( (from)(amount) )
-}
+// void database_fixture::vest( const string& from, const string& to, const asset& amount )
+// {
+//    try
+//    {
+//       FC_ASSERT( amount.symbol == CLC_SYMBOL, "Can only vest TESTS" );
+// 
+//       transfer_to_vesting_operation op;
+//       op.from = from;
+//       op.to = to;
+//       op.amount = amount;
+// 
+//       trx.operations.push_back( op );
+//       trx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       trx.validate();
+// 
+//       // This sign() call fixes some tests, like withdraw_vesting_apply, that use this method
+//       //   with debug_plugin such that trx may be re-applied with less generous skip flags.
+//       if( from == COLAB_INIT_MINER_NAME )
+//       {
+//          sign( trx, init_account_priv_key );
+//       }
+// 
+//       db->push_transaction( trx, ~0 );
+//       trx.clear();
+//    } FC_CAPTURE_AND_RETHROW( (from)(to)(amount) )
+// }
+// 
+// void database_fixture::vest( const string& from, const share_type& amount )
+// {
+//    try
+//    {
+//       transfer_to_vesting_operation op;
+//       op.from = from;
+//       op.to = "";
+//       op.amount = asset( amount, CLC_SYMBOL );
+// 
+//       trx.operations.push_back( op );
+//       trx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       trx.validate();
+// 
+//       if( from == COLAB_INIT_MINER_NAME )
+//       {
+//          sign( trx, init_account_priv_key );
+//       }
+// 
+//       db->push_transaction( trx, ~0 );
+//       trx.clear();
+//    } FC_CAPTURE_AND_RETHROW( (from)(amount) )
+// }
 
 void database_fixture::proxy( const string& account, const string& proxy )
 {
@@ -919,7 +921,7 @@ json_rpc_database_fixture::json_rpc_database_fixture()
    db->set_hardfork( COLAB_BLOCKCHAIN_VERSION.minor_v() );
    generate_block();
 
-   vest( "initminer", 10000 );
+   //vest( "initminer", 10000 );
 
    // Fill up the rest of the required miners
    for( int i = COLAB_NUM_INIT_MINERS; i < COLAB_MAX_WITNESSES; i++ )

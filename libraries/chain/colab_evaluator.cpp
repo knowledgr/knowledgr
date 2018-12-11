@@ -1112,17 +1112,17 @@ void escrow_transfer_evaluator::do_apply( const escrow_transfer_operation& o )
       FC_ASSERT( o.escrow_expiration > _db.head_block_time(), "The escrow expiration must be after head block time." );
 
       asset clc_spent = o.clc_amount;
-      asset sbd_spent = o.sbd_amount;
+//      asset sbd_spent = o.sbd_amount;
       if( o.fee.symbol == CLC_SYMBOL )
          clc_spent += o.fee;
-      else
-         sbd_spent += o.fee;
+//       else
+//          sbd_spent += o.fee;
 
       FC_ASSERT( from_account.balance >= clc_spent, "Account cannot cover CLC costs of escrow. Required: ${r} Available: ${a}", ("r",clc_spent)("a",from_account.balance) );
-      FC_ASSERT( from_account.sbd_balance >= sbd_spent, "Account cannot cover SBD costs of escrow. Required: ${r} Available: ${a}", ("r",sbd_spent)("a",from_account.sbd_balance) );
+      //FC_ASSERT( from_account.sbd_balance >= sbd_spent, "Account cannot cover SBD costs of escrow. Required: ${r} Available: ${a}", ("r",sbd_spent)("a",from_account.sbd_balance) );
 
       _db.adjust_balance( from_account, -clc_spent );
-      _db.adjust_balance( from_account, -sbd_spent );
+      //_db.adjust_balance( from_account, -sbd_spent );
 
       _db.create<escrow_object>([&]( escrow_object& esc )
       {
@@ -1132,7 +1132,7 @@ void escrow_transfer_evaluator::do_apply( const escrow_transfer_operation& o )
          esc.agent                  = o.agent;
          esc.ratification_deadline  = o.ratification_deadline;
          esc.escrow_expiration      = o.escrow_expiration;
-         esc.sbd_balance            = o.sbd_amount;
+         //esc.sbd_balance            = o.sbd_amount;
          esc.clc_balance          = o.clc_amount;
          esc.pending_fee            = o.fee;
       });
@@ -1181,7 +1181,7 @@ void escrow_approve_evaluator::do_apply( const escrow_approve_operation& o )
       if( reject_escrow )
       {
          _db.adjust_balance( o.from, escrow.clc_balance );
-         _db.adjust_balance( o.from, escrow.sbd_balance );
+         //_db.adjust_balance( o.from, escrow.sbd_balance );
          _db.adjust_balance( o.from, escrow.pending_fee );
 
          _db.remove( escrow );
@@ -1228,7 +1228,7 @@ void escrow_release_evaluator::do_apply( const escrow_release_operation& o )
 
       const auto& e = _db.get_escrow( o.from, o.escrow_id );
       FC_ASSERT( e.clc_balance >= o.clc_amount, "Release amount exceeds escrow balance. Amount: ${a}, Balance: ${b}", ("a", o.clc_amount)("b", e.clc_balance) );
-      FC_ASSERT( e.sbd_balance >= o.sbd_amount, "Release amount exceeds escrow balance. Amount: ${a}, Balance: ${b}", ("a", o.sbd_amount)("b", e.sbd_balance) );
+      //FC_ASSERT( e.sbd_balance >= o.sbd_amount, "Release amount exceeds escrow balance. Amount: ${a}, Balance: ${b}", ("a", o.sbd_amount)("b", e.sbd_balance) );
       FC_ASSERT( e.to == o.to, "Operation 'to' (${o}) does not match escrow 'to' (${e}).", ("o", o.to)("e", e.to) );
       FC_ASSERT( e.agent == o.agent, "Operation 'agent' (${a}) does not match escrow 'agent' (${e}).", ("o", o.agent)("e", e.agent) );
       FC_ASSERT( o.receiver == e.from || o.receiver == e.to, "Funds must be released to 'from' (${f}) or 'to' (${t})", ("f", e.from)("t", e.to) );
@@ -1259,15 +1259,15 @@ void escrow_release_evaluator::do_apply( const escrow_release_operation& o )
       // If escrow expires and there is no dispute, either party can release funds to either party.
 
       _db.adjust_balance( o.receiver, o.clc_amount );
-      _db.adjust_balance( o.receiver, o.sbd_amount );
+      //_db.adjust_balance( o.receiver, o.sbd_amount );
 
       _db.modify( e, [&]( escrow_object& esc )
       {
          esc.clc_balance -= o.clc_amount;
-         esc.sbd_balance -= o.sbd_amount;
+         //esc.sbd_balance -= o.sbd_amount;
       });
 
-      if( e.clc_balance.amount == 0 && e.sbd_balance.amount == 0 )
+      if( e.clc_balance.amount == 0 /*&& e.sbd_balance.amount == 0 */)
       {
          _db.remove( e );
       }
@@ -1282,151 +1282,151 @@ void transfer_evaluator::do_apply( const transfer_operation& o )
    _db.adjust_balance( o.to, o.amount );
 }
 
-void transfer_to_vesting_evaluator::do_apply( const transfer_to_vesting_operation& o )
-{
-   const auto& from_account = _db.get_account(o.from);
-   const auto& to_account = o.to.size() ? _db.get_account(o.to) : from_account;
+// void transfer_to_vesting_evaluator::do_apply( const transfer_to_vesting_operation& o )
+// {
+//    const auto& from_account = _db.get_account(o.from);
+//    const auto& to_account = o.to.size() ? _db.get_account(o.to) : from_account;
+// 
+//    FC_ASSERT( _db.get_balance( from_account, o.amount.symbol) >= o.amount,
+//               "Account does not have sufficient liquid amount for transfer." );
+//    _db.adjust_balance( from_account, -o.amount );
+//    _db.create_vesting( to_account, o.amount );
+// }
 
-   FC_ASSERT( _db.get_balance( from_account, o.amount.symbol) >= o.amount,
-              "Account does not have sufficient liquid amount for transfer." );
-   _db.adjust_balance( from_account, -o.amount );
-   _db.create_vesting( to_account, o.amount );
-}
+// void withdraw_vesting_evaluator::do_apply( const withdraw_vesting_operation& o )
+// {
+//    const auto& account = _db.get_account( o.account );
+// 
+//    if( o.vesting_shares.amount < 0 )
+//    {
+//       // TODO: Update this to a HF 20 check
+// #ifndef IS_TEST_NET
+//       if( _db.head_block_num() > 23847548 )
+//       {
+// #endif
+//          FC_ASSERT( false, "Cannot withdraw negative VESTS. account: ${account}, vests:${vests}",
+//             ("account", o.account)("vests", o.vesting_shares) );
+// #ifndef IS_TEST_NET
+//       }
+// #endif
+// 
+//       // else, no-op
+//       return;
+//    }
+// 
+// 
+//    FC_ASSERT( account.vesting_shares >= asset( 0, VESTS_SYMBOL ), "Account does not have sufficient Colab Power for withdraw." );
+//    FC_ASSERT( account.vesting_shares - account.delegated_vesting_shares >= o.vesting_shares, "Account does not have sufficient Colab Power for withdraw." );
+// 
+//    FC_TODO( "Remove this entire block after HF 20" )
+//    if( !_db.has_hardfork( COLAB_HARDFORK_0_20__1860 ) && !account.mined && _db.has_hardfork( COLAB_HARDFORK_0_1 ) )
+//    {
+//       const auto& props = _db.get_dynamic_global_properties();
+//       const witness_schedule_object& wso = _db.get_witness_schedule_object();
+// 
+//       asset min_vests = wso.median_props.account_creation_fee * props.get_vesting_share_price();
+//       min_vests.amount.value *= 10;
+// 
+//       FC_ASSERT( account.vesting_shares > min_vests || ( _db.has_hardfork( COLAB_HARDFORK_0_16__562 ) && o.vesting_shares.amount == 0 ),
+//                  "Account registered by another account requires 10x account creation fee worth of Colab Power before it can be powered down." );
+//    }
+// 
+//    if( o.vesting_shares.amount == 0 )
+//    {
+//       if( _db.has_hardfork( COLAB_HARDFORK_0_5__57 ) )
+//          FC_ASSERT( account.vesting_withdraw_rate.amount  != 0, "This operation would not change the vesting withdraw rate." );
+// 
+//       _db.modify( account, [&]( account_object& a ) {
+//          a.vesting_withdraw_rate = asset( 0, VESTS_SYMBOL );
+//          a.next_vesting_withdrawal = time_point_sec::maximum();
+//          a.to_withdraw = 0;
+//          a.withdrawn = 0;
+//       });
+//    }
+//    else
+//    {
+//       int vesting_withdraw_intervals = COLAB_VESTING_WITHDRAW_INTERVALS_PRE_HF_16;
+//       if( _db.has_hardfork( COLAB_HARDFORK_0_16__551 ) )
+//          vesting_withdraw_intervals = COLAB_VESTING_WITHDRAW_INTERVALS; /// 13 weeks = 1 quarter of a year
+// 
+//       _db.modify( account, [&]( account_object& a )
+//       {
+//          auto new_vesting_withdraw_rate = asset( o.vesting_shares.amount / vesting_withdraw_intervals, VESTS_SYMBOL );
+// 
+//          if( new_vesting_withdraw_rate.amount == 0 )
+//             new_vesting_withdraw_rate.amount = 1;
+// 
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_5__57 ) )
+//             FC_ASSERT( account.vesting_withdraw_rate  != new_vesting_withdraw_rate, "This operation would not change the vesting withdraw rate." );
+// 
+//          a.vesting_withdraw_rate = new_vesting_withdraw_rate;
+//          a.next_vesting_withdrawal = _db.head_block_time() + fc::seconds(COLAB_VESTING_WITHDRAW_INTERVAL_SECONDS);
+//          a.to_withdraw = o.vesting_shares.amount;
+//          a.withdrawn = 0;
+//       });
+//    }
+// }
 
-void withdraw_vesting_evaluator::do_apply( const withdraw_vesting_operation& o )
-{
-   const auto& account = _db.get_account( o.account );
-
-   if( o.vesting_shares.amount < 0 )
-   {
-      // TODO: Update this to a HF 20 check
-#ifndef IS_TEST_NET
-      if( _db.head_block_num() > 23847548 )
-      {
-#endif
-         FC_ASSERT( false, "Cannot withdraw negative VESTS. account: ${account}, vests:${vests}",
-            ("account", o.account)("vests", o.vesting_shares) );
-#ifndef IS_TEST_NET
-      }
-#endif
-
-      // else, no-op
-      return;
-   }
-
-
-   FC_ASSERT( account.vesting_shares >= asset( 0, VESTS_SYMBOL ), "Account does not have sufficient Colab Power for withdraw." );
-   FC_ASSERT( account.vesting_shares - account.delegated_vesting_shares >= o.vesting_shares, "Account does not have sufficient Colab Power for withdraw." );
-
-   FC_TODO( "Remove this entire block after HF 20" )
-   if( !_db.has_hardfork( COLAB_HARDFORK_0_20__1860 ) && !account.mined && _db.has_hardfork( COLAB_HARDFORK_0_1 ) )
-   {
-      const auto& props = _db.get_dynamic_global_properties();
-      const witness_schedule_object& wso = _db.get_witness_schedule_object();
-
-      asset min_vests = wso.median_props.account_creation_fee * props.get_vesting_share_price();
-      min_vests.amount.value *= 10;
-
-      FC_ASSERT( account.vesting_shares > min_vests || ( _db.has_hardfork( COLAB_HARDFORK_0_16__562 ) && o.vesting_shares.amount == 0 ),
-                 "Account registered by another account requires 10x account creation fee worth of Colab Power before it can be powered down." );
-   }
-
-   if( o.vesting_shares.amount == 0 )
-   {
-      if( _db.has_hardfork( COLAB_HARDFORK_0_5__57 ) )
-         FC_ASSERT( account.vesting_withdraw_rate.amount  != 0, "This operation would not change the vesting withdraw rate." );
-
-      _db.modify( account, [&]( account_object& a ) {
-         a.vesting_withdraw_rate = asset( 0, VESTS_SYMBOL );
-         a.next_vesting_withdrawal = time_point_sec::maximum();
-         a.to_withdraw = 0;
-         a.withdrawn = 0;
-      });
-   }
-   else
-   {
-      int vesting_withdraw_intervals = COLAB_VESTING_WITHDRAW_INTERVALS_PRE_HF_16;
-      if( _db.has_hardfork( COLAB_HARDFORK_0_16__551 ) )
-         vesting_withdraw_intervals = COLAB_VESTING_WITHDRAW_INTERVALS; /// 13 weeks = 1 quarter of a year
-
-      _db.modify( account, [&]( account_object& a )
-      {
-         auto new_vesting_withdraw_rate = asset( o.vesting_shares.amount / vesting_withdraw_intervals, VESTS_SYMBOL );
-
-         if( new_vesting_withdraw_rate.amount == 0 )
-            new_vesting_withdraw_rate.amount = 1;
-
-         if( _db.has_hardfork( COLAB_HARDFORK_0_5__57 ) )
-            FC_ASSERT( account.vesting_withdraw_rate  != new_vesting_withdraw_rate, "This operation would not change the vesting withdraw rate." );
-
-         a.vesting_withdraw_rate = new_vesting_withdraw_rate;
-         a.next_vesting_withdrawal = _db.head_block_time() + fc::seconds(COLAB_VESTING_WITHDRAW_INTERVAL_SECONDS);
-         a.to_withdraw = o.vesting_shares.amount;
-         a.withdrawn = 0;
-      });
-   }
-}
-
-void set_withdraw_vesting_route_evaluator::do_apply( const set_withdraw_vesting_route_operation& o )
-{
-   try
-   {
-   const auto& from_account = _db.get_account( o.from_account );
-   const auto& to_account = _db.get_account( o.to_account );
-   const auto& wd_idx = _db.get_index< withdraw_vesting_route_index >().indices().get< by_withdraw_route >();
-   auto itr = wd_idx.find( boost::make_tuple( from_account.name, to_account.name ) );
-
-   if( itr == wd_idx.end() )
-   {
-      FC_ASSERT( o.percent != 0, "Cannot create a 0% destination." );
-      FC_ASSERT( from_account.withdraw_routes < COLAB_MAX_WITHDRAW_ROUTES, "Account already has the maximum number of routes." );
-
-      _db.create< withdraw_vesting_route_object >( [&]( withdraw_vesting_route_object& wvdo )
-      {
-         wvdo.from_account = from_account.name;
-         wvdo.to_account = to_account.name;
-         wvdo.percent = o.percent;
-         wvdo.auto_vest = o.auto_vest;
-      });
-
-      _db.modify( from_account, [&]( account_object& a )
-      {
-         a.withdraw_routes++;
-      });
-   }
-   else if( o.percent == 0 )
-   {
-      _db.remove( *itr );
-
-      _db.modify( from_account, [&]( account_object& a )
-      {
-         a.withdraw_routes--;
-      });
-   }
-   else
-   {
-      _db.modify( *itr, [&]( withdraw_vesting_route_object& wvdo )
-      {
-         wvdo.from_account = from_account.name;
-         wvdo.to_account = to_account.name;
-         wvdo.percent = o.percent;
-         wvdo.auto_vest = o.auto_vest;
-      });
-   }
-
-   itr = wd_idx.upper_bound( boost::make_tuple( from_account.name, account_name_type() ) );
-   uint16_t total_percent = 0;
-
-   while( itr->from_account == from_account.name && itr != wd_idx.end() )
-   {
-      total_percent += itr->percent;
-      ++itr;
-   }
-
-   FC_ASSERT( total_percent <= COLAB_100_PERCENT, "More than 100% of vesting withdrawals allocated to destinations." );
-   }
-   FC_CAPTURE_AND_RETHROW()
-}
+// void set_withdraw_vesting_route_evaluator::do_apply( const set_withdraw_vesting_route_operation& o )
+// {
+//    try
+//    {
+//    const auto& from_account = _db.get_account( o.from_account );
+//    const auto& to_account = _db.get_account( o.to_account );
+//    const auto& wd_idx = _db.get_index< withdraw_vesting_route_index >().indices().get< by_withdraw_route >();
+//    auto itr = wd_idx.find( boost::make_tuple( from_account.name, to_account.name ) );
+// 
+//    if( itr == wd_idx.end() )
+//    {
+//       FC_ASSERT( o.percent != 0, "Cannot create a 0% destination." );
+//       FC_ASSERT( from_account.withdraw_routes < COLAB_MAX_WITHDRAW_ROUTES, "Account already has the maximum number of routes." );
+// 
+//       _db.create< withdraw_vesting_route_object >( [&]( withdraw_vesting_route_object& wvdo )
+//       {
+//          wvdo.from_account = from_account.name;
+//          wvdo.to_account = to_account.name;
+//          wvdo.percent = o.percent;
+//          wvdo.auto_vest = o.auto_vest;
+//       });
+// 
+//       _db.modify( from_account, [&]( account_object& a )
+//       {
+//          a.withdraw_routes++;
+//       });
+//    }
+//    else if( o.percent == 0 )
+//    {
+//       _db.remove( *itr );
+// 
+//       _db.modify( from_account, [&]( account_object& a )
+//       {
+//          a.withdraw_routes--;
+//       });
+//    }
+//    else
+//    {
+//       _db.modify( *itr, [&]( withdraw_vesting_route_object& wvdo )
+//       {
+//          wvdo.from_account = from_account.name;
+//          wvdo.to_account = to_account.name;
+//          wvdo.percent = o.percent;
+//          wvdo.auto_vest = o.auto_vest;
+//       });
+//    }
+// 
+//    itr = wd_idx.upper_bound( boost::make_tuple( from_account.name, account_name_type() ) );
+//    uint16_t total_percent = 0;
+// 
+//    while( itr->from_account == from_account.name && itr != wd_idx.end() )
+//    {
+//       total_percent += itr->percent;
+//       ++itr;
+//    }
+// 
+//    FC_ASSERT( total_percent <= COLAB_100_PERCENT, "More than 100% of vesting withdrawals allocated to destinations." );
+//    }
+//    FC_CAPTURE_AND_RETHROW()
+// }
 
 void account_witness_proxy_evaluator::do_apply( const account_witness_proxy_operation& o )
 {
@@ -3211,22 +3211,22 @@ void claim_reward_balance_evaluator::do_apply( const claim_reward_balance_operat
 
    FC_ASSERT( op.reward_colab <= acnt.reward_clc_balance, "Cannot claim that much CLC. Claim: ${c} Actual: ${a}",
       ("c", op.reward_colab)("a", acnt.reward_clc_balance) );
-   FC_ASSERT( op.reward_sbd <= acnt.reward_sbd_balance, "Cannot claim that much SBD. Claim: ${c} Actual: ${a}",
-      ("c", op.reward_sbd)("a", acnt.reward_sbd_balance) );
-   FC_ASSERT( op.reward_vests <= acnt.reward_vesting_balance, "Cannot claim that much VESTS. Claim: ${c} Actual: ${a}",
-      ("c", op.reward_vests)("a", acnt.reward_vesting_balance) );
+//    FC_ASSERT( op.reward_sbd <= acnt.reward_sbd_balance, "Cannot claim that much SBD. Claim: ${c} Actual: ${a}",
+//       ("c", op.reward_sbd)("a", acnt.reward_sbd_balance) );
+//    FC_ASSERT( op.reward_vests <= acnt.reward_vesting_balance, "Cannot claim that much VESTS. Claim: ${c} Actual: ${a}",
+//       ("c", op.reward_vests)("a", acnt.reward_vesting_balance) );
 
-   asset reward_vesting_clc_to_move = asset( 0, CLC_SYMBOL );
-   if( op.reward_vests == acnt.reward_vesting_balance )
-      reward_vesting_clc_to_move = acnt.reward_vesting_clc;
-   else
-      reward_vesting_clc_to_move = asset( ( ( uint128_t( op.reward_vests.amount.value ) * uint128_t( acnt.reward_vesting_clc.amount.value ) )
-         / uint128_t( acnt.reward_vesting_balance.amount.value ) ).to_uint64(), CLC_SYMBOL );
+//   asset reward_vesting_clc_to_move = asset( 0, CLC_SYMBOL );
+//    if( op.reward_vests == acnt.reward_vesting_balance )
+//       reward_vesting_clc_to_move = acnt.reward_vesting_clc;
+//    else
+//       reward_vesting_clc_to_move = asset( ( ( uint128_t( op.reward_vests.amount.value ) * uint128_t( acnt.reward_vesting_clc.amount.value ) )
+//          / uint128_t( acnt.reward_vesting_balance.amount.value ) ).to_uint64(), CLC_SYMBOL );
 
    _db.adjust_reward_balance( acnt, -op.reward_colab );
-   _db.adjust_reward_balance( acnt, -op.reward_sbd );
+//   _db.adjust_reward_balance( acnt, -op.reward_sbd );
    _db.adjust_balance( acnt, op.reward_colab );
-   _db.adjust_balance( acnt, op.reward_sbd );
+//   _db.adjust_balance( acnt, op.reward_sbd );
 
    _db.modify( acnt, [&]( account_object& a )
    {
@@ -3238,17 +3238,17 @@ void claim_reward_balance_evaluator::do_apply( const claim_reward_balance_operat
       }
 
       a.vesting_shares += op.reward_vests;
-      a.reward_vesting_balance -= op.reward_vests;
-      a.reward_vesting_clc -= reward_vesting_clc_to_move;
+//      a.reward_vesting_balance -= op.reward_vests;
+//      a.reward_vesting_clc -= reward_vesting_clc_to_move;
    });
 
    _db.modify( _db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
    {
       gpo.total_vesting_shares += op.reward_vests;
-      gpo.total_vesting_fund_clc += reward_vesting_clc_to_move;
+      //gpo.total_vesting_fund_clc += reward_vesting_clc_to_move;
 
       gpo.pending_rewarded_vesting_shares -= op.reward_vests;
-      gpo.pending_rewarded_vesting_clc -= reward_vesting_clc_to_move;
+      //gpo.pending_rewarded_vesting_clc -= reward_vesting_clc_to_move;
    });
 
    _db.adjust_proxied_witness_votes( acnt, op.reward_vests.amount );
@@ -3278,42 +3278,42 @@ void claim_reward_balance2_evaluator::do_apply( const claim_reward_balance2_oper
             FC_ASSERT( a != nullptr, "Could NOT find account ${a}", ("a", op.account) );
          }
 
-         if( token.symbol == VESTS_SYMBOL)
-         {
-            FC_ASSERT( token <= a->reward_vesting_balance, "Cannot claim that much VESTS. Claim: ${c} Actual: ${a}",
-               ("c", token)("a", a->reward_vesting_balance) );
-
-            asset reward_vesting_clc_to_move = asset( 0, CLC_SYMBOL );
-            if( token == a->reward_vesting_balance )
-               reward_vesting_clc_to_move = a->reward_vesting_clc;
-            else
-               reward_vesting_clc_to_move = asset( ( ( uint128_t( token.amount.value ) * uint128_t( a->reward_vesting_clc.amount.value ) )
-                  / uint128_t( a->reward_vesting_balance.amount.value ) ).to_uint64(), CLC_SYMBOL );
-
-            _db.modify( *a, [&]( account_object& a )
-            {
-               a.vesting_shares += token;
-               a.reward_vesting_balance -= token;
-               a.reward_vesting_clc -= reward_vesting_clc_to_move;
-            });
-
-            _db.modify( _db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
-            {
-               gpo.total_vesting_shares += token;
-               gpo.total_vesting_fund_clc += reward_vesting_clc_to_move;
-
-               gpo.pending_rewarded_vesting_shares -= token;
-               gpo.pending_rewarded_vesting_clc -= reward_vesting_clc_to_move;
-            });
-
-            _db.adjust_proxied_witness_votes( *a, token.amount );
-         }
-         else if( token.symbol == CLC_SYMBOL || token.symbol == SBD_SYMBOL )
+//          if( token.symbol == VESTS_SYMBOL)
+//          {
+//             FC_ASSERT( token <= a->reward_vesting_balance, "Cannot claim that much VESTS. Claim: ${c} Actual: ${a}",
+//                ("c", token)("a", a->reward_vesting_balance) );
+// 
+//             asset reward_vesting_clc_to_move = asset( 0, CLC_SYMBOL );
+//             if( token == a->reward_vesting_balance )
+//                reward_vesting_clc_to_move = a->reward_vesting_clc;
+//             else
+//                reward_vesting_clc_to_move = asset( ( ( uint128_t( token.amount.value ) * uint128_t( a->reward_vesting_clc.amount.value ) )
+//                   / uint128_t( a->reward_vesting_balance.amount.value ) ).to_uint64(), CLC_SYMBOL );
+// 
+//             _db.modify( *a, [&]( account_object& a )
+//             {
+//                a.vesting_shares += token;
+//                a.reward_vesting_balance -= token;
+//                a.reward_vesting_clc -= reward_vesting_clc_to_move;
+//             });
+// 
+//             _db.modify( _db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
+//             {
+//                gpo.total_vesting_shares += token;
+//                gpo.total_vesting_fund_clc += reward_vesting_clc_to_move;
+// 
+//                gpo.pending_rewarded_vesting_shares -= token;
+//                gpo.pending_rewarded_vesting_clc -= reward_vesting_clc_to_move;
+//             });
+// 
+//             _db.adjust_proxied_witness_votes( *a, token.amount );
+//          }
+         /*else */if( token.symbol == CLC_SYMBOL/* || token.symbol == SBD_SYMBOL*/ )
          {
             FC_ASSERT( is_asset_type( token, CLC_SYMBOL ) == false || token <= a->reward_clc_balance,
                        "Cannot claim that much CLC. Claim: ${c} Actual: ${a}", ("c", token)("a", a->reward_clc_balance) );
-            FC_ASSERT( is_asset_type( token, SBD_SYMBOL ) == false || token <= a->reward_sbd_balance,
-                       "Cannot claim that much SBD. Claim: ${c} Actual: ${a}", ("c", token)("a", a->reward_sbd_balance) );
+//             FC_ASSERT( is_asset_type( token, SBD_SYMBOL ) == false || token <= a->reward_sbd_balance,
+//                        "Cannot claim that much SBD. Claim: ${c} Actual: ${a}", ("c", token)("a", a->reward_sbd_balance) );
             _db.adjust_reward_balance( *a, -token );
             _db.adjust_balance( *a, token );
          }

@@ -1115,18 +1115,18 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance2_apply )
       {
          db.modify( db.get_account( "alice" ), []( account_object& a )
          {
-            a.reward_sbd_balance = ASSET( "10.000 TBD" );
+            //a.reward_sbd_balance = ASSET( "10.000 TBD" );
             a.reward_clc_balance = ASSET( "10.000 TESTS" );
-            a.reward_vesting_balance = ASSET( "10.000000 VESTS" );
-            a.reward_vesting_clc = ASSET( "10.000 TESTS" );
+            //a.reward_vesting_balance = ASSET( "10.000000 VESTS" );
+            //a.reward_vesting_clc = ASSET( "10.000 TESTS" );
          });
 
          db.modify( db.get_dynamic_global_properties(), []( dynamic_global_property_object& gpo )
          {
-            gpo.current_sbd_supply += ASSET( "10.000 TBD" );
+            //gpo.current_sbd_supply += ASSET( "10.000 TBD" );
             gpo.current_supply += ASSET( "20.000 TESTS" );
             gpo.virtual_supply += ASSET( "20.000 TESTS" );
-            gpo.pending_rewarded_vesting_shares += ASSET( "10.000000 VESTS" );
+            //gpo.pending_rewarded_vesting_shares += ASSET( "10.000000 VESTS" );
             gpo.pending_rewarded_vesting_clc += ASSET( "10.000 TESTS" );
          });
       });
@@ -1135,7 +1135,7 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance2_apply )
       validate_database();
 
       auto alice_colab = db->get_account( "alice" ).balance;
-      auto alice_sbd = db->get_account( "alice" ).sbd_balance;
+      //auto alice_sbd = db->get_account( "alice" ).sbd_balance;
       auto alice_vests = db->get_account( "alice" ).vesting_shares;
       auto alice_smt1 = db->get_balance( "alice", smt1 );
       auto alice_smt2 = db->get_balance( "alice", smt2 );
@@ -1167,11 +1167,11 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance2_apply )
       PUSH_OP(op, alice_private_key);
       BOOST_REQUIRE( db->get_account( "alice" ).balance == alice_colab + ASSET( "0.000 TESTS" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_clc_balance == ASSET( "10.000 TESTS" ) );
-      BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == alice_sbd + ASSET( "0.000 TBD" ) );
-      BOOST_REQUIRE( db->get_account( "alice" ).reward_sbd_balance == ASSET( "10.000 TBD" ) );
+      //BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == alice_sbd + ASSET( "0.000 TBD" ) );
+      //BOOST_REQUIRE( db->get_account( "alice" ).reward_sbd_balance == ASSET( "10.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).vesting_shares == alice_vests + partial_vests );
-      BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_balance == ASSET( "5.000000 VESTS" ) );
-      BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_clc == ASSET( "5.000 TESTS" ) );
+      //BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_balance == ASSET( "5.000000 VESTS" ) );
+      //BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_clc == ASSET( "5.000 TESTS" ) );
       validate_database();
       alice_vests += partial_vests;
       op.reward_tokens.clear();
@@ -1198,11 +1198,11 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance2_apply )
       PUSH_OP(op, alice_private_key);
       BOOST_REQUIRE( db->get_account( "alice" ).balance == alice_colab + full_colab );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_clc_balance == ASSET( "0.000 TESTS" ) );
-      BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == alice_sbd + full_sbd );
-      BOOST_REQUIRE( db->get_account( "alice" ).reward_sbd_balance == ASSET( "0.000 TBD" ) );
+      //BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == alice_sbd + full_sbd );
+      //BOOST_REQUIRE( db->get_account( "alice" ).reward_sbd_balance == ASSET( "0.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).vesting_shares == alice_vests + partial_vests );
-      BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_balance == ASSET( "0.000000 VESTS" ) );
-      BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_clc == ASSET( "0.000 TESTS" ) );
+//       BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_balance == ASSET( "0.000000 VESTS" ) );
+//       BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_clc == ASSET( "0.000 TESTS" ) );
       validate_database();
       op.reward_tokens.clear();
       // SMTs
@@ -1220,131 +1220,131 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance2_apply )
    FC_LOG_AND_RETHROW()
 }
 
-BOOST_AUTO_TEST_CASE( smt_transfer_to_vesting_validate )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: transfer_to_vesting_validate with SMT" );
-
-      // Dramatis personae
-      ACTORS( (alice) )
-      generate_block();
-      // Create sample SMTs
-      auto smts = create_smt_3( "alice", alice_private_key );
-      const auto& smt1 = smts[0];
-      // Fund creator with SMTs
-      FUND( "alice", asset( 100, smt1 ) );
-
-      transfer_to_vesting_operation op;
-      op.from = "alice";
-      op.amount = asset( 20, smt1 );
-      op.validate();
-
-      // Fail on invalid 'from' account name
-      op.from = "@@@@@";
-      COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
-      op.from = "alice";
-
-      // Fail on invalid 'to' account name
-      op.to = "@@@@@";
-      COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
-      op.to = "";
-
-      // Fail on vesting symbol (instead of liquid)
-      op.amount = asset( 20, smt1.get_paired_symbol() );
-      COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
-      op.amount = asset( 20, smt1 );
-
-      // Fail on 0 amount
-      op.amount = asset( 0, smt1 );
-      COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
-      op.amount = asset( 20, smt1 );
-
-      // Fail on negative amount
-      op.amount = asset( -20, smt1 );
-      COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
-      op.amount = asset( 20, smt1 );
-
-      validate_database();
-   }
-   FC_LOG_AND_RETHROW()
-}
+// BOOST_AUTO_TEST_CASE( smt_transfer_to_vesting_validate )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: transfer_to_vesting_validate with SMT" );
+// 
+//       // Dramatis personae
+//       ACTORS( (alice) )
+//       generate_block();
+//       // Create sample SMTs
+//       auto smts = create_smt_3( "alice", alice_private_key );
+//       const auto& smt1 = smts[0];
+//       // Fund creator with SMTs
+//       FUND( "alice", asset( 100, smt1 ) );
+// 
+//       transfer_to_vesting_operation op;
+//       op.from = "alice";
+//       op.amount = asset( 20, smt1 );
+//       op.validate();
+// 
+//       // Fail on invalid 'from' account name
+//       op.from = "@@@@@";
+//       COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
+//       op.from = "alice";
+// 
+//       // Fail on invalid 'to' account name
+//       op.to = "@@@@@";
+//       COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
+//       op.to = "";
+// 
+//       // Fail on vesting symbol (instead of liquid)
+//       op.amount = asset( 20, smt1.get_paired_symbol() );
+//       COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
+//       op.amount = asset( 20, smt1 );
+// 
+//       // Fail on 0 amount
+//       op.amount = asset( 0, smt1 );
+//       COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
+//       op.amount = asset( 20, smt1 );
+// 
+//       // Fail on negative amount
+//       op.amount = asset( -20, smt1 );
+//       COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
+//       op.amount = asset( 20, smt1 );
+// 
+//       validate_database();
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
 
 // Here would be smt_transfer_to_vesting_authorities if it differed from transfer_to_vesting_authorities
 
-BOOST_AUTO_TEST_CASE( smt_transfer_to_vesting_apply )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: smt_transfer_to_vesting_apply" );
-
-      auto test_single_smt = [this] (const asset_symbol_type& liquid_smt, const fc::ecc::private_key& key )
-      {
-         asset_symbol_type vesting_smt = liquid_smt.get_paired_symbol();
-         // Fund creator with SMTs
-         FUND( "alice", asset( 10000, liquid_smt ) );
-
-         const auto& smt_object = db->get< smt_token_object, by_symbol >( liquid_smt );
-
-         // Check pre-vesting balances
-         FC_ASSERT( db->get_balance( "alice", liquid_smt ).amount == 10000, "SMT balance adjusting error" );
-         FC_ASSERT( db->get_balance( "alice", vesting_smt ).amount == 0, "SMT balance adjusting error" );
-
-         auto smt_shares = asset( smt_object.total_vesting_shares, vesting_smt );
-         auto smt_vests = asset( smt_object.total_vesting_fund_smt, liquid_smt );
-         auto smt_share_price = smt_object.get_vesting_share_price();
-         auto alice_smt_shares = db->get_balance( "alice", vesting_smt );
-         auto bob_smt_shares = db->get_balance( "bob", vesting_smt );;
-
-         // Self transfer Alice's liquid
-         transfer_to_vesting_operation op;
-         op.from = "alice";
-         op.to = "";
-         op.amount = asset( 7500, liquid_smt );
-         PUSH_OP( op, key );
-
-         auto new_vest = op.amount * smt_share_price;
-         smt_shares += new_vest;
-         smt_vests += op.amount;
-         alice_smt_shares += new_vest;
-
-         BOOST_REQUIRE( db->get_balance( "alice", liquid_smt ) == asset( 2500, liquid_smt ) );
-         BOOST_REQUIRE( db->get_balance( "alice", vesting_smt ) == alice_smt_shares );
-         BOOST_REQUIRE( smt_object.total_vesting_fund_smt.value == smt_vests.amount.value );
-         BOOST_REQUIRE( smt_object.total_vesting_shares.value == smt_shares.amount.value );
-         validate_database();
-         smt_share_price = smt_object.get_vesting_share_price();
-
-         // Transfer Alice's liquid to Bob's vests
-         op.to = "bob";
-         op.amount = asset( 2000, liquid_smt );
-         PUSH_OP( op, key );
-
-         new_vest = op.amount * smt_share_price;
-         smt_shares += new_vest;
-         smt_vests += op.amount;
-         bob_smt_shares += new_vest;
-
-         BOOST_REQUIRE( db->get_balance( "alice", liquid_smt ) == asset( 500, liquid_smt ) );
-         BOOST_REQUIRE( db->get_balance( "alice", vesting_smt ) == alice_smt_shares );
-         BOOST_REQUIRE( db->get_balance( "bob", liquid_smt ) == asset( 0, liquid_smt ) );
-         BOOST_REQUIRE( db->get_balance( "bob", vesting_smt ) == bob_smt_shares );
-         BOOST_REQUIRE( smt_object.total_vesting_fund_smt.value == smt_vests.amount.value );
-         BOOST_REQUIRE( smt_object.total_vesting_shares.value == smt_shares.amount.value );
-         validate_database();
-      };
-
-      ACTORS( (alice)(bob) )
-      generate_block();
-
-      // Create sample SMTs
-      auto smts = create_smt_3( "alice", alice_private_key );
-      test_single_smt( smts[0], alice_private_key);
-      test_single_smt( smts[1], alice_private_key );
-      test_single_smt( smts[2], alice_private_key );
-   }
-   FC_LOG_AND_RETHROW()
-}
+// BOOST_AUTO_TEST_CASE( smt_transfer_to_vesting_apply )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: smt_transfer_to_vesting_apply" );
+// 
+//       auto test_single_smt = [this] (const asset_symbol_type& liquid_smt, const fc::ecc::private_key& key )
+//       {
+//          asset_symbol_type vesting_smt = liquid_smt.get_paired_symbol();
+//          // Fund creator with SMTs
+//          FUND( "alice", asset( 10000, liquid_smt ) );
+// 
+//          const auto& smt_object = db->get< smt_token_object, by_symbol >( liquid_smt );
+// 
+//          // Check pre-vesting balances
+//          FC_ASSERT( db->get_balance( "alice", liquid_smt ).amount == 10000, "SMT balance adjusting error" );
+//          FC_ASSERT( db->get_balance( "alice", vesting_smt ).amount == 0, "SMT balance adjusting error" );
+// 
+//          auto smt_shares = asset( smt_object.total_vesting_shares, vesting_smt );
+//          auto smt_vests = asset( smt_object.total_vesting_fund_smt, liquid_smt );
+//          auto smt_share_price = smt_object.get_vesting_share_price();
+//          auto alice_smt_shares = db->get_balance( "alice", vesting_smt );
+//          auto bob_smt_shares = db->get_balance( "bob", vesting_smt );;
+// 
+//          // Self transfer Alice's liquid
+//          transfer_to_vesting_operation op;
+//          op.from = "alice";
+//          op.to = "";
+//          op.amount = asset( 7500, liquid_smt );
+//          PUSH_OP( op, key );
+// 
+//          auto new_vest = op.amount * smt_share_price;
+//          smt_shares += new_vest;
+//          smt_vests += op.amount;
+//          alice_smt_shares += new_vest;
+// 
+//          BOOST_REQUIRE( db->get_balance( "alice", liquid_smt ) == asset( 2500, liquid_smt ) );
+//          BOOST_REQUIRE( db->get_balance( "alice", vesting_smt ) == alice_smt_shares );
+//          BOOST_REQUIRE( smt_object.total_vesting_fund_smt.value == smt_vests.amount.value );
+//          BOOST_REQUIRE( smt_object.total_vesting_shares.value == smt_shares.amount.value );
+//          validate_database();
+//          smt_share_price = smt_object.get_vesting_share_price();
+// 
+//          // Transfer Alice's liquid to Bob's vests
+//          op.to = "bob";
+//          op.amount = asset( 2000, liquid_smt );
+//          PUSH_OP( op, key );
+// 
+//          new_vest = op.amount * smt_share_price;
+//          smt_shares += new_vest;
+//          smt_vests += op.amount;
+//          bob_smt_shares += new_vest;
+// 
+//          BOOST_REQUIRE( db->get_balance( "alice", liquid_smt ) == asset( 500, liquid_smt ) );
+//          BOOST_REQUIRE( db->get_balance( "alice", vesting_smt ) == alice_smt_shares );
+//          BOOST_REQUIRE( db->get_balance( "bob", liquid_smt ) == asset( 0, liquid_smt ) );
+//          BOOST_REQUIRE( db->get_balance( "bob", vesting_smt ) == bob_smt_shares );
+//          BOOST_REQUIRE( smt_object.total_vesting_fund_smt.value == smt_vests.amount.value );
+//          BOOST_REQUIRE( smt_object.total_vesting_shares.value == smt_shares.amount.value );
+//          validate_database();
+//       };
+// 
+//       ACTORS( (alice)(bob) )
+//       generate_block();
+// 
+//       // Create sample SMTs
+//       auto smts = create_smt_3( "alice", alice_private_key );
+//       test_single_smt( smts[0], alice_private_key);
+//       test_single_smt( smts[1], alice_private_key );
+//       test_single_smt( smts[2], alice_private_key );
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
 
 BOOST_AUTO_TEST_CASE( smt_create_validate )
 {
@@ -1378,10 +1378,10 @@ BOOST_AUTO_TEST_CASE( smt_create_validate )
       op.smt_creation_fee.amount++;
       COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
 
-      BOOST_TEST_MESSAGE( " -- Invalid currency for SMT creation fee (VESTS)" );
-      op.smt_creation_fee = ASSET( "1.000000 VESTS" );
-      COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
-      op.smt_creation_fee = db->get_dynamic_global_properties().smt_creation_fee;
+//       BOOST_TEST_MESSAGE( " -- Invalid currency for SMT creation fee (VESTS)" );
+//       op.smt_creation_fee = ASSET( "1.000000 VESTS" );
+//       COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
+//       op.smt_creation_fee = db->get_dynamic_global_properties().smt_creation_fee;
 
       BOOST_TEST_MESSAGE( " -- Invalid SMT creation fee: differing decimals" );
       op.precision = 0;
@@ -1397,13 +1397,13 @@ BOOST_AUTO_TEST_CASE( smt_create_validate )
       op.symbol = CLC_SYMBOL;
       COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
 
-      BOOST_TEST_MESSAGE( " -- Invalid SMT creation symbol: SBD cannot be an SMT" );
-      op.symbol = SBD_SYMBOL;
-      COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
-
-      BOOST_TEST_MESSAGE( " -- Invalid SMT creation symbol: VESTS cannot be an SMT" );
-      op.symbol = VESTS_SYMBOL;
-      COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
+//       BOOST_TEST_MESSAGE( " -- Invalid SMT creation symbol: SBD cannot be an SMT" );
+//       op.symbol = SBD_SYMBOL;
+//       COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
+// 
+//       BOOST_TEST_MESSAGE( " -- Invalid SMT creation symbol: VESTS cannot be an SMT" );
+//       op.symbol = VESTS_SYMBOL;
+//       COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
 
       // If this fails, it could indicate a test above has failed for the wrong reasons
       op.symbol = get_new_smt_symbol( 3, db );

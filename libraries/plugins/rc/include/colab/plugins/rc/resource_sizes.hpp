@@ -123,13 +123,13 @@ struct operation_exec_info
    int64_t limit_order_create_operation_exec_time              =  31700;
    int64_t limit_order_create2_operation_exec_time             =  31700;
    int64_t request_account_recovery_operation_exec_time        =  54400;
-   int64_t set_withdraw_vesting_route_operation_exec_time      =  17900;
+   //int64_t set_withdraw_vesting_route_operation_exec_time      =  17900;
    int64_t transfer_from_savings_operation_exec_time           =  17500;
    int64_t transfer_operation_exec_time                        =   9600;
    int64_t transfer_to_savings_operation_exec_time             =   6400;
-   int64_t transfer_to_vesting_operation_exec_time             =  44400;
+   //int64_t transfer_to_vesting_operation_exec_time             =  44400;
    int64_t vote_operation_exec_time                            =  26500;
-   int64_t withdraw_vesting_operation_exec_time                =  10400;
+   //int64_t withdraw_vesting_operation_exec_time                =  10400;
    int64_t witness_set_properties_operation_exec_time          =   9500;
    int64_t witness_update_operation_exec_time                  =   9500;
 
@@ -203,13 +203,13 @@ FC_REFLECT( colab::plugins::rc::operation_exec_info,
    ( limit_order_create_operation_exec_time )
    ( limit_order_create2_operation_exec_time )
    ( request_account_recovery_operation_exec_time )
-   ( set_withdraw_vesting_route_operation_exec_time )
+//   ( set_withdraw_vesting_route_operation_exec_time )
    ( transfer_from_savings_operation_exec_time )
    ( transfer_operation_exec_time )
    ( transfer_to_savings_operation_exec_time )
-   ( transfer_to_vesting_operation_exec_time )
+//   ( transfer_to_vesting_operation_exec_time )
    ( vote_operation_exec_time )
-   ( withdraw_vesting_operation_exec_time )
+//   ( withdraw_vesting_operation_exec_time )
    ( witness_set_properties_operation_exec_time )
    ( witness_update_operation_exec_time )
 

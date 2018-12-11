@@ -444,7 +444,7 @@ class wallet_api
        *
        *  @param creator The account creating the new account
        *  @param clc_fee The amount of the fee to be paid with CLC
-       *  @param delegated_vests The amount of the fee to be paid with delegation
+       *  @param delegated_clc The amount of the fee to be paid with delegation
        *  @param new_account_name The name of the new account
        *  @param json_meta JSON Metadata associated with the new account
        *  @param broadcast true if you wish to broadcast the transaction
@@ -452,7 +452,7 @@ class wallet_api
       condenser_api::legacy_signed_transaction create_account_delegated(
          string creator,
          condenser_api::legacy_asset clc_fee,
-         condenser_api::legacy_asset delegated_vests,
+         condenser_api::legacy_asset delegated_clc,
          string new_account_name,
          string json_meta,
          bool broadcast );
@@ -467,7 +467,7 @@ class wallet_api
        *
        * @param creator The account creating the new account
        * @param clc_fee The amount of the fee to be paid with CLC
-       * @param delegated_vests The amount of the fee to be paid with delegation
+       * @param delegated_clc The amount of the fee to be paid with delegation
        * @param newname The name of the new account
        * @param json_meta JSON Metadata associated with the new account
        * @param owner public owner key of the new account
@@ -479,7 +479,7 @@ class wallet_api
       condenser_api::legacy_signed_transaction create_account_with_keys_delegated(
          string creator,
          condenser_api::legacy_asset clc_fee,
-         condenser_api::legacy_asset delegated_vests,
+         condenser_api::legacy_asset delegated_clc,
          string newname,
          string json_meta,
          public_key_type owner,
@@ -780,7 +780,6 @@ class wallet_api
        * @param to The account the funds are going to
        * @param agent The account acting as the agent in case of dispute
        * @param escrow_id A unique id for the escrow transfer. (from, escrow_id) must be a unique pair
-       * @param sbd_amount The amount of SBD to transfer
        * @param clc_amount The amount of CLC to transfer
        * @param fee The fee paid to the agent
        * @param ratification_deadline The deadline for 'to' and 'agent' to approve the escrow transfer
@@ -793,7 +792,7 @@ class wallet_api
          string to,
          string agent,
          uint32_t escrow_id,
-         condenser_api::legacy_asset sbd_amount,
+//         condenser_api::legacy_asset sbd_amount,
          condenser_api::legacy_asset clc_amount,
          condenser_api::legacy_asset fee,
          time_point_sec ratification_deadline,
@@ -852,7 +851,6 @@ class wallet_api
        * @param who The account authorizing the release
        * @param receiver The account that will receive funds being released
        * @param escrow_id A unique id for the escrow transfer
-       * @param sbd_amount The amount of SBD that will be released
        * @param clc_amount The amount of CLC that will be released
        * @param broadcast true if you wish to broadcast the transaction
        */
@@ -863,7 +861,7 @@ class wallet_api
          string who,
          string receiver,
          uint32_t escrow_id,
-         condenser_api::legacy_asset sbd_amount,
+//         condenser_api::legacy_asset sbd_amount,
          condenser_api::legacy_asset clc_amount,
          bool broadcast = false
       );
@@ -878,11 +876,11 @@ class wallet_api
        * @param amount The amount of CLC to vest i.e. "100.00 CLC"
        * @param broadcast true if you wish to broadcast the transaction
        */
-      condenser_api::legacy_signed_transaction transfer_to_vesting(
-         string from,
-         string to,
-         condenser_api::legacy_asset amount,
-         bool broadcast = false);
+//       condenser_api::legacy_signed_transaction transfer_to_vesting(
+//          string from,
+//          string to,
+//          condenser_api::legacy_asset amount,
+//          bool broadcast = false);
 
       /**
        *  Transfers into savings happen immediately, transfers from savings take 72 hours
@@ -928,10 +926,10 @@ class wallet_api
        *    withdrawn and deposited back as CLC. i.e. "10.000000 VESTS"
        * @param broadcast true if you wish to broadcast the transaction
        */
-      condenser_api::legacy_signed_transaction withdraw_vesting(
-         string from,
-         condenser_api::legacy_asset vesting_shares,
-         bool broadcast = false );
+//       condenser_api::legacy_signed_transaction withdraw_vesting(
+//          string from,
+//          condenser_api::legacy_asset vesting_shares,
+//          bool broadcast = false );
 
       /**
        * Set up a vesting withdraw route. When vesting shares are withdrawn, they will be routed to these accounts
@@ -945,12 +943,12 @@ class wallet_api
        *    them as CLC.
        * @param broadcast true if you wish to broadcast the transaction.
        */
-      condenser_api::legacy_signed_transaction set_withdraw_vesting_route(
-         string from,
-         string to,
-         uint16_t percent,
-         bool auto_vest,
-         bool broadcast = false );
+//       condenser_api::legacy_signed_transaction set_withdraw_vesting_route(
+//          string from,
+//          string to,
+//          uint16_t percent,
+//          bool auto_vest,
+//          bool broadcast = false );
 
       /**
        *  This method will convert SBD to CLC at the current_median_history price one
@@ -1314,9 +1312,9 @@ FC_API( colab::wallet::wallet_api,
         (escrow_approve)
         (escrow_dispute)
         (escrow_release)
-        (transfer_to_vesting)
-        (withdraw_vesting)
-        (set_withdraw_vesting_route)
+        //(transfer_to_vesting)
+        //(withdraw_vesting)
+        //(set_withdraw_vesting_route)
         (convert_sbd)
         (publish_feed)
         (get_order_book)

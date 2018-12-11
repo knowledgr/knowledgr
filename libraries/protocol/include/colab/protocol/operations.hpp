@@ -17,8 +17,8 @@ namespace colab { namespace protocol {
             comment_operation,
 
             transfer_operation,
-            transfer_to_vesting_operation,
-            withdraw_vesting_operation,
+            //transfer_to_vesting_operation,
+            //withdraw_vesting_operation,
 
             limit_order_create_operation,
             limit_order_cancel_operation,
@@ -46,7 +46,7 @@ namespace colab { namespace protocol {
             delete_comment_operation,
             custom_json_operation,
             comment_options_operation,
-            set_withdraw_vesting_route_operation,
+            //set_withdraw_vesting_route_operation,
             limit_order_create2_operation,
             claim_account_operation,
             create_claimed_account_operation,

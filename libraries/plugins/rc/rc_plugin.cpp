@@ -639,21 +639,21 @@ struct pre_apply_operation_visitor
       regenerate( op.creator );
    }
 
-   void operator()( const transfer_to_vesting_operation& op )const
-   {
-      account_name_type target = op.to.size() ? op.to : op.from;
-      regenerate( target );
-   }
+//    void operator()( const transfer_to_vesting_operation& op )const
+//    {
+//       account_name_type target = op.to.size() ? op.to : op.from;
+//       regenerate( target );
+//    }
 
-   void operator()( const withdraw_vesting_operation& op )const
-   {
-      regenerate( op.account );
-   }
+//    void operator()( const withdraw_vesting_operation& op )const
+//    {
+//       regenerate( op.account );
+//    }
 
-   void operator()( const set_withdraw_vesting_route_operation& op )const
-   {
-      regenerate( op.from_account );
-   }
+//    void operator()( const set_withdraw_vesting_route_operation& op )const
+//    {
+//       regenerate( op.from_account );
+//    }
 
    void operator()( const delegate_vesting_shares_operation& op )const
    {
@@ -805,16 +805,16 @@ struct post_apply_operation_visitor
       _mod_accounts.emplace_back( _current_witness );
    }
 
-   void operator()( const transfer_to_vesting_operation& op )
-   {
-      account_name_type target = op.to.size() ? op.to : op.from;
-      _mod_accounts.emplace_back( target );
-   }
+//    void operator()( const transfer_to_vesting_operation& op )
+//    {
+//       account_name_type target = op.to.size() ? op.to : op.from;
+//       _mod_accounts.emplace_back( target );
+//    }
 
-   void operator()( const withdraw_vesting_operation& op )const
-   {
-      _mod_accounts.emplace_back( op.account, false );
-   }
+//    void operator()( const withdraw_vesting_operation& op )const
+//    {
+//       _mod_accounts.emplace_back( op.account, false );
+//    }
 
    void operator()( const delegate_vesting_shares_operation& op )const
    {
