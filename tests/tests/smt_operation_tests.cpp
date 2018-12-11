@@ -1135,7 +1135,7 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance2_apply )
       validate_database();
 
       auto alice_colab = db->get_account( "alice" ).balance;
-      auto alice_sbd = db->get_account( "alice" ).sbd_balance;
+      //auto alice_sbd = db->get_account( "alice" ).sbd_balance;
       auto alice_vests = db->get_account( "alice" ).vesting_shares;
       auto alice_smt1 = db->get_balance( "alice", smt1 );
       auto alice_smt2 = db->get_balance( "alice", smt2 );
@@ -1167,7 +1167,7 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance2_apply )
       PUSH_OP(op, alice_private_key);
       BOOST_REQUIRE( db->get_account( "alice" ).balance == alice_colab + ASSET( "0.000 TESTS" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_clc_balance == ASSET( "10.000 TESTS" ) );
-      BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == alice_sbd + ASSET( "0.000 TBD" ) );
+      //BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == alice_sbd + ASSET( "0.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_sbd_balance == ASSET( "10.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).vesting_shares == alice_vests + partial_vests );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_balance == ASSET( "5.000000 VESTS" ) );
@@ -1198,7 +1198,7 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance2_apply )
       PUSH_OP(op, alice_private_key);
       BOOST_REQUIRE( db->get_account( "alice" ).balance == alice_colab + full_colab );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_clc_balance == ASSET( "0.000 TESTS" ) );
-      BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == alice_sbd + full_sbd );
+      //BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == alice_sbd + full_sbd );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_sbd_balance == ASSET( "0.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).vesting_shares == alice_vests + partial_vests );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_balance == ASSET( "0.000000 VESTS" ) );

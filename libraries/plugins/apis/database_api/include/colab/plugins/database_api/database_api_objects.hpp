@@ -185,7 +185,7 @@ struct api_account_object
       voting_manabar( a.voting_manabar ),
       balance( a.balance ),
       savings_balance( a.savings_balance ),
-      sbd_balance( a.sbd_balance ),
+      //sbd_balance( a.sbd_balance ),///~~~~~CLC~~~~~ NO NEED for CoLab
       sbd_seconds( a.sbd_seconds ),
       sbd_seconds_last_update( a.sbd_seconds_last_update ),
       sbd_last_interest_payment( a.sbd_last_interest_payment ),
@@ -268,7 +268,7 @@ struct api_account_object
    asset             balance;
    asset             savings_balance;
 
-   asset             sbd_balance;
+   //asset             sbd_balance;///~~~~~CLC~~~~~ NO NEED for CoLab
    uint128_t         sbd_seconds;
    time_point_sec    sbd_seconds_last_update;
    time_point_sec    sbd_last_interest_payment;
@@ -606,7 +606,8 @@ FC_REFLECT( colab::plugins::database_api::api_account_object,
              (comment_count)(lifetime_vote_count)(post_count)(can_vote)(voting_manabar)
              (balance)
              (savings_balance)
-             (sbd_balance)(sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)
+             /*(sbd_balance)*////~~~~~CLC~~~~~ NO NEED for CoLab
+			 (sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)
              (savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)(savings_withdraw_requests)
              (reward_sbd_balance)(reward_clc_balance)(reward_vesting_balance)(reward_vesting_clc)
              (vesting_shares)(delegated_vesting_shares)(received_vesting_shares)(vesting_withdraw_rate)(next_vesting_withdrawal)(withdrawn)(to_withdraw)(withdraw_routes)

@@ -61,7 +61,7 @@ namespace colab { namespace chain {
          account_name_type agent;
          time_point_sec    ratification_deadline;
          time_point_sec    escrow_expiration;
-         asset             sbd_balance;
+///         asset             sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
          asset             clc_balance;
          asset             pending_fee;
          bool              to_approved = false;
@@ -531,7 +531,8 @@ CHAINBASE_SET_INDEX_TYPE( colab::chain::savings_withdraw_object, colab::chain::s
 FC_REFLECT( colab::chain::escrow_object,
              (id)(escrow_id)(from)(to)(agent)
              (ratification_deadline)(escrow_expiration)
-             (sbd_balance)(clc_balance)(pending_fee)
+             /*(sbd_balance)*////~~~~~CLC~~~~~ NO NEED for CoLab
+			 (clc_balance)(pending_fee)
              (to_approved)(agent_approved)(disputed) )
 CHAINBASE_SET_INDEX_TYPE( colab::chain::escrow_object, colab::chain::escrow_index )
 

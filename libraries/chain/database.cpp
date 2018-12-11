@@ -1278,7 +1278,7 @@ void database::clear_null_account_balance()
 
    const auto& null_account = get_account( COLAB_NULL_ACCOUNT );
    asset total_colab( 0, CLC_SYMBOL );
-   asset total_sbd( 0, SBD_SYMBOL );
+//   asset total_sbd( 0, SBD_SYMBOL );///~~~~~CLC~~~~~ NO NEED
    asset total_vests( 0, VESTS_SYMBOL );
 
    asset vesting_shares_colab_value = asset( 0, CLC_SYMBOL );
@@ -1292,16 +1292,16 @@ void database::clear_null_account_balance()
    {
       total_colab += null_account.savings_balance;
    }
-
+#if 0///~~~~~CLC~~~~~{ NO NEED for CoLab
    if( null_account.sbd_balance.amount > 0 )
    {
       total_sbd += null_account.sbd_balance;
    }
-
    if( null_account.savings_sbd_balance.amount > 0 )
    {
       total_sbd += null_account.savings_sbd_balance;
    }
+#endif///~~~~~CLC~~~~~} NO NEED for CoLab
 
    if( null_account.vesting_shares.amount > 0 )
    {
@@ -1352,10 +1352,12 @@ void database::clear_null_account_balance()
       adjust_savings_balance( null_account, -null_account.savings_balance );
    }
 
+#if 0///~~~~~CLC~~~~~{ NO NEED for CoLab
    if( null_account.sbd_balance.amount > 0 )
    {
       adjust_balance( null_account, -null_account.sbd_balance );
    }
+#endif
 
    if( null_account.savings_sbd_balance.amount > 0 )
    {
@@ -2455,7 +2457,9 @@ void database::expire_escrow_ratification()
       ++escrow_itr;
 
       adjust_balance( old_escrow.from, old_escrow.clc_balance );
+#if 0///~~~~~CLC~~~~~{ NO NEED for CoLab
       adjust_balance( old_escrow.from, old_escrow.sbd_balance );
+#endif///~~~~~CLC~~~~~{ NO NEED for CoLab
       adjust_balance( old_escrow.from, old_escrow.pending_fee );
 
       remove( old_escrow );
@@ -4224,6 +4228,8 @@ void database::modify_balance( const account_object& a, const asset& delta, bool
                FC_ASSERT( acnt.balance.amount.value >= 0, "Insufficient CLC funds" );
             }
             break;
+
+#if 0///~~~~~CLC~~~~~{ NO NEED for CoLab
          case COLAB_ASSET_NUM_SBD:
             if( a.sbd_seconds_last_update != head_block_time() )
             {
@@ -4264,6 +4270,7 @@ void database::modify_balance( const account_object& a, const asset& delta, bool
                FC_ASSERT( acnt.vesting_shares.amount.value >= 0, "Insufficient VESTS funds" );
             }
             break;
+#endif///~~~~~CLC~~~~~} NO NEED for CoLab
          default:
             FC_ASSERT( false, "invalid symbol" );
       }
@@ -4553,6 +4560,8 @@ asset database::get_balance( const account_object& a, asset_symbol_type symbol )
    {
       case COLAB_ASSET_NUM_CLC:
          return a.balance;
+
+#if 0///~~~~~CLC~~~~~{ NO NEED for CoLab
       case COLAB_ASSET_NUM_SBD:
          return a.sbd_balance;
       default:
@@ -4573,6 +4582,7 @@ asset database::get_balance( const account_object& a, asset_symbol_type symbol )
 #else
       FC_ASSERT( false, "invalid symbol" );
 #endif
+#endif///~~~~~CLC~~~~~} NO NEED for CoLab
       }
    }
 }
@@ -5095,7 +5105,7 @@ void database::validate_invariants()const
          total_supply += itr->balance;
          total_supply += itr->savings_balance;
          total_supply += itr->reward_clc_balance;
-         total_sbd += itr->sbd_balance;
+///         total_sbd += itr->sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
          total_sbd += itr->savings_sbd_balance;
          total_sbd += itr->reward_sbd_balance;
          total_vesting += itr->vesting_shares;
@@ -5139,7 +5149,7 @@ void database::validate_invariants()const
       for( auto itr = escrow_idx.begin(); itr != escrow_idx.end(); ++itr )
       {
          total_supply += itr->clc_balance;
-         total_sbd += itr->sbd_balance;
+//         total_sbd += itr->sbd_balance;///~~~~~CLC~~~~~ NO NEED for COLAB
 
          if( itr->pending_fee.symbol == CLC_SYMBOL )
             total_supply += itr->pending_fee;

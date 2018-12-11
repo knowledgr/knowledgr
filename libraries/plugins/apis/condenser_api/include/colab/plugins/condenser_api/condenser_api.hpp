@@ -118,7 +118,7 @@ struct api_account_object
       voting_manabar( a.voting_manabar ),
       balance( legacy_asset::from_asset( a.balance ) ),
       savings_balance( legacy_asset::from_asset( a.savings_balance ) ),
-      sbd_balance( legacy_asset::from_asset( a.sbd_balance ) ),
+      /*sbd_balance( legacy_asset::from_asset( a.sbd_balance ) ),*////~~~~~CLC~~~~~ NO NEED for CoLab
       sbd_seconds( a.sbd_seconds ),
       sbd_seconds_last_update( a.sbd_seconds_last_update ),
       sbd_last_interest_payment( a.sbd_last_interest_payment ),
@@ -185,12 +185,12 @@ struct api_account_object
 
    bool              can_vote = false;
    util::manabar     voting_manabar;
-//   uint16_t          voting_power = 0;///~~~~~CLC~~~~~
+//   uint16_t          voting_power = 0;///~~~~~CLC~~~~~ NO NEED for CoLab
 
    legacy_asset      balance;
    legacy_asset      savings_balance;
 
-   legacy_asset      sbd_balance;
+//   legacy_asset      sbd_balance;///~~~~~CLC~~~~~ NO NEED for CoLab
    uint128_t         sbd_seconds;
    time_point_sec    sbd_seconds_last_update;
    time_point_sec    sbd_last_interest_payment;
@@ -606,7 +606,7 @@ struct api_escrow_object
       agent( e.agent ),
       ratification_deadline( e.ratification_deadline ),
       escrow_expiration( e.escrow_expiration ),
-      sbd_balance( legacy_asset::from_asset( e.sbd_balance ) ),
+//      sbd_balance( legacy_asset::from_asset( e.sbd_balance ) ),///~~~~~CLC~~~~~ NO NEED for CoLab
       clc_balance( legacy_asset::from_asset( e.clc_balance ) ),
       pending_fee( legacy_asset::from_asset( e.pending_fee ) ),
       to_approved( e.to_approved ),
@@ -621,7 +621,7 @@ struct api_escrow_object
    account_name_type agent;
    time_point_sec    ratification_deadline;
    time_point_sec    escrow_expiration;
-   legacy_asset      sbd_balance;
+//   legacy_asset      sbd_balance;///~~~~~CLC~~~~~ NO NEED for CoLab
    legacy_asset      clc_balance;
    legacy_asset      pending_fee;
    bool              to_approved = false;
@@ -1187,7 +1187,8 @@ FC_REFLECT( colab::plugins::condenser_api::api_account_object,
 			 //(voting_power)///~~~~~CLC~~~~~
              (balance)
              (savings_balance)
-             (sbd_balance)(sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)
+             /*(sbd_balance)*////~~~~~CLC~~~~~ NO NEED for CoLab
+			 (sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)
              (savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)(savings_withdraw_requests)
              (reward_sbd_balance)(reward_clc_balance)(reward_vesting_balance)(reward_vesting_clc)
              (vesting_shares)(delegated_vesting_shares)(received_vesting_shares)(vesting_withdraw_rate)(next_vesting_withdrawal)(withdrawn)(to_withdraw)(withdraw_routes)
@@ -1286,7 +1287,8 @@ FC_REFLECT( colab::plugins::condenser_api::api_reward_fund_object,
 FC_REFLECT( colab::plugins::condenser_api::api_escrow_object,
              (id)(escrow_id)(from)(to)(agent)
              (ratification_deadline)(escrow_expiration)
-             (sbd_balance)(clc_balance)(pending_fee)
+             /*(sbd_balance)*////~~~~~CLC~~~~~ NO NEED for CoLab
+			 (clc_balance)(pending_fee)
              (to_approved)(agent_approved)(disputed) )
 
 FC_REFLECT( colab::plugins::condenser_api::api_savings_withdraw_object,

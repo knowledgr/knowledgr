@@ -411,11 +411,13 @@ void database_fixture::fund(
          {
             if( amount.symbol == CLC_SYMBOL )
                a.balance += amount;
+#if 0///~~~~~CLC~~~~~{ NO NEED for CoLab
             else if( amount.symbol == SBD_SYMBOL )
             {
                a.sbd_balance += amount;
                a.sbd_seconds_last_update = db.head_block_time();
             }
+#endif///~~~~~CLC~~~~~} NO NEED for CoLab
          });
 
          db.modify( db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
