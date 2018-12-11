@@ -1352,7 +1352,7 @@ condenser_api::legacy_signed_transaction wallet_api::create_account_with_keys(
 condenser_api::legacy_signed_transaction wallet_api::create_account_with_keys_delegated(
    string creator,
    condenser_api::legacy_asset clc_fee,
-   condenser_api::legacy_asset delegated_vests,
+   condenser_api::legacy_asset delegated_clc,
    string new_account_name,
    string json_meta,
    public_key_type owner,
@@ -1371,7 +1371,7 @@ condenser_api::legacy_signed_transaction wallet_api::create_account_with_keys_de
    op.memo_key = memo;
    op.json_metadata = json_meta;
    op.fee = clc_fee.to_asset();
-   op.delegation = delegated_vests.to_asset();
+   op.delegation = delegated_clc.to_asset();
 
    signed_transaction tx;
    tx.operations.push_back(op);
@@ -1818,7 +1818,7 @@ condenser_api::legacy_signed_transaction wallet_api::create_account(
 condenser_api::legacy_signed_transaction wallet_api::create_account_delegated(
    string creator,
    condenser_api::legacy_asset clc_fee,
-   condenser_api::legacy_asset delegated_vests,
+   condenser_api::legacy_asset delegated_clc,
    string new_account_name,
    string json_meta,
    bool broadcast )
@@ -1832,7 +1832,7 @@ condenser_api::legacy_signed_transaction wallet_api::create_account_delegated(
    import_key( active.wif_priv_key );
    import_key( posting.wif_priv_key );
    import_key( memo.wif_priv_key );
-   return create_account_with_keys_delegated( creator, clc_fee, delegated_vests, new_account_name, json_meta,  owner.pub_key, active.pub_key, posting.pub_key, memo.pub_key, broadcast );
+   return create_account_with_keys_delegated( creator, clc_fee, delegated_clc, new_account_name, json_meta,  owner.pub_key, active.pub_key, posting.pub_key, memo.pub_key, broadcast );
 } FC_CAPTURE_AND_RETHROW( (creator)(new_account_name)(json_meta) ) }
 
 
@@ -2010,7 +2010,7 @@ condenser_api::legacy_signed_transaction wallet_api::escrow_transfer(
    string to,
    string agent,
    uint32_t escrow_id,
-   condenser_api::legacy_asset sbd_amount,
+//   condenser_api::legacy_asset sbd_amount,
    condenser_api::legacy_asset clc_amount,
    condenser_api::legacy_asset fee,
    time_point_sec ratification_deadline,
@@ -2024,7 +2024,7 @@ condenser_api::legacy_signed_transaction wallet_api::escrow_transfer(
    op.to = to;
    op.agent = agent;
    op.escrow_id = escrow_id;
-   op.sbd_amount = sbd_amount.to_asset();
+//   op.sbd_amount = sbd_amount.to_asset();
    op.clc_amount = clc_amount.to_asset();
    op.fee = fee.to_asset();
    op.ratification_deadline = ratification_deadline;
@@ -2092,7 +2092,7 @@ condenser_api::legacy_signed_transaction wallet_api::escrow_release(
    string who,
    string receiver,
    uint32_t escrow_id,
-   condenser_api::legacy_asset sbd_amount,
+//   condenser_api::legacy_asset sbd_amount,
    condenser_api::legacy_asset clc_amount,
    bool broadcast )
 {
@@ -2104,7 +2104,7 @@ condenser_api::legacy_signed_transaction wallet_api::escrow_release(
    op.who = who;
    op.receiver = receiver;
    op.escrow_id = escrow_id;
-   op.sbd_amount = sbd_amount.to_asset();
+//   op.sbd_amount = sbd_amount.to_asset();
    op.clc_amount = clc_amount.to_asset();
 
    signed_transaction tx;
@@ -2185,62 +2185,62 @@ condenser_api::legacy_signed_transaction wallet_api::cancel_transfer_from_saving
    return my->sign_transaction( tx, broadcast );
 }
 
-condenser_api::legacy_signed_transaction wallet_api::transfer_to_vesting(
-   string from,
-   string to,
-   condenser_api::legacy_asset amount,
-   bool broadcast )
-{
-   FC_ASSERT( !is_locked() );
-    transfer_to_vesting_operation op;
-    op.from = from;
-    op.to = (to == from ? "" : to);
-    op.amount = amount.to_asset();
+// condenser_api::legacy_signed_transaction wallet_api::transfer_to_vesting(
+//    string from,
+//    string to,
+//    condenser_api::legacy_asset amount,
+//    bool broadcast )
+// {
+//    FC_ASSERT( !is_locked() );
+//     transfer_to_vesting_operation op;
+//     op.from = from;
+//     op.to = (to == from ? "" : to);
+//     op.amount = amount.to_asset();
+// 
+//     signed_transaction tx;
+//     tx.operations.push_back( op );
+//     tx.validate();
+// 
+//    return my->sign_transaction( tx, broadcast );
+// }
 
-    signed_transaction tx;
-    tx.operations.push_back( op );
-    tx.validate();
+// condenser_api::legacy_signed_transaction wallet_api::withdraw_vesting(
+//    string from,
+//    condenser_api::legacy_asset vesting_shares,
+//    bool broadcast )
+// {
+//    FC_ASSERT( !is_locked() );
+//    withdraw_vesting_operation op;
+//    op.account = from;
+//    op.vesting_shares = vesting_shares.to_asset();
+// 
+//    signed_transaction tx;
+//    tx.operations.push_back( op );
+//    tx.validate();
+// 
+//    return my->sign_transaction( tx, broadcast );
+// }
 
-   return my->sign_transaction( tx, broadcast );
-}
-
-condenser_api::legacy_signed_transaction wallet_api::withdraw_vesting(
-   string from,
-   condenser_api::legacy_asset vesting_shares,
-   bool broadcast )
-{
-   FC_ASSERT( !is_locked() );
-   withdraw_vesting_operation op;
-   op.account = from;
-   op.vesting_shares = vesting_shares.to_asset();
-
-   signed_transaction tx;
-   tx.operations.push_back( op );
-   tx.validate();
-
-   return my->sign_transaction( tx, broadcast );
-}
-
-condenser_api::legacy_signed_transaction wallet_api::set_withdraw_vesting_route(
-   string from,
-   string to,
-   uint16_t percent,
-   bool auto_vest,
-   bool broadcast )
-{
-   FC_ASSERT( !is_locked() );
-   set_withdraw_vesting_route_operation op;
-   op.from_account = from;
-   op.to_account = to;
-   op.percent = percent;
-   op.auto_vest = auto_vest;
-
-   signed_transaction tx;
-   tx.operations.push_back( op );
-   tx.validate();
-
-   return my->sign_transaction( tx, broadcast );
-}
+// condenser_api::legacy_signed_transaction wallet_api::set_withdraw_vesting_route(
+//    string from,
+//    string to,
+//    uint16_t percent,
+//    bool auto_vest,
+//    bool broadcast )
+// {
+//    FC_ASSERT( !is_locked() );
+//    set_withdraw_vesting_route_operation op;
+//    op.from_account = from;
+//    op.to_account = to;
+//    op.percent = percent;
+//    op.auto_vest = auto_vest;
+// 
+//    signed_transaction tx;
+//    tx.operations.push_back( op );
+//    tx.validate();
+// 
+//    return my->sign_transaction( tx, broadcast );
+// }
 
 condenser_api::legacy_signed_transaction wallet_api::convert_sbd(
    string from,

@@ -1301,335 +1301,335 @@ BOOST_AUTO_TEST_CASE( transfer_apply )
    FC_LOG_AND_RETHROW()
 }
 
-BOOST_AUTO_TEST_CASE( transfer_to_vesting_validate )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: transfer_to_vesting_validate" );
-
-      validate_database();
-   }
-   FC_LOG_AND_RETHROW()
-}
-
-BOOST_AUTO_TEST_CASE( transfer_to_vesting_authorities )
-{
-   try
-   {
-      ACTORS( (alice)(bob) )
-      fund( "alice", 10000 );
-
-      BOOST_TEST_MESSAGE( "Testing: transfer_to_vesting_authorities" );
-
-      transfer_to_vesting_operation op;
-      op.from = "alice";
-      op.to = "bob";
-      op.amount = ASSET( "2.500 TESTS" );
-
-      signed_transaction tx;
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      tx.operations.push_back( op );
-
-      BOOST_TEST_MESSAGE( "--- Test failure when no signatures" );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_missing_active_auth );
-
-      BOOST_TEST_MESSAGE( "--- Test failure when signed by a signature not in the account's authority" );
-      sign( tx, alice_post_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_missing_active_auth );
-
-      BOOST_TEST_MESSAGE( "--- Test failure when duplicate signatures" );
-      tx.signatures.clear();
-      sign( tx, alice_private_key );
-      sign( tx, alice_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_duplicate_sig );
-
-      BOOST_TEST_MESSAGE( "--- Test failure when signed by an additional signature not in the creator's authority" );
-      tx.signatures.clear();
-      sign( tx, alice_private_key );
-      sign( tx, bob_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_irrelevant_sig );
-
-      BOOST_TEST_MESSAGE( "--- Test success with from signature" );
-      tx.signatures.clear();
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      validate_database();
-   }
-   FC_LOG_AND_RETHROW()
-}
-
-BOOST_AUTO_TEST_CASE( transfer_to_vesting_apply )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: transfer_to_vesting_apply" );
-
-      ACTORS( (alice)(bob) )
-      fund( "alice", 10000 );
-
-      const auto& gpo = db->get_dynamic_global_properties();
-
-      BOOST_REQUIRE( alice.balance == ASSET( "10.000 TESTS" ) );
-
-      auto shares = asset( gpo.total_vesting_shares.amount, VESTS_SYMBOL );
-      auto vests = asset( gpo.total_vesting_fund_clc.amount, CLC_SYMBOL );
-      auto alice_shares = alice.vesting_shares;
-      auto bob_shares = bob.vesting_shares;
-
-      transfer_to_vesting_operation op;
-      op.from = "alice";
-      op.to = "";
-      op.amount = ASSET( "7.500 TESTS" );
-
-      signed_transaction tx;
-      tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      auto new_vest = op.amount * ( shares / vests );
-      shares += new_vest;
-      vests += op.amount;
-      alice_shares += new_vest;
-
-      BOOST_REQUIRE( alice.balance.amount.value == ASSET( "2.500 TESTS" ).amount.value );
-      BOOST_REQUIRE( alice.vesting_shares.amount.value == alice_shares.amount.value );
-      BOOST_REQUIRE( gpo.total_vesting_fund_clc.amount.value == vests.amount.value );
-      BOOST_REQUIRE( gpo.total_vesting_shares.amount.value == shares.amount.value );
-      validate_database();
-
-      op.to = "bob";
-      op.amount = asset( 2000, CLC_SYMBOL );
-      tx.operations.clear();
-      tx.signatures.clear();
-      tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      new_vest = asset( ( op.amount * ( shares / vests ) ).amount, VESTS_SYMBOL );
-      shares += new_vest;
-      vests += op.amount;
-      bob_shares += new_vest;
-
-      BOOST_REQUIRE( alice.balance.amount.value == ASSET( "0.500 TESTS" ).amount.value );
-      BOOST_REQUIRE( alice.vesting_shares.amount.value == alice_shares.amount.value );
-      BOOST_REQUIRE( bob.balance.amount.value == ASSET( "0.000 TESTS" ).amount.value );
-      BOOST_REQUIRE( bob.vesting_shares.amount.value == bob_shares.amount.value );
-      BOOST_REQUIRE( gpo.total_vesting_fund_clc.amount.value == vests.amount.value );
-      BOOST_REQUIRE( gpo.total_vesting_shares.amount.value == shares.amount.value );
-      validate_database();
-
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), fc::exception );
-
-      BOOST_REQUIRE( alice.balance.amount.value == ASSET( "0.500 TESTS" ).amount.value );
-      BOOST_REQUIRE( alice.vesting_shares.amount.value == alice_shares.amount.value );
-      BOOST_REQUIRE( bob.balance.amount.value == ASSET( "0.000 TESTS" ).amount.value );
-      BOOST_REQUIRE( bob.vesting_shares.amount.value == bob_shares.amount.value );
-      BOOST_REQUIRE( gpo.total_vesting_fund_clc.amount.value == vests.amount.value );
-      BOOST_REQUIRE( gpo.total_vesting_shares.amount.value == shares.amount.value );
-      validate_database();
-   }
-   FC_LOG_AND_RETHROW()
-}
-
-BOOST_AUTO_TEST_CASE( withdraw_vesting_validate )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: withdraw_vesting_validate" );
-
-      validate_database();
-   }
-   FC_LOG_AND_RETHROW()
-}
-
-BOOST_AUTO_TEST_CASE( withdraw_vesting_authorities )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: withdraw_vesting_authorities" );
-
-      ACTORS( (alice)(bob) )
-      fund( "alice", 10000 );
-      vest( "alice", 10000 );
-
-      withdraw_vesting_operation op;
-      op.account = "alice";
-      op.vesting_shares = ASSET( "0.001000 VESTS" );
-
-      signed_transaction tx;
-      tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-
-      BOOST_TEST_MESSAGE( "--- Test failure when no signature." );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_missing_active_auth );
-
-      BOOST_TEST_MESSAGE( "--- Test success with account signature" );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, database::skip_transaction_dupe_check );
-
-      BOOST_TEST_MESSAGE( "--- Test failure with duplicate signature" );
-      sign( tx, alice_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_duplicate_sig );
-
-      BOOST_TEST_MESSAGE( "--- Test failure with additional incorrect signature" );
-      tx.signatures.clear();
-      sign( tx, alice_private_key );
-      sign( tx, bob_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_irrelevant_sig );
-
-      BOOST_TEST_MESSAGE( "--- Test failure with incorrect signature" );
-      tx.signatures.clear();
-      sign( tx, alice_post_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_missing_active_auth );
-
-      validate_database();
-   }
-   FC_LOG_AND_RETHROW()
-}
-
-BOOST_AUTO_TEST_CASE( withdraw_vesting_apply )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: withdraw_vesting_apply" );
-
-      ACTORS( (alice)(bob) )
-      generate_block();
-      vest( COLAB_INIT_MINER_NAME, "alice", ASSET( "10.000 TESTS" ) );
-
-      BOOST_TEST_MESSAGE( "--- Test failure withdrawing negative VESTS" );
-
-      {
-      const auto& alice = db->get_account( "alice" );
-
-      withdraw_vesting_operation op;
-      op.account = "alice";
-      op.vesting_shares = asset( -1, VESTS_SYMBOL );
-
-      signed_transaction tx;
-      tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, alice_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::assert_exception );
-
-
-      BOOST_TEST_MESSAGE( "--- Test withdraw of existing VESTS" );
-      op.vesting_shares = asset( alice.vesting_shares.amount / 2, VESTS_SYMBOL );
-
-      auto old_vesting_shares = alice.vesting_shares;
-
-      tx.clear();
-      tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      BOOST_REQUIRE( alice.vesting_shares.amount.value == old_vesting_shares.amount.value );
-      BOOST_REQUIRE( alice.vesting_withdraw_rate.amount.value == ( old_vesting_shares.amount / ( COLAB_VESTING_WITHDRAW_INTERVALS * 2 ) ).value );
-      BOOST_REQUIRE( alice.to_withdraw.value == op.vesting_shares.amount.value );
-      BOOST_REQUIRE( alice.next_vesting_withdrawal == db->head_block_time() + COLAB_VESTING_WITHDRAW_INTERVAL_SECONDS );
-      validate_database();
-
-      BOOST_TEST_MESSAGE( "--- Test changing vesting withdrawal" );
-      tx.operations.clear();
-      tx.signatures.clear();
-
-      op.vesting_shares = asset( alice.vesting_shares.amount / 3, VESTS_SYMBOL );
-      tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      BOOST_REQUIRE( alice.vesting_shares.amount.value == old_vesting_shares.amount.value );
-      BOOST_REQUIRE( alice.vesting_withdraw_rate.amount.value == ( old_vesting_shares.amount / ( COLAB_VESTING_WITHDRAW_INTERVALS * 3 ) ).value );
-      BOOST_REQUIRE( alice.to_withdraw.value == op.vesting_shares.amount.value );
-      BOOST_REQUIRE( alice.next_vesting_withdrawal == db->head_block_time() + COLAB_VESTING_WITHDRAW_INTERVAL_SECONDS );
-      validate_database();
-
-      BOOST_TEST_MESSAGE( "--- Test withdrawing more vests than available" );
-      //auto old_withdraw_amount = alice.to_withdraw;
-      tx.operations.clear();
-      tx.signatures.clear();
-
-      op.vesting_shares = asset( alice.vesting_shares.amount * 2, VESTS_SYMBOL );
-      tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, alice_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
-
-      BOOST_REQUIRE( alice.vesting_shares.amount.value == old_vesting_shares.amount.value );
-      BOOST_REQUIRE( alice.vesting_withdraw_rate.amount.value == ( old_vesting_shares.amount / ( COLAB_VESTING_WITHDRAW_INTERVALS * 3 ) ).value );
-      BOOST_REQUIRE( alice.next_vesting_withdrawal == db->head_block_time() + COLAB_VESTING_WITHDRAW_INTERVAL_SECONDS );
-      validate_database();
-
-      BOOST_TEST_MESSAGE( "--- Test withdrawing 0 to reset vesting withdraw" );
-      tx.operations.clear();
-      tx.signatures.clear();
-
-      op.vesting_shares = asset( 0, VESTS_SYMBOL );
-      tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      BOOST_REQUIRE( alice.vesting_shares.amount.value == old_vesting_shares.amount.value );
-      BOOST_REQUIRE( alice.vesting_withdraw_rate.amount.value == 0 );
-      BOOST_REQUIRE( alice.to_withdraw.value == 0 );
-      BOOST_REQUIRE( alice.next_vesting_withdrawal == fc::time_point_sec::maximum() );
-
-
-      BOOST_TEST_MESSAGE( "--- Test cancelling a withdraw when below the account creation fee" );
-      op.vesting_shares = alice.vesting_shares;
-      tx.clear();
-      tx.operations.push_back( op );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-      generate_block();
-      }
-
-      db_plugin->debug_update( [=]( database& db )
-      {
-         auto& wso = db.get_witness_schedule_object();
-
-         db.modify( wso, [&]( witness_schedule_object& w )
-         {
-            w.median_props.account_creation_fee = ASSET( "10.000 TESTS" );
-         });
-
-         db.modify( db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
-         {
-            gpo.current_supply += wso.median_props.account_creation_fee - ASSET( "0.001 TESTS" ) - gpo.total_vesting_fund_clc;
-            gpo.total_vesting_fund_clc = wso.median_props.account_creation_fee - ASSET( "0.001 TESTS" );
-         });
-
-         db.update_virtual_supply();
-      }, database::skip_witness_signature );
-
-      withdraw_vesting_operation op;
-      signed_transaction tx;
-      op.account = "alice";
-      op.vesting_shares = ASSET( "0.000000 VESTS" );
-      tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      BOOST_REQUIRE( db->get_account( "alice" ).vesting_withdraw_rate == ASSET( "0.000000 VESTS" ) );
-      validate_database();
-
-      BOOST_TEST_MESSAGE( "--- Test withdrawing minimal VESTS" );
-      op.account = "bob";
-      op.vesting_shares = db->get_account( "bob" ).vesting_shares;
-      tx.clear();
-      tx.operations.push_back( op );
-      sign( tx, bob_private_key );
-      db->push_transaction( tx, 0 ); // We do not need to test the result of this, simply that it works.
-   }
-   FC_LOG_AND_RETHROW()
-}
+// BOOST_AUTO_TEST_CASE( transfer_to_vesting_validate )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: transfer_to_vesting_validate" );
+// 
+//       validate_database();
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
+// 
+// BOOST_AUTO_TEST_CASE( transfer_to_vesting_authorities )
+// {
+//    try
+//    {
+//       ACTORS( (alice)(bob) )
+//       fund( "alice", 10000 );
+// 
+//       BOOST_TEST_MESSAGE( "Testing: transfer_to_vesting_authorities" );
+// 
+//       transfer_to_vesting_operation op;
+//       op.from = "alice";
+//       op.to = "bob";
+//       op.amount = ASSET( "2.500 TESTS" );
+// 
+//       signed_transaction tx;
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       tx.operations.push_back( op );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when no signatures" );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_missing_active_auth );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when signed by a signature not in the account's authority" );
+//       sign( tx, alice_post_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_missing_active_auth );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when duplicate signatures" );
+//       tx.signatures.clear();
+//       sign( tx, alice_private_key );
+//       sign( tx, alice_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_duplicate_sig );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when signed by an additional signature not in the creator's authority" );
+//       tx.signatures.clear();
+//       sign( tx, alice_private_key );
+//       sign( tx, bob_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_irrelevant_sig );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test success with from signature" );
+//       tx.signatures.clear();
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+// 
+//       validate_database();
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
+// 
+// BOOST_AUTO_TEST_CASE( transfer_to_vesting_apply )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: transfer_to_vesting_apply" );
+// 
+//       ACTORS( (alice)(bob) )
+//       fund( "alice", 10000 );
+// 
+//       const auto& gpo = db->get_dynamic_global_properties();
+// 
+//       BOOST_REQUIRE( alice.balance == ASSET( "10.000 TESTS" ) );
+// 
+//       auto shares = asset( gpo.total_vesting_shares.amount, VESTS_SYMBOL );
+//       auto vests = asset( gpo.total_vesting_fund_clc.amount, CLC_SYMBOL );
+//       auto alice_shares = alice.vesting_shares;
+//       auto bob_shares = bob.vesting_shares;
+// 
+//       transfer_to_vesting_operation op;
+//       op.from = "alice";
+//       op.to = "";
+//       op.amount = ASSET( "7.500 TESTS" );
+// 
+//       signed_transaction tx;
+//       tx.operations.push_back( op );
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+// 
+//       auto new_vest = op.amount * ( shares / vests );
+//       shares += new_vest;
+//       vests += op.amount;
+//       alice_shares += new_vest;
+// 
+//       BOOST_REQUIRE( alice.balance.amount.value == ASSET( "2.500 TESTS" ).amount.value );
+//       BOOST_REQUIRE( alice.vesting_shares.amount.value == alice_shares.amount.value );
+//       BOOST_REQUIRE( gpo.total_vesting_fund_clc.amount.value == vests.amount.value );
+//       BOOST_REQUIRE( gpo.total_vesting_shares.amount.value == shares.amount.value );
+//       validate_database();
+// 
+//       op.to = "bob";
+//       op.amount = asset( 2000, CLC_SYMBOL );
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       tx.operations.push_back( op );
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+// 
+//       new_vest = asset( ( op.amount * ( shares / vests ) ).amount, VESTS_SYMBOL );
+//       shares += new_vest;
+//       vests += op.amount;
+//       bob_shares += new_vest;
+// 
+//       BOOST_REQUIRE( alice.balance.amount.value == ASSET( "0.500 TESTS" ).amount.value );
+//       BOOST_REQUIRE( alice.vesting_shares.amount.value == alice_shares.amount.value );
+//       BOOST_REQUIRE( bob.balance.amount.value == ASSET( "0.000 TESTS" ).amount.value );
+//       BOOST_REQUIRE( bob.vesting_shares.amount.value == bob_shares.amount.value );
+//       BOOST_REQUIRE( gpo.total_vesting_fund_clc.amount.value == vests.amount.value );
+//       BOOST_REQUIRE( gpo.total_vesting_shares.amount.value == shares.amount.value );
+//       validate_database();
+// 
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), fc::exception );
+// 
+//       BOOST_REQUIRE( alice.balance.amount.value == ASSET( "0.500 TESTS" ).amount.value );
+//       BOOST_REQUIRE( alice.vesting_shares.amount.value == alice_shares.amount.value );
+//       BOOST_REQUIRE( bob.balance.amount.value == ASSET( "0.000 TESTS" ).amount.value );
+//       BOOST_REQUIRE( bob.vesting_shares.amount.value == bob_shares.amount.value );
+//       BOOST_REQUIRE( gpo.total_vesting_fund_clc.amount.value == vests.amount.value );
+//       BOOST_REQUIRE( gpo.total_vesting_shares.amount.value == shares.amount.value );
+//       validate_database();
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
+
+// BOOST_AUTO_TEST_CASE( withdraw_vesting_validate )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: withdraw_vesting_validate" );
+// 
+//       validate_database();
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
+
+// BOOST_AUTO_TEST_CASE( withdraw_vesting_authorities )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: withdraw_vesting_authorities" );
+// 
+//       ACTORS( (alice)(bob) )
+//       fund( "alice", 10000 );
+//       vest( "alice", 10000 );
+// 
+//       withdraw_vesting_operation op;
+//       op.account = "alice";
+//       op.vesting_shares = ASSET( "0.001000 VESTS" );
+// 
+//       signed_transaction tx;
+//       tx.operations.push_back( op );
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when no signature." );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_missing_active_auth );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test success with account signature" );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, database::skip_transaction_dupe_check );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure with duplicate signature" );
+//       sign( tx, alice_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_duplicate_sig );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure with additional incorrect signature" );
+//       tx.signatures.clear();
+//       sign( tx, alice_private_key );
+//       sign( tx, bob_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_irrelevant_sig );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure with incorrect signature" );
+//       tx.signatures.clear();
+//       sign( tx, alice_post_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_missing_active_auth );
+// 
+//       validate_database();
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
+
+// BOOST_AUTO_TEST_CASE( withdraw_vesting_apply )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: withdraw_vesting_apply" );
+// 
+//       ACTORS( (alice)(bob) )
+//       generate_block();
+//       vest( COLAB_INIT_MINER_NAME, "alice", ASSET( "10.000 TESTS" ) );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure withdrawing negative VESTS" );
+// 
+//       {
+//       const auto& alice = db->get_account( "alice" );
+// 
+//       withdraw_vesting_operation op;
+//       op.account = "alice";
+//       op.vesting_shares = asset( -1, VESTS_SYMBOL );
+// 
+//       signed_transaction tx;
+//       tx.operations.push_back( op );
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, alice_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::assert_exception );
+// 
+// 
+//       BOOST_TEST_MESSAGE( "--- Test withdraw of existing VESTS" );
+//       op.vesting_shares = asset( alice.vesting_shares.amount / 2, VESTS_SYMBOL );
+// 
+//       auto old_vesting_shares = alice.vesting_shares;
+// 
+//       tx.clear();
+//       tx.operations.push_back( op );
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+// 
+//       BOOST_REQUIRE( alice.vesting_shares.amount.value == old_vesting_shares.amount.value );
+//       BOOST_REQUIRE( alice.vesting_withdraw_rate.amount.value == ( old_vesting_shares.amount / ( COLAB_VESTING_WITHDRAW_INTERVALS * 2 ) ).value );
+//       BOOST_REQUIRE( alice.to_withdraw.value == op.vesting_shares.amount.value );
+//       BOOST_REQUIRE( alice.next_vesting_withdrawal == db->head_block_time() + COLAB_VESTING_WITHDRAW_INTERVAL_SECONDS );
+//       validate_database();
+// 
+//       BOOST_TEST_MESSAGE( "--- Test changing vesting withdrawal" );
+//       tx.operations.clear();
+//       tx.signatures.clear();
+// 
+//       op.vesting_shares = asset( alice.vesting_shares.amount / 3, VESTS_SYMBOL );
+//       tx.operations.push_back( op );
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+// 
+//       BOOST_REQUIRE( alice.vesting_shares.amount.value == old_vesting_shares.amount.value );
+//       BOOST_REQUIRE( alice.vesting_withdraw_rate.amount.value == ( old_vesting_shares.amount / ( COLAB_VESTING_WITHDRAW_INTERVALS * 3 ) ).value );
+//       BOOST_REQUIRE( alice.to_withdraw.value == op.vesting_shares.amount.value );
+//       BOOST_REQUIRE( alice.next_vesting_withdrawal == db->head_block_time() + COLAB_VESTING_WITHDRAW_INTERVAL_SECONDS );
+//       validate_database();
+// 
+//       BOOST_TEST_MESSAGE( "--- Test withdrawing more vests than available" );
+//       //auto old_withdraw_amount = alice.to_withdraw;
+//       tx.operations.clear();
+//       tx.signatures.clear();
+// 
+//       op.vesting_shares = asset( alice.vesting_shares.amount * 2, VESTS_SYMBOL );
+//       tx.operations.push_back( op );
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, alice_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
+// 
+//       BOOST_REQUIRE( alice.vesting_shares.amount.value == old_vesting_shares.amount.value );
+//       BOOST_REQUIRE( alice.vesting_withdraw_rate.amount.value == ( old_vesting_shares.amount / ( COLAB_VESTING_WITHDRAW_INTERVALS * 3 ) ).value );
+//       BOOST_REQUIRE( alice.next_vesting_withdrawal == db->head_block_time() + COLAB_VESTING_WITHDRAW_INTERVAL_SECONDS );
+//       validate_database();
+// 
+//       BOOST_TEST_MESSAGE( "--- Test withdrawing 0 to reset vesting withdraw" );
+//       tx.operations.clear();
+//       tx.signatures.clear();
+// 
+//       op.vesting_shares = asset( 0, VESTS_SYMBOL );
+//       tx.operations.push_back( op );
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+// 
+//       BOOST_REQUIRE( alice.vesting_shares.amount.value == old_vesting_shares.amount.value );
+//       BOOST_REQUIRE( alice.vesting_withdraw_rate.amount.value == 0 );
+//       BOOST_REQUIRE( alice.to_withdraw.value == 0 );
+//       BOOST_REQUIRE( alice.next_vesting_withdrawal == fc::time_point_sec::maximum() );
+// 
+// 
+//       BOOST_TEST_MESSAGE( "--- Test cancelling a withdraw when below the account creation fee" );
+//       op.vesting_shares = alice.vesting_shares;
+//       tx.clear();
+//       tx.operations.push_back( op );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+//       generate_block();
+//       }
+// 
+//       db_plugin->debug_update( [=]( database& db )
+//       {
+//          auto& wso = db.get_witness_schedule_object();
+// 
+//          db.modify( wso, [&]( witness_schedule_object& w )
+//          {
+//             w.median_props.account_creation_fee = ASSET( "10.000 TESTS" );
+//          });
+// 
+//          db.modify( db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
+//          {
+//             gpo.current_supply += wso.median_props.account_creation_fee - ASSET( "0.001 TESTS" ) - gpo.total_vesting_fund_clc;
+//             gpo.total_vesting_fund_clc = wso.median_props.account_creation_fee - ASSET( "0.001 TESTS" );
+//          });
+// 
+//          db.update_virtual_supply();
+//       }, database::skip_witness_signature );
+// 
+//       withdraw_vesting_operation op;
+//       signed_transaction tx;
+//       op.account = "alice";
+//       op.vesting_shares = ASSET( "0.000000 VESTS" );
+//       tx.operations.push_back( op );
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+// 
+//       BOOST_REQUIRE( db->get_account( "alice" ).vesting_withdraw_rate == ASSET( "0.000000 VESTS" ) );
+//       validate_database();
+// 
+//       BOOST_TEST_MESSAGE( "--- Test withdrawing minimal VESTS" );
+//       op.account = "bob";
+//       op.vesting_shares = db->get_account( "bob" ).vesting_shares;
+//       tx.clear();
+//       tx.operations.push_back( op );
+//       sign( tx, bob_private_key );
+//       db->push_transaction( tx, 0 ); // We do not need to test the result of this, simply that it works.
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
 
 BOOST_AUTO_TEST_CASE( witness_update_validate )
 {
@@ -3880,7 +3880,7 @@ BOOST_AUTO_TEST_CASE( escrow_transfer_validate )
       escrow_transfer_operation op;
       op.from = "alice";
       op.to = "bob";
-      op.sbd_amount = ASSET( "1.000 TBD" );
+      //op.sbd_amount = ASSET( "1.000 TBD" );
       op.clc_amount = ASSET( "1.000 TESTS" );
       op.escrow_id = 0;
       op.agent = "sam";
@@ -3890,11 +3890,11 @@ BOOST_AUTO_TEST_CASE( escrow_transfer_validate )
       op.escrow_expiration = db->head_block_time() + 200;
 
       BOOST_TEST_MESSAGE( "--- failure when sbd symbol != SBD" );
-      op.sbd_amount.symbol = CLC_SYMBOL;
+      //op.sbd_amount.symbol = CLC_SYMBOL;
       COLAB_REQUIRE_THROW( op.validate(), fc::exception );
 
       BOOST_TEST_MESSAGE( "--- failure when colab symbol != CLC" );
-      op.sbd_amount.symbol = SBD_SYMBOL;
+      //op.sbd_amount.symbol = SBD_SYMBOL;
       op.clc_amount.symbol = SBD_SYMBOL;
       COLAB_REQUIRE_THROW( op.validate(), fc::exception );
 
@@ -3905,17 +3905,17 @@ BOOST_AUTO_TEST_CASE( escrow_transfer_validate )
 
       BOOST_TEST_MESSAGE( "--- failure when sbd == 0 and colab == 0" );
       op.fee.symbol = CLC_SYMBOL;
-      op.sbd_amount.amount = 0;
+      //op.sbd_amount.amount = 0;
       op.clc_amount.amount = 0;
       COLAB_REQUIRE_THROW( op.validate(), fc::exception );
 
-      BOOST_TEST_MESSAGE( "--- failure when sbd < 0" );
-      op.sbd_amount.amount = -100;
+      //BOOST_TEST_MESSAGE( "--- failure when sbd < 0" );
+      //op.sbd_amount.amount = -100;
       op.clc_amount.amount = 1000;
       COLAB_REQUIRE_THROW( op.validate(), fc::exception );
 
       BOOST_TEST_MESSAGE( "--- failure when colab < 0" );
-      op.sbd_amount.amount = 1000;
+      //op.sbd_amount.amount = 1000;
       op.clc_amount.amount = -100;
       COLAB_REQUIRE_THROW( op.validate(), fc::exception );
 
@@ -3949,7 +3949,7 @@ BOOST_AUTO_TEST_CASE( escrow_transfer_authorities )
       escrow_transfer_operation op;
       op.from = "alice";
       op.to = "bob";
-      op.sbd_amount = ASSET( "1.000 TBD" );
+      //op.sbd_amount = ASSET( "1.000 TBD" );
       op.clc_amount = ASSET( "1.000 TESTS" );
       op.escrow_id = 0;
       op.agent = "sam";
@@ -3987,7 +3987,7 @@ BOOST_AUTO_TEST_CASE( escrow_transfer_apply )
       escrow_transfer_operation op;
       op.from = "alice";
       op.to = "bob";
-      op.sbd_amount = ASSET( "1.000 TBD" );
+      //op.sbd_amount = ASSET( "1.000 TBD" );
       op.clc_amount = ASSET( "1.000 TESTS" );
       op.escrow_id = 0;
       op.agent = "sam";
@@ -4004,7 +4004,7 @@ BOOST_AUTO_TEST_CASE( escrow_transfer_apply )
       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
 
       BOOST_TEST_MESSAGE( "--- falure when from cannot cover amount + fee" );
-      op.sbd_amount.amount = 0;
+      //op.sbd_amount.amount = 0;
       op.clc_amount.amount = 10000;
       tx.operations.clear();
       tx.signatures.clear();
@@ -4685,23 +4685,23 @@ BOOST_AUTO_TEST_CASE( escrow_release_validate )
 
       BOOST_TEST_MESSAGE( "--- failure when sbd < 0" );
       op.clc_amount.amount = 0;
-      op.sbd_amount.amount = -1;
+      //op.sbd_amount.amount = -1;
       COLAB_REQUIRE_THROW( op.validate(), fc::exception );
 
 
       BOOST_TEST_MESSAGE( "--- failure when colab == 0 and sbd == 0" );
-      op.sbd_amount.amount = 0;
+      //op.sbd_amount.amount = 0;
       COLAB_REQUIRE_THROW( op.validate(), fc::exception );
 
 
       BOOST_TEST_MESSAGE( "--- failure when sbd is not sbd symbol" );
-      op.sbd_amount = ASSET( "1.000 TESTS" );
+      //op.sbd_amount = ASSET( "1.000 TESTS" );
       COLAB_REQUIRE_THROW( op.validate(), fc::exception );
 
 
       BOOST_TEST_MESSAGE( "--- failure when colab is not colab symbol" );
-      op.sbd_amount.symbol = SBD_SYMBOL;
-      op.clc_amount = ASSET( "1.000 TBD" );
+      //op.sbd_amount.symbol = SBD_SYMBOL;
+      //op.clc_amount = ASSET( "1.000 TBD" );
       COLAB_REQUIRE_THROW( op.validate(), fc::exception );
 
 
@@ -4956,7 +4956,7 @@ BOOST_AUTO_TEST_CASE( escrow_release_apply )
 
       BOOST_TEST_MESSAGE( "--- failure when releasing less colab than available" );
       op.clc_amount = ASSET( "0.000 TESTS" );
-      op.sbd_amount = ASSET( "1.000 TBD" );
+      //op.sbd_amount = ASSET( "1.000 TBD" );
 
       tx.clear();
       tx.operations.push_back( op );
@@ -4981,7 +4981,7 @@ BOOST_AUTO_TEST_CASE( escrow_release_apply )
       op.receiver = et_op.from;
       op.who = et_op.to;
       op.clc_amount = ASSET( "0.100 TESTS" );
-      op.sbd_amount = ASSET( "0.000 TBD" );
+      //op.sbd_amount = ASSET( "0.000 TBD" );
       tx.operations.push_back( op );
       sign( tx, bob_private_key );
       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
@@ -6273,213 +6273,213 @@ BOOST_AUTO_TEST_CASE( delegate_vesting_shares_authorities )
    FC_LOG_AND_RETHROW()
 }
 
-BOOST_AUTO_TEST_CASE( delegate_vesting_shares_apply )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: delegate_vesting_shares_apply" );
-      signed_transaction tx;
-      ACTORS( (alice)(bob)(charlie) )
-      generate_block();
-
-      vest( COLAB_INIT_MINER_NAME, "alice", ASSET( "1000.000 TESTS" ) );
-
-      generate_block();
-
-      db_plugin->debug_update( [=]( database& db )
-      {
-         db.modify( db.get_witness_schedule_object(), [&]( witness_schedule_object& w )
-         {
-            w.median_props.account_creation_fee = ASSET( "1.000 TESTS" );
-         });
-      });
-
-      generate_block();
-
-      delegate_vesting_shares_operation op;
-      op.vesting_shares = ASSET( "10000000.000000 VESTS");
-      op.delegator = "alice";
-      op.delegatee = "bob";
-
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      tx.operations.push_back( op );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-      generate_blocks( 1 );
-      const account_object& alice_acc = db->get_account( "alice" );
-      const account_object& bob_acc = db->get_account( "bob" );
-
-      BOOST_REQUIRE( alice_acc.delegated_vesting_shares == ASSET( "10000000.000000 VESTS"));
-      BOOST_REQUIRE( bob_acc.received_vesting_shares == ASSET( "10000000.000000 VESTS"));
-
-      BOOST_TEST_MESSAGE( "--- Test that the delegation object is correct. " );
-      auto delegation = db->find< vesting_delegation_object, by_delegation >( boost::make_tuple( op.delegator, op.delegatee ) );
-
-      BOOST_REQUIRE( delegation != nullptr );
-      BOOST_REQUIRE( delegation->delegator == op.delegator);
-      BOOST_REQUIRE( delegation->vesting_shares  == ASSET( "10000000.000000 VESTS"));
-
-      validate_database();
-      tx.clear();
-      op.vesting_shares = ASSET( "20000000.000000 VESTS");
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      tx.operations.push_back( op );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-      generate_blocks(1);
-
-      BOOST_REQUIRE( delegation != nullptr );
-      BOOST_REQUIRE( delegation->delegator == op.delegator);
-      BOOST_REQUIRE( delegation->vesting_shares == ASSET( "20000000.000000 VESTS"));
-      BOOST_REQUIRE( alice_acc.delegated_vesting_shares == ASSET( "20000000.000000 VESTS"));
-      BOOST_REQUIRE( bob_acc.received_vesting_shares == ASSET( "20000000.000000 VESTS"));
-
-      BOOST_TEST_MESSAGE( "--- Test failure delegating delgated VESTS." );
-
-      op.delegator = "bob";
-      op.delegatee = "charlie";
-      tx.clear();
-      tx.operations.push_back( op );
-      sign( tx, bob_private_key );
-      BOOST_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
-
-
-      BOOST_TEST_MESSAGE( "--- Test that effective vesting shares is accurate and being applied." );
-      tx.operations.clear();
-      tx.signatures.clear();
-
-      util::manabar old_manabar = db->get_account( "bob" ).voting_manabar;
-      util::manabar_params params( util::get_effective_vesting_shares( db->get_account( "bob" ) ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
-      old_manabar.regenerate_mana( params, db->head_block_time() );
-
-      comment_operation comment_op;
-      comment_op.author = "alice";
-      comment_op.permlink = "foo";
-      comment_op.parent_permlink = "test";
-      comment_op.title = "bar";
-      comment_op.body = "foo bar";
-      tx.operations.push_back( comment_op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-      tx.signatures.clear();
-      tx.operations.clear();
-      vote_operation vote_op;
-      vote_op.voter = "bob";
-      vote_op.author = "alice";
-      vote_op.permlink = "foo";
-      vote_op.weight = COLAB_100_PERCENT;
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      tx.operations.push_back( vote_op );
-      sign( tx, bob_private_key );
-
-      db->push_transaction( tx, 0 );
-      generate_blocks(1);
-
-      const auto& vote_idx = db->get_index< comment_vote_index >().indices().get< by_comment_voter >();
-
-      auto& alice_comment = db->get_comment( "alice", string( "foo" ) );
-      auto itr = vote_idx.find( std::make_tuple( alice_comment.id, bob_acc.id ) );
-      BOOST_REQUIRE( alice_comment.net_rshares.value == old_manabar.current_mana - db->get_account( "bob" ).voting_manabar.current_mana - COLAB_VOTE_DUST_THRESHOLD );
-      BOOST_REQUIRE( itr->rshares == old_manabar.current_mana - db->get_account( "bob" ).voting_manabar.current_mana - COLAB_VOTE_DUST_THRESHOLD );
-
-      generate_block();
-      ACTORS( (sam)(dave) )
-      generate_block();
-
-      vest( COLAB_INIT_MINER_NAME, "sam", ASSET( "1000.000 TESTS" ) );
-
-      generate_block();
-
-      auto sam_vest = db->get_account( "sam" ).vesting_shares;
-
-      BOOST_TEST_MESSAGE( "--- Test failure when delegating 0 VESTS" );
-      tx.clear();
-      op.delegator = "sam";
-      op.delegatee = "dave";
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, sam_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx ), fc::assert_exception );
-
-
-      BOOST_TEST_MESSAGE( "--- Testing failure delegating more vesting shares than account has." );
-      tx.clear();
-      op.vesting_shares = asset( sam_vest.amount + 1, VESTS_SYMBOL );
-      tx.operations.push_back( op );
-      sign( tx, sam_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx ), fc::assert_exception );
-
-
-      BOOST_TEST_MESSAGE( "--- Test failure delegating vesting shares that are part of a power down" );
-      tx.clear();
-      sam_vest = asset( sam_vest.amount / 2, VESTS_SYMBOL );
-      withdraw_vesting_operation withdraw;
-      withdraw.account = "sam";
-      withdraw.vesting_shares = sam_vest;
-      tx.operations.push_back( withdraw );
-      sign( tx, sam_private_key );
-      db->push_transaction( tx, 0 );
-
-      tx.clear();
-      op.vesting_shares = asset( sam_vest.amount + 2, VESTS_SYMBOL );
-      tx.operations.push_back( op );
-      sign( tx, sam_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx ), fc::assert_exception );
-
-      tx.clear();
-      withdraw.vesting_shares = ASSET( "0.000000 VESTS" );
-      tx.operations.push_back( withdraw );
-      sign( tx, sam_private_key );
-      db->push_transaction( tx, 0 );
-
-
-      BOOST_TEST_MESSAGE( "--- Test failure powering down vesting shares that are delegated" );
-      sam_vest.amount += 1000;
-      op.vesting_shares = sam_vest;
-      tx.clear();
-      tx.operations.push_back( op );
-      sign( tx, sam_private_key );
-      db->push_transaction( tx, 0 );
-
-      tx.clear();
-      withdraw.vesting_shares = asset( sam_vest.amount, VESTS_SYMBOL );
-      tx.operations.push_back( withdraw );
-      sign( tx, sam_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx ), fc::assert_exception );
-
-
-      BOOST_TEST_MESSAGE( "--- Remove a delegation and ensure it is returned after 1 week" );
-      tx.clear();
-      op.vesting_shares = ASSET( "0.000000 VESTS" );
-      tx.operations.push_back( op );
-      sign( tx, sam_private_key );
-      db->push_transaction( tx, 0 );
-
-      auto exp_obj = db->get_index< vesting_delegation_expiration_index, by_id >().begin();
-      auto end = db->get_index< vesting_delegation_expiration_index, by_id >().end();
-      auto gpo = db->get_dynamic_global_properties();
-
-      BOOST_REQUIRE( gpo.delegation_return_period == COLAB_DELEGATION_RETURN_PERIOD_HF20 );
-
-      BOOST_REQUIRE( exp_obj != end );
-      BOOST_REQUIRE( exp_obj->delegator == "sam" );
-      BOOST_REQUIRE( exp_obj->vesting_shares == sam_vest );
-      BOOST_REQUIRE( exp_obj->expiration == db->head_block_time() + gpo.delegation_return_period );
-      BOOST_REQUIRE( db->get_account( "sam" ).delegated_vesting_shares == sam_vest );
-      BOOST_REQUIRE( db->get_account( "dave" ).received_vesting_shares == ASSET( "0.000000 VESTS" ) );
-      delegation = db->find< vesting_delegation_object, by_delegation >( boost::make_tuple( op.delegator, op.delegatee ) );
-      BOOST_REQUIRE( delegation == nullptr );
-
-      generate_blocks( exp_obj->expiration + COLAB_BLOCK_INTERVAL );
-
-      exp_obj = db->get_index< vesting_delegation_expiration_index, by_id >().begin();
-      end = db->get_index< vesting_delegation_expiration_index, by_id >().end();
-
-      BOOST_REQUIRE( exp_obj == end );
-      BOOST_REQUIRE( db->get_account( "sam" ).delegated_vesting_shares == ASSET( "0.000000 VESTS" ) );
-   }
-   FC_LOG_AND_RETHROW()
-}
+// BOOST_AUTO_TEST_CASE( delegate_vesting_shares_apply )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: delegate_vesting_shares_apply" );
+//       signed_transaction tx;
+//       ACTORS( (alice)(bob)(charlie) )
+//       generate_block();
+// 
+//       vest( COLAB_INIT_MINER_NAME, "alice", ASSET( "1000.000 TESTS" ) );
+// 
+//       generate_block();
+// 
+//       db_plugin->debug_update( [=]( database& db )
+//       {
+//          db.modify( db.get_witness_schedule_object(), [&]( witness_schedule_object& w )
+//          {
+//             w.median_props.account_creation_fee = ASSET( "1.000 TESTS" );
+//          });
+//       });
+// 
+//       generate_block();
+// 
+//       delegate_vesting_shares_operation op;
+//       op.vesting_shares = ASSET( "10000000.000000 VESTS");
+//       op.delegator = "alice";
+//       op.delegatee = "bob";
+// 
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       tx.operations.push_back( op );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+//       generate_blocks( 1 );
+//       const account_object& alice_acc = db->get_account( "alice" );
+//       const account_object& bob_acc = db->get_account( "bob" );
+// 
+//       BOOST_REQUIRE( alice_acc.delegated_vesting_shares == ASSET( "10000000.000000 VESTS"));
+//       BOOST_REQUIRE( bob_acc.received_vesting_shares == ASSET( "10000000.000000 VESTS"));
+// 
+//       BOOST_TEST_MESSAGE( "--- Test that the delegation object is correct. " );
+//       auto delegation = db->find< vesting_delegation_object, by_delegation >( boost::make_tuple( op.delegator, op.delegatee ) );
+// 
+//       BOOST_REQUIRE( delegation != nullptr );
+//       BOOST_REQUIRE( delegation->delegator == op.delegator);
+//       BOOST_REQUIRE( delegation->vesting_shares  == ASSET( "10000000.000000 VESTS"));
+// 
+//       validate_database();
+//       tx.clear();
+//       op.vesting_shares = ASSET( "20000000.000000 VESTS");
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       tx.operations.push_back( op );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+//       generate_blocks(1);
+// 
+//       BOOST_REQUIRE( delegation != nullptr );
+//       BOOST_REQUIRE( delegation->delegator == op.delegator);
+//       BOOST_REQUIRE( delegation->vesting_shares == ASSET( "20000000.000000 VESTS"));
+//       BOOST_REQUIRE( alice_acc.delegated_vesting_shares == ASSET( "20000000.000000 VESTS"));
+//       BOOST_REQUIRE( bob_acc.received_vesting_shares == ASSET( "20000000.000000 VESTS"));
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure delegating delgated VESTS." );
+// 
+//       op.delegator = "bob";
+//       op.delegatee = "charlie";
+//       tx.clear();
+//       tx.operations.push_back( op );
+//       sign( tx, bob_private_key );
+//       BOOST_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
+// 
+// 
+//       BOOST_TEST_MESSAGE( "--- Test that effective vesting shares is accurate and being applied." );
+//       tx.operations.clear();
+//       tx.signatures.clear();
+// 
+//       util::manabar old_manabar = db->get_account( "bob" ).voting_manabar;
+//       util::manabar_params params( util::get_effective_vesting_shares( db->get_account( "bob" ) ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
+//       old_manabar.regenerate_mana( params, db->head_block_time() );
+// 
+//       comment_operation comment_op;
+//       comment_op.author = "alice";
+//       comment_op.permlink = "foo";
+//       comment_op.parent_permlink = "test";
+//       comment_op.title = "bar";
+//       comment_op.body = "foo bar";
+//       tx.operations.push_back( comment_op );
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+//       tx.signatures.clear();
+//       tx.operations.clear();
+//       vote_operation vote_op;
+//       vote_op.voter = "bob";
+//       vote_op.author = "alice";
+//       vote_op.permlink = "foo";
+//       vote_op.weight = COLAB_100_PERCENT;
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       tx.operations.push_back( vote_op );
+//       sign( tx, bob_private_key );
+// 
+//       db->push_transaction( tx, 0 );
+//       generate_blocks(1);
+// 
+//       const auto& vote_idx = db->get_index< comment_vote_index >().indices().get< by_comment_voter >();
+// 
+//       auto& alice_comment = db->get_comment( "alice", string( "foo" ) );
+//       auto itr = vote_idx.find( std::make_tuple( alice_comment.id, bob_acc.id ) );
+//       BOOST_REQUIRE( alice_comment.net_rshares.value == old_manabar.current_mana - db->get_account( "bob" ).voting_manabar.current_mana - COLAB_VOTE_DUST_THRESHOLD );
+//       BOOST_REQUIRE( itr->rshares == old_manabar.current_mana - db->get_account( "bob" ).voting_manabar.current_mana - COLAB_VOTE_DUST_THRESHOLD );
+// 
+//       generate_block();
+//       ACTORS( (sam)(dave) )
+//       generate_block();
+// 
+//       vest( COLAB_INIT_MINER_NAME, "sam", ASSET( "1000.000 TESTS" ) );
+// 
+//       generate_block();
+// 
+//       auto sam_vest = db->get_account( "sam" ).vesting_shares;
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when delegating 0 VESTS" );
+//       tx.clear();
+//       op.delegator = "sam";
+//       op.delegatee = "dave";
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, sam_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx ), fc::assert_exception );
+// 
+// 
+//       BOOST_TEST_MESSAGE( "--- Testing failure delegating more vesting shares than account has." );
+//       tx.clear();
+//       op.vesting_shares = asset( sam_vest.amount + 1, VESTS_SYMBOL );
+//       tx.operations.push_back( op );
+//       sign( tx, sam_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx ), fc::assert_exception );
+// 
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure delegating vesting shares that are part of a power down" );
+//       tx.clear();
+//       sam_vest = asset( sam_vest.amount / 2, VESTS_SYMBOL );
+//       withdraw_vesting_operation withdraw;
+//       withdraw.account = "sam";
+//       withdraw.vesting_shares = sam_vest;
+//       tx.operations.push_back( withdraw );
+//       sign( tx, sam_private_key );
+//       db->push_transaction( tx, 0 );
+// 
+//       tx.clear();
+//       op.vesting_shares = asset( sam_vest.amount + 2, VESTS_SYMBOL );
+//       tx.operations.push_back( op );
+//       sign( tx, sam_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx ), fc::assert_exception );
+// 
+//       tx.clear();
+//       withdraw.vesting_shares = ASSET( "0.000000 VESTS" );
+//       tx.operations.push_back( withdraw );
+//       sign( tx, sam_private_key );
+//       db->push_transaction( tx, 0 );
+// 
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure powering down vesting shares that are delegated" );
+//       sam_vest.amount += 1000;
+//       op.vesting_shares = sam_vest;
+//       tx.clear();
+//       tx.operations.push_back( op );
+//       sign( tx, sam_private_key );
+//       db->push_transaction( tx, 0 );
+// 
+//       tx.clear();
+//       withdraw.vesting_shares = asset( sam_vest.amount, VESTS_SYMBOL );
+//       tx.operations.push_back( withdraw );
+//       sign( tx, sam_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx ), fc::assert_exception );
+// 
+// 
+//       BOOST_TEST_MESSAGE( "--- Remove a delegation and ensure it is returned after 1 week" );
+//       tx.clear();
+//       op.vesting_shares = ASSET( "0.000000 VESTS" );
+//       tx.operations.push_back( op );
+//       sign( tx, sam_private_key );
+//       db->push_transaction( tx, 0 );
+// 
+//       auto exp_obj = db->get_index< vesting_delegation_expiration_index, by_id >().begin();
+//       auto end = db->get_index< vesting_delegation_expiration_index, by_id >().end();
+//       auto gpo = db->get_dynamic_global_properties();
+// 
+//       BOOST_REQUIRE( gpo.delegation_return_period == COLAB_DELEGATION_RETURN_PERIOD_HF20 );
+// 
+//       BOOST_REQUIRE( exp_obj != end );
+//       BOOST_REQUIRE( exp_obj->delegator == "sam" );
+//       BOOST_REQUIRE( exp_obj->vesting_shares == sam_vest );
+//       BOOST_REQUIRE( exp_obj->expiration == db->head_block_time() + gpo.delegation_return_period );
+//       BOOST_REQUIRE( db->get_account( "sam" ).delegated_vesting_shares == sam_vest );
+//       BOOST_REQUIRE( db->get_account( "dave" ).received_vesting_shares == ASSET( "0.000000 VESTS" ) );
+//       delegation = db->find< vesting_delegation_object, by_delegation >( boost::make_tuple( op.delegator, op.delegatee ) );
+//       BOOST_REQUIRE( delegation == nullptr );
+// 
+//       generate_blocks( exp_obj->expiration + COLAB_BLOCK_INTERVAL );
+// 
+//       exp_obj = db->get_index< vesting_delegation_expiration_index, by_id >().begin();
+//       end = db->get_index< vesting_delegation_expiration_index, by_id >().end();
+// 
+//       BOOST_REQUIRE( exp_obj == end );
+//       BOOST_REQUIRE( db->get_account( "sam" ).delegated_vesting_shares == ASSET( "0.000000 VESTS" ) );
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
 
 BOOST_AUTO_TEST_CASE( issue_971_vesting_removal )
 {

@@ -493,55 +493,55 @@ void database_fixture::transfer(
    } FC_CAPTURE_AND_RETHROW( (from)(to)(amount) )
 }
 
-void database_fixture::vest( const string& from, const string& to, const asset& amount )
-{
-   try
-   {
-      FC_ASSERT( amount.symbol == CLC_SYMBOL, "Can only vest TESTS" );
-
-      transfer_to_vesting_operation op;
-      op.from = from;
-      op.to = to;
-      op.amount = amount;
-
-      trx.operations.push_back( op );
-      trx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      trx.validate();
-
-      // This sign() call fixes some tests, like withdraw_vesting_apply, that use this method
-      //   with debug_plugin such that trx may be re-applied with less generous skip flags.
-      if( from == COLAB_INIT_MINER_NAME )
-      {
-         sign( trx, init_account_priv_key );
-      }
-
-      db->push_transaction( trx, ~0 );
-      trx.clear();
-   } FC_CAPTURE_AND_RETHROW( (from)(to)(amount) )
-}
-
-void database_fixture::vest( const string& from, const share_type& amount )
-{
-   try
-   {
-      transfer_to_vesting_operation op;
-      op.from = from;
-      op.to = "";
-      op.amount = asset( amount, CLC_SYMBOL );
-
-      trx.operations.push_back( op );
-      trx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      trx.validate();
-
-      if( from == COLAB_INIT_MINER_NAME )
-      {
-         sign( trx, init_account_priv_key );
-      }
-
-      db->push_transaction( trx, ~0 );
-      trx.clear();
-   } FC_CAPTURE_AND_RETHROW( (from)(amount) )
-}
+// void database_fixture::vest( const string& from, const string& to, const asset& amount )
+// {
+//    try
+//    {
+//       FC_ASSERT( amount.symbol == CLC_SYMBOL, "Can only vest TESTS" );
+// 
+//       transfer_to_vesting_operation op;
+//       op.from = from;
+//       op.to = to;
+//       op.amount = amount;
+// 
+//       trx.operations.push_back( op );
+//       trx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       trx.validate();
+// 
+//       // This sign() call fixes some tests, like withdraw_vesting_apply, that use this method
+//       //   with debug_plugin such that trx may be re-applied with less generous skip flags.
+//       if( from == COLAB_INIT_MINER_NAME )
+//       {
+//          sign( trx, init_account_priv_key );
+//       }
+// 
+//       db->push_transaction( trx, ~0 );
+//       trx.clear();
+//    } FC_CAPTURE_AND_RETHROW( (from)(to)(amount) )
+// }
+// 
+// void database_fixture::vest( const string& from, const share_type& amount )
+// {
+//    try
+//    {
+//       transfer_to_vesting_operation op;
+//       op.from = from;
+//       op.to = "";
+//       op.amount = asset( amount, CLC_SYMBOL );
+// 
+//       trx.operations.push_back( op );
+//       trx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       trx.validate();
+// 
+//       if( from == COLAB_INIT_MINER_NAME )
+//       {
+//          sign( trx, init_account_priv_key );
+//       }
+// 
+//       db->push_transaction( trx, ~0 );
+//       trx.clear();
+//    } FC_CAPTURE_AND_RETHROW( (from)(amount) )
+// }
 
 void database_fixture::proxy( const string& account, const string& proxy )
 {

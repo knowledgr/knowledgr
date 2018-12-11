@@ -219,28 +219,28 @@ namespace colab { namespace protocol {
       FC_ASSERT( fc::is_utf8( memo ), "Memo is not UTF8" );
    } FC_CAPTURE_AND_RETHROW( (*this) ) }
 
-   void transfer_to_vesting_operation::validate() const
-   {
-      validate_account_name( from );
-      FC_ASSERT( amount.symbol == CLC_SYMBOL ||
-                 ( amount.symbol.space() == asset_symbol_type::smt_nai_space && amount.symbol.is_vesting() == false ),
-                 "Amount must be CLC or SMT liquid" );
-      if ( to != account_name_type() ) validate_account_name( to );
-      FC_ASSERT( amount.amount > 0, "Must transfer a nonzero amount" );
-   }
+//    void transfer_to_vesting_operation::validate() const
+//    {
+//       validate_account_name( from );
+//       FC_ASSERT( amount.symbol == CLC_SYMBOL ||
+//                  ( amount.symbol.space() == asset_symbol_type::smt_nai_space && amount.symbol.is_vesting() == false ),
+//                  "Amount must be CLC or SMT liquid" );
+//       if ( to != account_name_type() ) validate_account_name( to );
+//       FC_ASSERT( amount.amount > 0, "Must transfer a nonzero amount" );
+//    }
 
-   void withdraw_vesting_operation::validate() const
-   {
-      validate_account_name( account );
-      FC_ASSERT( is_asset_type( vesting_shares, VESTS_SYMBOL), "Amount must be VESTS"  );
-   }
+//    void withdraw_vesting_operation::validate() const
+//    {
+//       validate_account_name( account );
+//       FC_ASSERT( is_asset_type( vesting_shares, VESTS_SYMBOL), "Amount must be VESTS"  );
+//    }
 
-   void set_withdraw_vesting_route_operation::validate() const
-   {
-      validate_account_name( from_account );
-      validate_account_name( to_account );
-      FC_ASSERT( 0 <= percent && percent <= COLAB_100_PERCENT, "Percent must be valid colab percent" );
-   }
+//    void set_withdraw_vesting_route_operation::validate() const
+//    {
+//       validate_account_name( from_account );
+//       validate_account_name( to_account );
+//       FC_ASSERT( 0 <= percent && percent <= COLAB_100_PERCENT, "Percent must be valid colab percent" );
+//    }
 
    void witness_update_operation::validate() const
    {
@@ -571,12 +571,12 @@ namespace colab { namespace protocol {
       validate_account_name( to );
       validate_account_name( agent );
       FC_ASSERT( fee.amount >= 0, "fee cannot be negative" );
-      FC_ASSERT( sbd_amount.amount >= 0, "sbd amount cannot be negative" );
+//      FC_ASSERT( sbd_amount.amount >= 0, "sbd amount cannot be negative" );
       FC_ASSERT( clc_amount.amount >= 0, "clc amount cannot be negative" );
-      FC_ASSERT( sbd_amount.amount > 0 || clc_amount.amount > 0, "escrow must transfer a non-zero amount" );
+      FC_ASSERT( /*sbd_amount.amount > 0 || */clc_amount.amount > 0, "escrow must transfer a non-zero amount" );
       FC_ASSERT( from != agent && to != agent, "agent must be a third party" );
       FC_ASSERT( (fee.symbol == CLC_SYMBOL) || (fee.symbol == SBD_SYMBOL), "fee must be CLC or SBD" );
-      FC_ASSERT( sbd_amount.symbol == SBD_SYMBOL, "sbd amount must contain SBD" );
+//      FC_ASSERT( sbd_amount.symbol == SBD_SYMBOL, "sbd amount must contain SBD" );
       FC_ASSERT( clc_amount.symbol == CLC_SYMBOL, "clc amount must contain CLC" );
       FC_ASSERT( ratification_deadline < escrow_expiration, "ratification deadline must be before escrow expiration" );
       if ( json_meta.size() > 0 )
@@ -613,10 +613,10 @@ namespace colab { namespace protocol {
       validate_account_name( receiver );
       FC_ASSERT( who == from || who == to || who == agent, "who must be from or to or agent" );
       FC_ASSERT( receiver == from || receiver == to, "receiver must be from or to" );
-      FC_ASSERT( sbd_amount.amount >= 0, "sbd amount cannot be negative" );
+//      FC_ASSERT( sbd_amount.amount >= 0, "sbd amount cannot be negative" );
       FC_ASSERT( clc_amount.amount >= 0, "colab amount cannot be negative" );
-      FC_ASSERT( sbd_amount.amount > 0 || clc_amount.amount > 0, "escrow must release a non-zero amount" );
-      FC_ASSERT( sbd_amount.symbol == SBD_SYMBOL, "sbd amount must contain SBD" );
+      FC_ASSERT( /*sbd_amount.amount > 0 ||*/ clc_amount.amount > 0, "escrow must release a non-zero amount" );
+//      FC_ASSERT( sbd_amount.symbol == SBD_SYMBOL, "sbd amount must contain SBD" );
       FC_ASSERT( clc_amount.symbol == CLC_SYMBOL, "colab amount must contain CLC" );
    }
 

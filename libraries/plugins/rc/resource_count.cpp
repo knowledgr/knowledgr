@@ -138,12 +138,12 @@ struct count_operation_visitor
       execution_time_count += _e.request_account_recovery_operation_exec_time;
    }
 
-   void operator()( const set_withdraw_vesting_route_operation& op )const
-   {
-      FC_TODO( "Change RC state bytes computation to take SMT's into account" )
-      state_bytes_count += _w.withdraw_vesting_route_object_base_size;
-      execution_time_count += _e.set_withdraw_vesting_route_operation_exec_time;
-   }
+//    void operator()( const set_withdraw_vesting_route_operation& op )const
+//    {
+//       FC_TODO( "Change RC state bytes computation to take SMT's into account" )
+//       state_bytes_count += _w.withdraw_vesting_route_object_base_size;
+//       execution_time_count += _e.set_withdraw_vesting_route_operation_exec_time;
+//    }
 
    void operator()( const vote_operation& op )const
    {
@@ -167,12 +167,12 @@ struct count_operation_visitor
       market_op_count++;
    }
 
-   void operator()( const transfer_to_vesting_operation& )const
-   {
-      FC_TODO( "Change RC state bytes computation to take SMT's into account" )
-      execution_time_count += _e.transfer_to_vesting_operation_exec_time;
-      market_op_count++;
-   }
+//    void operator()( const transfer_to_vesting_operation& )const
+//    {
+//       FC_TODO( "Change RC state bytes computation to take SMT's into account" )
+//       execution_time_count += _e.transfer_to_vesting_operation_exec_time;
+//       market_op_count++;
+//    }
 
    void operator()( const transfer_to_savings_operation& )const
    {
@@ -193,11 +193,11 @@ struct count_operation_visitor
       execution_time_count += _e.claim_reward_balance_operation_exec_time;
    }
 
-   void operator()( const withdraw_vesting_operation& op )const
-   {
-      FC_TODO( "Change RC state bytes computation to take SMT's into account" )
-      execution_time_count += _e.withdraw_vesting_operation_exec_time;
-   }
+//    void operator()( const withdraw_vesting_operation& op )const
+//    {
+//       FC_TODO( "Change RC state bytes computation to take SMT's into account" )
+//       execution_time_count += _e.withdraw_vesting_operation_exec_time;
+//    }
 
    ///~~~~~CLC~~~~~{
    void operator()( const account_expertise_update_operation& op )const

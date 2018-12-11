@@ -46,7 +46,7 @@ namespace colab { namespace plugins { namespace condenser_api {
    typedef vote_operation                         legacy_vote_operation;
    typedef escrow_approve_operation               legacy_escrow_approve_operation;
    typedef escrow_dispute_operation               legacy_escrow_dispute_operation;
-   typedef set_withdraw_vesting_route_operation   legacy_set_withdraw_vesting_route_operation;
+   //typedef set_withdraw_vesting_route_operation   legacy_set_withdraw_vesting_route_operation;
    typedef witness_set_properties_operation       legacy_witness_set_properties_operation;
    typedef account_witness_vote_operation         legacy_account_witness_vote_operation;
    typedef account_witness_proxy_operation        legacy_account_witness_proxy_operation;
@@ -359,7 +359,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          to( op.to ),
          agent( op.agent ),
          escrow_id( op.escrow_id ),
-         sbd_amount( legacy_asset::from_asset( op.sbd_amount ) ),
+//         sbd_amount( legacy_asset::from_asset( op.sbd_amount ) ),
          clc_amount( legacy_asset::from_asset( op.clc_amount ) ),
          fee( legacy_asset::from_asset( op.fee ) ),
          ratification_deadline( op.ratification_deadline ),
@@ -374,7 +374,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          op.to = to;
          op.agent = agent;
          op.escrow_id = escrow_id;
-         op.sbd_amount = sbd_amount;
+//         op.sbd_amount = sbd_amount;
          op.clc_amount = clc_amount;
          op.fee = fee;
          op.ratification_deadline = ratification_deadline;
@@ -388,7 +388,7 @@ namespace colab { namespace plugins { namespace condenser_api {
       account_name_type agent;
       uint32_t          escrow_id;
 
-      legacy_asset      sbd_amount;
+//      legacy_asset      sbd_amount;
       legacy_asset      clc_amount;
       legacy_asset      fee;
 
@@ -408,7 +408,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          who( op.who ),
          receiver( op.receiver ),
          escrow_id( op.escrow_id ),
-         sbd_amount( legacy_asset::from_asset( op.sbd_amount ) ),
+//         sbd_amount( legacy_asset::from_asset( op.sbd_amount ) ),
          clc_amount( legacy_asset::from_asset( op.clc_amount ) )
       {}
 
@@ -421,7 +421,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          op.who = who;
          op.receiver = receiver;
          op.escrow_id = escrow_id;
-         op.sbd_amount = sbd_amount;
+//         op.sbd_amount = sbd_amount;
          op.clc_amount = clc_amount;
          return op;
       }
@@ -433,7 +433,7 @@ namespace colab { namespace plugins { namespace condenser_api {
       account_name_type receiver;
 
       uint32_t          escrow_id;
-      legacy_asset      sbd_amount;
+//      legacy_asset      sbd_amount;
       legacy_asset      clc_amount;
    };
 
@@ -465,48 +465,48 @@ namespace colab { namespace plugins { namespace condenser_api {
       api_chain_properties          props;
    };
 
-   struct legacy_transfer_to_vesting_operation
-   {
-      legacy_transfer_to_vesting_operation() {}
-      legacy_transfer_to_vesting_operation( const transfer_to_vesting_operation& op ) :
-         from( op.from ),
-         to( op.to ),
-         amount( legacy_asset::from_asset( op.amount ) )
-      {}
+//    struct legacy_transfer_to_vesting_operation
+//    {
+//       legacy_transfer_to_vesting_operation() {}
+//       legacy_transfer_to_vesting_operation( const transfer_to_vesting_operation& op ) :
+//          from( op.from ),
+//          to( op.to ),
+//          amount( legacy_asset::from_asset( op.amount ) )
+//       {}
+// 
+//       operator transfer_to_vesting_operation()const
+//       {
+//          transfer_to_vesting_operation op;
+//          op.from = from;
+//          op.to = to;
+//          op.amount = amount;
+//          return op;
+//       }
+// 
+//       account_name_type from;
+//       account_name_type to;
+//       legacy_asset      amount;
+//    };
 
-      operator transfer_to_vesting_operation()const
-      {
-         transfer_to_vesting_operation op;
-         op.from = from;
-         op.to = to;
-         op.amount = amount;
-         return op;
-      }
-
-      account_name_type from;
-      account_name_type to;
-      legacy_asset      amount;
-   };
-
-   struct legacy_withdraw_vesting_operation
-   {
-      legacy_withdraw_vesting_operation() {}
-      legacy_withdraw_vesting_operation( const withdraw_vesting_operation& op ) :
-         account( op.account ),
-         vesting_shares( legacy_asset::from_asset( op.vesting_shares) )
-      {}
-
-      operator withdraw_vesting_operation()const
-      {
-         withdraw_vesting_operation op;
-         op.account = account;
-         op.vesting_shares = vesting_shares;
-         return op;
-      }
-
-      account_name_type account;
-      legacy_asset      vesting_shares;
-   };
+//    struct legacy_withdraw_vesting_operation
+//    {
+//       legacy_withdraw_vesting_operation() {}
+//       legacy_withdraw_vesting_operation( const withdraw_vesting_operation& op ) :
+//          account( op.account ),
+//          vesting_shares( legacy_asset::from_asset( op.vesting_shares) )
+//       {}
+// 
+//       operator withdraw_vesting_operation()const
+//       {
+//          withdraw_vesting_operation op;
+//          op.account = account;
+//          op.vesting_shares = vesting_shares;
+//          return op;
+//       }
+// 
+//       account_name_type account;
+//       legacy_asset      vesting_shares;
+//    };
 
    struct legacy_witness_update_operation
    {
@@ -1095,8 +1095,8 @@ namespace colab { namespace plugins { namespace condenser_api {
             legacy_vote_operation,
             legacy_comment_operation,
             legacy_transfer_operation,
-            legacy_transfer_to_vesting_operation,
-            legacy_withdraw_vesting_operation,
+//            legacy_transfer_to_vesting_operation,
+//            legacy_withdraw_vesting_operation,
             legacy_limit_order_create_operation,
             legacy_limit_order_cancel_operation,
             legacy_feed_publish_operation,
@@ -1116,7 +1116,7 @@ namespace colab { namespace plugins { namespace condenser_api {
             legacy_delete_comment_operation,
             legacy_custom_json_operation,
             legacy_comment_options_operation,
-            legacy_set_withdraw_vesting_route_operation,
+//            legacy_set_withdraw_vesting_route_operation,
             legacy_limit_order_create2_operation,
             legacy_claim_account_operation,
             legacy_create_claimed_account_operation,
@@ -1172,7 +1172,7 @@ namespace colab { namespace plugins { namespace condenser_api {
       bool operator()( const vote_operation& op )const                           { l_op = op; return true; }
       bool operator()( const escrow_approve_operation& op )const                 { l_op = op; return true; }
       bool operator()( const escrow_dispute_operation& op )const                 { l_op = op; return true; }
-      bool operator()( const set_withdraw_vesting_route_operation& op )const     { l_op = op; return true; }
+      //bool operator()( const set_withdraw_vesting_route_operation& op )const     { l_op = op; return true; }
       bool operator()( const witness_set_properties_operation& op )const         { l_op = op; return true; }
       bool operator()( const account_witness_vote_operation& op )const           { l_op = op; return true; }
       bool operator()( const account_witness_proxy_operation& op )const          { l_op = op; return true; }
@@ -1199,17 +1199,17 @@ namespace colab { namespace plugins { namespace condenser_api {
          return true;
       }
 
-      bool operator()( const transfer_to_vesting_operation& op )const
-      {
-         l_op = legacy_transfer_to_vesting_operation( op );
-         return true;
-      }
+//       bool operator()( const transfer_to_vesting_operation& op )const
+//       {
+//          l_op = legacy_transfer_to_vesting_operation( op );
+//          return true;
+//       }
 
-      bool operator()( const withdraw_vesting_operation& op )const
-      {
-         l_op = legacy_withdraw_vesting_operation( op );
-         return true;
-      }
+//       bool operator()( const withdraw_vesting_operation& op )const
+//       {
+//          l_op = legacy_withdraw_vesting_operation( op );
+//          return true;
+//       }
 
       bool operator()( const limit_order_create_operation& op )const
       {
@@ -1430,15 +1430,15 @@ struct convert_from_legacy_operation_visitor
       return operation( transfer_operation( op ) );
    }
 
-   operation operator()( const legacy_transfer_to_vesting_operation& op )const
-   {
-      return operation( transfer_to_vesting_operation( op ) );
-   }
+//    operation operator()( const legacy_transfer_to_vesting_operation& op )const
+//    {
+//       return operation( transfer_to_vesting_operation( op ) );
+//    }
 
-   operation operator()( const legacy_withdraw_vesting_operation& op )const
-   {
-      return operation( withdraw_vesting_operation( op ) );
-   }
+//    operation operator()( const legacy_withdraw_vesting_operation& op )const
+//    {
+//       return operation( withdraw_vesting_operation( op ) );
+//    }
 
    operation operator()( const legacy_limit_order_create_operation& op )const
    {
@@ -1727,14 +1727,14 @@ FC_REFLECT( colab::plugins::condenser_api::legacy_account_create_with_delegation
             (extensions) )
 
 FC_REFLECT( colab::plugins::condenser_api::legacy_transfer_operation, (from)(to)(amount)(memo) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_transfer_to_vesting_operation, (from)(to)(amount) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_withdraw_vesting_operation, (account)(vesting_shares) )
+//FC_REFLECT( colab::plugins::condenser_api::legacy_transfer_to_vesting_operation, (from)(to)(amount) )
+//FC_REFLECT( colab::plugins::condenser_api::legacy_withdraw_vesting_operation, (account)(vesting_shares) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_witness_update_operation, (owner)(url)(block_signing_key)(props)(fee) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_limit_order_create_operation, (owner)(orderid)(amount_to_sell)(min_to_receive)(fill_or_kill)(expiration) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_limit_order_create2_operation, (owner)(orderid)(amount_to_sell)(exchange_rate)(fill_or_kill)(expiration) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_comment_options_operation, (author)(permlink)(max_accepted_payout)(percent_colab_dollars)(allow_votes)(allow_curation_rewards)(extensions) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_escrow_transfer_operation, (from)(to)(sbd_amount)(clc_amount)(escrow_id)(agent)(fee)(json_meta)(ratification_deadline)(escrow_expiration) );
-FC_REFLECT( colab::plugins::condenser_api::legacy_escrow_release_operation, (from)(to)(agent)(who)(receiver)(escrow_id)(sbd_amount)(clc_amount) );
+FC_REFLECT( colab::plugins::condenser_api::legacy_escrow_transfer_operation, (from)(to)/*(sbd_amount)*/(clc_amount)(escrow_id)(agent)(fee)(json_meta)(ratification_deadline)(escrow_expiration) );
+FC_REFLECT( colab::plugins::condenser_api::legacy_escrow_release_operation, (from)(to)(agent)(who)(receiver)(escrow_id)/*(sbd_amount)*/(clc_amount) );
 FC_REFLECT( colab::plugins::condenser_api::legacy_pow2_operation, (work)(new_owner_key)(props) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_claim_reward_balance_operation, (account)(reward_colab)(reward_sbd)(reward_vests) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_delegate_vesting_shares_operation, (delegator)(delegatee)(vesting_shares) );

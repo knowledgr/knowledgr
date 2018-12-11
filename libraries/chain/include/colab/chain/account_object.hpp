@@ -99,7 +99,7 @@ namespace colab { namespace chain {
          share_type        curation_rewards = 0;
          share_type        posting_rewards = 0;
 
-         asset             vesting_shares = asset( 0, VESTS_SYMBOL ); ///< total vesting shares held by this account, controls its voting power
+         asset             vesting_shares = asset( 0, VESTS_SYMBOL ); ///< total vesting shares held by this account, controls its voting power ///~~~~~CLC~~~~~ NO NEED for CoLab
          asset             delegated_vesting_shares = asset( 0, VESTS_SYMBOL );
          asset             received_vesting_shares = asset( 0, VESTS_SYMBOL );
 
@@ -140,7 +140,7 @@ namespace colab { namespace chain {
          share_type        witness_vote_weight()const {
             return std::accumulate( proxied_vsf_votes.begin(),
                                     proxied_vsf_votes.end(),
-                                    vesting_shares.amount );
+                                    /*vesting_shares*/balance.amount );///~~~~~CLC~~~~~
          }
          share_type        proxied_vsf_votes_total()const {
             return std::accumulate( proxied_vsf_votes.begin(),
