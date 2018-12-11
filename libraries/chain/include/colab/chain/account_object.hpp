@@ -91,7 +91,7 @@ namespace colab { namespace chain {
          uint8_t           savings_withdraw_requests = 0;
          ///@}
 
-         asset             reward_sbd_balance = asset( 0, SBD_SYMBOL );
+//         asset             reward_sbd_balance = asset( 0, SBD_SYMBOL ); ///~~~~~CLC~~~~~ NO NEED for CoLab
          asset             reward_clc_balance = asset( 0, CLC_SYMBOL );
          asset             reward_vesting_balance = asset( 0, VESTS_SYMBOL );
          asset             reward_vesting_clc = asset( 0, CLC_SYMBOL );
@@ -440,7 +440,7 @@ FC_REFLECT( colab::chain::account_object,
 			 /*(sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)*////~~~~~CLC~~~~~ NO NEED for CoLab
              /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~CLC~~~~~ NO NEED for CoLab
 			 (savings_withdraw_requests)
-             (reward_clc_balance)(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_clc)
+             (reward_clc_balance)/*(reward_sbd_balance)*/(reward_vesting_balance)(reward_vesting_clc)///~~~~~CLC~~~~~ NO NEED for CoLab
              (vesting_shares)(delegated_vesting_shares)(received_vesting_shares)
              (vesting_withdraw_rate)(next_vesting_withdrawal)(withdrawn)(to_withdraw)(withdraw_routes)
              (curation_rewards)

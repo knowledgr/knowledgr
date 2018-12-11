@@ -1115,18 +1115,18 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance2_apply )
       {
          db.modify( db.get_account( "alice" ), []( account_object& a )
          {
-            a.reward_sbd_balance = ASSET( "10.000 TBD" );
+            //a.reward_sbd_balance = ASSET( "10.000 TBD" );
             a.reward_clc_balance = ASSET( "10.000 TESTS" );
-            a.reward_vesting_balance = ASSET( "10.000000 VESTS" );
+            //a.reward_vesting_balance = ASSET( "10.000000 VESTS" );
             a.reward_vesting_clc = ASSET( "10.000 TESTS" );
          });
 
          db.modify( db.get_dynamic_global_properties(), []( dynamic_global_property_object& gpo )
          {
-            gpo.current_sbd_supply += ASSET( "10.000 TBD" );
+            //gpo.current_sbd_supply += ASSET( "10.000 TBD" );
             gpo.current_supply += ASSET( "20.000 TESTS" );
             gpo.virtual_supply += ASSET( "20.000 TESTS" );
-            gpo.pending_rewarded_vesting_shares += ASSET( "10.000000 VESTS" );
+            //gpo.pending_rewarded_vesting_shares += ASSET( "10.000000 VESTS" );
             gpo.pending_rewarded_vesting_clc += ASSET( "10.000 TESTS" );
          });
       });
@@ -1168,9 +1168,9 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance2_apply )
       BOOST_REQUIRE( db->get_account( "alice" ).balance == alice_colab + ASSET( "0.000 TESTS" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_clc_balance == ASSET( "10.000 TESTS" ) );
       //BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == alice_sbd + ASSET( "0.000 TBD" ) );
-      BOOST_REQUIRE( db->get_account( "alice" ).reward_sbd_balance == ASSET( "10.000 TBD" ) );
+      //BOOST_REQUIRE( db->get_account( "alice" ).reward_sbd_balance == ASSET( "10.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).vesting_shares == alice_vests + partial_vests );
-      BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_balance == ASSET( "5.000000 VESTS" ) );
+      //BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_balance == ASSET( "5.000000 VESTS" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_clc == ASSET( "5.000 TESTS" ) );
       validate_database();
       alice_vests += partial_vests;
@@ -1199,7 +1199,7 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance2_apply )
       BOOST_REQUIRE( db->get_account( "alice" ).balance == alice_colab + full_colab );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_clc_balance == ASSET( "0.000 TESTS" ) );
       //BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == alice_sbd + full_sbd );
-      BOOST_REQUIRE( db->get_account( "alice" ).reward_sbd_balance == ASSET( "0.000 TBD" ) );
+      //BOOST_REQUIRE( db->get_account( "alice" ).reward_sbd_balance == ASSET( "0.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).vesting_shares == alice_vests + partial_vests );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_balance == ASSET( "0.000000 VESTS" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_clc == ASSET( "0.000 TESTS" ) );

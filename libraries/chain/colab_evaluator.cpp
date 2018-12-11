@@ -3211,8 +3211,8 @@ void claim_reward_balance_evaluator::do_apply( const claim_reward_balance_operat
 
    FC_ASSERT( op.reward_colab <= acnt.reward_clc_balance, "Cannot claim that much CLC. Claim: ${c} Actual: ${a}",
       ("c", op.reward_colab)("a", acnt.reward_clc_balance) );
-   FC_ASSERT( op.reward_sbd <= acnt.reward_sbd_balance, "Cannot claim that much SBD. Claim: ${c} Actual: ${a}",
-      ("c", op.reward_sbd)("a", acnt.reward_sbd_balance) );
+//    FC_ASSERT( op.reward_sbd <= acnt.reward_sbd_balance, "Cannot claim that much SBD. Claim: ${c} Actual: ${a}",
+//       ("c", op.reward_sbd)("a", acnt.reward_sbd_balance) );
    FC_ASSERT( op.reward_vests <= acnt.reward_vesting_balance, "Cannot claim that much VESTS. Claim: ${c} Actual: ${a}",
       ("c", op.reward_vests)("a", acnt.reward_vesting_balance) );
 
@@ -3308,12 +3308,12 @@ void claim_reward_balance2_evaluator::do_apply( const claim_reward_balance2_oper
 
             _db.adjust_proxied_witness_votes( *a, token.amount );
          }
-         else if( token.symbol == CLC_SYMBOL || token.symbol == SBD_SYMBOL )
+         else if( token.symbol == CLC_SYMBOL/* || token.symbol == SBD_SYMBOL*/ )
          {
             FC_ASSERT( is_asset_type( token, CLC_SYMBOL ) == false || token <= a->reward_clc_balance,
                        "Cannot claim that much CLC. Claim: ${c} Actual: ${a}", ("c", token)("a", a->reward_clc_balance) );
-            FC_ASSERT( is_asset_type( token, SBD_SYMBOL ) == false || token <= a->reward_sbd_balance,
-                       "Cannot claim that much SBD. Claim: ${c} Actual: ${a}", ("c", token)("a", a->reward_sbd_balance) );
+//             FC_ASSERT( is_asset_type( token, SBD_SYMBOL ) == false || token <= a->reward_sbd_balance,
+//                        "Cannot claim that much SBD. Claim: ${c} Actual: ${a}", ("c", token)("a", a->reward_sbd_balance) );
             _db.adjust_reward_balance( *a, -token );
             _db.adjust_balance( *a, token );
          }

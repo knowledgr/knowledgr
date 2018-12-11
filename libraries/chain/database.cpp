@@ -1314,11 +1314,12 @@ void database::clear_null_account_balance()
    {
       total_colab += null_account.reward_clc_balance;
    }
-
+///~~~~~CLC~~~~~{ NO NEED for CoLab
 //    if( null_account.reward_sbd_balance.amount > 0 )
 //    {
 //       total_sbd += null_account.reward_sbd_balance;
 //    }
+///~~~~~CLC~~~~~} NO NEED for CoLab
 
    if( null_account.reward_vesting_balance.amount > 0 )
    {
@@ -1386,10 +1387,12 @@ void database::clear_null_account_balance()
       adjust_reward_balance( null_account, -null_account.reward_clc_balance );
    }
 
-   if( null_account.reward_sbd_balance.amount > 0 )
-   {
-      adjust_reward_balance( null_account, -null_account.reward_sbd_balance );
-   }
+///~~~~~CLC~~~~~{ NO NEED for CoLab
+//    if( null_account.reward_sbd_balance.amount > 0 )
+//    {
+//       adjust_reward_balance( null_account, -null_account.reward_sbd_balance );
+//    }
+///~~~~~CLC~~~~~} NO NEED for CoLab
 
    if( null_account.reward_vesting_balance.amount > 0 )
    {
@@ -4303,14 +4306,16 @@ void database::modify_reward_balance( const account_object& a, const asset& valu
                }
             }
             break;
-         case COLAB_ASSET_NUM_SBD:
-            FC_ASSERT( share_delta.amount.value == 0 );
-            acnt.reward_sbd_balance += value_delta;
-            if( check_balance )
-            {
-               FC_ASSERT( acnt.reward_sbd_balance.amount.value >= 0, "Insufficient reward SBD funds" );
-            }
-            break;
+///~~~~~CLC~~~~~{ NO NEED for CoLab
+//          case COLAB_ASSET_NUM_SBD:
+//             FC_ASSERT( share_delta.amount.value == 0 );
+//             acnt.reward_sbd_balance += value_delta;
+//             if( check_balance )
+//             {
+//                FC_ASSERT( acnt.reward_sbd_balance.amount.value >= 0, "Insufficient reward SBD funds" );
+//             }
+//             break;
+///~~~~~CLC~~~~~} NO NEED for CoLab
          default:
             FC_ASSERT( false, "invalid symbol" );
       }
@@ -5113,7 +5118,7 @@ void database::validate_invariants()const
          total_supply += itr->reward_clc_balance;
 ///         total_sbd += itr->sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
 ///         total_sbd += itr->savings_sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
-         total_sbd += itr->reward_sbd_balance;
+///         total_sbd += itr->reward_sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
          total_vesting += itr->vesting_shares;
          total_vesting += itr->reward_vesting_balance;
          pending_vesting_colab += itr->reward_vesting_clc;

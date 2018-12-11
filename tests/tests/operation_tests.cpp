@@ -6130,15 +6130,15 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance_apply )
          db.modify( db.get_account( "alice" ), []( account_object& a )
          {
             a.reward_clc_balance = ASSET( "10.000 TESTS" );
-            a.reward_sbd_balance = ASSET( "10.000 TBD" );
-            a.reward_vesting_balance = ASSET( "10.000000 VESTS" );
+//             a.reward_sbd_balance = ASSET( "10.000 TBD" );
+//             a.reward_vesting_balance = ASSET( "10.000000 VESTS" );
             a.reward_vesting_clc = ASSET( "10.000 TESTS" );
          });
 
          db.modify( db.get_dynamic_global_properties(), []( dynamic_global_property_object& gpo )
          {
             gpo.current_supply += ASSET( "20.000 TESTS" );
-            gpo.current_sbd_supply += ASSET( "10.000 TBD" );
+//            gpo.current_sbd_supply += ASSET( "10.000 TBD" );
             gpo.virtual_supply += ASSET( "20.000 TESTS" );
             gpo.pending_rewarded_vesting_shares += ASSET( "10.000000 VESTS" );
             gpo.pending_rewarded_vesting_clc += ASSET( "10.000 TESTS" );
@@ -6181,7 +6181,7 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance_apply )
       BOOST_REQUIRE( db->get_account( "alice" ).balance == alice_colab + op.reward_colab );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_clc_balance == ASSET( "10.000 TESTS" ) );
       //BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == alice_sbd + op.reward_sbd );
-      BOOST_REQUIRE( db->get_account( "alice" ).reward_sbd_balance == ASSET( "10.000 TBD" ) );
+      //BOOST_REQUIRE( db->get_account( "alice" ).reward_sbd_balance == ASSET( "10.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).vesting_shares == alice_vests + op.reward_vests );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_balance == ASSET( "5.000000 VESTS" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_clc == ASSET( "5.000 TESTS" ) );
@@ -6202,7 +6202,7 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance_apply )
       BOOST_REQUIRE( db->get_account( "alice" ).balance == alice_colab + op.reward_colab );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_clc_balance == ASSET( "0.000 TESTS" ) );
       //BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == alice_sbd + op.reward_sbd );
-      BOOST_REQUIRE( db->get_account( "alice" ).reward_sbd_balance == ASSET( "0.000 TBD" ) );
+      //BOOST_REQUIRE( db->get_account( "alice" ).reward_sbd_balance == ASSET( "0.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).vesting_shares == alice_vests + op.reward_vests );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_balance == ASSET( "0.000000 VESTS" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).reward_vesting_clc == ASSET( "0.000 TESTS" ) );
@@ -6730,11 +6730,11 @@ BOOST_AUTO_TEST_CASE( comment_beneficiaries_apply )
 
       generate_block();
 
-      BOOST_REQUIRE( db->get_account( "bob" ).reward_vesting_clc.amount + db->get_account( "bob" ).reward_sbd_balance.amount + db->get_account( "sam" ).reward_vesting_clc.amount + db->get_account( "sam" ).reward_sbd_balance.amount == db->get_comment( "alice", string( "test" ) ).beneficiary_payout_value.amount );
-      BOOST_REQUIRE( ( db->get_account( "alice" ).reward_sbd_balance.amount + db->get_account( "alice" ).reward_vesting_clc.amount ) == db->get_account( "bob" ).reward_vesting_clc.amount + db->get_account( "bob" ).reward_sbd_balance.amount + 2 );
-      BOOST_REQUIRE( ( db->get_account( "alice" ).reward_sbd_balance.amount + db->get_account( "alice" ).reward_vesting_clc.amount ) * 2 == db->get_account( "sam" ).reward_vesting_clc.amount + db->get_account( "sam" ).reward_sbd_balance.amount + 3 );
-      BOOST_REQUIRE( db->get_account( "bob" ).reward_vesting_clc.amount == db->get_account( "bob" ).reward_sbd_balance.amount );
-      BOOST_REQUIRE( db->get_account( "sam" ).reward_vesting_clc.amount == db->get_account( "sam" ).reward_sbd_balance.amount + 1 );
+//       BOOST_REQUIRE( db->get_account( "bob" ).reward_vesting_clc.amount + db->get_account( "bob" ).reward_sbd_balance.amount + db->get_account( "sam" ).reward_vesting_clc.amount + db->get_account( "sam" ).reward_sbd_balance.amount == db->get_comment( "alice", string( "test" ) ).beneficiary_payout_value.amount );
+//       BOOST_REQUIRE( ( db->get_account( "alice" ).reward_sbd_balance.amount + db->get_account( "alice" ).reward_vesting_clc.amount ) == db->get_account( "bob" ).reward_vesting_clc.amount + db->get_account( "bob" ).reward_sbd_balance.amount + 2 );
+//       BOOST_REQUIRE( ( db->get_account( "alice" ).reward_sbd_balance.amount + db->get_account( "alice" ).reward_vesting_clc.amount ) * 2 == db->get_account( "sam" ).reward_vesting_clc.amount + db->get_account( "sam" ).reward_sbd_balance.amount + 3 );
+//       BOOST_REQUIRE( db->get_account( "bob" ).reward_vesting_clc.amount == db->get_account( "bob" ).reward_sbd_balance.amount );
+//       BOOST_REQUIRE( db->get_account( "sam" ).reward_vesting_clc.amount == db->get_account( "sam" ).reward_sbd_balance.amount + 1 );
    }
    FC_LOG_AND_RETHROW()
 }

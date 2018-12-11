@@ -148,9 +148,9 @@ BOOST_AUTO_TEST_CASE( comment_payout_equalize )
       const account_object& bob_account   = db->get_account("bob");
       const account_object& dave_account  = db->get_account("dave");
 
-      BOOST_CHECK( alice_account.reward_sbd_balance == ASSET( "10720.000 TBD" ) );
-      BOOST_CHECK( bob_account.reward_sbd_balance == ASSET( "0.000 TBD" ) );
-      BOOST_CHECK( dave_account.reward_sbd_balance == alice_account.reward_sbd_balance );
+//       BOOST_CHECK( alice_account.reward_sbd_balance == ASSET( "10720.000 TBD" ) );
+//       BOOST_CHECK( bob_account.reward_sbd_balance == ASSET( "0.000 TBD" ) );
+//       BOOST_CHECK( dave_account.reward_sbd_balance == alice_account.reward_sbd_balance );
    }
    FC_LOG_AND_RETHROW()
 }
@@ -2921,8 +2921,8 @@ BOOST_AUTO_TEST_CASE( clear_null_account )
          db.modify( db.get_account( COLAB_NULL_ACCOUNT ), [&]( account_object& a )
          {
             a.reward_clc_balance = ASSET( "1.000 TESTS" );
-            a.reward_sbd_balance = ASSET( "1.000 TBD" );
-            a.reward_vesting_balance = ASSET( "1.000000 VESTS" );
+//             a.reward_sbd_balance = ASSET( "1.000 TBD" );
+//             a.reward_vesting_balance = ASSET( "1.000000 VESTS" );
             a.reward_vesting_clc = ASSET( "1.000 TESTS" );
          });
 
@@ -2930,8 +2930,8 @@ BOOST_AUTO_TEST_CASE( clear_null_account )
          {
             gpo.current_supply += ASSET( "2.000 TESTS" );
             gpo.virtual_supply += ASSET( "3.000 TESTS" );
-            gpo.current_sbd_supply += ASSET( "1.000 TBD" );
-            gpo.pending_rewarded_vesting_shares += ASSET( "1.000000 VESTS" );
+//             gpo.current_sbd_supply += ASSET( "1.000 TBD" );
+//             gpo.pending_rewarded_vesting_shares += ASSET( "1.000000 VESTS" );
             gpo.pending_rewarded_vesting_clc += ASSET( "1.000 TESTS" );
          });
       });
@@ -2943,7 +2943,7 @@ BOOST_AUTO_TEST_CASE( clear_null_account )
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).vesting_shares > ASSET( "0.000000 VESTS" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).savings_balance == ASSET( "4.000 TESTS" ) );
       //BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).savings_sbd_balance == ASSET( "5.000 TBD" ) );
-      BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_sbd_balance == ASSET( "1.000 TBD" ) );
+      //BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_sbd_balance == ASSET( "1.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_clc_balance == ASSET( "1.000 TESTS" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_vesting_balance == ASSET( "1.000000 VESTS" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_vesting_clc == ASSET( "1.000 TESTS" ) );
@@ -2959,7 +2959,7 @@ BOOST_AUTO_TEST_CASE( clear_null_account )
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).vesting_shares == ASSET( "0.000000 VESTS" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).savings_balance == ASSET( "0.000 TESTS" ) );
       //BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).savings_sbd_balance == ASSET( "0.000 TBD" ) );
-      BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_sbd_balance == ASSET( "0.000 TBD" ) );
+      //BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_sbd_balance == ASSET( "0.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_clc_balance == ASSET( "0.000 TESTS" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_vesting_balance == ASSET( "0.000000 VESTS" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_vesting_clc == ASSET( "0.000 TESTS" ) );
