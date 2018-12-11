@@ -1319,13 +1319,13 @@ void database::clear_null_account_balance()
 //    {
 //       total_sbd += null_account.reward_sbd_balance;
 //    }
-///~~~~~CLC~~~~~} NO NEED for CoLab
 
-   if( null_account.reward_vesting_balance.amount > 0 )
-   {
-      total_colab += null_account.reward_vesting_clc;
-      total_vests += null_account.reward_vesting_balance;
-   }
+//    if( null_account.reward_vesting_balance.amount > 0 )
+//    {
+//       total_colab += null_account.reward_vesting_clc;
+//       total_vests += null_account.reward_vesting_balance;
+//    }
+///~~~~~CLC~~~~~} NO NEED for CoLab
 
    if( (total_colab.amount.value == 0) && /*(total_sbd.amount.value == 0) &&*/ (total_vests.amount.value == 0) )
       return;
@@ -1392,24 +1392,24 @@ void database::clear_null_account_balance()
 //    {
 //       adjust_reward_balance( null_account, -null_account.reward_sbd_balance );
 //    }
+//
+//    if( null_account.reward_vesting_balance.amount > 0 )
+//    {
+//       const auto& gpo = get_dynamic_global_properties();
+// 
+//       modify( gpo, [&]( dynamic_global_property_object& g )
+//       {
+//          g.pending_rewarded_vesting_shares -= null_account.reward_vesting_balance;
+//          g.pending_rewarded_vesting_clc -= null_account.reward_vesting_clc;
+//       });
+// 
+//       modify( null_account, [&]( account_object& a )
+//       {
+//          a.reward_vesting_clc.amount = 0;
+//          a.reward_vesting_balance.amount = 0;
+//       });
+//    }
 ///~~~~~CLC~~~~~} NO NEED for CoLab
-
-   if( null_account.reward_vesting_balance.amount > 0 )
-   {
-      const auto& gpo = get_dynamic_global_properties();
-
-      modify( gpo, [&]( dynamic_global_property_object& g )
-      {
-         g.pending_rewarded_vesting_shares -= null_account.reward_vesting_balance;
-         g.pending_rewarded_vesting_clc -= null_account.reward_vesting_clc;
-      });
-
-      modify( null_account, [&]( account_object& a )
-      {
-         a.reward_vesting_clc.amount = 0;
-         a.reward_vesting_balance.amount = 0;
-      });
-   }
 
    //////////////////////////////////////////////////////////////
 
@@ -4296,16 +4296,20 @@ void database::modify_reward_balance( const account_object& a, const asset& valu
                   FC_ASSERT( acnt.reward_clc_balance.amount.value >= 0, "Insufficient reward CLC funds" );
                }
             }
-            else
-            {
-               acnt.reward_vesting_clc += value_delta;
-               acnt.reward_vesting_balance += share_delta;
-               if( check_balance )
-               {
-                  FC_ASSERT( acnt.reward_vesting_balance.amount.value >= 0, "Insufficient reward VESTS funds" );
-               }
-            }
+///~~~~~CLC~~~~~{ NO NEED for CoLab
+//             else
+//             {
+//                acnt.reward_vesting_clc += value_delta;
+//                acnt.reward_vesting_balance += share_delta;
+//                if( check_balance )
+//                {
+//                   FC_ASSERT( acnt.reward_vesting_balance.amount.value >= 0, "Insufficient reward VESTS funds" );
+//                }
+//             }
+///~~~~~CLC~~~~~} NO NEED for CoLab
+
             break;
+
 ///~~~~~CLC~~~~~{ NO NEED for CoLab
 //          case COLAB_ASSET_NUM_SBD:
 //             FC_ASSERT( share_delta.amount.value == 0 );
@@ -5120,8 +5124,8 @@ void database::validate_invariants()const
 ///         total_sbd += itr->savings_sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
 ///         total_sbd += itr->reward_sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
          total_vesting += itr->vesting_shares;
-         total_vesting += itr->reward_vesting_balance;
-         pending_vesting_colab += itr->reward_vesting_clc;
+///         total_vesting += itr->reward_vesting_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
+///         pending_vesting_colab += itr->reward_vesting_clc;
          total_vsf_votes += ( itr->proxy == COLAB_PROXY_TO_SELF_ACCOUNT ?
                                  itr->witness_vote_weight() :
                                  ( COLAB_MAX_PROXY_RECURSION_DEPTH > 0 ?

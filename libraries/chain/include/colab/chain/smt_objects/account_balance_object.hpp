@@ -76,8 +76,8 @@ public:
    /// Name of the account, the balance is held for.
    account_name_type   owner;
    asset               pending_liquid;          /// 'reward_clc_balance' for pending CLC
-   asset               pending_vesting_shares;  /// 'reward_vesting_balance' for pending VESTS
-   asset               pending_vesting_value;   /// 'reward_vesting_clc' for pending VESTS
+//    asset               pending_vesting_shares;  /// 'reward_vesting_balance' for pending VESTS
+//    asset               pending_vesting_value;   /// 'reward_vesting_clc' for pending VESTS
 
    /** Set of simple methods that allow unification of
     *  regular and rewards balance manipulation code.
@@ -91,20 +91,21 @@ public:
    {
       owner = "";
       pending_liquid = asset( 0, liquid_symbol);
-      pending_vesting_shares = asset( 0, liquid_symbol.get_paired_symbol() );
-      pending_vesting_value = asset( 0, liquid_symbol);
+//       pending_vesting_shares = asset( 0, liquid_symbol.get_paired_symbol() );
+//       pending_vesting_value = asset( 0, liquid_symbol);
    }
    void add_vesting( const asset& vesting_shares, const asset& vesting_value )
    {
-      pending_vesting_shares += vesting_shares;
-      pending_vesting_value += vesting_value;
+//       pending_vesting_shares += vesting_shares;
+//       pending_vesting_value += vesting_value;
    }
    ///@}
 
    bool validate() const
    {
-      return pending_liquid.symbol == pending_vesting_shares.symbol.get_paired_symbol() &&
-             pending_liquid.symbol == pending_vesting_value.symbol;
+	   return true;
+//       return pending_liquid.symbol == pending_vesting_shares.symbol.get_paired_symbol() &&
+//              pending_liquid.symbol == pending_vesting_value.symbol;
    }
 };
 
@@ -155,8 +156,8 @@ FC_REFLECT( colab::chain::account_rewards_balance_object,
    (id)
    (owner)
    (pending_liquid)
-   (pending_vesting_shares)
-   (pending_vesting_value)
+//    (pending_vesting_shares)
+//    (pending_vesting_value)
 )
 
 CHAINBASE_SET_INDEX_TYPE( colab::chain::account_regular_balance_object, colab::chain::account_regular_balance_index )

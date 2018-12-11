@@ -3213,20 +3213,20 @@ void claim_reward_balance_evaluator::do_apply( const claim_reward_balance_operat
       ("c", op.reward_colab)("a", acnt.reward_clc_balance) );
 //    FC_ASSERT( op.reward_sbd <= acnt.reward_sbd_balance, "Cannot claim that much SBD. Claim: ${c} Actual: ${a}",
 //       ("c", op.reward_sbd)("a", acnt.reward_sbd_balance) );
-   FC_ASSERT( op.reward_vests <= acnt.reward_vesting_balance, "Cannot claim that much VESTS. Claim: ${c} Actual: ${a}",
-      ("c", op.reward_vests)("a", acnt.reward_vesting_balance) );
+//    FC_ASSERT( op.reward_vests <= acnt.reward_vesting_balance, "Cannot claim that much VESTS. Claim: ${c} Actual: ${a}",
+//       ("c", op.reward_vests)("a", acnt.reward_vesting_balance) );
 
-   asset reward_vesting_clc_to_move = asset( 0, CLC_SYMBOL );
-   if( op.reward_vests == acnt.reward_vesting_balance )
-      reward_vesting_clc_to_move = acnt.reward_vesting_clc;
-   else
-      reward_vesting_clc_to_move = asset( ( ( uint128_t( op.reward_vests.amount.value ) * uint128_t( acnt.reward_vesting_clc.amount.value ) )
-         / uint128_t( acnt.reward_vesting_balance.amount.value ) ).to_uint64(), CLC_SYMBOL );
+//   asset reward_vesting_clc_to_move = asset( 0, CLC_SYMBOL );
+//    if( op.reward_vests == acnt.reward_vesting_balance )
+//       reward_vesting_clc_to_move = acnt.reward_vesting_clc;
+//    else
+//       reward_vesting_clc_to_move = asset( ( ( uint128_t( op.reward_vests.amount.value ) * uint128_t( acnt.reward_vesting_clc.amount.value ) )
+//          / uint128_t( acnt.reward_vesting_balance.amount.value ) ).to_uint64(), CLC_SYMBOL );
 
    _db.adjust_reward_balance( acnt, -op.reward_colab );
-   _db.adjust_reward_balance( acnt, -op.reward_sbd );
+//   _db.adjust_reward_balance( acnt, -op.reward_sbd );
    _db.adjust_balance( acnt, op.reward_colab );
-   _db.adjust_balance( acnt, op.reward_sbd );
+//   _db.adjust_balance( acnt, op.reward_sbd );
 
    _db.modify( acnt, [&]( account_object& a )
    {
@@ -3238,17 +3238,17 @@ void claim_reward_balance_evaluator::do_apply( const claim_reward_balance_operat
       }
 
       a.vesting_shares += op.reward_vests;
-      a.reward_vesting_balance -= op.reward_vests;
-      a.reward_vesting_clc -= reward_vesting_clc_to_move;
+//      a.reward_vesting_balance -= op.reward_vests;
+//      a.reward_vesting_clc -= reward_vesting_clc_to_move;
    });
 
    _db.modify( _db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
    {
       gpo.total_vesting_shares += op.reward_vests;
-      gpo.total_vesting_fund_clc += reward_vesting_clc_to_move;
+      //gpo.total_vesting_fund_clc += reward_vesting_clc_to_move;
 
       gpo.pending_rewarded_vesting_shares -= op.reward_vests;
-      gpo.pending_rewarded_vesting_clc -= reward_vesting_clc_to_move;
+      //gpo.pending_rewarded_vesting_clc -= reward_vesting_clc_to_move;
    });
 
    _db.adjust_proxied_witness_votes( acnt, op.reward_vests.amount );
@@ -3278,37 +3278,37 @@ void claim_reward_balance2_evaluator::do_apply( const claim_reward_balance2_oper
             FC_ASSERT( a != nullptr, "Could NOT find account ${a}", ("a", op.account) );
          }
 
-         if( token.symbol == VESTS_SYMBOL)
-         {
-            FC_ASSERT( token <= a->reward_vesting_balance, "Cannot claim that much VESTS. Claim: ${c} Actual: ${a}",
-               ("c", token)("a", a->reward_vesting_balance) );
-
-            asset reward_vesting_clc_to_move = asset( 0, CLC_SYMBOL );
-            if( token == a->reward_vesting_balance )
-               reward_vesting_clc_to_move = a->reward_vesting_clc;
-            else
-               reward_vesting_clc_to_move = asset( ( ( uint128_t( token.amount.value ) * uint128_t( a->reward_vesting_clc.amount.value ) )
-                  / uint128_t( a->reward_vesting_balance.amount.value ) ).to_uint64(), CLC_SYMBOL );
-
-            _db.modify( *a, [&]( account_object& a )
-            {
-               a.vesting_shares += token;
-               a.reward_vesting_balance -= token;
-               a.reward_vesting_clc -= reward_vesting_clc_to_move;
-            });
-
-            _db.modify( _db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
-            {
-               gpo.total_vesting_shares += token;
-               gpo.total_vesting_fund_clc += reward_vesting_clc_to_move;
-
-               gpo.pending_rewarded_vesting_shares -= token;
-               gpo.pending_rewarded_vesting_clc -= reward_vesting_clc_to_move;
-            });
-
-            _db.adjust_proxied_witness_votes( *a, token.amount );
-         }
-         else if( token.symbol == CLC_SYMBOL/* || token.symbol == SBD_SYMBOL*/ )
+//          if( token.symbol == VESTS_SYMBOL)
+//          {
+//             FC_ASSERT( token <= a->reward_vesting_balance, "Cannot claim that much VESTS. Claim: ${c} Actual: ${a}",
+//                ("c", token)("a", a->reward_vesting_balance) );
+// 
+//             asset reward_vesting_clc_to_move = asset( 0, CLC_SYMBOL );
+//             if( token == a->reward_vesting_balance )
+//                reward_vesting_clc_to_move = a->reward_vesting_clc;
+//             else
+//                reward_vesting_clc_to_move = asset( ( ( uint128_t( token.amount.value ) * uint128_t( a->reward_vesting_clc.amount.value ) )
+//                   / uint128_t( a->reward_vesting_balance.amount.value ) ).to_uint64(), CLC_SYMBOL );
+// 
+//             _db.modify( *a, [&]( account_object& a )
+//             {
+//                a.vesting_shares += token;
+//                a.reward_vesting_balance -= token;
+//                a.reward_vesting_clc -= reward_vesting_clc_to_move;
+//             });
+// 
+//             _db.modify( _db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
+//             {
+//                gpo.total_vesting_shares += token;
+//                gpo.total_vesting_fund_clc += reward_vesting_clc_to_move;
+// 
+//                gpo.pending_rewarded_vesting_shares -= token;
+//                gpo.pending_rewarded_vesting_clc -= reward_vesting_clc_to_move;
+//             });
+// 
+//             _db.adjust_proxied_witness_votes( *a, token.amount );
+//          }
+         /*else */if( token.symbol == CLC_SYMBOL/* || token.symbol == SBD_SYMBOL*/ )
          {
             FC_ASSERT( is_asset_type( token, CLC_SYMBOL ) == false || token <= a->reward_clc_balance,
                        "Cannot claim that much CLC. Claim: ${c} Actual: ${a}", ("c", token)("a", a->reward_clc_balance) );

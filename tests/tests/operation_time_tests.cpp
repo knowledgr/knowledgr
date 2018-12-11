@@ -2923,7 +2923,7 @@ BOOST_AUTO_TEST_CASE( clear_null_account )
             a.reward_clc_balance = ASSET( "1.000 TESTS" );
 //             a.reward_sbd_balance = ASSET( "1.000 TBD" );
 //             a.reward_vesting_balance = ASSET( "1.000000 VESTS" );
-            a.reward_vesting_clc = ASSET( "1.000 TESTS" );
+//            a.reward_vesting_clc = ASSET( "1.000 TESTS" );
          });
 
          db.modify( db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
@@ -2945,8 +2945,8 @@ BOOST_AUTO_TEST_CASE( clear_null_account )
       //BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).savings_sbd_balance == ASSET( "5.000 TBD" ) );
       //BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_sbd_balance == ASSET( "1.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_clc_balance == ASSET( "1.000 TESTS" ) );
-      BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_vesting_balance == ASSET( "1.000000 VESTS" ) );
-      BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_vesting_clc == ASSET( "1.000 TESTS" ) );
+//       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_vesting_balance == ASSET( "1.000000 VESTS" ) );
+//       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_vesting_clc == ASSET( "1.000 TESTS" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).balance == ASSET( "2.000 TESTS" ) );
       //BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == ASSET( "3.000 TBD" ) );
 
@@ -2961,8 +2961,8 @@ BOOST_AUTO_TEST_CASE( clear_null_account )
       //BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).savings_sbd_balance == ASSET( "0.000 TBD" ) );
       //BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_sbd_balance == ASSET( "0.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_clc_balance == ASSET( "0.000 TESTS" ) );
-      BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_vesting_balance == ASSET( "0.000000 VESTS" ) );
-      BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_vesting_clc == ASSET( "0.000 TESTS" ) );
+//       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_vesting_balance == ASSET( "0.000000 VESTS" ) );
+//       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_vesting_clc == ASSET( "0.000 TESTS" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).balance == ASSET( "2.000 TESTS" ) );
       //BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == ASSET( "3.000 TBD" ) );
    }
