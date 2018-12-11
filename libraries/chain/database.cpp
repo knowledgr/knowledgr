@@ -1114,10 +1114,12 @@ asset create_vesting2( database& db, const account_object& to_account, asset liq
 	  db.adjust_balance( to_account, new_token);
       
       // Update global vesting pool numbers.
+
+	  const auto& cprops = db.get_dynamic_global_properties();
       db.modify( cprops, [&]( dynamic_global_property_object& props )
       {
 		  props.total_vesting_fund_clc += new_token;///~~~ ???
-		  props.total_vesting_shares += new_token;///~~~ ???
+//		  props.total_vesting_shares += new_token;///~~~ ???
       } );
       // Update witness voting numbers.
       if( !to_reward_balance )
@@ -1729,7 +1731,7 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
             for( auto& b : comment.beneficiaries )
             {
                auto benefactor_tokens = ( author_tokens * b.weight ) / COLAB_100_PERCENT;
-               auto vop = comment_benefactor_reward_operation( b.account, comment.author, asset( 0, CLC_SYMBOL ) );
+               auto vop = comment_benefactor_reward_operation( b.account, comment.author, to_string(comment.permlink), asset( 0, CLC_SYMBOL ) );
 
                create_vesting2( *this, get_account( b.account ), asset( benefactor_tokens, CLC_SYMBOL ), false/*has_hardfork( COLAB_HARDFORK_0_17__659 )*/,
                [&]( const asset& reward )
@@ -1847,11 +1849,8 @@ void database::process_comment_cashout()
    std::cerr<<"~~~ [database::process_comment_cashout()] --\n";
    const auto& gpo = get_dynamic_global_properties();
    util::comment_reward_context ctx;
-   ctx.current_clc_price = get_feed_history().current_median_history;
-
-   std::cerr<<"~~~ [database::process_comment_cashout()] - current_median_history.current_clc_price.base = "<<ctx.current_clc_price.base.amount.value<<"\n";
-   std::cerr<<"~~~ [database::process_comment_cashout()] - current_median_history.current_clc_price.quote = "<<ctx.current_clc_price.quote.amount.value<<"\n";
-
+   ///ctx.current_clc_price = get_feed_history().current_median_history;
+   
    vector< reward_fund_context > funds;
    vector< share_type > colab_awarded;
    const auto& reward_idx = get_index< reward_fund_index, by_id >();
@@ -1868,6 +1867,7 @@ void database::process_comment_cashout()
 	   std::cerr<<"~~~ [database::process_comment_cashout()] - reward_fund_object->percent_curation_rewards = "<<itr->percent_curation_rewards<<"\n";///~~~~~CLC~~~~~
 	   std::cerr<<"~~~ [database::process_comment_cashout()] - reward_fund_object->percent_content_rewards = "<<itr->percent_content_rewards<<"\n";///~~~~~CLC~~~~~
 	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~CLC~~~~~
+
       modify( *itr, [&]( reward_fund_object& rfo )
       {
          fc::microseconds decay_time;
@@ -2062,7 +2062,7 @@ void database::process_funds()
          p.virtual_supply           += asset( new_colab, CLC_SYMBOL );
       });
 
-      operation vop = producer_reward_operation( cwit.owner, asset( 0, VESTS_SYMBOL ) );
+      operation vop = producer_reward_operation( cwit.owner, asset( 0, CLC_SYMBOL ) );
       create_vesting2( *this, get_account( cwit.owner ), asset( witness_reward, CLC_SYMBOL ), false,
          [&]( const asset& vesting_shares )
          {
