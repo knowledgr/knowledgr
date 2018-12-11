@@ -78,15 +78,15 @@ namespace colab { namespace chain {
           */
          ///@{
 ///         asset             sbd_balance = asset( 0, SBD_SYMBOL ); /// total sbd balance ///~~~~~CLC~~~~~ NO NEED for CoLab
-///         uint128_t         sbd_seconds; ///< total sbd * how long it has been hel
-///         time_point_sec    sbd_seconds_last_update; ///< the last time the sbd_seconds was updated
-///         time_point_sec    sbd_last_interest_payment; ///< used to pay interest at most once per month
+///         uint128_t         sbd_seconds; ///< total sbd * how long it has been hel ///~~~~~CLC~~~~~ NO NEED for CoLab
+///         time_point_sec    sbd_seconds_last_update; ///< the last time the sbd_seconds was updated ///~~~~~CLC~~~~~ NO NEED for CoLab
+///         time_point_sec    sbd_last_interest_payment; ///< used to pay interest at most once per month ///~~~~~CLC~~~~~ NO NEED for CoLab
 
 
-         asset             savings_sbd_balance = asset( 0, SBD_SYMBOL ); /// total sbd balance
-         uint128_t         savings_sbd_seconds; ///< total sbd * how long it has been hel
-         time_point_sec    savings_sbd_seconds_last_update; ///< the last time the sbd_seconds was updated
-         time_point_sec    savings_sbd_last_interest_payment; ///< used to pay interest at most once per month
+//          asset             savings_sbd_balance = asset( 0, SBD_SYMBOL ); /// total sbd balance ///~~~~~CLC~~~~~ NO NEED for CoLab
+//          uint128_t         savings_sbd_seconds; ///< total sbd * how long it has been hel ///~~~~~CLC~~~~~ NO NEED for CoLab
+//          time_point_sec    savings_sbd_seconds_last_update; ///< the last time the sbd_seconds was updated ///~~~~~CLC~~~~~ NO NEED for CoLab
+//          time_point_sec    savings_sbd_last_interest_payment; ///< used to pay interest at most once per month ///~~~~~CLC~~~~~ NO NEED for CoLab
 
          uint8_t           savings_withdraw_requests = 0;
          ///@}
@@ -438,7 +438,8 @@ FC_REFLECT( colab::chain::account_object,
              (savings_balance)
              /*(sbd_balance)*////~~~~~CLC~~~~~ NO NEED for CoLab
 			 /*(sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)*////~~~~~CLC~~~~~ NO NEED for CoLab
-             (savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)(savings_withdraw_requests)
+             /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~CLC~~~~~ NO NEED for CoLab
+			 (savings_withdraw_requests)
              (reward_clc_balance)(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_clc)
              (vesting_shares)(delegated_vesting_shares)(received_vesting_shares)
              (vesting_withdraw_rate)(next_vesting_withdrawal)(withdrawn)(to_withdraw)(withdraw_routes)

@@ -2942,7 +2942,7 @@ BOOST_AUTO_TEST_CASE( clear_null_account )
       //BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).sbd_balance == ASSET( "2.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).vesting_shares > ASSET( "0.000000 VESTS" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).savings_balance == ASSET( "4.000 TESTS" ) );
-      BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).savings_sbd_balance == ASSET( "5.000 TBD" ) );
+      //BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).savings_sbd_balance == ASSET( "5.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_sbd_balance == ASSET( "1.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_clc_balance == ASSET( "1.000 TESTS" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_vesting_balance == ASSET( "1.000000 VESTS" ) );
@@ -2958,7 +2958,7 @@ BOOST_AUTO_TEST_CASE( clear_null_account )
       //BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).sbd_balance == ASSET( "0.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).vesting_shares == ASSET( "0.000000 VESTS" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).savings_balance == ASSET( "0.000 TESTS" ) );
-      BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).savings_sbd_balance == ASSET( "0.000 TBD" ) );
+      //BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).savings_sbd_balance == ASSET( "0.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_sbd_balance == ASSET( "0.000 TBD" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_clc_balance == ASSET( "0.000 TESTS" ) );
       BOOST_REQUIRE( db->get_account( COLAB_NULL_ACCOUNT ).reward_vesting_balance == ASSET( "0.000000 VESTS" ) );

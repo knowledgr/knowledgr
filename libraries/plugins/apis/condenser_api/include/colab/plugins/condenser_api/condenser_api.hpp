@@ -122,10 +122,10 @@ struct api_account_object
       /*sbd_seconds( a.sbd_seconds ),*////~~~~~CLC~~~~~ NO NEED for CoLab
       /*sbd_seconds_last_update( a.sbd_seconds_last_update ),*////~~~~~CLC~~~~~ NO NEED for CoLab
       /*sbd_last_interest_payment( a.sbd_last_interest_payment ),*////~~~~~CLC~~~~~ NO NEED for CoLab
-      savings_sbd_balance( legacy_asset::from_asset( a.savings_sbd_balance ) ),
-      savings_sbd_seconds( a.savings_sbd_seconds ),
-      savings_sbd_seconds_last_update( a.savings_sbd_seconds_last_update ),
-      savings_sbd_last_interest_payment( a.savings_sbd_last_interest_payment ),
+      /*savings_sbd_balance( legacy_asset::from_asset( a.savings_sbd_balance ) ),*////~~~~~CLC~~~~~ NO NEED for CoLab
+      /*savings_sbd_seconds( a.savings_sbd_seconds ),*////~~~~~CLC~~~~~ NO NEED for CoLab
+      /*savings_sbd_seconds_last_update( a.savings_sbd_seconds_last_update ),*////~~~~~CLC~~~~~ NO NEED for CoLab
+      /*savings_sbd_last_interest_payment( a.savings_sbd_last_interest_payment ),*////~~~~~CLC~~~~~ NO NEED for CoLab
       savings_withdraw_requests( a.savings_withdraw_requests ),
       reward_sbd_balance( legacy_asset::from_asset( a.reward_sbd_balance ) ),
       reward_clc_balance( legacy_asset::from_asset( a.reward_clc_balance ) ),
@@ -195,10 +195,10 @@ struct api_account_object
 //    time_point_sec    sbd_seconds_last_update;///~~~~~CLC~~~~~ NO NEED for CoLab
 //    time_point_sec    sbd_last_interest_payment;///~~~~~CLC~~~~~ NO NEED for CoLab
 
-   legacy_asset      savings_sbd_balance;
-   uint128_t         savings_sbd_seconds;
-   time_point_sec    savings_sbd_seconds_last_update;
-   time_point_sec    savings_sbd_last_interest_payment;
+//    legacy_asset      savings_sbd_balance;///~~~~~CLC~~~~~ NO NEED for CoLab
+//    uint128_t         savings_sbd_seconds;///~~~~~CLC~~~~~ NO NEED for CoLab
+//    time_point_sec    savings_sbd_seconds_last_update;///~~~~~CLC~~~~~ NO NEED for CoLab
+//    time_point_sec    savings_sbd_last_interest_payment;///~~~~~CLC~~~~~ NO NEED for CoLab
 
    uint8_t           savings_withdraw_requests = 0;
 
@@ -1189,7 +1189,8 @@ FC_REFLECT( colab::plugins::condenser_api::api_account_object,
              (savings_balance)
              /*(sbd_balance)*////~~~~~CLC~~~~~ NO NEED for CoLab
 			 /*(sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)*////~~~~~CLC~~~~~ NO NEED for CoLab
-             (savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)(savings_withdraw_requests)
+             /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~CLC~~~~~ NO NEED for CoLab
+			 (savings_withdraw_requests)
              (reward_sbd_balance)(reward_clc_balance)(reward_vesting_balance)(reward_vesting_clc)
              (vesting_shares)(delegated_vesting_shares)(received_vesting_shares)(vesting_withdraw_rate)(next_vesting_withdrawal)(withdrawn)(to_withdraw)(withdraw_routes)
              (curation_rewards)

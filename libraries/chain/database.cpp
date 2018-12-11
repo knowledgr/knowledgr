@@ -1,5 +1,4 @@
-﻿
-#include <colab/protocol/colab_operations.hpp>
+﻿#include <colab/protocol/colab_operations.hpp>
 
 #include <colab/chain/block_summary_object.hpp>
 #include <colab/chain/compound.hpp>
@@ -1359,13 +1358,12 @@ void database::clear_null_account_balance()
 //    {
 //       adjust_balance( null_account, -null_account.sbd_balance );
 //    }
+   
+//    if( null_account.savings_sbd_balance.amount > 0 )
+//    {
+//       adjust_savings_balance( null_account, -null_account.savings_sbd_balance );
+//    }
 ///~~~~~CLC~~~~~} NO NEED for CoLab
-
-
-   if( null_account.savings_sbd_balance.amount > 0 )
-   {
-      adjust_savings_balance( null_account, -null_account.savings_sbd_balance );
-   }
 
    if( null_account.vesting_shares.amount > 0 )
    {
@@ -4423,40 +4421,42 @@ void database::adjust_savings_balance( const account_object& a, const asset& del
             {
                FC_ASSERT( acnt.savings_balance.amount.value >= 0, "Insufficient savings CLC funds" );
             }
-            break;
-         case COLAB_ASSET_NUM_SBD:
-            if( a.savings_sbd_seconds_last_update != head_block_time() )
-            {
-               acnt.savings_sbd_seconds += fc::uint128_t(a.savings_sbd_balance.amount.value) * (head_block_time() - a.savings_sbd_seconds_last_update).to_seconds();
-               acnt.savings_sbd_seconds_last_update = head_block_time();
-
-               if( acnt.savings_sbd_seconds > 0 &&
-                   (acnt.savings_sbd_seconds_last_update - acnt.savings_sbd_last_interest_payment).to_seconds() > COLAB_SBD_INTEREST_COMPOUND_INTERVAL_SEC )
-               {
-                  auto interest = acnt.savings_sbd_seconds / COLAB_SECONDS_PER_YEAR;
-                  interest *= get_dynamic_global_properties().sbd_interest_rate;
-                  interest /= COLAB_100_PERCENT;
-                  asset interest_paid(interest.to_uint64(), SBD_SYMBOL);
-                  acnt.savings_sbd_balance += interest_paid;
-                  acnt.savings_sbd_seconds = 0;
-                  acnt.savings_sbd_last_interest_payment = head_block_time();
-
-                  if(interest > 0)
-                     push_virtual_operation( interest_operation( a.name, interest_paid ) );
-
-                  modify( get_dynamic_global_properties(), [&]( dynamic_global_property_object& props)
-                  {
-                     props.current_sbd_supply += interest_paid;
-                     props.virtual_supply += interest_paid * get_feed_history().current_median_history;
-                  } );
-               }
-            }
-            acnt.savings_sbd_balance += delta;
-            if( check_balance )
-            {
-               FC_ASSERT( acnt.savings_sbd_balance.amount.value >= 0, "Insufficient savings SBD funds" );
-            }
-            break;
+			break;
+///~~~~~CLC~~~~~{ NO NEED for CoLab
+//          case COLAB_ASSET_NUM_SBD:
+//             if( a.savings_sbd_seconds_last_update != head_block_time() )
+//             {
+//                acnt.savings_sbd_seconds += fc::uint128_t(a.savings_sbd_balance.amount.value) * (head_block_time() - a.savings_sbd_seconds_last_update).to_seconds();
+//                acnt.savings_sbd_seconds_last_update = head_block_time();
+// 
+//                if( acnt.savings_sbd_seconds > 0 &&
+//                    (acnt.savings_sbd_seconds_last_update - acnt.savings_sbd_last_interest_payment).to_seconds() > COLAB_SBD_INTEREST_COMPOUND_INTERVAL_SEC )
+//                {
+//                   auto interest = acnt.savings_sbd_seconds / COLAB_SECONDS_PER_YEAR;
+//                   interest *= get_dynamic_global_properties().sbd_interest_rate;
+//                   interest /= COLAB_100_PERCENT;
+//                   asset interest_paid(interest.to_uint64(), SBD_SYMBOL);
+//                   acnt.savings_sbd_balance += interest_paid;
+//                   acnt.savings_sbd_seconds = 0;
+//                   acnt.savings_sbd_last_interest_payment = head_block_time();
+// 
+//                   if(interest > 0)
+//                      push_virtual_operation( interest_operation( a.name, interest_paid ) );
+// 
+//                   modify( get_dynamic_global_properties(), [&]( dynamic_global_property_object& props)
+//                   {
+//                      props.current_sbd_supply += interest_paid;
+//                      props.virtual_supply += interest_paid * get_feed_history().current_median_history;
+//                   } );
+//                }
+//             }
+//             acnt.savings_sbd_balance += delta;
+//             if( check_balance )
+//             {
+//                FC_ASSERT( acnt.savings_sbd_balance.amount.value >= 0, "Insufficient savings SBD funds" );
+//             }
+//             break;
+///~~~~~CLC~~~~~} NO NEED for CoLab
          default:
             FC_ASSERT( !"invalid symbol" );
       }
@@ -4597,8 +4597,10 @@ asset database::get_savings_balance( const account_object& a, asset_symbol_type 
    {
       case COLAB_ASSET_NUM_CLC:
          return a.savings_balance;
+///~~~~~CLC~~~~~{ NO NEED for CoLab
 //       case COLAB_ASSET_NUM_SBD:
 //          return a.savings_sbd_balance;
+///~~~~~CLC~~~~~} NO NEED for CoLab
       default: // Note no savings balance for SMT per comments in issue 1682.
          FC_ASSERT( !"invalid symbol" );
    }
@@ -5110,7 +5112,7 @@ void database::validate_invariants()const
          total_supply += itr->savings_balance;
          total_supply += itr->reward_clc_balance;
 ///         total_sbd += itr->sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
-         total_sbd += itr->savings_sbd_balance;
+///         total_sbd += itr->savings_sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
          total_sbd += itr->reward_sbd_balance;
          total_vesting += itr->vesting_shares;
          total_vesting += itr->reward_vesting_balance;
