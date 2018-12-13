@@ -172,23 +172,23 @@ namespace colab { namespace chain {
          time_point_sec    last_owner_update;
    };
 
-   class vesting_delegation_object : public object< vesting_delegation_object_type, vesting_delegation_object >
-   {
-      public:
-         template< typename Constructor, typename Allocator >
-         vesting_delegation_object( Constructor&& c, allocator< Allocator > a )
-         {
-            c( *this );
-         }
-
-         vesting_delegation_object() {}
-
-         id_type           id;
-         account_name_type delegator;
-         account_name_type delegatee;
-         asset             vesting_shares;
-         time_point_sec    min_delegation_time;
-   };
+//    class vesting_delegation_object : public object< vesting_delegation_object_type, vesting_delegation_object >
+//    {
+//       public:
+//          template< typename Constructor, typename Allocator >
+//          vesting_delegation_object( Constructor&& c, allocator< Allocator > a )
+//          {
+//             c( *this );
+//          }
+// 
+//          vesting_delegation_object() {}
+// 
+//          id_type           id;
+//          account_name_type delegator;
+//          account_name_type delegatee;
+//          asset             vesting_shares;
+//          time_point_sec    min_delegation_time;
+//    };
 
    class vesting_delegation_expiration_object : public object< vesting_delegation_expiration_object_type, vesting_delegation_expiration_object >
    {
@@ -334,23 +334,23 @@ namespace colab { namespace chain {
       allocator< account_authority_object >
    > account_authority_index;
 
-   struct by_delegation;
-
-   typedef multi_index_container <
-      vesting_delegation_object,
-      indexed_by <
-         ordered_unique< tag< by_id >,
-            member< vesting_delegation_object, vesting_delegation_id_type, &vesting_delegation_object::id > >,
-         ordered_unique< tag< by_delegation >,
-            composite_key< vesting_delegation_object,
-               member< vesting_delegation_object, account_name_type, &vesting_delegation_object::delegator >,
-               member< vesting_delegation_object, account_name_type, &vesting_delegation_object::delegatee >
-            >,
-            composite_key_compare< std::less< account_name_type >, std::less< account_name_type > >
-         >
-      >,
-      allocator< vesting_delegation_object >
-   > vesting_delegation_index;
+//    struct by_delegation;
+// 
+//    typedef multi_index_container <
+//       vesting_delegation_object,
+//       indexed_by <
+//          ordered_unique< tag< by_id >,
+//             member< vesting_delegation_object, vesting_delegation_id_type, &vesting_delegation_object::id > >,
+//          ordered_unique< tag< by_delegation >,
+//             composite_key< vesting_delegation_object,
+//                member< vesting_delegation_object, account_name_type, &vesting_delegation_object::delegator >,
+//                member< vesting_delegation_object, account_name_type, &vesting_delegation_object::delegatee >
+//             >,
+//             composite_key_compare< std::less< account_name_type >, std::less< account_name_type > >
+//          >
+//       >,
+//       allocator< vesting_delegation_object >
+//    > vesting_delegation_index;
 
    struct by_expiration;
    struct by_account_expiration;
@@ -460,9 +460,9 @@ FC_REFLECT( colab::chain::account_authority_object,
 )
 CHAINBASE_SET_INDEX_TYPE( colab::chain::account_authority_object, colab::chain::account_authority_index )
 
-FC_REFLECT( colab::chain::vesting_delegation_object,
-            (id)(delegator)(delegatee)(vesting_shares)(min_delegation_time) )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::vesting_delegation_object, colab::chain::vesting_delegation_index )
+// FC_REFLECT( colab::chain::vesting_delegation_object,
+//             (id)(delegator)(delegatee)(vesting_shares)(min_delegation_time) )
+// CHAINBASE_SET_INDEX_TYPE( colab::chain::vesting_delegation_object, colab::chain::vesting_delegation_index )
 
 FC_REFLECT( colab::chain::vesting_delegation_expiration_object,
             (id)(delegator)(vesting_shares)(expiration) )

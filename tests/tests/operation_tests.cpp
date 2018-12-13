@@ -6039,79 +6039,79 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance_authorities )
    FC_LOG_AND_RETHROW()
 }
 
-BOOST_AUTO_TEST_CASE( account_create_with_delegation_authorities )
-{
-   try
-   {
-     BOOST_TEST_MESSAGE( "Testing: account_create_with_delegation_authorities" );
+// BOOST_AUTO_TEST_CASE( account_create_with_delegation_authorities )
+// {
+//    try
+//    {
+//      BOOST_TEST_MESSAGE( "Testing: account_create_with_delegation_authorities" );
+// 
+//       account_create_with_delegation_operation op;
+//       op.creator = "alice";
+// 
+//       flat_set< account_name_type > auths;
+//       flat_set< account_name_type > expected;
+// 
+//       op.get_required_owner_authorities( auths );
+//       BOOST_REQUIRE( auths == expected );
+// 
+//       expected.insert( "alice" );
+//       op.get_required_active_authorities( auths );
+//       BOOST_REQUIRE( auths == expected );
+// 
+//       expected.clear();
+//       auths.clear();
+//       op.get_required_posting_authorities( auths );
+//       BOOST_REQUIRE( auths == expected );
+//    }
+//    FC_LOG_AND_RETHROW()
+// 
+// }
 
-      account_create_with_delegation_operation op;
-      op.creator = "alice";
-
-      flat_set< account_name_type > auths;
-      flat_set< account_name_type > expected;
-
-      op.get_required_owner_authorities( auths );
-      BOOST_REQUIRE( auths == expected );
-
-      expected.insert( "alice" );
-      op.get_required_active_authorities( auths );
-      BOOST_REQUIRE( auths == expected );
-
-      expected.clear();
-      auths.clear();
-      op.get_required_posting_authorities( auths );
-      BOOST_REQUIRE( auths == expected );
-   }
-   FC_LOG_AND_RETHROW()
-
-}
-
-BOOST_AUTO_TEST_CASE( account_create_with_delegation_apply )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: account_create_with_delegation_apply" );
-      signed_transaction tx;
-      ACTORS( (alice) );
-      // 150 * fee = ( 5 * CLC ) + SP
-      //auto gpo = db->get_dynamic_global_properties();
-      generate_blocks(1);
-      fund( "alice", ASSET("1510.000 TESTS") );
-      vest( COLAB_INIT_MINER_NAME, "alice", ASSET("1000.000 TESTS") );
-
-      private_key_type priv_key = generate_private_key( "temp_key" );
-
-      generate_block();
-
-      db_plugin->debug_update( [=]( database& db )
-      {
-         db.modify( db.get_witness_schedule_object(), [&]( witness_schedule_object& w )
-         {
-            w.median_props.account_creation_fee = ASSET( "1.000 TESTS" );
-         });
-      });
-
-      generate_block();
-
-      // This test passed pre HF20
-      BOOST_TEST_MESSAGE( "--- Test deprecation. " );
-      account_create_with_delegation_operation op;
-      op.fee = ASSET( "10.000 TESTS" );
-      op.delegation = ASSET( "100000000.000000 VESTS" );
-      op.creator = "alice";
-      op.new_account_name = "bob";
-      op.owner = authority( 1, priv_key.get_public_key(), 1 );
-      op.active = authority( 2, priv_key.get_public_key(), 2 );
-      op.memo_key = priv_key.get_public_key();
-      op.json_metadata = "{\"foo\":\"bar\"}";
-      tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, alice_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::assert_exception );
-   }
-   FC_LOG_AND_RETHROW()
-}
+// BOOST_AUTO_TEST_CASE( account_create_with_delegation_apply )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: account_create_with_delegation_apply" );
+//       signed_transaction tx;
+//       ACTORS( (alice) );
+//       // 150 * fee = ( 5 * CLC ) + SP
+//       //auto gpo = db->get_dynamic_global_properties();
+//       generate_blocks(1);
+//       fund( "alice", ASSET("1510.000 TESTS") );
+//       vest( COLAB_INIT_MINER_NAME, "alice", ASSET("1000.000 TESTS") );
+// 
+//       private_key_type priv_key = generate_private_key( "temp_key" );
+// 
+//       generate_block();
+// 
+//       db_plugin->debug_update( [=]( database& db )
+//       {
+//          db.modify( db.get_witness_schedule_object(), [&]( witness_schedule_object& w )
+//          {
+//             w.median_props.account_creation_fee = ASSET( "1.000 TESTS" );
+//          });
+//       });
+// 
+//       generate_block();
+// 
+//       // This test passed pre HF20
+//       BOOST_TEST_MESSAGE( "--- Test deprecation. " );
+//       account_create_with_delegation_operation op;
+//       op.fee = ASSET( "10.000 TESTS" );
+//       op.delegation = ASSET( "100000000.000000 VESTS" );
+//       op.creator = "alice";
+//       op.new_account_name = "bob";
+//       op.owner = authority( 1, priv_key.get_public_key(), 1 );
+//       op.active = authority( 2, priv_key.get_public_key(), 2 );
+//       op.memo_key = priv_key.get_public_key();
+//       op.json_metadata = "{\"foo\":\"bar\"}";
+//       tx.operations.push_back( op );
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, alice_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::assert_exception );
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
 
 BOOST_AUTO_TEST_CASE( claim_reward_balance_apply )
 {
@@ -6211,67 +6211,67 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance_apply )
    FC_LOG_AND_RETHROW()
 }
 
-BOOST_AUTO_TEST_CASE( delegate_vesting_shares_validate )
-{
-   try
-   {
-      delegate_vesting_shares_operation op;
+// BOOST_AUTO_TEST_CASE( delegate_vesting_shares_validate )
+// {
+//    try
+//    {
+//       delegate_vesting_shares_operation op;
+// 
+//       op.delegator = "alice";
+//       op.delegatee = "bob";
+//       op.tokens = asset( -1, CLC_SYMBOL );
+//       COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
 
-      op.delegator = "alice";
-      op.delegatee = "bob";
-      op.tokens = asset( -1, CLC_SYMBOL );
-      COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
-   }
-   FC_LOG_AND_RETHROW()
-}
-
-BOOST_AUTO_TEST_CASE( delegate_vesting_shares_authorities )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: delegate_vesting_shares_authorities" );
-      signed_transaction tx;
-      ACTORS( (alice)(bob) )
-      vest( COLAB_INIT_MINER_NAME, "alice", ASSET( "10000.000 TESTS" ) );
-
-      delegate_vesting_shares_operation op;
-      op.tokens = ASSET( "300.000000 CLC");
-      op.delegator = "alice";
-      op.delegatee = "bob";
-
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      tx.operations.push_back( op );
-
-      BOOST_TEST_MESSAGE( "--- Test failure when no signatures" );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_missing_active_auth );
-
-      BOOST_TEST_MESSAGE( "--- Test success with witness signature" );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      BOOST_TEST_MESSAGE( "--- Test failure when duplicate signatures" );
-      tx.operations.clear();
-      tx.signatures.clear();
-      op.delegatee = "sam";
-      tx.operations.push_back( op );
-      sign( tx, alice_private_key );
-      sign( tx, alice_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_duplicate_sig );
-
-      BOOST_TEST_MESSAGE( "--- Test failure when signed by an additional signature not in the creator's authority" );
-      tx.signatures.clear();
-      sign( tx, init_account_priv_key );
-      sign( tx, alice_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_irrelevant_sig );
-
-      BOOST_TEST_MESSAGE( "--- Test failure when signed by a signature not in the creator's authority" );
-      tx.signatures.clear();
-      sign( tx, init_account_priv_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_missing_active_auth );
-      validate_database();
-   }
-   FC_LOG_AND_RETHROW()
-}
+// BOOST_AUTO_TEST_CASE( delegate_vesting_shares_authorities )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: delegate_vesting_shares_authorities" );
+//       signed_transaction tx;
+//       ACTORS( (alice)(bob) )
+//       vest( COLAB_INIT_MINER_NAME, "alice", ASSET( "10000.000 TESTS" ) );
+// 
+//       delegate_vesting_shares_operation op;
+//       op.tokens = ASSET( "300.000000 CLC");
+//       op.delegator = "alice";
+//       op.delegatee = "bob";
+// 
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       tx.operations.push_back( op );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when no signatures" );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_missing_active_auth );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test success with witness signature" );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when duplicate signatures" );
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       op.delegatee = "sam";
+//       tx.operations.push_back( op );
+//       sign( tx, alice_private_key );
+//       sign( tx, alice_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_duplicate_sig );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when signed by an additional signature not in the creator's authority" );
+//       tx.signatures.clear();
+//       sign( tx, init_account_priv_key );
+//       sign( tx, alice_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_irrelevant_sig );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when signed by a signature not in the creator's authority" );
+//       tx.signatures.clear();
+//       sign( tx, init_account_priv_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_missing_active_auth );
+//       validate_database();
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
 
 // BOOST_AUTO_TEST_CASE( delegate_vesting_shares_apply )
 // {
@@ -6481,71 +6481,71 @@ BOOST_AUTO_TEST_CASE( delegate_vesting_shares_authorities )
 //    FC_LOG_AND_RETHROW()
 // }
 
-BOOST_AUTO_TEST_CASE( issue_971_vesting_removal )
-{
-   // This is a regression test specifically for issue #971
-   try
-   {
-      BOOST_TEST_MESSAGE( "Test Issue 971 Vesting Removal" );
-      ACTORS( (alice)(bob) )
-      generate_block();
-
-      vest( COLAB_INIT_MINER_NAME, "alice", ASSET( "1000.000 TESTS" ) );
-
-      generate_block();
-
-      db_plugin->debug_update( [=]( database& db )
-      {
-         db.modify( db.get_witness_schedule_object(), [&]( witness_schedule_object& w )
-         {
-            w.median_props.account_creation_fee = ASSET( "1.000 TESTS" );
-         });
-      });
-
-      generate_block();
-
-      signed_transaction tx;
-      delegate_vesting_shares_operation op;
-      op.tokens = ASSET( "10000000.000 CLC");
-      op.delegator = "alice";
-      op.delegatee = "bob";
-
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      tx.operations.push_back( op );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-      generate_block();
-      const account_object& alice_acc = db->get_account( "alice" );
-      const account_object& bob_acc = db->get_account( "bob" );
-
-      BOOST_REQUIRE( alice_acc.delegated_vesting_shares == ASSET( "10000000.000000 VESTS"));
-      BOOST_REQUIRE( bob_acc.received_vesting_shares == ASSET( "10000000.000000 VESTS"));
-
-      generate_block();
-
-      db_plugin->debug_update( [=]( database& db )
-      {
-         db.modify( db.get_witness_schedule_object(), [&]( witness_schedule_object& w )
-         {
-            w.median_props.account_creation_fee = ASSET( "100.000 TESTS" );
-         });
-      });
-
-      generate_block();
-
-      op.tokens = ASSET( "0.000 CLC" );
-
-      tx.clear();
-      tx.operations.push_back( op );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-      generate_block();
-
+// BOOST_AUTO_TEST_CASE( issue_971_vesting_removal )
+// {
+//    // This is a regression test specifically for issue #971
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Test Issue 971 Vesting Removal" );
+//       ACTORS( (alice)(bob) )
+//       generate_block();
+// 
+//       vest( COLAB_INIT_MINER_NAME, "alice", ASSET( "1000.000 TESTS" ) );
+// 
+//       generate_block();
+// 
+//       db_plugin->debug_update( [=]( database& db )
+//       {
+//          db.modify( db.get_witness_schedule_object(), [&]( witness_schedule_object& w )
+//          {
+//             w.median_props.account_creation_fee = ASSET( "1.000 TESTS" );
+//          });
+//       });
+// 
+//       generate_block();
+// 
+//       signed_transaction tx;
+//       delegate_vesting_shares_operation op;
+//       op.tokens = ASSET( "10000000.000 CLC");
+//       op.delegator = "alice";
+//       op.delegatee = "bob";
+// 
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       tx.operations.push_back( op );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+//       generate_block();
+//       const account_object& alice_acc = db->get_account( "alice" );
+//       const account_object& bob_acc = db->get_account( "bob" );
+// 
 //       BOOST_REQUIRE( alice_acc.delegated_vesting_shares == ASSET( "10000000.000000 VESTS"));
-//       BOOST_REQUIRE( bob_acc.received_vesting_shares == ASSET( "0.000000 VESTS"));
-   }
-   FC_LOG_AND_RETHROW()
-}
+//       BOOST_REQUIRE( bob_acc.received_vesting_shares == ASSET( "10000000.000000 VESTS"));
+// 
+//       generate_block();
+// 
+//       db_plugin->debug_update( [=]( database& db )
+//       {
+//          db.modify( db.get_witness_schedule_object(), [&]( witness_schedule_object& w )
+//          {
+//             w.median_props.account_creation_fee = ASSET( "100.000 TESTS" );
+//          });
+//       });
+// 
+//       generate_block();
+// 
+//       op.tokens = ASSET( "0.000 CLC" );
+// 
+//       tx.clear();
+//       tx.operations.push_back( op );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+//       generate_block();
+// 
+// //       BOOST_REQUIRE( alice_acc.delegated_vesting_shares == ASSET( "10000000.000000 VESTS"));
+// //       BOOST_REQUIRE( bob_acc.received_vesting_shares == ASSET( "0.000000 VESTS"));
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
 
 BOOST_AUTO_TEST_CASE( comment_beneficiaries_validate )
 {

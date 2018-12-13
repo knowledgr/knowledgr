@@ -66,23 +66,23 @@ namespace colab { namespace protocol {
    };
 
 
-   struct account_create_with_delegation_operation : public base_operation
-   {
-      asset             fee;
-      asset             delegation;
-      account_name_type creator;
-      account_name_type new_account_name;
-      authority         owner;
-      authority         active;
-      authority         posting;
-      public_key_type   memo_key;
-      string            json_metadata;
-
-      extensions_type   extensions;
-
-      void validate()const;
-      void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(creator); }
-   };
+//    struct account_create_with_delegation_operation : public base_operation
+//    {
+//       asset             fee;
+//       asset             delegation;
+//       account_name_type creator;
+//       account_name_type new_account_name;
+//       authority         owner;
+//       authority         active;
+//       authority         posting;
+//       public_key_type   memo_key;
+//       string            json_metadata;
+// 
+//       extensions_type   extensions;
+// 
+//       void validate()const;
+//       void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(creator); }
+//    };
 
 
    struct account_update_operation : public base_operation
@@ -1088,15 +1088,15 @@ namespace colab { namespace protocol {
     * When a delegation is removed the shares are placed in limbo for a week to prevent a satoshi
     * of VESTS from voting on the same content twice.
     */
-   struct delegate_vesting_shares_operation : public base_operation
-   {
-      account_name_type delegator;        ///< The account delegating vesting shares
-      account_name_type delegatee;        ///< The account receiving vesting shares
-      asset             vesting_shares;   ///< The amount of vesting shares delegated
-
-      void get_required_active_authorities( flat_set< account_name_type >& a ) const { a.insert( delegator ); }
-      void validate() const;
-   };
+//    struct delegate_vesting_shares_operation : public base_operation
+//    {
+//       account_name_type delegator;        ///< The account delegating vesting shares
+//       account_name_type delegatee;        ///< The account receiving vesting shares
+//       asset             vesting_shares;   ///< The amount of vesting shares delegated
+// 
+//       void get_required_active_authorities( flat_set< account_name_type >& a ) const { a.insert( delegator ); }
+//       void validate() const;
+//    };
 } } // colab::protocol
 
 
@@ -1157,17 +1157,17 @@ FC_REFLECT( colab::protocol::account_create_operation,
             (memo_key)
             (json_metadata) )
 
-FC_REFLECT( colab::protocol::account_create_with_delegation_operation,
-            (fee)
-            (delegation)
-            (creator)
-            (new_account_name)
-            (owner)
-            (active)
-            (posting)
-            (memo_key)
-            (json_metadata)
-            (extensions) )
+// FC_REFLECT( colab::protocol::account_create_with_delegation_operation,
+//             (fee)
+//             (delegation)
+//             (creator)
+//             (new_account_name)
+//             (owner)
+//             (active)
+//             (posting)
+//             (memo_key)
+//             (json_metadata)
+//             (extensions) )
 
 FC_REFLECT( colab::protocol::account_update_operation,
             (account)
@@ -1224,4 +1224,4 @@ FC_REFLECT( colab::protocol::claim_reward_balance_operation, (account)(reward_co
 #ifdef COLAB_ENABLE_SMT
 FC_REFLECT( colab::protocol::claim_reward_balance2_operation, (account)(extensions)(reward_tokens) )
 #endif
-FC_REFLECT( colab::protocol::delegate_vesting_shares_operation, (delegator)(delegatee)(vesting_shares) );
+//FC_REFLECT( colab::protocol::delegate_vesting_shares_operation, (delegator)(delegatee)(vesting_shares) );

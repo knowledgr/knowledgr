@@ -42,7 +42,7 @@ void initialize_core_indexes( database& db )
    add_core_index< savings_withdraw_index                  >( db );
    add_core_index< decline_voting_rights_request_index     >( db );
    add_core_index< reward_fund_index                       >( db );
-   add_core_index< vesting_delegation_index                >( db );
+//   add_core_index< vesting_delegation_index                >( db );
    add_core_index< vesting_delegation_expiration_index     >( db );
    add_core_index< pending_required_action_index           >( db );
    add_core_index< pending_optional_action_index           >( db );

@@ -2573,8 +2573,8 @@ void database::initialize_evaluators()
 #ifdef COLAB_ENABLE_SMT
    _my->_evaluator_registry.register_evaluator< claim_reward_balance2_evaluator          >();
 #endif
-   _my->_evaluator_registry.register_evaluator< account_create_with_delegation_evaluator >();
-   _my->_evaluator_registry.register_evaluator< delegate_vesting_shares_evaluator        >();
+//   _my->_evaluator_registry.register_evaluator< account_create_with_delegation_evaluator >();
+//   _my->_evaluator_registry.register_evaluator< delegate_vesting_shares_evaluator        >();
    _my->_evaluator_registry.register_evaluator< witness_set_properties_evaluator         >();
 
 #ifdef COLAB_ENABLE_SMT
@@ -5006,22 +5006,22 @@ void database::apply_hardfork( uint32_t hardfork )
             });
 
             /* Remove all 0 delegation objects */
-            vector< const vesting_delegation_object* > to_remove;
-            const auto& delegation_idx = get_index< vesting_delegation_index, by_id >();
-            auto delegation_itr = delegation_idx.begin();
-
-            while( delegation_itr != delegation_idx.end() )
-            {
-               if( delegation_itr->vesting_shares.amount == 0 )
-                  to_remove.push_back( &(*delegation_itr) );
-
-               ++delegation_itr;
-            }
-
-            for( const vesting_delegation_object* delegation_ptr: to_remove )
-            {
-               remove( *delegation_ptr );
-            }
+//             vector< const vesting_delegation_object* > to_remove;
+//             const auto& delegation_idx = get_index< vesting_delegation_index, by_id >();
+//             auto delegation_itr = delegation_idx.begin();
+// 
+//             while( delegation_itr != delegation_idx.end() )
+//             {
+//                if( delegation_itr->vesting_shares.amount == 0 )
+//                   to_remove.push_back( &(*delegation_itr) );
+// 
+//                ++delegation_itr;
+//             }
+// 
+//             for( const vesting_delegation_object* delegation_ptr: to_remove )
+//             {
+//                remove( *delegation_ptr );
+//             }
          }
          break;
       case COLAB_HARDFORK_0_20:

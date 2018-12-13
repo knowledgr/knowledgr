@@ -49,7 +49,7 @@ struct remote_node_api
    vector< database_api::api_withdraw_vesting_route_object > get_withdraw_routes( account_name_type, condenser_api::withdraw_route_type );
    vector< condenser_api::api_savings_withdraw_object > get_savings_withdraw_from( account_name_type );
    vector< condenser_api::api_savings_withdraw_object > get_savings_withdraw_to( account_name_type );
-   vector< condenser_api::api_vesting_delegation_object > get_vesting_delegations( account_name_type, account_name_type, uint32_t );
+//   vector< condenser_api::api_vesting_delegation_object > get_vesting_delegations( account_name_type, account_name_type, uint32_t );
    vector< condenser_api::api_vesting_delegation_expiration_object > get_expiring_vesting_delegations( account_name_type, time_point_sec, uint32_t );
    vector< optional< condenser_api::api_witness_object > > get_witnesses( vector< witness_id_type > );
    vector< condenser_api::api_convert_request_object > get_conversion_requests( account_name_type );
@@ -144,7 +144,7 @@ FC_API( colab::wallet::remote_node_api,
         (get_withdraw_routes)
         (get_savings_withdraw_from)
         (get_savings_withdraw_to)
-        (get_vesting_delegations)
+//        (get_vesting_delegations)
         (get_expiring_vesting_delegations)
         (get_witnesses)
         (get_conversion_requests)

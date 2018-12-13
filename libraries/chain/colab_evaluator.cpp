@@ -491,112 +491,112 @@ void account_create_evaluator::do_apply( const account_create_operation& o )
    }
 }
 
-void account_create_with_delegation_evaluator::do_apply( const account_create_with_delegation_operation& o )
-{
-   FC_ASSERT( !_db.has_hardfork( COLAB_HARDFORK_0_20__1760 ), "Account creation with delegation is deprecated as of Hardfork 20" );
-
-   if( _db.has_hardfork( COLAB_HARDFORK_0_20__2651 ) || _db.is_producing() )
-   {
-      FC_TODO( "Move to validate() after HF20" );
-      FC_ASSERT( o.fee <= asset( COLAB_MAX_ACCOUNT_CREATION_FEE, CLC_SYMBOL ), "Account creation fee cannot be too large" );
-   }
-
-   const auto& creator = _db.get_account( o.creator );
-   const auto& props = _db.get_dynamic_global_properties();
-   const witness_schedule_object& wso = _db.get_witness_schedule_object();
-
-   FC_ASSERT( creator.balance >= o.fee, "Insufficient balance to create account.",
-               ( "creator.balance", creator.balance )
-               ( "required", o.fee ) );
-
-   FC_ASSERT( creator.vesting_shares - creator.delegated_vesting_shares - asset( creator.to_withdraw - creator.withdrawn, VESTS_SYMBOL ) >= o.delegation, "Insufficient vesting shares to delegate to new account.",
-               ( "creator.vesting_shares", creator.vesting_shares )
-               ( "creator.delegated_vesting_shares", creator.delegated_vesting_shares )( "required", o.delegation ) );
-
-   auto target_delegation = asset( wso.median_props.account_creation_fee.amount * COLAB_CREATE_ACCOUNT_WITH_COLAB_MODIFIER * COLAB_CREATE_ACCOUNT_DELEGATION_RATIO, CLC_SYMBOL ) * props.get_vesting_share_price();
-
-   auto current_delegation = asset( o.fee.amount * COLAB_CREATE_ACCOUNT_DELEGATION_RATIO, CLC_SYMBOL ) * props.get_vesting_share_price() + o.delegation;
-
-   FC_ASSERT( current_delegation >= target_delegation, "Inssufficient Delegation ${f} required, ${p} provided.",
-               ("f", target_delegation )
-               ( "p", current_delegation )
-               ( "account_creation_fee", wso.median_props.account_creation_fee )
-               ( "o.fee", o.fee )
-               ( "o.delegation", o.delegation ) );
-
-   FC_ASSERT( o.fee >= wso.median_props.account_creation_fee, "Insufficient Fee: ${f} required, ${p} provided.",
-               ("f", wso.median_props.account_creation_fee)
-               ("p", o.fee) );
-
-   FC_TODO( "Check and move to validate post HF20" );
-   if( _db.is_producing() || _db.has_hardfork( COLAB_HARDFORK_0_20 ) )
-   {
-      validate_auth_size( o.owner );
-      validate_auth_size( o.active );
-      validate_auth_size( o.posting );
-   }
-
-   for( const auto& a : o.owner.account_auths )
-   {
-      _db.get_account( a.first );
-   }
-
-   for( const auto& a : o.active.account_auths )
-   {
-      _db.get_account( a.first );
-   }
-
-   for( const auto& a : o.posting.account_auths )
-   {
-      _db.get_account( a.first );
-   }
-
-   _db.modify( creator, [&]( account_object& c )
-   {
-      c.balance -= o.fee;
-      c.delegated_vesting_shares += o.delegation;
-   });
-
-   if( _db.has_hardfork( COLAB_HARDFORK_0_20__1762 ) )
-   {
-      _db.adjust_balance( _db.get< account_object, by_name >( COLAB_NULL_ACCOUNT ), o.fee );
-   }
-
-   const auto& new_account = _db.create< account_object >( [&]( account_object& acc )
-   {
-      initialize_account_object( acc, o.new_account_name, o.memo_key, props, false /*mined*/, o.creator, _db.get_hardfork() );
-      acc.received_vesting_shares = o.delegation;
-
-      #ifndef IS_LOW_MEM
-         from_string( acc.json_metadata, o.json_metadata );
-      #endif
-   });
-
-   _db.create< account_authority_object >( [&]( account_authority_object& auth )
-   {
-      auth.account = o.new_account_name;
-      auth.owner = o.owner;
-      auth.active = o.active;
-      auth.posting = o.posting;
-      auth.last_owner_update = fc::time_point_sec::min();
-   });
-
-   if( o.delegation.amount > 0 || !_db.has_hardfork( COLAB_HARDFORK_0_19__997 ) )
-   {
-      _db.create< vesting_delegation_object >( [&]( vesting_delegation_object& vdo )
-      {
-         vdo.delegator = o.creator;
-         vdo.delegatee = o.new_account_name;
-         vdo.vesting_shares = o.delegation;
-         vdo.min_delegation_time = _db.head_block_time() + COLAB_CREATE_ACCOUNT_DELEGATION_TIME;
-      });
-   }
-
-   if( !_db.has_hardfork( COLAB_HARDFORK_0_20__1762 ) && o.fee.amount > 0 )
-   {
-      _db.create_vesting( new_account, o.fee );
-   }
-}
+// void account_create_with_delegation_evaluator::do_apply( const account_create_with_delegation_operation& o )
+// {
+//    FC_ASSERT( !_db.has_hardfork( COLAB_HARDFORK_0_20__1760 ), "Account creation with delegation is deprecated as of Hardfork 20" );
+// 
+//    if( _db.has_hardfork( COLAB_HARDFORK_0_20__2651 ) || _db.is_producing() )
+//    {
+//       FC_TODO( "Move to validate() after HF20" );
+//       FC_ASSERT( o.fee <= asset( COLAB_MAX_ACCOUNT_CREATION_FEE, CLC_SYMBOL ), "Account creation fee cannot be too large" );
+//    }
+// 
+//    const auto& creator = _db.get_account( o.creator );
+//    const auto& props = _db.get_dynamic_global_properties();
+//    const witness_schedule_object& wso = _db.get_witness_schedule_object();
+// 
+//    FC_ASSERT( creator.balance >= o.fee, "Insufficient balance to create account.",
+//                ( "creator.balance", creator.balance )
+//                ( "required", o.fee ) );
+// 
+//    FC_ASSERT( creator.vesting_shares - creator.delegated_vesting_shares - asset( creator.to_withdraw - creator.withdrawn, VESTS_SYMBOL ) >= o.delegation, "Insufficient vesting shares to delegate to new account.",
+//                ( "creator.vesting_shares", creator.vesting_shares )
+//                ( "creator.delegated_vesting_shares", creator.delegated_vesting_shares )( "required", o.delegation ) );
+// 
+//    auto target_delegation = asset( wso.median_props.account_creation_fee.amount * COLAB_CREATE_ACCOUNT_WITH_COLAB_MODIFIER * COLAB_CREATE_ACCOUNT_DELEGATION_RATIO, CLC_SYMBOL ) * props.get_vesting_share_price();
+// 
+//    auto current_delegation = asset( o.fee.amount * COLAB_CREATE_ACCOUNT_DELEGATION_RATIO, CLC_SYMBOL ) * props.get_vesting_share_price() + o.delegation;
+// 
+//    FC_ASSERT( current_delegation >= target_delegation, "Inssufficient Delegation ${f} required, ${p} provided.",
+//                ("f", target_delegation )
+//                ( "p", current_delegation )
+//                ( "account_creation_fee", wso.median_props.account_creation_fee )
+//                ( "o.fee", o.fee )
+//                ( "o.delegation", o.delegation ) );
+// 
+//    FC_ASSERT( o.fee >= wso.median_props.account_creation_fee, "Insufficient Fee: ${f} required, ${p} provided.",
+//                ("f", wso.median_props.account_creation_fee)
+//                ("p", o.fee) );
+// 
+//    FC_TODO( "Check and move to validate post HF20" );
+//    if( _db.is_producing() || _db.has_hardfork( COLAB_HARDFORK_0_20 ) )
+//    {
+//       validate_auth_size( o.owner );
+//       validate_auth_size( o.active );
+//       validate_auth_size( o.posting );
+//    }
+// 
+//    for( const auto& a : o.owner.account_auths )
+//    {
+//       _db.get_account( a.first );
+//    }
+// 
+//    for( const auto& a : o.active.account_auths )
+//    {
+//       _db.get_account( a.first );
+//    }
+// 
+//    for( const auto& a : o.posting.account_auths )
+//    {
+//       _db.get_account( a.first );
+//    }
+// 
+//    _db.modify( creator, [&]( account_object& c )
+//    {
+//       c.balance -= o.fee;
+//       c.delegated_vesting_shares += o.delegation;
+//    });
+// 
+//    if( _db.has_hardfork( COLAB_HARDFORK_0_20__1762 ) )
+//    {
+//       _db.adjust_balance( _db.get< account_object, by_name >( COLAB_NULL_ACCOUNT ), o.fee );
+//    }
+// 
+//    const auto& new_account = _db.create< account_object >( [&]( account_object& acc )
+//    {
+//       initialize_account_object( acc, o.new_account_name, o.memo_key, props, false /*mined*/, o.creator, _db.get_hardfork() );
+//       acc.received_vesting_shares = o.delegation;
+// 
+//       #ifndef IS_LOW_MEM
+//          from_string( acc.json_metadata, o.json_metadata );
+//       #endif
+//    });
+// 
+//    _db.create< account_authority_object >( [&]( account_authority_object& auth )
+//    {
+//       auth.account = o.new_account_name;
+//       auth.owner = o.owner;
+//       auth.active = o.active;
+//       auth.posting = o.posting;
+//       auth.last_owner_update = fc::time_point_sec::min();
+//    });
+// 
+//    if( o.delegation.amount > 0 || !_db.has_hardfork( COLAB_HARDFORK_0_19__997 ) )
+//    {
+//       _db.create< vesting_delegation_object >( [&]( vesting_delegation_object& vdo )
+//       {
+//          vdo.delegator = o.creator;
+//          vdo.delegatee = o.new_account_name;
+//          vdo.vesting_shares = o.delegation;
+//          vdo.min_delegation_time = _db.head_block_time() + COLAB_CREATE_ACCOUNT_DELEGATION_TIME;
+//       });
+//    }
+// 
+//    if( !_db.has_hardfork( COLAB_HARDFORK_0_20__1762 ) && o.fee.amount > 0 )
+//    {
+//       _db.create_vesting( new_account, o.fee );
+//    }
+// }
 
 
 void account_update_evaluator::do_apply( const account_update_operation& o )
@@ -3324,192 +3324,192 @@ void claim_reward_balance2_evaluator::do_apply( const claim_reward_balance2_oper
 }
 #endif
 
-void delegate_vesting_shares_evaluator::do_apply( const delegate_vesting_shares_operation& op )
-{
-#pragma message( "TODO: Update get_effective_vesting_shares when modifying this operation to support SMTs." )
-
-   const auto& delegator = _db.get_account( op.delegator );
-   const auto& delegatee = _db.get_account( op.delegatee );
-   auto delegation = _db.find< vesting_delegation_object, by_delegation >( boost::make_tuple( op.delegator, op.delegatee ) );
-
-   asset available_shares;
-
-   if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-   {
-      auto max_mana = util::get_effective_vesting_shares( delegator );
-
-      _db.modify( delegator, [&]( account_object& a )
-      {
-         util::manabar_params params( max_mana, COLAB_VOTING_MANA_REGENERATION_SECONDS );
-         a.voting_manabar.regenerate_mana( params, _db.head_block_time() );
-      });
-
-      available_shares = asset( delegator.voting_manabar.current_mana, VESTS_SYMBOL );
-
-      // Assume delegated VESTS are used first when consuming mana. You cannot delegate received vesting shares
-      available_shares.amount = std::min( available_shares.amount, max_mana - delegator.received_vesting_shares.amount );
-
-      if( delegator.next_vesting_withdrawal < fc::time_point_sec::maximum()
-         && delegator.to_withdraw - delegator.withdrawn > delegator.vesting_withdraw_rate.amount )
-      {
-         /*
-         current voting mana does not include the current week's power down:
-
-         std::min(
-            account.vesting_withdraw_rate.amount.value,           // Weekly amount
-            account.to_withdraw.value - account.withdrawn.value   // Or remainder
-            );
-
-         But an account cannot delegate **any** VESTS that they are powering down.
-         The remaining withdrawal needs to be added in but then the current week is double counted.
-         */
-
-         auto weekly_withdraw = asset( std::min(
-            delegator.vesting_withdraw_rate.amount.value,           // Weekly amount
-            delegator.to_withdraw.value - delegator.withdrawn.value   // Or remainder
-            ), VESTS_SYMBOL );
-
-         available_shares += weekly_withdraw - asset( delegator.to_withdraw - delegator.withdrawn, VESTS_SYMBOL );
-      }
-   }
-   else
-   {
-      available_shares = delegator.vesting_shares - delegator.delegated_vesting_shares - asset( delegator.to_withdraw - delegator.withdrawn, VESTS_SYMBOL );
-   }
-
-   const auto& wso = _db.get_witness_schedule_object();
-   const auto& gpo = _db.get_dynamic_global_properties();
-
-   // HF 20 increase fee meaning by 30x, reduce these thresholds to compensate.
-   auto min_delegation = _db.has_hardfork( COLAB_HARDFORK_0_20__1761 ) ?
-      asset( wso.median_props.account_creation_fee.amount / 3, CLC_SYMBOL ) * gpo.get_vesting_share_price() :
-      asset( wso.median_props.account_creation_fee.amount * 10, CLC_SYMBOL ) * gpo.get_vesting_share_price();
-   auto min_update = _db.has_hardfork( COLAB_HARDFORK_0_20__1761 ) ?
-      asset( wso.median_props.account_creation_fee.amount / 30, CLC_SYMBOL ) * gpo.get_vesting_share_price() :
-      wso.median_props.account_creation_fee * gpo.get_vesting_share_price();
-
-   // If delegation doesn't exist, create it
-   if( delegation == nullptr )
-   {
-      FC_ASSERT( available_shares >= op.vesting_shares, "Account ${acc} does not have enough mana to delegate. required: ${r} available: ${a}",
-         ("acc", op.delegator)("r", op.vesting_shares)("a", available_shares) );
-      FC_ASSERT( op.vesting_shares >= min_delegation, "Account must delegate a minimum of ${v}", ("v", min_delegation) );
-
-      _db.create< vesting_delegation_object >( [&]( vesting_delegation_object& obj )
-      {
-         obj.delegator = op.delegator;
-         obj.delegatee = op.delegatee;
-         obj.vesting_shares = op.vesting_shares;
-         obj.min_delegation_time = _db.head_block_time();
-      });
-
-      _db.modify( delegator, [&]( account_object& a )
-      {
-         a.delegated_vesting_shares += op.vesting_shares;
-
-         if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-         {
-            a.voting_manabar.use_mana( op.vesting_shares.amount.value );
-         }
-      });
-
-      _db.modify( delegatee, [&]( account_object& a )
-      {
-         if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-         {
-            util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
-            a.voting_manabar.regenerate_mana( params, _db.head_block_time() );
-            a.voting_manabar.use_mana( -op.vesting_shares.amount.value );
-         }
-
-         a.received_vesting_shares += op.vesting_shares;
-      });
-   }
-   // Else if the delegation is increasing
-   else if( op.vesting_shares >= delegation->vesting_shares )
-   {
-      auto delta = op.vesting_shares - delegation->vesting_shares;
-
-      FC_ASSERT( delta >= min_update, "Colab Power increase is not enough of a difference. min_update: ${min}", ("min", min_update) );
-      FC_ASSERT( available_shares >= delta, "Account ${acc} does not have enough mana to delegate. required: ${r} available: ${a}",
-         ("acc", op.delegator)("r", delta)("a", available_shares) );
-
-      _db.modify( delegator, [&]( account_object& a )
-      {
-         a.delegated_vesting_shares += delta;
-
-         if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-         {
-            a.voting_manabar.use_mana( delta.amount.value );
-         }
-      });
-
-      _db.modify( delegatee, [&]( account_object& a )
-      {
-         if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-         {
-            util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
-            a.voting_manabar.regenerate_mana( params, _db.head_block_time() );
-            a.voting_manabar.use_mana( -delta.amount.value );
-         }
-
-         a.received_vesting_shares += delta;
-      });
-
-      _db.modify( *delegation, [&]( vesting_delegation_object& obj )
-      {
-         obj.vesting_shares = op.vesting_shares;
-      });
-   }
-   // Else the delegation is decreasing
-   else /* delegation->vesting_shares > op.vesting_shares */
-   {
-      auto delta = delegation->vesting_shares - op.vesting_shares;
-
-      if( op.vesting_shares.amount > 0 )
-      {
-         FC_ASSERT( delta >= min_update, "Colab Power decrease is not enough of a difference. min_update: ${min}", ("min", min_update) );
-         FC_ASSERT( op.vesting_shares >= min_delegation, "Delegation must be removed or leave minimum delegation amount of ${v}", ("v", min_delegation) );
-      }
-      else
-      {
-         FC_ASSERT( delegation->vesting_shares.amount > 0, "Delegation would set vesting_shares to zero, but it is already zero");
-      }
-
-      _db.create< vesting_delegation_expiration_object >( [&]( vesting_delegation_expiration_object& obj )
-      {
-         obj.delegator = op.delegator;
-         obj.vesting_shares = delta;
-         obj.expiration = std::max( _db.head_block_time() + gpo.delegation_return_period, delegation->min_delegation_time );
-      });
-
-      _db.modify( delegatee, [&]( account_object& a )
-      {
-         a.received_vesting_shares -= delta;
-
-         if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-         {
-            a.voting_manabar.use_mana( delta.amount.value );
-
-            if( a.voting_manabar.current_mana < 0 )
-            {
-               a.voting_manabar.current_mana = 0;
-            }
-         }
-      });
-
-      if( op.vesting_shares.amount > 0 )
-      {
-         _db.modify( *delegation, [&]( vesting_delegation_object& obj )
-         {
-            obj.vesting_shares = op.vesting_shares;
-         });
-      }
-      else
-      {
-         _db.remove( *delegation );
-      }
-   }
-}
+// void delegate_vesting_shares_evaluator::do_apply( const delegate_vesting_shares_operation& op )
+// {
+// #pragma message( "TODO: Update get_effective_vesting_shares when modifying this operation to support SMTs." )
+// 
+//    const auto& delegator = _db.get_account( op.delegator );
+//    const auto& delegatee = _db.get_account( op.delegatee );
+//    auto delegation = _db.find< vesting_delegation_object, by_delegation >( boost::make_tuple( op.delegator, op.delegatee ) );
+// 
+//    asset available_shares;
+// 
+//    if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//    {
+//       auto max_mana = util::get_effective_vesting_shares( delegator );
+// 
+//       _db.modify( delegator, [&]( account_object& a )
+//       {
+//          util::manabar_params params( max_mana, COLAB_VOTING_MANA_REGENERATION_SECONDS );
+//          a.voting_manabar.regenerate_mana( params, _db.head_block_time() );
+//       });
+// 
+//       available_shares = asset( delegator.voting_manabar.current_mana, VESTS_SYMBOL );
+// 
+//       // Assume delegated VESTS are used first when consuming mana. You cannot delegate received vesting shares
+//       available_shares.amount = std::min( available_shares.amount, max_mana - delegator.received_vesting_shares.amount );
+// 
+//       if( delegator.next_vesting_withdrawal < fc::time_point_sec::maximum()
+//          && delegator.to_withdraw - delegator.withdrawn > delegator.vesting_withdraw_rate.amount )
+//       {
+//          /*
+//          current voting mana does not include the current week's power down:
+// 
+//          std::min(
+//             account.vesting_withdraw_rate.amount.value,           // Weekly amount
+//             account.to_withdraw.value - account.withdrawn.value   // Or remainder
+//             );
+// 
+//          But an account cannot delegate **any** VESTS that they are powering down.
+//          The remaining withdrawal needs to be added in but then the current week is double counted.
+//          */
+// 
+//          auto weekly_withdraw = asset( std::min(
+//             delegator.vesting_withdraw_rate.amount.value,           // Weekly amount
+//             delegator.to_withdraw.value - delegator.withdrawn.value   // Or remainder
+//             ), VESTS_SYMBOL );
+// 
+//          available_shares += weekly_withdraw - asset( delegator.to_withdraw - delegator.withdrawn, VESTS_SYMBOL );
+//       }
+//    }
+//    else
+//    {
+//       available_shares = delegator.vesting_shares - delegator.delegated_vesting_shares - asset( delegator.to_withdraw - delegator.withdrawn, VESTS_SYMBOL );
+//    }
+// 
+//    const auto& wso = _db.get_witness_schedule_object();
+//    const auto& gpo = _db.get_dynamic_global_properties();
+// 
+//    // HF 20 increase fee meaning by 30x, reduce these thresholds to compensate.
+//    auto min_delegation = _db.has_hardfork( COLAB_HARDFORK_0_20__1761 ) ?
+//       asset( wso.median_props.account_creation_fee.amount / 3, CLC_SYMBOL ) * gpo.get_vesting_share_price() :
+//       asset( wso.median_props.account_creation_fee.amount * 10, CLC_SYMBOL ) * gpo.get_vesting_share_price();
+//    auto min_update = _db.has_hardfork( COLAB_HARDFORK_0_20__1761 ) ?
+//       asset( wso.median_props.account_creation_fee.amount / 30, CLC_SYMBOL ) * gpo.get_vesting_share_price() :
+//       wso.median_props.account_creation_fee * gpo.get_vesting_share_price();
+// 
+//    // If delegation doesn't exist, create it
+//    if( delegation == nullptr )
+//    {
+//       FC_ASSERT( available_shares >= op.vesting_shares, "Account ${acc} does not have enough mana to delegate. required: ${r} available: ${a}",
+//          ("acc", op.delegator)("r", op.vesting_shares)("a", available_shares) );
+//       FC_ASSERT( op.vesting_shares >= min_delegation, "Account must delegate a minimum of ${v}", ("v", min_delegation) );
+// 
+//       _db.create< vesting_delegation_object >( [&]( vesting_delegation_object& obj )
+//       {
+//          obj.delegator = op.delegator;
+//          obj.delegatee = op.delegatee;
+//          obj.vesting_shares = op.vesting_shares;
+//          obj.min_delegation_time = _db.head_block_time();
+//       });
+// 
+//       _db.modify( delegator, [&]( account_object& a )
+//       {
+//          a.delegated_vesting_shares += op.vesting_shares;
+// 
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//          {
+//             a.voting_manabar.use_mana( op.vesting_shares.amount.value );
+//          }
+//       });
+// 
+//       _db.modify( delegatee, [&]( account_object& a )
+//       {
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//          {
+//             util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
+//             a.voting_manabar.regenerate_mana( params, _db.head_block_time() );
+//             a.voting_manabar.use_mana( -op.vesting_shares.amount.value );
+//          }
+// 
+//          a.received_vesting_shares += op.vesting_shares;
+//       });
+//    }
+//    // Else if the delegation is increasing
+//    else if( op.vesting_shares >= delegation->vesting_shares )
+//    {
+//       auto delta = op.vesting_shares - delegation->vesting_shares;
+// 
+//       FC_ASSERT( delta >= min_update, "Colab Power increase is not enough of a difference. min_update: ${min}", ("min", min_update) );
+//       FC_ASSERT( available_shares >= delta, "Account ${acc} does not have enough mana to delegate. required: ${r} available: ${a}",
+//          ("acc", op.delegator)("r", delta)("a", available_shares) );
+// 
+//       _db.modify( delegator, [&]( account_object& a )
+//       {
+//          a.delegated_vesting_shares += delta;
+// 
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//          {
+//             a.voting_manabar.use_mana( delta.amount.value );
+//          }
+//       });
+// 
+//       _db.modify( delegatee, [&]( account_object& a )
+//       {
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//          {
+//             util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
+//             a.voting_manabar.regenerate_mana( params, _db.head_block_time() );
+//             a.voting_manabar.use_mana( -delta.amount.value );
+//          }
+// 
+//          a.received_vesting_shares += delta;
+//       });
+// 
+//       _db.modify( *delegation, [&]( vesting_delegation_object& obj )
+//       {
+//          obj.vesting_shares = op.vesting_shares;
+//       });
+//    }
+//    // Else the delegation is decreasing
+//    else /* delegation->vesting_shares > op.vesting_shares */
+//    {
+//       auto delta = delegation->vesting_shares - op.vesting_shares;
+// 
+//       if( op.vesting_shares.amount > 0 )
+//       {
+//          FC_ASSERT( delta >= min_update, "Colab Power decrease is not enough of a difference. min_update: ${min}", ("min", min_update) );
+//          FC_ASSERT( op.vesting_shares >= min_delegation, "Delegation must be removed or leave minimum delegation amount of ${v}", ("v", min_delegation) );
+//       }
+//       else
+//       {
+//          FC_ASSERT( delegation->vesting_shares.amount > 0, "Delegation would set vesting_shares to zero, but it is already zero");
+//       }
+// 
+//       _db.create< vesting_delegation_expiration_object >( [&]( vesting_delegation_expiration_object& obj )
+//       {
+//          obj.delegator = op.delegator;
+//          obj.vesting_shares = delta;
+//          obj.expiration = std::max( _db.head_block_time() + gpo.delegation_return_period, delegation->min_delegation_time );
+//       });
+// 
+//       _db.modify( delegatee, [&]( account_object& a )
+//       {
+//          a.received_vesting_shares -= delta;
+// 
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//          {
+//             a.voting_manabar.use_mana( delta.amount.value );
+// 
+//             if( a.voting_manabar.current_mana < 0 )
+//             {
+//                a.voting_manabar.current_mana = 0;
+//             }
+//          }
+//       });
+// 
+//       if( op.vesting_shares.amount > 0 )
+//       {
+//          _db.modify( *delegation, [&]( vesting_delegation_object& obj )
+//          {
+//             obj.vesting_shares = op.vesting_shares;
+//          });
+//       }
+//       else
+//       {
+//          _db.remove( *delegation );
+//       }
+//    }
+// }
 
 } } // colab::chain
