@@ -2344,16 +2344,16 @@ condenser_api::legacy_signed_transaction wallet_api::decline_voting_rights(
 condenser_api::legacy_signed_transaction wallet_api::claim_reward_balance(
    string account,
    condenser_api::legacy_asset reward_colab,
-   condenser_api::legacy_asset reward_sbd,
-   condenser_api::legacy_asset reward_vests,
+//    condenser_api::legacy_asset reward_sbd,
+//    condenser_api::legacy_asset reward_vests,
    bool broadcast )
 {
    FC_ASSERT( !is_locked() );
    claim_reward_balance_operation op;
    op.account = account;
    op.reward_colab = reward_colab.to_asset();
-   op.reward_sbd = reward_sbd.to_asset();
-   op.reward_vests = reward_vests.to_asset();
+//    op.reward_sbd = reward_sbd.to_asset();
+//    op.reward_vests = reward_vests.to_asset();
 
    signed_transaction tx;
    tx.operations.push_back( op );

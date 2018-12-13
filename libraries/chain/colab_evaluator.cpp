@@ -78,7 +78,7 @@ void copy_legacy_chain_properties( chain_properties& dest, const legacy_chain_pr
 {
    dest.account_creation_fee = src.account_creation_fee.to_asset< force_canon >();
    dest.maximum_block_size = src.maximum_block_size;
-   dest.sbd_interest_rate = src.sbd_interest_rate;
+//   dest.sbd_interest_rate = src.sbd_interest_rate;
 }
 
 void witness_update_evaluator::do_apply( const witness_update_operation& o )
@@ -132,11 +132,11 @@ struct witness_properties_change_flags
 {
    uint32_t account_creation_changed       : 1;
    uint32_t max_block_changed              : 1;
-   uint32_t sbd_interest_changed           : 1;
+//   uint32_t sbd_interest_changed           : 1;
    uint32_t account_subsidy_budget_changed : 1;
    uint32_t account_subsidy_decay_changed  : 1;
    uint32_t key_changed                    : 1;
-   uint32_t sbd_exchange_changed           : 1;
+//   uint32_t sbd_exchange_changed           : 1;
    uint32_t url_changed                    : 1;
 };
 
@@ -149,8 +149,8 @@ void witness_set_properties_evaluator::do_apply( const witness_set_properties_op
    // Capture old properties. This allows only updating the object once.
    chain_properties  props;
    public_key_type   signing_key;
-   price             sbd_exchange_rate;
-   time_point_sec    last_sbd_exchange_update;
+//    price             sbd_exchange_rate;
+//    time_point_sec    last_sbd_exchange_update;
    string            url;
 
    witness_properties_change_flags flags;
@@ -181,12 +181,12 @@ void witness_set_properties_evaluator::do_apply( const witness_set_properties_op
       fc::raw::unpack_from_vector( itr->second, props.maximum_block_size );
    }
 
-   itr = o.props.find( "sbd_interest_rate" );
-   flags.sbd_interest_changed = itr != o.props.end();
-   if( flags.sbd_interest_changed )
-   {
-      fc::raw::unpack_from_vector( itr->second, props.sbd_interest_rate );
-   }
+//    itr = o.props.find( "sbd_interest_rate" );
+//    flags.sbd_interest_changed = itr != o.props.end();
+//    if( flags.sbd_interest_changed )
+//    {
+//       fc::raw::unpack_from_vector( itr->second, props.sbd_interest_rate );
+//    }
 
    itr = o.props.find( "account_subsidy_budget" );
    flags.account_subsidy_budget_changed = itr != o.props.end();
@@ -209,13 +209,13 @@ void witness_set_properties_evaluator::do_apply( const witness_set_properties_op
       fc::raw::unpack_from_vector( itr->second, signing_key );
    }
 
-   itr = o.props.find( "sbd_exchange_rate" );
-   flags.sbd_exchange_changed = itr != o.props.end();
-   if( flags.sbd_exchange_changed )
-   {
-      fc::raw::unpack_from_vector( itr->second, sbd_exchange_rate );
-      last_sbd_exchange_update = _db.head_block_time();
-   }
+//    itr = o.props.find( "sbd_exchange_rate" );
+//    flags.sbd_exchange_changed = itr != o.props.end();
+//    if( flags.sbd_exchange_changed )
+//    {
+//       fc::raw::unpack_from_vector( itr->second, sbd_exchange_rate );
+//       last_sbd_exchange_update = _db.head_block_time();
+//    }
 
    itr = o.props.find( "url" );
    flags.url_changed = itr != o.props.end();
@@ -236,10 +236,10 @@ void witness_set_properties_evaluator::do_apply( const witness_set_properties_op
          w.props.maximum_block_size = props.maximum_block_size;
       }
 
-      if( flags.sbd_interest_changed )
-      {
-         w.props.sbd_interest_rate = props.sbd_interest_rate;
-      }
+//       if( flags.sbd_interest_changed )
+//       {
+//          w.props.sbd_interest_rate = props.sbd_interest_rate;
+//       }
 
       if( flags.account_subsidy_budget_changed )
       {
@@ -256,11 +256,11 @@ void witness_set_properties_evaluator::do_apply( const witness_set_properties_op
          w.signing_key = signing_key;
       }
 
-      if( flags.sbd_exchange_changed )
-      {
-         w.sbd_exchange_rate = sbd_exchange_rate;
-         w.last_sbd_exchange_update = last_sbd_exchange_update;
-      }
+//       if( flags.sbd_exchange_changed )
+//       {
+//          w.sbd_exchange_rate = sbd_exchange_rate;
+//          w.last_sbd_exchange_update = last_sbd_exchange_update;
+//       }
 
       if( flags.url_changed )
       {
@@ -3235,16 +3235,16 @@ void claim_reward_balance_evaluator::do_apply( const claim_reward_balance_operat
 //      a.reward_vesting_clc -= reward_vesting_clc_to_move;
 //   });
 
-   _db.modify( _db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
-   {
-      gpo.total_vesting_shares += op.reward_vests;
-      //gpo.total_vesting_fund_clc += reward_vesting_clc_to_move;
+//    _db.modify( _db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
+//    {
+//       //gpo.total_vesting_shares += op.reward_vests;
+//       //gpo.total_vesting_fund_clc += reward_vesting_clc_to_move;
+// 
+//       //gpo.pending_rewarded_vesting_shares -= op.reward_vests;
+//       //gpo.pending_rewarded_vesting_clc -= reward_vesting_clc_to_move;
+//    });
 
-      gpo.pending_rewarded_vesting_shares -= op.reward_vests;
-      //gpo.pending_rewarded_vesting_clc -= reward_vesting_clc_to_move;
-   });
-
-   _db.adjust_proxied_witness_votes( acnt, op.reward_vests.amount );
+   _db.adjust_proxied_witness_votes( acnt, op.reward_colab.amount );
 }
 
 #ifdef COLAB_ENABLE_SMT

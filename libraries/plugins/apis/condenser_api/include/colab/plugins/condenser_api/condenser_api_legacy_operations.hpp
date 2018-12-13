@@ -87,7 +87,7 @@ namespace colab { namespace plugins { namespace condenser_api {
       api_chain_properties( const chain::chain_properties& c ) :
          account_creation_fee( legacy_asset::from_asset( c.account_creation_fee ) ),
          maximum_block_size( c.maximum_block_size ),
-         sbd_interest_rate( c.sbd_interest_rate ),
+//         sbd_interest_rate( c.sbd_interest_rate ),
          account_subsidy_budget( c.account_subsidy_budget ),
          account_subsidy_decay( c.account_subsidy_decay )
       {}
@@ -97,13 +97,13 @@ namespace colab { namespace plugins { namespace condenser_api {
          legacy_chain_properties props;
          props.account_creation_fee = legacy_colab_asset::from_asset( asset( account_creation_fee ) );
          props.maximum_block_size = maximum_block_size;
-         props.sbd_interest_rate = sbd_interest_rate;
+//         props.sbd_interest_rate = sbd_interest_rate;
          return props;
       }
 
       legacy_asset   account_creation_fee;
       uint32_t       maximum_block_size = COLAB_MIN_BLOCK_SIZE_LIMIT * 2;
-      uint16_t       sbd_interest_rate = COLAB_DEFAULT_SBD_INTEREST_RATE;
+//      uint16_t       sbd_interest_rate = COLAB_DEFAULT_SBD_INTEREST_RATE;
       int32_t        account_subsidy_budget = COLAB_DEFAULT_ACCOUNT_SUBSIDY_BUDGET;
       uint32_t       account_subsidy_decay = COLAB_DEFAULT_ACCOUNT_SUBSIDY_DECAY;
    };
@@ -446,7 +446,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          op.work.visit( convert_to_legacy_static_variant< legacy_pow2_work >( work ) );
          props.account_creation_fee = legacy_asset::from_asset( op.props.account_creation_fee.to_asset< false >() );
          props.maximum_block_size = op.props.maximum_block_size;
-         props.sbd_interest_rate = op.props.sbd_interest_rate;
+//         props.sbd_interest_rate = op.props.sbd_interest_rate;
       }
 
       operator pow2_operation()const
@@ -456,7 +456,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          op.new_owner_key = new_owner_key;
          op.props.account_creation_fee = legacy_colab_asset::from_asset( asset( props.account_creation_fee ) );
          op.props.maximum_block_size = props.maximum_block_size;
-         op.props.sbd_interest_rate = props.sbd_interest_rate;
+//         op.props.sbd_interest_rate = props.sbd_interest_rate;
          return op;
       }
 
@@ -519,7 +519,7 @@ namespace colab { namespace plugins { namespace condenser_api {
       {
          props.account_creation_fee = legacy_asset::from_asset( op.props.account_creation_fee.to_asset< false >() );
          props.maximum_block_size = op.props.maximum_block_size;
-         props.sbd_interest_rate = op.props.sbd_interest_rate;
+//         props.sbd_interest_rate = op.props.sbd_interest_rate;
       }
 
       operator witness_update_operation()const
@@ -530,7 +530,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          op.block_signing_key = block_signing_key;
          op.props.account_creation_fee = legacy_colab_asset::from_asset( asset( props.account_creation_fee ) );
          op.props.maximum_block_size = props.maximum_block_size;
-         op.props.sbd_interest_rate = props.sbd_interest_rate;
+//         op.props.sbd_interest_rate = props.sbd_interest_rate;
          op.fee = fee;
          return op;
       }
@@ -709,9 +709,9 @@ namespace colab { namespace plugins { namespace condenser_api {
       legacy_claim_reward_balance_operation() {}
       legacy_claim_reward_balance_operation( const claim_reward_balance_operation& op ) :
          account( op.account ),
-         reward_colab( legacy_asset::from_asset( op.reward_colab ) ),
-         reward_sbd( legacy_asset::from_asset( op.reward_sbd ) ),
-         reward_vests( legacy_asset::from_asset( op.reward_vests ) )
+         reward_colab( legacy_asset::from_asset( op.reward_colab ) )//,
+//          reward_sbd( legacy_asset::from_asset( op.reward_sbd ) ),
+//          reward_vests( legacy_asset::from_asset( op.reward_vests ) )
       {}
 
       operator claim_reward_balance_operation()const
@@ -719,15 +719,15 @@ namespace colab { namespace plugins { namespace condenser_api {
          claim_reward_balance_operation op;
          op.account = account;
          op.reward_colab = reward_colab;
-         op.reward_sbd = reward_sbd;
-         op.reward_vests = reward_vests;
+//          op.reward_sbd = reward_sbd;
+//          op.reward_vests = reward_vests;
          return op;
       }
 
       account_name_type account;
       legacy_asset      reward_colab;
-      legacy_asset      reward_sbd;
-      legacy_asset      reward_vests;
+//       legacy_asset      reward_sbd;
+//       legacy_asset      reward_vests;
    };
 
 //    struct legacy_delegate_vesting_shares_operation
@@ -1675,7 +1675,7 @@ void old_sv_from_variant( const fc::variant& v, T& sv )
 }
 
 FC_REFLECT( colab::plugins::condenser_api::api_chain_properties,
-            (account_creation_fee)(maximum_block_size)(sbd_interest_rate)(account_subsidy_budget)(account_subsidy_decay)
+            (account_creation_fee)(maximum_block_size)/*(sbd_interest_rate)*/(account_subsidy_budget)(account_subsidy_decay)
           )
 
 FC_REFLECT( colab::plugins::condenser_api::legacy_price, (base)(quote) )
@@ -1736,7 +1736,7 @@ FC_REFLECT( colab::plugins::condenser_api::legacy_comment_options_operation, (au
 FC_REFLECT( colab::plugins::condenser_api::legacy_escrow_transfer_operation, (from)(to)/*(sbd_amount)*/(clc_amount)(escrow_id)(agent)(fee)(json_meta)(ratification_deadline)(escrow_expiration) );
 FC_REFLECT( colab::plugins::condenser_api::legacy_escrow_release_operation, (from)(to)(agent)(who)(receiver)(escrow_id)/*(sbd_amount)*/(clc_amount) );
 FC_REFLECT( colab::plugins::condenser_api::legacy_pow2_operation, (work)(new_owner_key)(props) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_claim_reward_balance_operation, (account)(reward_colab)(reward_sbd)(reward_vests) )
+FC_REFLECT( colab::plugins::condenser_api::legacy_claim_reward_balance_operation, (account)(reward_colab)/*(reward_sbd)(reward_vests)*/ )
 //FC_REFLECT( colab::plugins::condenser_api::legacy_delegate_vesting_shares_operation, (delegator)(delegatee)(vesting_shares) );
 FC_REFLECT( colab::plugins::condenser_api::legacy_author_reward_operation, (author)(permlink)(payout)/*(clc_payout)(vesting_payout)*/ )///~~~~~CLC~~~~~
 FC_REFLECT( colab::plugins::condenser_api::legacy_curation_reward_operation, (curator)(reward)(comment_author)(comment_permlink) )

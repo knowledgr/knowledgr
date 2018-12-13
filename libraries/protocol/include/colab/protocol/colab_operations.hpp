@@ -502,7 +502,7 @@ namespace colab { namespace protocol {
        *  to tune rate limiting and capacity
        */
       uint32_t          maximum_block_size = COLAB_MIN_BLOCK_SIZE_LIMIT * 2;
-      uint16_t          sbd_interest_rate  = COLAB_DEFAULT_SBD_INTEREST_RATE;
+//      uint16_t          sbd_interest_rate  = COLAB_DEFAULT_SBD_INTEREST_RATE;
 
       template< bool force_canon >
       void validate()const
@@ -513,8 +513,8 @@ namespace colab { namespace protocol {
          }
          FC_ASSERT( account_creation_fee.amount >= COLAB_MIN_ACCOUNT_CREATION_FEE);
          FC_ASSERT( maximum_block_size >= COLAB_MIN_BLOCK_SIZE_LIMIT);
-         FC_ASSERT( sbd_interest_rate >= 0 );
-         FC_ASSERT( sbd_interest_rate <= COLAB_100_PERCENT );
+//          FC_ASSERT( sbd_interest_rate >= 0 );
+//          FC_ASSERT( sbd_interest_rate <= COLAB_100_PERCENT );
       }
    };
 
@@ -1053,8 +1053,6 @@ namespace colab { namespace protocol {
    {
       account_name_type account;
       asset             reward_colab;
-      asset             reward_sbd;
-      asset             reward_vests;
 
       void get_required_posting_authorities( flat_set< account_name_type >& a )const{ a.insert( account ); }
       void validate() const;
@@ -1118,7 +1116,7 @@ FC_REFLECT( colab::protocol::equihash_pow, (input)(proof)(prev_block)(pow_summar
 FC_REFLECT( colab::protocol::legacy_chain_properties,
             (account_creation_fee)
             (maximum_block_size)
-            (sbd_interest_rate)
+//            (sbd_interest_rate)
           )
 
 FC_REFLECT_TYPENAME( colab::protocol::pow2_work )
@@ -1220,7 +1218,7 @@ FC_REFLECT( colab::protocol::request_account_recovery_operation, (recovery_accou
 FC_REFLECT( colab::protocol::recover_account_operation, (account_to_recover)(new_owner_authority)(recent_owner_authority)(extensions) );
 FC_REFLECT( colab::protocol::change_recovery_account_operation, (account_to_recover)(new_recovery_account)(extensions) );
 FC_REFLECT( colab::protocol::decline_voting_rights_operation, (account)(decline) );
-FC_REFLECT( colab::protocol::claim_reward_balance_operation, (account)(reward_colab)(reward_sbd)(reward_vests) )
+FC_REFLECT( colab::protocol::claim_reward_balance_operation, (account)(reward_colab)/*(reward_sbd)(reward_vests)*/ )
 #ifdef COLAB_ENABLE_SMT
 FC_REFLECT( colab::protocol::claim_reward_balance2_operation, (account)(extensions)(reward_tokens) )
 #endif

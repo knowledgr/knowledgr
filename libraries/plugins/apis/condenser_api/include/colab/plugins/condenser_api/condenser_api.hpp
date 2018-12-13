@@ -390,15 +390,15 @@ struct extended_dynamic_global_properties
       virtual_supply( legacy_asset::from_asset( o.virtual_supply ) ),
       current_supply( legacy_asset::from_asset( o.current_supply ) ),
       confidential_supply( legacy_asset::from_asset( o.confidential_supply ) ),
-      current_sbd_supply( legacy_asset::from_asset( o.current_sbd_supply ) ),
-      confidential_sbd_supply( legacy_asset::from_asset( o.confidential_sbd_supply ) ),
+//      current_sbd_supply( legacy_asset::from_asset( o.current_sbd_supply ) ),
+//      confidential_sbd_supply( legacy_asset::from_asset( o.confidential_sbd_supply ) ),
       total_vesting_fund_clc( legacy_asset::from_asset( o.total_vesting_fund_clc ) ),
       total_vesting_shares( legacy_asset::from_asset( o.total_vesting_shares ) ),
       total_reward_fund_colab( legacy_asset::from_asset( o.total_reward_fund_colab ) ),
       total_reward_shares2( o.total_reward_shares2 ),
       pending_rewarded_vesting_shares( legacy_asset::from_asset( o.pending_rewarded_vesting_shares ) ),
       pending_rewarded_vesting_clc( legacy_asset::from_asset( o.pending_rewarded_vesting_clc ) ),
-      sbd_interest_rate( o.sbd_interest_rate ),
+//      sbd_interest_rate( o.sbd_interest_rate ),
       sbd_print_rate( o.sbd_print_rate ),
       maximum_block_size( o.maximum_block_size ),
       current_aslot( o.current_aslot ),
@@ -424,8 +424,8 @@ struct extended_dynamic_global_properties
    legacy_asset      virtual_supply;
    legacy_asset      current_supply;
    legacy_asset      confidential_supply;
-   legacy_asset      current_sbd_supply;
-   legacy_asset      confidential_sbd_supply;
+//   legacy_asset      current_sbd_supply;
+//   legacy_asset      confidential_sbd_supply;
    legacy_asset      total_vesting_fund_clc;
    legacy_asset      total_vesting_shares;
    legacy_asset      total_reward_fund_colab;
@@ -433,7 +433,7 @@ struct extended_dynamic_global_properties
    legacy_asset      pending_rewarded_vesting_shares;
    legacy_asset      pending_rewarded_vesting_clc;
 
-   uint16_t          sbd_interest_rate = 0;
+//   uint16_t          sbd_interest_rate = 0;
    uint16_t          sbd_print_rate = COLAB_100_PERCENT;
 
    uint32_t          maximum_block_size = 0;
@@ -1223,10 +1223,10 @@ FC_REFLECT( colab::plugins::condenser_api::api_comment_object,
 FC_REFLECT( colab::plugins::condenser_api::extended_dynamic_global_properties,
             (head_block_number)(head_block_id)(time)
             (current_witness)(total_pow)(num_pow_witnesses)
-            (virtual_supply)(current_supply)(confidential_supply)(current_sbd_supply)(confidential_sbd_supply)
+            (virtual_supply)(current_supply)(confidential_supply)/*(current_sbd_supply)(confidential_sbd_supply)*/
             (total_vesting_fund_clc)(total_vesting_shares)
             (total_reward_fund_colab)(total_reward_shares2)(pending_rewarded_vesting_shares)(pending_rewarded_vesting_clc)
-            (sbd_interest_rate)(sbd_print_rate)
+            /*(sbd_interest_rate)(sbd_print_rate)*/
             (maximum_block_size)(current_aslot)(recent_slots_filled)(participation_count)(last_irreversible_block_num)(vote_power_reserve_rate)
             (delegation_return_period)(reverse_auction_seconds)(sbd_stop_percent)(sbd_start_percent) )
 

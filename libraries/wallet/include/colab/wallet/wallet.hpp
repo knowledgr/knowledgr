@@ -1222,8 +1222,8 @@ class wallet_api
       condenser_api::legacy_signed_transaction claim_reward_balance(
          string account,
          condenser_api::legacy_asset reward_colab,
-         condenser_api::legacy_asset reward_sbd,
-         condenser_api::legacy_asset reward_vests,
+//          condenser_api::legacy_asset reward_sbd,
+//          condenser_api::legacy_asset reward_vests,
          bool broadcast );
 };
 

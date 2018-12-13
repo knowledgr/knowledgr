@@ -5967,8 +5967,8 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance_validate )
       claim_reward_balance_operation op;
       op.account = "alice";
       op.reward_colab = ASSET( "0.000 TESTS" );
-      op.reward_sbd = ASSET( "0.000 TBD" );
-      op.reward_vests = ASSET( "0.000000 VESTS" );
+//       op.reward_sbd = ASSET( "0.000 TBD" );
+//       op.reward_vests = ASSET( "0.000000 VESTS" );
 
 
       BOOST_TEST_MESSAGE( "Testing all 0 amounts" );
@@ -5980,14 +5980,14 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance_validate )
       op.validate();
 
       op.reward_colab.amount = 0;
-      op.reward_sbd.amount = 1000;
+      //op.reward_sbd.amount = 1000;
       op.validate();
 
-      op.reward_sbd.amount = 0;
-      op.reward_vests.amount = 1000;
-      op.validate();
+      //op.reward_sbd.amount = 0;
+      //op.reward_vests.amount = 1000;
+      //op.validate();
 
-      op.reward_vests.amount = 0;
+      //op.reward_vests.amount = 0;
 
 
       BOOST_TEST_MESSAGE( "Testing wrong CLC symbol" );
@@ -5997,19 +5997,19 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance_validate )
 
       BOOST_TEST_MESSAGE( "Testing wrong SBD symbol" );
       op.reward_colab = ASSET( "1.000 TESTS" );
-      op.reward_sbd = ASSET( "1.000 TESTS" );
+      //op.reward_sbd = ASSET( "1.000 TESTS" );
       COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
 
 
-      BOOST_TEST_MESSAGE( "Testing wrong VESTS symbol" );
-      op.reward_sbd = ASSET( "1.000 TBD" );
-      op.reward_vests = ASSET( "1.000 TESTS" );
-      COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
+//       BOOST_TEST_MESSAGE( "Testing wrong VESTS symbol" );
+//       op.reward_sbd = ASSET( "1.000 TBD" );
+//       op.reward_vests = ASSET( "1.000 TESTS" );
+//       COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
 
 
       BOOST_TEST_MESSAGE( "Testing a single negative amount" );
       op.reward_colab.amount = 1000;
-      op.reward_sbd.amount = -1000;
+      //op.reward_sbd.amount = -1000;
       COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
    }
    FC_LOG_AND_RETHROW()
@@ -6783,25 +6783,25 @@ BOOST_AUTO_TEST_CASE( witness_set_properties_validate )
       prop_op.props[ "maximum_block_size" ] = fc::raw::pack_to_vector( COLAB_MIN_BLOCK_SIZE_LIMIT - 1 );
       COLAB_REQUIRE_THROW( prop_op.validate(), fc::assert_exception );
 
-      BOOST_TEST_MESSAGE( "--- failure when setting sbd_interest_rate with negative number" );
-      prop_op.props.erase( "maximum_block_size" );
-      prop_op.props[ "sbd_interest_rate" ] = fc::raw::pack_to_vector( -700 );
-      COLAB_REQUIRE_THROW( prop_op.validate(), fc::assert_exception );
+//       BOOST_TEST_MESSAGE( "--- failure when setting sbd_interest_rate with negative number" );
+//       prop_op.props.erase( "maximum_block_size" );
+//       prop_op.props[ "sbd_interest_rate" ] = fc::raw::pack_to_vector( -700 );
+//       COLAB_REQUIRE_THROW( prop_op.validate(), fc::assert_exception );
 
-      BOOST_TEST_MESSAGE( "--- failure when setting sbd_interest_rate to COLAB_100_PERCENT + 1" );
-      prop_op.props[ "sbd_interest_rate" ].clear();
-      prop_op.props[ "sbd_interest_rate" ] = fc::raw::pack_to_vector( COLAB_100_PERCENT + 1 );
-      COLAB_REQUIRE_THROW( prop_op.validate(), fc::assert_exception );
-
-      BOOST_TEST_MESSAGE( "--- failure when setting new sbd_exchange_rate with SBD / CLC" );
-      prop_op.props.erase( "sbd_interest_rate" );
-      prop_op.props[ "sbd_exchange_rate" ] = fc::raw::pack_to_vector( price( ASSET( "1.000 TESTS" ), ASSET( "10.000 TBD" ) ) );
-      COLAB_REQUIRE_THROW( prop_op.validate(), fc::assert_exception );
-
-      BOOST_TEST_MESSAGE( "--- failure when setting new url with length of zero" );
-      prop_op.props.erase( "sbd_exchange_rate" );
-      prop_op.props[ "url" ] = fc::raw::pack_to_vector( "" );
-      COLAB_REQUIRE_THROW( prop_op.validate(), fc::assert_exception );
+//       BOOST_TEST_MESSAGE( "--- failure when setting sbd_interest_rate to COLAB_100_PERCENT + 1" );
+//       prop_op.props[ "sbd_interest_rate" ].clear();
+//       prop_op.props[ "sbd_interest_rate" ] = fc::raw::pack_to_vector( COLAB_100_PERCENT + 1 );
+//       COLAB_REQUIRE_THROW( prop_op.validate(), fc::assert_exception );
+// 
+//       BOOST_TEST_MESSAGE( "--- failure when setting new sbd_exchange_rate with SBD / CLC" );
+//       prop_op.props.erase( "sbd_interest_rate" );
+//       prop_op.props[ "sbd_exchange_rate" ] = fc::raw::pack_to_vector( price( ASSET( "1.000 TESTS" ), ASSET( "10.000 TBD" ) ) );
+//       COLAB_REQUIRE_THROW( prop_op.validate(), fc::assert_exception );
+// 
+//       BOOST_TEST_MESSAGE( "--- failure when setting new url with length of zero" );
+//       prop_op.props.erase( "sbd_exchange_rate" );
+//       prop_op.props[ "url" ] = fc::raw::pack_to_vector( "" );
+//       COLAB_REQUIRE_THROW( prop_op.validate(), fc::assert_exception );
 
       BOOST_TEST_MESSAGE( "--- failure when setting new url with non UTF-8 character" );
       prop_op.props[ "url" ].clear();
@@ -6962,25 +6962,25 @@ BOOST_AUTO_TEST_CASE( witness_set_properties_apply )
       BOOST_REQUIRE( alice_witness.props.maximum_block_size == COLAB_MIN_BLOCK_SIZE_LIMIT + 1 );
 
       // Setting sbd_interest_rate
-      prop_op.props.erase( "maximum_block_size" );
-      prop_op.props[ "sbd_interest_rate" ] = fc::raw::pack_to_vector( 700 );
-      tx.clear();
-      tx.operations.push_back( prop_op );
-      sign( tx, signing_key );
-      db->push_transaction( tx, 0 );
-      BOOST_REQUIRE( alice_witness.props.sbd_interest_rate == 700 );
-
-      // Setting new signing_key
-      private_key_type old_signing_key = signing_key;
-      signing_key = generate_private_key( "new_key" );
-      public_key_type alice_pub = signing_key.get_public_key();
-      prop_op.props.erase( "sbd_interest_rate" );
-      prop_op.props[ "new_signing_key" ] = fc::raw::pack_to_vector( alice_pub );
-      tx.clear();
-      tx.operations.push_back( prop_op );
-      sign( tx, old_signing_key );
-      db->push_transaction( tx, 0 );
-      BOOST_REQUIRE( alice_witness.signing_key == alice_pub );
+//       prop_op.props.erase( "maximum_block_size" );
+//       prop_op.props[ "sbd_interest_rate" ] = fc::raw::pack_to_vector( 700 );
+//       tx.clear();
+//       tx.operations.push_back( prop_op );
+//       sign( tx, signing_key );
+//       db->push_transaction( tx, 0 );
+//       BOOST_REQUIRE( alice_witness.props.sbd_interest_rate == 700 );
+// 
+//       // Setting new signing_key
+//       private_key_type old_signing_key = signing_key;
+//       signing_key = generate_private_key( "new_key" );
+//       public_key_type alice_pub = signing_key.get_public_key();
+//       prop_op.props.erase( "sbd_interest_rate" );
+//       prop_op.props[ "new_signing_key" ] = fc::raw::pack_to_vector( alice_pub );
+//       tx.clear();
+//       tx.operations.push_back( prop_op );
+//       sign( tx, old_signing_key );
+//       db->push_transaction( tx, 0 );
+//       BOOST_REQUIRE( alice_witness.signing_key == alice_pub );
 
       // Setting new sbd_exchange_rate
       prop_op.props.erase( "new_signing_key" );

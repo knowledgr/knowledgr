@@ -278,14 +278,14 @@ namespace colab { namespace protocol {
          FC_ASSERT( maximum_block_size >= COLAB_MIN_BLOCK_SIZE_LIMIT, "maximum_block_size smaller than minimum max block size" );
       }
 
-      itr = props.find( "sbd_interest_rate" );
-      if( itr != props.end() )
-      {
-         uint16_t sbd_interest_rate;
-         fc::raw::unpack_from_vector( itr->second, sbd_interest_rate );
-         FC_ASSERT( sbd_interest_rate >= 0, "sbd_interest_rate must be positive" );
-         FC_ASSERT( sbd_interest_rate <= COLAB_100_PERCENT, "sbd_interest_rate must not exceed 100%" );
-      }
+//       itr = props.find( "sbd_interest_rate" );
+//       if( itr != props.end() )
+//       {
+//          uint16_t sbd_interest_rate;
+//          fc::raw::unpack_from_vector( itr->second, sbd_interest_rate );
+//          FC_ASSERT( sbd_interest_rate >= 0, "sbd_interest_rate must be positive" );
+//          FC_ASSERT( sbd_interest_rate <= COLAB_100_PERCENT, "sbd_interest_rate must not exceed 100%" );
+//       }
 
       itr = props.find( "new_signing_key" );
       if( itr != props.end() )
@@ -295,15 +295,15 @@ namespace colab { namespace protocol {
          FC_UNUSED( signing_key ); // This tests the deserialization of the key
       }
 
-      itr = props.find( "sbd_exchange_rate" );
-      if( itr != props.end() )
-      {
-         price sbd_exchange_rate;
-         fc::raw::unpack_from_vector( itr->second, sbd_exchange_rate );
-         FC_ASSERT( ( is_asset_type( sbd_exchange_rate.base, SBD_SYMBOL ) && is_asset_type( sbd_exchange_rate.quote, CLC_SYMBOL ) ),
-            "Price feed must be a CLC/SBD price" );
-         sbd_exchange_rate.validate();
-      }
+//       itr = props.find( "sbd_exchange_rate" );
+//       if( itr != props.end() )
+//       {
+//          price sbd_exchange_rate;
+//          fc::raw::unpack_from_vector( itr->second, sbd_exchange_rate );
+//          FC_ASSERT( ( is_asset_type( sbd_exchange_rate.base, SBD_SYMBOL ) && is_asset_type( sbd_exchange_rate.quote, CLC_SYMBOL ) ),
+//             "Price feed must be a CLC/SBD price" );
+//          sbd_exchange_rate.validate();
+//       }
 
       itr = props.find( "url" );
       if( itr != props.end() )
@@ -691,12 +691,12 @@ namespace colab { namespace protocol {
    {
       validate_account_name( account );
       FC_ASSERT( is_asset_type( reward_colab, CLC_SYMBOL ), "Reward Colab must be CLC" );
-      FC_ASSERT( is_asset_type( reward_sbd, SBD_SYMBOL ), "Reward Colab must be SBD" );
-      FC_ASSERT( is_asset_type( reward_vests, VESTS_SYMBOL ), "Reward Colab must be VESTS" );
+//       FC_ASSERT( is_asset_type( reward_sbd, SBD_SYMBOL ), "Reward Colab must be SBD" );
+//       FC_ASSERT( is_asset_type( reward_vests, VESTS_SYMBOL ), "Reward Colab must be VESTS" );
       FC_ASSERT( reward_colab.amount >= 0, "Cannot claim a negative amount" );
-      FC_ASSERT( reward_sbd.amount >= 0, "Cannot claim a negative amount" );
-      FC_ASSERT( reward_vests.amount >= 0, "Cannot claim a negative amount" );
-      FC_ASSERT( reward_colab.amount > 0 || reward_sbd.amount > 0 || reward_vests.amount > 0, "Must claim something." );
+//       FC_ASSERT( reward_sbd.amount >= 0, "Cannot claim a negative amount" );
+//       FC_ASSERT( reward_vests.amount >= 0, "Cannot claim a negative amount" );
+      FC_ASSERT( reward_colab.amount > 0/* || reward_sbd.amount > 0 || reward_vests.amount > 0*/, "Must claim something." );
    }
 
 #ifdef COLAB_ENABLE_SMT
