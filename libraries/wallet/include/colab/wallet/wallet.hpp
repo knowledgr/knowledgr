@@ -449,13 +449,13 @@ class wallet_api
        *  @param json_meta JSON Metadata associated with the new account
        *  @param broadcast true if you wish to broadcast the transaction
        */
-      condenser_api::legacy_signed_transaction create_account_delegated(
-         string creator,
-         condenser_api::legacy_asset clc_fee,
-         condenser_api::legacy_asset delegated_clc,
-         string new_account_name,
-         string json_meta,
-         bool broadcast );
+//       condenser_api::legacy_signed_transaction create_account_delegated(
+//          string creator,
+//          condenser_api::legacy_asset clc_fee,
+//          condenser_api::legacy_asset delegated_clc,
+//          string new_account_name,
+//          string json_meta,
+//          bool broadcast );
 
       /**
        * This method is used by faucets to create new accounts for other users which must
@@ -476,17 +476,17 @@ class wallet_api
        * @param memo public memo key of the new account
        * @param broadcast true if you wish to broadcast the transaction
        */
-      condenser_api::legacy_signed_transaction create_account_with_keys_delegated(
-         string creator,
-         condenser_api::legacy_asset clc_fee,
-         condenser_api::legacy_asset delegated_clc,
-         string newname,
-         string json_meta,
-         public_key_type owner,
-         public_key_type active,
-         public_key_type posting,
-         public_key_type memo,
-         bool broadcast )const;
+//       condenser_api::legacy_signed_transaction create_account_with_keys_delegated(
+//          string creator,
+//          condenser_api::legacy_asset clc_fee,
+//          condenser_api::legacy_asset delegated_clc,
+//          string newname,
+//          string json_meta,
+//          public_key_type owner,
+//          public_key_type active,
+//          public_key_type posting,
+//          public_key_type memo,
+//          bool broadcast )const;
 
       /**
        * This method updates the keys of an existing account.
@@ -662,11 +662,11 @@ class wallet_api
        * @param vesting_shares The amount of VESTS to delegate
        * @param broadcast true if you wish to broadcast the transaction
        */
-       condenser_api::legacy_signed_transaction delegate_vesting_shares(
-          string delegator,
-          string delegatee,
-          condenser_api::legacy_asset vesting_shares,
-          bool broadcast );
+//        condenser_api::legacy_signed_transaction delegate_vesting_shares(
+//           string delegator,
+//           string delegatee,
+//           condenser_api::legacy_asset vesting_shares,
+//           bool broadcast );
 
 
       /**
@@ -1289,8 +1289,8 @@ FC_API( colab::wallet::wallet_api,
         /// transaction api
         (create_account)
         (create_account_with_keys)
-        (create_account_delegated)
-        (create_account_with_keys_delegated)
+        //(create_account_delegated)
+        //(create_account_with_keys_delegated)
 		(update_account_admin)///~~~~~CLC~~~~~
 		(update_account_expertise)///~~~~~CLC~~~~~
 		(stake)///~~~~~CLC~~~~~
@@ -1302,7 +1302,7 @@ FC_API( colab::wallet::wallet_api,
         (update_account_auth_threshold)
         (update_account_meta)
         (update_account_memo_key)
-        (delegate_vesting_shares)
+        //(delegate_vesting_shares)
         (update_witness)
         (set_voting_proxy)
         (vote_for_witness)

@@ -49,8 +49,8 @@ class database_api_impl
          (find_withdraw_vesting_routes)
          (list_savings_withdrawals)
          (find_savings_withdrawals)
-         (list_vesting_delegations)
-         (find_vesting_delegations)
+//         (list_vesting_delegations)
+//         (find_vesting_delegations)
          (list_vesting_delegation_expirations)
          (find_vesting_delegation_expirations)
          (list_sbd_conversion_requests)
@@ -743,46 +743,46 @@ DEFINE_API_IMPL( database_api_impl, find_savings_withdrawals )
 
 /* Vesting Delegations */
 
-DEFINE_API_IMPL( database_api_impl, list_vesting_delegations )
-{
-   FC_ASSERT( args.limit <= DATABASE_API_SINGLE_QUERY_LIMIT );
+// DEFINE_API_IMPL( database_api_impl, list_vesting_delegations )
+// {
+//    FC_ASSERT( args.limit <= DATABASE_API_SINGLE_QUERY_LIMIT );
+// 
+//    list_vesting_delegations_return result;
+//    result.delegations.reserve( args.limit );
+// 
+//    switch( args.order )
+//    {
+//       case( by_delegation ):
+//       {
+//          auto key = args.start.as< std::pair< account_name_type, account_name_type > >();
+//          iterate_results< chain::vesting_delegation_index, chain::by_delegation >(
+//             boost::make_tuple( key.first, key.second ),
+//             result.delegations,
+//             args.limit,
+//             &database_api_impl::on_push_default< api_vesting_delegation_object > );
+//          break;
+//       }
+//       default:
+//          FC_ASSERT( false, "Unknown or unsupported sort order" );
+//    }
+// 
+//    return result;
+// }
 
-   list_vesting_delegations_return result;
-   result.delegations.reserve( args.limit );
-
-   switch( args.order )
-   {
-      case( by_delegation ):
-      {
-         auto key = args.start.as< std::pair< account_name_type, account_name_type > >();
-         iterate_results< chain::vesting_delegation_index, chain::by_delegation >(
-            boost::make_tuple( key.first, key.second ),
-            result.delegations,
-            args.limit,
-            &database_api_impl::on_push_default< api_vesting_delegation_object > );
-         break;
-      }
-      default:
-         FC_ASSERT( false, "Unknown or unsupported sort order" );
-   }
-
-   return result;
-}
-
-DEFINE_API_IMPL( database_api_impl, find_vesting_delegations )
-{
-   find_vesting_delegations_return result;
-   const auto& delegation_idx = _db.get_index< chain::vesting_delegation_index, chain::by_delegation >();
-   auto itr = delegation_idx.lower_bound( args.account );
-
-   while( itr != delegation_idx.end() && itr->delegator == args.account && result.delegations.size() <= DATABASE_API_SINGLE_QUERY_LIMIT )
-   {
-      result.delegations.push_back( api_vesting_delegation_object( *itr ) );
-      ++itr;
-   }
-
-   return result;
-}
+// DEFINE_API_IMPL( database_api_impl, find_vesting_delegations )
+// {
+//    find_vesting_delegations_return result;
+//    const auto& delegation_idx = _db.get_index< chain::vesting_delegation_index, chain::by_delegation >();
+//    auto itr = delegation_idx.lower_bound( args.account );
+// 
+//    while( itr != delegation_idx.end() && itr->delegator == args.account && result.delegations.size() <= DATABASE_API_SINGLE_QUERY_LIMIT )
+//    {
+//       result.delegations.push_back( api_vesting_delegation_object( *itr ) );
+//       ++itr;
+//    }
+// 
+//    return result;
+// }
 
 
 /* Vesting Delegation Expirations */
@@ -1518,8 +1518,8 @@ DEFINE_READ_APIS( database_api,
    (find_withdraw_vesting_routes)
    (list_savings_withdrawals)
    (find_savings_withdrawals)
-   (list_vesting_delegations)
-   (find_vesting_delegations)
+//    (list_vesting_delegations)
+//    (find_vesting_delegations)
    (list_vesting_delegation_expirations)
    (find_vesting_delegation_expirations)
    (list_sbd_conversion_requests)

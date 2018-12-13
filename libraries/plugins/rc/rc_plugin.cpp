@@ -634,10 +634,10 @@ struct pre_apply_operation_visitor
       regenerate( *account, *rc_account );
    }
 
-   void operator()( const account_create_with_delegation_operation& op )const
-   {
-      regenerate( op.creator );
-   }
+//    void operator()( const account_create_with_delegation_operation& op )const
+//    {
+//       regenerate( op.creator );
+//    }
 
 //    void operator()( const transfer_to_vesting_operation& op )const
 //    {
@@ -655,11 +655,11 @@ struct pre_apply_operation_visitor
 //       regenerate( op.from_account );
 //    }
 
-   void operator()( const delegate_vesting_shares_operation& op )const
-   {
-      regenerate( op.delegator );
-      regenerate( op.delegatee );
-   }
+//    void operator()( const delegate_vesting_shares_operation& op )const
+//    {
+//       regenerate( op.delegator );
+//       regenerate( op.delegatee );
+//    }
 
    void operator()( const author_reward_operation& op )const
    {
@@ -778,11 +778,11 @@ struct post_apply_operation_visitor
       create_rc_account( _db, _current_time, op.new_account_name, op.fee );
    }
 
-   void operator()( const account_create_with_delegation_operation& op )const
-   {
-      create_rc_account( _db, _current_time, op.new_account_name, op.fee );
-      _mod_accounts.emplace_back( op.creator );
-   }
+//    void operator()( const account_create_with_delegation_operation& op )const
+//    {
+//       create_rc_account( _db, _current_time, op.new_account_name, op.fee );
+//       _mod_accounts.emplace_back( op.creator );
+//    }
 
    void operator()( const create_claimed_account_operation& op )const
    {
@@ -816,11 +816,11 @@ struct post_apply_operation_visitor
 //       _mod_accounts.emplace_back( op.account, false );
 //    }
 
-   void operator()( const delegate_vesting_shares_operation& op )const
-   {
-      _mod_accounts.emplace_back( op.delegator );
-      _mod_accounts.emplace_back( op.delegatee );
-   }
+//    void operator()( const delegate_vesting_shares_operation& op )const
+//    {
+//       _mod_accounts.emplace_back( op.delegator );
+//       _mod_accounts.emplace_back( op.delegatee );
+//    }
 
    void operator()( const author_reward_operation& op )const
    {

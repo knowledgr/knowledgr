@@ -13,7 +13,7 @@ COLAB_DEFINE_EVALUATOR( account_admin_update ) ///~~~~~CLC~~~~~
 COLAB_DEFINE_EVALUATOR( account_expertise_update ) ///~~~~~CLC~~~~~
 COLAB_DEFINE_EVALUATOR( stake_request ) ///~~~~~CLC~~~~~
 COLAB_DEFINE_EVALUATOR( stake_process ) ///~~~~~CLC~~~~~
-COLAB_DEFINE_EVALUATOR( account_create_with_delegation )
+//COLAB_DEFINE_EVALUATOR( account_create_with_delegation )
 COLAB_DEFINE_EVALUATOR( account_update )
 COLAB_DEFINE_EVALUATOR( transfer )
 //COLAB_DEFINE_EVALUATOR( transfer_to_vesting )
@@ -56,7 +56,7 @@ COLAB_DEFINE_EVALUATOR( claim_reward_balance )
 #ifdef COLAB_ENABLE_SMT
 COLAB_DEFINE_EVALUATOR( claim_reward_balance2 )
 #endif
-COLAB_DEFINE_EVALUATOR( delegate_vesting_shares )
+//COLAB_DEFINE_EVALUATOR( delegate_vesting_shares )
 COLAB_DEFINE_EVALUATOR( witness_set_properties )
 #ifdef COLAB_ENABLE_SMT
 COLAB_DEFINE_EVALUATOR( smt_setup )

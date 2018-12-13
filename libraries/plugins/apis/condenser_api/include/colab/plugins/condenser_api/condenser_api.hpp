@@ -652,23 +652,23 @@ struct api_savings_withdraw_object
    time_point_sec    complete;
 };
 
-struct api_vesting_delegation_object
-{
-   api_vesting_delegation_object() {}
-   api_vesting_delegation_object( const database_api::api_vesting_delegation_object& v ) :
-      id( v.id ),
-      delegator( v.delegator ),
-      delegatee( v.delegatee ),
-      vesting_shares( legacy_asset::from_asset( v.vesting_shares ) ),
-      min_delegation_time( v.min_delegation_time )
-   {}
-
-   vesting_delegation_id_type id;
-   account_name_type delegator;
-   account_name_type delegatee;
-   legacy_asset      vesting_shares;
-   time_point_sec    min_delegation_time;
-};
+// struct api_vesting_delegation_object
+// {
+//    api_vesting_delegation_object() {}
+//    api_vesting_delegation_object( const database_api::api_vesting_delegation_object& v ) :
+//       id( v.id ),
+//       delegator( v.delegator ),
+//       delegatee( v.delegatee ),
+//       vesting_shares( legacy_asset::from_asset( v.vesting_shares ) ),
+//       min_delegation_time( v.min_delegation_time )
+//    {}
+// 
+//    vesting_delegation_id_type id;
+//    account_name_type delegator;
+//    account_name_type delegatee;
+//    legacy_asset      vesting_shares;
+//    time_point_sec    min_delegation_time;
+// };
 
 struct api_vesting_delegation_expiration_object
 {
@@ -994,7 +994,7 @@ DEFINE_API_ARGS( get_escrow,                             vector< variant >,   op
 DEFINE_API_ARGS( get_withdraw_routes,                    vector< variant >,   vector< database_api::api_withdraw_vesting_route_object > )
 DEFINE_API_ARGS( get_savings_withdraw_from,              vector< variant >,   vector< api_savings_withdraw_object > )
 DEFINE_API_ARGS( get_savings_withdraw_to,                vector< variant >,   vector< api_savings_withdraw_object > )
-DEFINE_API_ARGS( get_vesting_delegations,                vector< variant >,   vector< api_vesting_delegation_object > )
+//DEFINE_API_ARGS( get_vesting_delegations,                vector< variant >,   vector< api_vesting_delegation_object > )
 DEFINE_API_ARGS( get_expiring_vesting_delegations,       vector< variant >,   vector< api_vesting_delegation_expiration_object > )
 DEFINE_API_ARGS( get_witnesses,                          vector< variant >,   vector< optional< api_witness_object > > )
 DEFINE_API_ARGS( get_conversion_requests,                vector< variant >,   vector< api_convert_request_object > )
@@ -1092,7 +1092,7 @@ public:
       (get_withdraw_routes)
       (get_savings_withdraw_from)
       (get_savings_withdraw_to)
-      (get_vesting_delegations)
+//      (get_vesting_delegations)
       (get_expiring_vesting_delegations)
       (get_witnesses)
       (get_conversion_requests)
@@ -1302,8 +1302,8 @@ FC_REFLECT( colab::plugins::condenser_api::api_savings_withdraw_object,
              (complete)
           )
 
-FC_REFLECT( colab::plugins::condenser_api::api_vesting_delegation_object,
-            (id)(delegator)(delegatee)(vesting_shares)(min_delegation_time) )
+// FC_REFLECT( colab::plugins::condenser_api::api_vesting_delegation_object,
+//             (id)(delegator)(delegatee)(vesting_shares)(min_delegation_time) )
 
 FC_REFLECT( colab::plugins::condenser_api::api_vesting_delegation_expiration_object,
             (id)(delegator)(vesting_shares)(expiration) )

@@ -334,25 +334,25 @@ typedef list_savings_withdrawals_return find_savings_withdrawals_return;
 
 /* Vesting Delegations */
 
-struct list_vesting_delegations_args
-{
-   fc::variant       start;
-   uint32_t          limit;
-   sort_order_type   order;
-};
-
-struct list_vesting_delegations_return
-{
-   vector< api_vesting_delegation_object > delegations;
-};
-
-
-struct find_vesting_delegations_args
-{
-   account_name_type account;
-};
-
-typedef list_vesting_delegations_return find_vesting_delegations_return;
+// struct list_vesting_delegations_args
+// {
+//    fc::variant       start;
+//    uint32_t          limit;
+//    sort_order_type   order;
+// };
+// 
+// struct list_vesting_delegations_return
+// {
+//    vector< api_vesting_delegation_object > delegations;
+// };
+// 
+// 
+// struct find_vesting_delegations_args
+// {
+//    account_name_type account;
+// };
+// 
+// typedef list_vesting_delegations_return find_vesting_delegations_return;
 
 
 /* Vesting Delegation Expirations */
@@ -717,14 +717,14 @@ FC_REFLECT( colab::plugins::database_api::list_savings_withdrawals_return,
 FC_REFLECT( colab::plugins::database_api::find_savings_withdrawals_args,
    (account) )
 
-FC_REFLECT( colab::plugins::database_api::list_vesting_delegations_args,
-   (start)(limit)(order) )
-
-FC_REFLECT( colab::plugins::database_api::list_vesting_delegations_return,
-   (delegations) )
-
-FC_REFLECT( colab::plugins::database_api::find_vesting_delegations_args,
-   (account) )
+// FC_REFLECT( colab::plugins::database_api::list_vesting_delegations_args,
+//    (start)(limit)(order) )
+// 
+// FC_REFLECT( colab::plugins::database_api::list_vesting_delegations_return,
+//    (delegations) )
+// 
+// FC_REFLECT( colab::plugins::database_api::find_vesting_delegations_args,
+//    (account) )
 
 FC_REFLECT( colab::plugins::database_api::list_vesting_delegation_expirations_args,
    (start)(limit)(order) )

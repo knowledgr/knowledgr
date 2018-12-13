@@ -144,10 +144,10 @@ vector< condenser_api::api_savings_withdraw_object > remote_node_api::get_saving
    FC_ASSERT( false );
 }
 
-vector< condenser_api::api_vesting_delegation_object > remote_node_api::get_vesting_delegations( account_name_type, account_name_type, uint32_t )
-{
-   FC_ASSERT( false );
-}
+// vector< condenser_api::api_vesting_delegation_object > remote_node_api::get_vesting_delegations( account_name_type, account_name_type, uint32_t )
+// {
+//    FC_ASSERT( false );
+// }
 
 vector< condenser_api::api_vesting_delegation_expiration_object > remote_node_api::get_expiring_vesting_delegations( account_name_type, time_point_sec, uint32_t )
 {

@@ -24,7 +24,7 @@ typedef limit_order_object                     api_limit_order_object;
 typedef withdraw_vesting_route_object          api_withdraw_vesting_route_object;
 typedef decline_voting_rights_request_object   api_decline_voting_rights_request_object;
 typedef witness_vote_object                    api_witness_vote_object;
-typedef vesting_delegation_object              api_vesting_delegation_object;
+//typedef vesting_delegation_object              api_vesting_delegation_object;
 typedef vesting_delegation_expiration_object   api_vesting_delegation_expiration_object;
 typedef reward_fund_object                     api_reward_fund_object;
 

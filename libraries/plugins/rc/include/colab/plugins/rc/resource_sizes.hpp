@@ -73,7 +73,7 @@ struct state_object_size_info
    int64_t transaction_object_byte_size       =         STATE_TRANSACTION_BYTE_SIZE;
 
    // vesting_delegation_object
-   int64_t vesting_delegation_object_base_size = 60*STATE_BYTES_SCALE;
+   //int64_t vesting_delegation_object_base_size = 60*STATE_BYTES_SCALE;
 
    // vesting_delegation_expiration_object
    int64_t vesting_delegation_expiration_object_base_size = 44*STATE_BYTES_SCALE;
@@ -92,7 +92,7 @@ struct state_object_size_info
 struct operation_exec_info
 {
    int64_t account_create_operation_exec_time                  =  57700;
-   int64_t account_create_with_delegation_operation_exec_time  =  57700;
+   //int64_t account_create_with_delegation_operation_exec_time  =  57700;
    int64_t account_expertise_update_operation_exec_time       =  14000;///~~~~~CLC~~~~~
    int64_t account_admin_update_operation_exec_time			    =  14000;///~~~~~CLC~~~~~
    int64_t stake_request_operation_exec_time			    =  14000;///~~~~~CLC~~~~~
@@ -112,7 +112,7 @@ struct operation_exec_info
    int64_t custom_json_operation_exec_time                     =  11400;
    int64_t custom_binary_operation_exec_time                   =  11400;
    int64_t decline_voting_rights_operation_exec_time           =   5300;
-   int64_t delegate_vesting_shares_operation_exec_time         =  19900;
+   //int64_t delegate_vesting_shares_operation_exec_time         =  19900;
    int64_t delete_comment_operation_exec_time                  =  51100;
    int64_t escrow_approve_operation_exec_time                  =   9900;
    int64_t escrow_dispute_operation_exec_time                  =  11500;
@@ -166,7 +166,7 @@ FC_REFLECT( colab::plugins::rc::state_object_size_info,
    ( savings_withdraw_object_byte_size )
    ( transaction_object_base_size )
    ( transaction_object_byte_size )
-   ( vesting_delegation_object_base_size )
+//   ( vesting_delegation_object_base_size )
    ( vesting_delegation_expiration_object_base_size )
    ( withdraw_vesting_route_object_base_size )
    ( witness_object_base_size )
@@ -176,7 +176,7 @@ FC_REFLECT( colab::plugins::rc::state_object_size_info,
 
 FC_REFLECT( colab::plugins::rc::operation_exec_info,
    ( account_create_operation_exec_time )
-   ( account_create_with_delegation_operation_exec_time )
+//   ( account_create_with_delegation_operation_exec_time )
    ( account_update_operation_exec_time )
    ( account_witness_proxy_operation_exec_time )
    ( account_witness_vote_operation_exec_time )
@@ -192,7 +192,7 @@ FC_REFLECT( colab::plugins::rc::operation_exec_info,
    ( custom_json_operation_exec_time )
    ( custom_binary_operation_exec_time )
    ( decline_voting_rights_operation_exec_time )
-   ( delegate_vesting_shares_operation_exec_time )
+//   ( delegate_vesting_shares_operation_exec_time )
    ( delete_comment_operation_exec_time )
    ( escrow_approve_operation_exec_time )
    ( escrow_dispute_operation_exec_time )
