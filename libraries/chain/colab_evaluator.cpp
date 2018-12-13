@@ -78,7 +78,7 @@ void copy_legacy_chain_properties( chain_properties& dest, const legacy_chain_pr
 {
    dest.account_creation_fee = src.account_creation_fee.to_asset< force_canon >();
    dest.maximum_block_size = src.maximum_block_size;
-   dest.sbd_interest_rate = src.sbd_interest_rate;
+//   dest.sbd_interest_rate = src.sbd_interest_rate;
 }
 
 void witness_update_evaluator::do_apply( const witness_update_operation& o )
@@ -132,11 +132,11 @@ struct witness_properties_change_flags
 {
    uint32_t account_creation_changed       : 1;
    uint32_t max_block_changed              : 1;
-   uint32_t sbd_interest_changed           : 1;
+//   uint32_t sbd_interest_changed           : 1;
    uint32_t account_subsidy_budget_changed : 1;
    uint32_t account_subsidy_decay_changed  : 1;
    uint32_t key_changed                    : 1;
-   uint32_t sbd_exchange_changed           : 1;
+//   uint32_t sbd_exchange_changed           : 1;
    uint32_t url_changed                    : 1;
 };
 
@@ -149,8 +149,8 @@ void witness_set_properties_evaluator::do_apply( const witness_set_properties_op
    // Capture old properties. This allows only updating the object once.
    chain_properties  props;
    public_key_type   signing_key;
-   price             sbd_exchange_rate;
-   time_point_sec    last_sbd_exchange_update;
+//    price             sbd_exchange_rate;
+//    time_point_sec    last_sbd_exchange_update;
    string            url;
 
    witness_properties_change_flags flags;
@@ -181,12 +181,12 @@ void witness_set_properties_evaluator::do_apply( const witness_set_properties_op
       fc::raw::unpack_from_vector( itr->second, props.maximum_block_size );
    }
 
-   itr = o.props.find( "sbd_interest_rate" );
-   flags.sbd_interest_changed = itr != o.props.end();
-   if( flags.sbd_interest_changed )
-   {
-      fc::raw::unpack_from_vector( itr->second, props.sbd_interest_rate );
-   }
+//    itr = o.props.find( "sbd_interest_rate" );
+//    flags.sbd_interest_changed = itr != o.props.end();
+//    if( flags.sbd_interest_changed )
+//    {
+//       fc::raw::unpack_from_vector( itr->second, props.sbd_interest_rate );
+//    }
 
    itr = o.props.find( "account_subsidy_budget" );
    flags.account_subsidy_budget_changed = itr != o.props.end();
@@ -209,13 +209,13 @@ void witness_set_properties_evaluator::do_apply( const witness_set_properties_op
       fc::raw::unpack_from_vector( itr->second, signing_key );
    }
 
-   itr = o.props.find( "sbd_exchange_rate" );
-   flags.sbd_exchange_changed = itr != o.props.end();
-   if( flags.sbd_exchange_changed )
-   {
-      fc::raw::unpack_from_vector( itr->second, sbd_exchange_rate );
-      last_sbd_exchange_update = _db.head_block_time();
-   }
+//    itr = o.props.find( "sbd_exchange_rate" );
+//    flags.sbd_exchange_changed = itr != o.props.end();
+//    if( flags.sbd_exchange_changed )
+//    {
+//       fc::raw::unpack_from_vector( itr->second, sbd_exchange_rate );
+//       last_sbd_exchange_update = _db.head_block_time();
+//    }
 
    itr = o.props.find( "url" );
    flags.url_changed = itr != o.props.end();
@@ -236,10 +236,10 @@ void witness_set_properties_evaluator::do_apply( const witness_set_properties_op
          w.props.maximum_block_size = props.maximum_block_size;
       }
 
-      if( flags.sbd_interest_changed )
-      {
-         w.props.sbd_interest_rate = props.sbd_interest_rate;
-      }
+//       if( flags.sbd_interest_changed )
+//       {
+//          w.props.sbd_interest_rate = props.sbd_interest_rate;
+//       }
 
       if( flags.account_subsidy_budget_changed )
       {
@@ -256,11 +256,11 @@ void witness_set_properties_evaluator::do_apply( const witness_set_properties_op
          w.signing_key = signing_key;
       }
 
-      if( flags.sbd_exchange_changed )
-      {
-         w.sbd_exchange_rate = sbd_exchange_rate;
-         w.last_sbd_exchange_update = last_sbd_exchange_update;
-      }
+//       if( flags.sbd_exchange_changed )
+//       {
+//          w.sbd_exchange_rate = sbd_exchange_rate;
+//          w.last_sbd_exchange_update = last_sbd_exchange_update;
+//       }
 
       if( flags.url_changed )
       {
@@ -491,112 +491,112 @@ void account_create_evaluator::do_apply( const account_create_operation& o )
    }
 }
 
-void account_create_with_delegation_evaluator::do_apply( const account_create_with_delegation_operation& o )
-{
-   FC_ASSERT( !_db.has_hardfork( COLAB_HARDFORK_0_20__1760 ), "Account creation with delegation is deprecated as of Hardfork 20" );
-
-   if( _db.has_hardfork( COLAB_HARDFORK_0_20__2651 ) || _db.is_producing() )
-   {
-      FC_TODO( "Move to validate() after HF20" );
-      FC_ASSERT( o.fee <= asset( COLAB_MAX_ACCOUNT_CREATION_FEE, CLC_SYMBOL ), "Account creation fee cannot be too large" );
-   }
-
-   const auto& creator = _db.get_account( o.creator );
-   const auto& props = _db.get_dynamic_global_properties();
-   const witness_schedule_object& wso = _db.get_witness_schedule_object();
-
-   FC_ASSERT( creator.balance >= o.fee, "Insufficient balance to create account.",
-               ( "creator.balance", creator.balance )
-               ( "required", o.fee ) );
-
-   FC_ASSERT( creator.vesting_shares - creator.delegated_vesting_shares - asset( creator.to_withdraw - creator.withdrawn, VESTS_SYMBOL ) >= o.delegation, "Insufficient vesting shares to delegate to new account.",
-               ( "creator.vesting_shares", creator.vesting_shares )
-               ( "creator.delegated_vesting_shares", creator.delegated_vesting_shares )( "required", o.delegation ) );
-
-   auto target_delegation = asset( wso.median_props.account_creation_fee.amount * COLAB_CREATE_ACCOUNT_WITH_COLAB_MODIFIER * COLAB_CREATE_ACCOUNT_DELEGATION_RATIO, CLC_SYMBOL ) * props.get_vesting_share_price();
-
-   auto current_delegation = asset( o.fee.amount * COLAB_CREATE_ACCOUNT_DELEGATION_RATIO, CLC_SYMBOL ) * props.get_vesting_share_price() + o.delegation;
-
-   FC_ASSERT( current_delegation >= target_delegation, "Inssufficient Delegation ${f} required, ${p} provided.",
-               ("f", target_delegation )
-               ( "p", current_delegation )
-               ( "account_creation_fee", wso.median_props.account_creation_fee )
-               ( "o.fee", o.fee )
-               ( "o.delegation", o.delegation ) );
-
-   FC_ASSERT( o.fee >= wso.median_props.account_creation_fee, "Insufficient Fee: ${f} required, ${p} provided.",
-               ("f", wso.median_props.account_creation_fee)
-               ("p", o.fee) );
-
-   FC_TODO( "Check and move to validate post HF20" );
-   if( _db.is_producing() || _db.has_hardfork( COLAB_HARDFORK_0_20 ) )
-   {
-      validate_auth_size( o.owner );
-      validate_auth_size( o.active );
-      validate_auth_size( o.posting );
-   }
-
-   for( const auto& a : o.owner.account_auths )
-   {
-      _db.get_account( a.first );
-   }
-
-   for( const auto& a : o.active.account_auths )
-   {
-      _db.get_account( a.first );
-   }
-
-   for( const auto& a : o.posting.account_auths )
-   {
-      _db.get_account( a.first );
-   }
-
-   _db.modify( creator, [&]( account_object& c )
-   {
-      c.balance -= o.fee;
-      c.delegated_vesting_shares += o.delegation;
-   });
-
-   if( _db.has_hardfork( COLAB_HARDFORK_0_20__1762 ) )
-   {
-      _db.adjust_balance( _db.get< account_object, by_name >( COLAB_NULL_ACCOUNT ), o.fee );
-   }
-
-   const auto& new_account = _db.create< account_object >( [&]( account_object& acc )
-   {
-      initialize_account_object( acc, o.new_account_name, o.memo_key, props, false /*mined*/, o.creator, _db.get_hardfork() );
-      acc.received_vesting_shares = o.delegation;
-
-      #ifndef IS_LOW_MEM
-         from_string( acc.json_metadata, o.json_metadata );
-      #endif
-   });
-
-   _db.create< account_authority_object >( [&]( account_authority_object& auth )
-   {
-      auth.account = o.new_account_name;
-      auth.owner = o.owner;
-      auth.active = o.active;
-      auth.posting = o.posting;
-      auth.last_owner_update = fc::time_point_sec::min();
-   });
-
-   if( o.delegation.amount > 0 || !_db.has_hardfork( COLAB_HARDFORK_0_19__997 ) )
-   {
-      _db.create< vesting_delegation_object >( [&]( vesting_delegation_object& vdo )
-      {
-         vdo.delegator = o.creator;
-         vdo.delegatee = o.new_account_name;
-         vdo.vesting_shares = o.delegation;
-         vdo.min_delegation_time = _db.head_block_time() + COLAB_CREATE_ACCOUNT_DELEGATION_TIME;
-      });
-   }
-
-   if( !_db.has_hardfork( COLAB_HARDFORK_0_20__1762 ) && o.fee.amount > 0 )
-   {
-      _db.create_vesting( new_account, o.fee );
-   }
-}
+// void account_create_with_delegation_evaluator::do_apply( const account_create_with_delegation_operation& o )
+// {
+//    FC_ASSERT( !_db.has_hardfork( COLAB_HARDFORK_0_20__1760 ), "Account creation with delegation is deprecated as of Hardfork 20" );
+// 
+//    if( _db.has_hardfork( COLAB_HARDFORK_0_20__2651 ) || _db.is_producing() )
+//    {
+//       FC_TODO( "Move to validate() after HF20" );
+//       FC_ASSERT( o.fee <= asset( COLAB_MAX_ACCOUNT_CREATION_FEE, CLC_SYMBOL ), "Account creation fee cannot be too large" );
+//    }
+// 
+//    const auto& creator = _db.get_account( o.creator );
+//    const auto& props = _db.get_dynamic_global_properties();
+//    const witness_schedule_object& wso = _db.get_witness_schedule_object();
+// 
+//    FC_ASSERT( creator.balance >= o.fee, "Insufficient balance to create account.",
+//                ( "creator.balance", creator.balance )
+//                ( "required", o.fee ) );
+// 
+//    FC_ASSERT( creator.vesting_shares - creator.delegated_vesting_shares - asset( creator.to_withdraw - creator.withdrawn, VESTS_SYMBOL ) >= o.delegation, "Insufficient vesting shares to delegate to new account.",
+//                ( "creator.vesting_shares", creator.vesting_shares )
+//                ( "creator.delegated_vesting_shares", creator.delegated_vesting_shares )( "required", o.delegation ) );
+// 
+//    auto target_delegation = asset( wso.median_props.account_creation_fee.amount * COLAB_CREATE_ACCOUNT_WITH_COLAB_MODIFIER * COLAB_CREATE_ACCOUNT_DELEGATION_RATIO, CLC_SYMBOL ) * props.get_vesting_share_price();
+// 
+//    auto current_delegation = asset( o.fee.amount * COLAB_CREATE_ACCOUNT_DELEGATION_RATIO, CLC_SYMBOL ) * props.get_vesting_share_price() + o.delegation;
+// 
+//    FC_ASSERT( current_delegation >= target_delegation, "Inssufficient Delegation ${f} required, ${p} provided.",
+//                ("f", target_delegation )
+//                ( "p", current_delegation )
+//                ( "account_creation_fee", wso.median_props.account_creation_fee )
+//                ( "o.fee", o.fee )
+//                ( "o.delegation", o.delegation ) );
+// 
+//    FC_ASSERT( o.fee >= wso.median_props.account_creation_fee, "Insufficient Fee: ${f} required, ${p} provided.",
+//                ("f", wso.median_props.account_creation_fee)
+//                ("p", o.fee) );
+// 
+//    FC_TODO( "Check and move to validate post HF20" );
+//    if( _db.is_producing() || _db.has_hardfork( COLAB_HARDFORK_0_20 ) )
+//    {
+//       validate_auth_size( o.owner );
+//       validate_auth_size( o.active );
+//       validate_auth_size( o.posting );
+//    }
+// 
+//    for( const auto& a : o.owner.account_auths )
+//    {
+//       _db.get_account( a.first );
+//    }
+// 
+//    for( const auto& a : o.active.account_auths )
+//    {
+//       _db.get_account( a.first );
+//    }
+// 
+//    for( const auto& a : o.posting.account_auths )
+//    {
+//       _db.get_account( a.first );
+//    }
+// 
+//    _db.modify( creator, [&]( account_object& c )
+//    {
+//       c.balance -= o.fee;
+//       c.delegated_vesting_shares += o.delegation;
+//    });
+// 
+//    if( _db.has_hardfork( COLAB_HARDFORK_0_20__1762 ) )
+//    {
+//       _db.adjust_balance( _db.get< account_object, by_name >( COLAB_NULL_ACCOUNT ), o.fee );
+//    }
+// 
+//    const auto& new_account = _db.create< account_object >( [&]( account_object& acc )
+//    {
+//       initialize_account_object( acc, o.new_account_name, o.memo_key, props, false /*mined*/, o.creator, _db.get_hardfork() );
+//       acc.received_vesting_shares = o.delegation;
+// 
+//       #ifndef IS_LOW_MEM
+//          from_string( acc.json_metadata, o.json_metadata );
+//       #endif
+//    });
+// 
+//    _db.create< account_authority_object >( [&]( account_authority_object& auth )
+//    {
+//       auth.account = o.new_account_name;
+//       auth.owner = o.owner;
+//       auth.active = o.active;
+//       auth.posting = o.posting;
+//       auth.last_owner_update = fc::time_point_sec::min();
+//    });
+// 
+//    if( o.delegation.amount > 0 || !_db.has_hardfork( COLAB_HARDFORK_0_19__997 ) )
+//    {
+//       _db.create< vesting_delegation_object >( [&]( vesting_delegation_object& vdo )
+//       {
+//          vdo.delegator = o.creator;
+//          vdo.delegatee = o.new_account_name;
+//          vdo.vesting_shares = o.delegation;
+//          vdo.min_delegation_time = _db.head_block_time() + COLAB_CREATE_ACCOUNT_DELEGATION_TIME;
+//       });
+//    }
+// 
+//    if( !_db.has_hardfork( COLAB_HARDFORK_0_20__1762 ) && o.fee.amount > 0 )
+//    {
+//       _db.create_vesting( new_account, o.fee );
+//    }
+// }
 
 
 void account_update_evaluator::do_apply( const account_update_operation& o )
@@ -1437,7 +1437,7 @@ void account_witness_proxy_evaluator::do_apply( const account_witness_proxy_oper
 
    /// remove all current votes
    std::array<share_type, COLAB_MAX_PROXY_RECURSION_DEPTH+1> delta;
-   delta[0] = -account.vesting_shares.amount;
+   delta[0] = -account.balance.amount;///account.vesting_shares.amount;///~~~~~CLC~~~~~
    for( int i = 0; i < COLAB_MAX_PROXY_RECURSION_DEPTH; ++i )
       delta[i+1] = -account.proxied_vsf_votes[i];
    _db.adjust_proxied_witness_votes( account, delta );
@@ -1598,11 +1598,6 @@ void colab_vote_evaluator( const vote_operation& o, database& _db )
 
    _db.modify( voter, [&]( account_object& a )
    {
-#if 0///~~~~~CLC~~~~~
-      util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
-      a.voting_manabar.regenerate_mana( params, now );
-#endif///~~~~~CLC~~~~~
-
 	  int64_t elapsed_seconds = (_db.head_block_time().sec_since_epoch() - voter.voting_manabar.last_update_time);
 	  int64_t regenerated_power = (COLAB_100_PERCENT * elapsed_seconds) / COLAB_VOTING_MANA_REGENERATION_SECONDS;
 	  a.voting_manabar.current_mana = std::min( int64_t(voter.voting_manabar.current_mana) + regenerated_power, int64_t(COLAB_100_PERCENT) );
@@ -1826,665 +1821,663 @@ void colab_vote_evaluator( const vote_operation& o, database& _db )
 ///~~~~~CLC~~~~~}
 
 #if 0//////~~~~~CLC~~~~~{
-void hf20_vote_evaluator( const vote_operation& o, database& _db )
-{
-	const auto& comment = _db.get_comment( o.author, o.permlink );
-   const auto& voter   = _db.get_account( o.voter );
-
-   FC_ASSERT( voter.can_vote, "Voter has declined their voting rights." );
-
-   if( o.weight > 0 ) FC_ASSERT( comment.allow_votes, "Votes are not allowed on the comment." );
-
-   if( _db.calculate_discussion_payout_time( comment ) == fc::time_point_sec::maximum() )
-   {
-#ifndef CLEAR_VOTES
-      const auto& comment_vote_idx = _db.get_index< comment_vote_index >().indices().get< by_comment_voter >();
-      auto itr = comment_vote_idx.find( std::make_tuple( comment.id, voter.id ) );
-
-      if( itr == comment_vote_idx.end() )
-         _db.create< comment_vote_object >( [&]( comment_vote_object& cvo )
-         {
-            cvo.voter = voter.id;
-            cvo.comment = comment.id;
-            cvo.vote_percent = o.weight;
-            cvo.last_update = _db.head_block_time();
-         });
-      else
-         _db.modify( *itr, [&]( comment_vote_object& cvo )
-         {
-            cvo.vote_percent = o.weight;
-            cvo.last_update = _db.head_block_time();
-         });
-#endif
-      return;
-   }
-   else
-   {
-      FC_ASSERT( _db.head_block_time() < comment.cashout_time, "Comment is actively being rewarded. Cannot vote on comment." );
-   }
-
-   const auto& comment_vote_idx = _db.get_index< comment_vote_index, by_comment_voter >();
-   auto itr = comment_vote_idx.find( std::make_tuple( comment.id, voter.id ) );
-
-   // Lazily delete vote
-   if( itr != comment_vote_idx.end() && itr->num_changes == -1 )
-   {
-      FC_TODO( "This looks suspicious. We might not be deleting vote objects that we should be on nodes that are configured to clear votes" );
-      FC_ASSERT( false, "Cannot vote again on a comment after payout." );
-
-      _db.remove( *itr );
-      itr = comment_vote_idx.end();
-   }
-
-   auto now = _db.head_block_time();
-   FC_ASSERT( ( now - voter.last_vote_time ).to_seconds() >= COLAB_MIN_VOTE_INTERVAL_SEC, "Can only vote once every 3 seconds." );
-
-   _db.modify( voter, [&]( account_object& a )
-   {
-      util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
-      a.voting_manabar.regenerate_mana( params, now );
-   });
-   FC_ASSERT( voter.voting_manabar.current_mana > 0, "Account does not have enough mana to vote." );
-
-   int16_t abs_weight = abs( o.weight );
-   uint128_t used_mana = ( uint128_t( voter.voting_manabar.current_mana ) * abs_weight * 60 * 60 * 24 ) / COLAB_100_PERCENT;
-
-   const dynamic_global_property_object& dgpo = _db.get_dynamic_global_properties();
-
-   int64_t max_vote_denom = dgpo.vote_power_reserve_rate * COLAB_VOTING_MANA_REGENERATION_SECONDS;
-   FC_ASSERT( max_vote_denom > 0 );
-
-   used_mana = ( used_mana + max_vote_denom - 1 ) / max_vote_denom;
-   FC_ASSERT( voter.voting_manabar.has_mana( used_mana.to_uint64() ), "Account does not have enough mana to vote." );
-
-   int64_t abs_rshares = used_mana.to_uint64();
-
-   abs_rshares -= COLAB_VOTE_DUST_THRESHOLD;
-   abs_rshares = std::max( int64_t(0), abs_rshares );
-
-   uint32_t cashout_delta = ( comment.cashout_time - _db.head_block_time() ).to_seconds();
-
-   if( cashout_delta < COLAB_UPVOTE_LOCKOUT_SECONDS )
-   {
-      abs_rshares = (int64_t) ( ( uint128_t( abs_rshares ) * cashout_delta ) / COLAB_UPVOTE_LOCKOUT_SECONDS ).to_uint64();
-   }
-
-   if( itr == comment_vote_idx.end() )
-   {
-      FC_ASSERT( o.weight != 0, "Vote weight cannot be 0." );
-      /// this is the rshares voting for or against the post
-
-      int64_t rshares = o.weight < 0 ? -abs_rshares : abs_rshares;
-
-      _db.modify( voter, [&]( account_object& a )
-      {
-         a.voting_manabar.use_mana( used_mana.to_uint64() );
-         a.last_vote_time = _db.head_block_time();
-      });
-
-      /// if the current net_rshares is less than 0, the post is getting 0 rewards so it is not factored into total rshares^2
-      fc::uint128_t old_rshares = std::max(comment.net_rshares.value, int64_t(0));
-      const auto& root = _db.get( comment.root_comment );
-
-      auto old_vote_rshares = comment.vote_rshares;
-
-      _db.modify( comment, [&]( comment_object& c )
-      {
-         c.net_rshares += rshares;
-         c.abs_rshares += abs_rshares;
-         if( rshares > 0 )
-            c.vote_rshares += rshares;
-         if( rshares > 0 )
-            c.net_votes++;
-         else
-            c.net_votes--;
-      });
-
-      _db.modify( root, [&]( comment_object& c )
-      {
-         c.children_abs_rshares += abs_rshares;
-      });
-
-      fc::uint128_t new_rshares = std::max( comment.net_rshares.value, int64_t(0) );
-
-      /// calculate rshares2 value
-      new_rshares = util::evaluate_reward_curve( new_rshares );
-      old_rshares = util::evaluate_reward_curve( old_rshares );
-
-      uint64_t max_vote_weight = 0;
-
-      /** this verifies uniqueness of voter
-       *
-       *  cv.weight / c.total_vote_weight ==> % of rshares increase that is accounted for by the vote
-       *
-       *  W(R) = B * R / ( R + 2S )
-       *  W(R) is bounded above by B. B is fixed at 2^64 - 1, so all weights fit in a 64 bit integer.
-       *
-       *  The equation for an individual vote is:
-       *    W(R_N) - W(R_N-1), which is the delta increase of proportional weight
-       *
-       *  c.total_vote_weight =
-       *    W(R_1) - W(R_0) +
-       *    W(R_2) - W(R_1) + ...
-       *    W(R_N) - W(R_N-1) = W(R_N) - W(R_0)
-       *
-       *  Since W(R_0) = 0, c.total_vote_weight is also bounded above by B and will always fit in a 64 bit integer.
-       *
-      **/
-      _db.create<comment_vote_object>( [&]( comment_vote_object& cv )
-      {
-         cv.voter   = voter.id;
-         cv.comment = comment.id;
-         cv.rshares = rshares;
-         cv.vote_percent = o.weight;
-         cv.last_update = _db.head_block_time();
-
-         bool curation_reward_eligible = rshares > 0 && (comment.last_payout == fc::time_point_sec()) && comment.allow_curation_rewards;
-
-         if( curation_reward_eligible )
-         {
-            curation_reward_eligible = _db.get_curation_rewards_percent( comment ) > 0;
-         }
-
-         if( curation_reward_eligible )
-         {
-            // cv.weight = W(R_1) - W(R_0)
-            const auto& reward_fund = _db.get_reward_fund( comment );
-            auto curve = reward_fund.curation_reward_curve;
-            uint64_t old_weight = util::evaluate_reward_curve( old_vote_rshares.value, curve, reward_fund.content_constant ).to_uint64();
-            uint64_t new_weight = util::evaluate_reward_curve( comment.vote_rshares.value, curve, reward_fund.content_constant ).to_uint64();
-            cv.weight = new_weight - old_weight;
-
-            max_vote_weight = cv.weight;
-
-            /// discount weight by time
-            uint128_t w(max_vote_weight);
-            uint64_t delta_t = std::min( uint64_t((cv.last_update - comment.created).to_seconds()), uint64_t( dgpo.reverse_auction_seconds ) );
-
-            w *= delta_t;
-            w /= dgpo.reverse_auction_seconds;
-            cv.weight = w.to_uint64();
-         }
-         else
-         {
-            cv.weight = 0;
-         }
-      });
-
-      if( max_vote_weight ) // Optimization
-      {
-         _db.modify( comment, [&]( comment_object& c )
-         {
-            c.total_vote_weight += max_vote_weight;
-         });
-      }
-   }
-   else
-   {
-      FC_ASSERT( itr->num_changes < COLAB_MAX_VOTE_CHANGES, "Voter has used the maximum number of vote changes on this comment." );
-      FC_ASSERT( itr->vote_percent != o.weight, "Your current vote on this comment is identical to this vote." );
-
-      int64_t rshares = o.weight < 0 ? -abs_rshares : abs_rshares;
-
-      _db.modify( voter, [&]( account_object& a )
-      {
-         a.voting_manabar.use_mana( used_mana.to_uint64() );
-         a.last_vote_time = _db.head_block_time();
-      });
-
-      /// if the current net_rshares is less than 0, the post is getting 0 rewards so it is not factored into total rshares^2
-      fc::uint128_t old_rshares = std::max( comment.net_rshares.value, int64_t( 0 ) );
-      const auto& root = _db.get( comment.root_comment );
-
-      _db.modify( comment, [&]( comment_object& c )
-      {
-         c.net_rshares -= itr->rshares;
-         c.net_rshares += rshares;
-         c.abs_rshares += abs_rshares;
-
-         /// TODO: figure out how to handle remove a vote (rshares == 0 )
-         if( rshares > 0 && itr->rshares < 0 )
-            c.net_votes += 2;
-         else if( rshares > 0 && itr->rshares == 0 )
-            c.net_votes += 1;
-         else if( rshares == 0 && itr->rshares < 0 )
-            c.net_votes += 1;
-         else if( rshares == 0 && itr->rshares > 0 )
-            c.net_votes -= 1;
-         else if( rshares < 0 && itr->rshares == 0 )
-            c.net_votes -= 1;
-         else if( rshares < 0 && itr->rshares > 0 )
-            c.net_votes -= 2;
-      });
-
-      _db.modify( root, [&]( comment_object& c )
-      {
-         c.children_abs_rshares += abs_rshares;
-      });
-
-      fc::uint128_t new_rshares = std::max( comment.net_rshares.value, int64_t(0));
-
-      /// calculate rshares2 value
-      new_rshares = util::evaluate_reward_curve( new_rshares );
-      old_rshares = util::evaluate_reward_curve( old_rshares );
-
-      _db.modify( comment, [&]( comment_object& c )
-      {
-         c.total_vote_weight -= itr->weight;
-      });
-
-      _db.modify( *itr, [&]( comment_vote_object& cv )
-      {
-         cv.rshares = rshares;
-         cv.vote_percent = o.weight;
-         cv.last_update = _db.head_block_time();
-         cv.weight = 0;
-         cv.num_changes += 1;
-      });
-   }
-}
-
-void pre_hf20_vote_evaluator( const vote_operation& o, database& _db )
-{
-   const auto& comment = _db.get_comment( o.author, o.permlink );
-   const auto& voter   = _db.get_account( o.voter );
-
-   FC_ASSERT( voter.can_vote, "Voter has declined their voting rights." );
-
-   if( o.weight > 0 ) FC_ASSERT( comment.allow_votes, "Votes are not allowed on the comment." );
-
-   if( _db.has_hardfork( COLAB_HARDFORK_0_12__177 ) && _db.calculate_discussion_payout_time( comment ) == fc::time_point_sec::maximum() )
-   {
-#ifndef CLEAR_VOTES
-      const auto& comment_vote_idx = _db.get_index< comment_vote_index >().indices().get< by_comment_voter >();
-      auto itr = comment_vote_idx.find( std::make_tuple( comment.id, voter.id ) );
-
-      if( itr == comment_vote_idx.end() )
-         _db.create< comment_vote_object >( [&]( comment_vote_object& cvo )
-         {
-            cvo.voter = voter.id;
-            cvo.comment = comment.id;
-            cvo.vote_percent = o.weight;
-            cvo.last_update = _db.head_block_time();
-         });
-      else
-         _db.modify( *itr, [&]( comment_vote_object& cvo )
-         {
-            cvo.vote_percent = o.weight;
-            cvo.last_update = _db.head_block_time();
-         });
-#endif
-      return;
-   }
-
-   const auto& comment_vote_idx = _db.get_index< comment_vote_index >().indices().get< by_comment_voter >();
-   auto itr = comment_vote_idx.find( std::make_tuple( comment.id, voter.id ) );
-
-   int64_t elapsed_seconds = _db.head_block_time().sec_since_epoch() - voter.voting_manabar.last_update_time;
-
-   if( _db.has_hardfork( COLAB_HARDFORK_0_11 ) )
-      FC_ASSERT( elapsed_seconds >= COLAB_MIN_VOTE_INTERVAL_SEC, "Can only vote once every 3 seconds." );
-
-   int64_t regenerated_power = (COLAB_100_PERCENT * elapsed_seconds) / COLAB_VOTING_MANA_REGENERATION_SECONDS;
-   int64_t current_power     = std::min( int64_t(voter.voting_manabar.current_mana) + regenerated_power, int64_t(COLAB_100_PERCENT) );
-   FC_ASSERT( current_power > 0, "Account currently does not have voting power." );
-
-   int64_t  abs_weight    = abs(o.weight);
-   // Less rounding error would occur if we did the division last, but we need to maintain backward
-   // compatibility with the previous implementation which was replaced in #1285
-   int64_t  used_power  = ((current_power * abs_weight) / COLAB_100_PERCENT) * (60*60*24);
-
-   const dynamic_global_property_object& dgpo = _db.get_dynamic_global_properties();
-
-   // The second multiplication is rounded up as of HF 259
-   int64_t max_vote_denom = dgpo.vote_power_reserve_rate * COLAB_VOTING_MANA_REGENERATION_SECONDS;
-   FC_ASSERT( max_vote_denom > 0 );
-
-   if( !_db.has_hardfork( COLAB_HARDFORK_0_14__259 ) )
-   {
-      used_power = (used_power / max_vote_denom)+1;
-   }
-   else
-   {
-      used_power = (used_power + max_vote_denom - 1) / max_vote_denom;
-   }
-   FC_ASSERT( used_power <= current_power, "Account does not have enough power to vote." );
-
-   int64_t abs_rshares    = ((uint128_t( _db.get_effective_vesting_shares( voter, VESTS_SYMBOL ).amount.value ) * used_power) / (COLAB_100_PERCENT)).to_uint64();
-   if( !_db.has_hardfork( COLAB_HARDFORK_0_14__259 ) && abs_rshares == 0 ) abs_rshares = 1;
-
-   if( _db.has_hardfork( COLAB_HARDFORK_0_20__1764 ) )
-   {
-      abs_rshares -= COLAB_VOTE_DUST_THRESHOLD;
-      abs_rshares = std::max( int64_t(0), abs_rshares );
-   }
-   else if( _db.has_hardfork( COLAB_HARDFORK_0_14__259 ) )
-   {
-      FC_ASSERT( abs_rshares > COLAB_VOTE_DUST_THRESHOLD || o.weight == 0, "Voting weight is too small, please accumulate more voting power or colab power." );
-   }
-   else if( _db.has_hardfork( COLAB_HARDFORK_0_13__248 ) )
-   {
-      FC_ASSERT( abs_rshares > COLAB_VOTE_DUST_THRESHOLD || abs_rshares == 1, "Voting weight is too small, please accumulate more voting power or colab power." );
-   }
-
-
-
-   // Lazily delete vote
-   if( itr != comment_vote_idx.end() && itr->num_changes == -1 )
-   {
-      if( _db.has_hardfork( COLAB_HARDFORK_0_12__177 ) )
-         FC_ASSERT( false, "Cannot vote again on a comment after payout." );
-
-      _db.remove( *itr );
-      itr = comment_vote_idx.end();
-   }
-
-   if( itr == comment_vote_idx.end() )
-   {
-      FC_ASSERT( o.weight != 0, "Vote weight cannot be 0." );
-      /// this is the rshares voting for or against the post
-      int64_t rshares        = o.weight < 0 ? -abs_rshares : abs_rshares;
-
-      if( rshares > 0 )
-      {
-         if( _db.has_hardfork( COLAB_HARDFORK_0_17__900 ) )
-            FC_ASSERT( _db.head_block_time() < comment.cashout_time - COLAB_UPVOTE_LOCKOUT_HF17, "Cannot increase payout within last twelve hours before payout." );
-         else if( _db.has_hardfork( COLAB_HARDFORK_0_7 ) )
-            FC_ASSERT( _db.head_block_time() < _db.calculate_discussion_payout_time( comment ) - COLAB_UPVOTE_LOCKOUT_HF7, "Cannot increase payout within last minute before payout." );
-      }
-
-      //used_power /= (50*7); /// a 100% vote means use .28% of voting power which should force users to spread their votes around over 50+ posts day for a week
-      //if( used_power == 0 ) used_power = 1;
-
-      _db.modify( voter, [&]( account_object& a ){
-         a.voting_manabar.current_mana = current_power - used_power;
-         a.last_vote_time = _db.head_block_time();
-         a.voting_manabar.last_update_time = a.last_vote_time.sec_since_epoch();
-      });
-
-      /// if the current net_rshares is less than 0, the post is getting 0 rewards so it is not factored into total rshares^2
-      fc::uint128_t old_rshares = std::max(comment.net_rshares.value, int64_t(0));
-      const auto& root = _db.get( comment.root_comment );
-      auto old_root_abs_rshares = root.children_abs_rshares.value;
-
-      fc::uint128_t avg_cashout_sec;
-
-      if( !_db.has_hardfork( COLAB_HARDFORK_0_17__769 ) )
-      {
-         fc::uint128_t cur_cashout_time_sec = _db.calculate_discussion_payout_time( comment ).sec_since_epoch();
-         fc::uint128_t new_cashout_time_sec;
-
-         if( _db.has_hardfork( COLAB_HARDFORK_0_12__177 ) && !_db.has_hardfork( COLAB_HARDFORK_0_13__257)  )
-            new_cashout_time_sec = _db.head_block_time().sec_since_epoch() + COLAB_CASHOUT_WINDOW_SECONDS_PRE_HF17;
-         else
-            new_cashout_time_sec = _db.head_block_time().sec_since_epoch() + COLAB_CASHOUT_WINDOW_SECONDS_PRE_HF12;
-
-         avg_cashout_sec = ( cur_cashout_time_sec * old_root_abs_rshares + new_cashout_time_sec * abs_rshares ) / ( old_root_abs_rshares + abs_rshares );
-      }
-
-      FC_ASSERT( abs_rshares > 0, "Cannot vote with 0 rshares." );
-
-      auto old_vote_rshares = comment.vote_rshares;
-
-      _db.modify( comment, [&]( comment_object& c ){
-         c.net_rshares += rshares;
-         c.abs_rshares += abs_rshares;
-         if( rshares > 0 )
-            c.vote_rshares += rshares;
-         if( rshares > 0 )
-            c.net_votes++;
-         else
-            c.net_votes--;
-         if( !_db.has_hardfork( COLAB_HARDFORK_0_6__114 ) && c.net_rshares == -c.abs_rshares) FC_ASSERT( c.net_votes < 0, "Comment has negative net votes?" );
-      });
-
-      _db.modify( root, [&]( comment_object& c )
-      {
-         c.children_abs_rshares += abs_rshares;
-
-         if( !_db.has_hardfork( COLAB_HARDFORK_0_17__769 ) )
-         {
-            if( _db.has_hardfork( COLAB_HARDFORK_0_12__177 ) && c.last_payout > fc::time_point_sec::min() )
-               c.cashout_time = c.last_payout + COLAB_SECOND_CASHOUT_WINDOW;
-            else
-               c.cashout_time = fc::time_point_sec( std::min( uint32_t( avg_cashout_sec.to_uint64() ), c.max_cashout_time.sec_since_epoch() ) );
-
-            if( c.max_cashout_time == fc::time_point_sec::maximum() )
-               c.max_cashout_time = _db.head_block_time() + fc::seconds( COLAB_MAX_CASHOUT_WINDOW_SECONDS );
-         }
-      });
-
-      fc::uint128_t new_rshares = std::max( comment.net_rshares.value, int64_t(0));
-
-      /// calculate rshares2 value
-      new_rshares = util::evaluate_reward_curve( new_rshares );
-      old_rshares = util::evaluate_reward_curve( old_rshares );
-
-      uint64_t max_vote_weight = 0;
-
-      /** this verifies uniqueness of voter
-       *
-       *  cv.weight / c.total_vote_weight ==> % of rshares increase that is accounted for by the vote
-       *
-       *  W(R) = B * R / ( R + 2S )
-       *  W(R) is bounded above by B. B is fixed at 2^64 - 1, so all weights fit in a 64 bit integer.
-       *
-       *  The equation for an individual vote is:
-       *    W(R_N) - W(R_N-1), which is the delta increase of proportional weight
-       *
-       *  c.total_vote_weight =
-       *    W(R_1) - W(R_0) +
-       *    W(R_2) - W(R_1) + ...
-       *    W(R_N) - W(R_N-1) = W(R_N) - W(R_0)
-       *
-       *  Since W(R_0) = 0, c.total_vote_weight is also bounded above by B and will always fit in a 64 bit integer.
-       *
-      **/
-      _db.create<comment_vote_object>( [&]( comment_vote_object& cv ){
-         cv.voter   = voter.id;
-         cv.comment = comment.id;
-         cv.rshares = rshares;
-         cv.vote_percent = o.weight;
-         cv.last_update = _db.head_block_time();
-
-         bool curation_reward_eligible = rshares > 0 && (comment.last_payout == fc::time_point_sec()) && comment.allow_curation_rewards;
-
-         if( curation_reward_eligible && _db.has_hardfork( COLAB_HARDFORK_0_17__774 ) )
-            curation_reward_eligible = _db.get_curation_rewards_percent( comment ) > 0;
-
-         if( curation_reward_eligible )
-         {
-            if( comment.created < fc::time_point_sec(COLAB_HARDFORK_0_6_REVERSE_AUCTION_TIME) ) {
-               u512 rshares3(rshares);
-               u256 total2( comment.abs_rshares.value );
-
-               if( !_db.has_hardfork( COLAB_HARDFORK_0_1 ) )
-               {
-                  rshares3 *= 1000000;
-                  total2 *= 1000000;
-               }
-
-               rshares3 = rshares3 * rshares3 * rshares3;
-
-               total2 *= total2;
-               cv.weight = static_cast<uint64_t>( rshares3 / total2 );
-            } else {// cv.weight = W(R_1) - W(R_0)
-               const uint128_t two_s = 2 * util::get_content_constant_s();
-               if( _db.has_hardfork( COLAB_HARDFORK_0_17__774 ) )
-               {
-                  const auto& reward_fund = _db.get_reward_fund( comment );
-                  auto curve = !_db.has_hardfork( COLAB_HARDFORK_0_19__1052 ) && comment.created > COLAB_HF_19_SQRT_PRE_CALC
-                                 ? curve_id::square_root : reward_fund.curation_reward_curve;
-                  uint64_t old_weight = util::evaluate_reward_curve( old_vote_rshares.value, curve, reward_fund.content_constant ).to_uint64();
-                  uint64_t new_weight = util::evaluate_reward_curve( comment.vote_rshares.value, curve, reward_fund.content_constant ).to_uint64();
-                  cv.weight = new_weight - old_weight;
-               }
-               else if ( _db.has_hardfork( COLAB_HARDFORK_0_1 ) )
-               {
-                  uint64_t old_weight = ( ( std::numeric_limits< uint64_t >::max() * fc::uint128_t( old_vote_rshares.value ) ) / ( two_s + old_vote_rshares.value ) ).to_uint64();
-                  uint64_t new_weight = ( ( std::numeric_limits< uint64_t >::max() * fc::uint128_t( comment.vote_rshares.value ) ) / ( two_s + comment.vote_rshares.value ) ).to_uint64();
-                  cv.weight = new_weight - old_weight;
-               }
-               else
-               {
-                  uint64_t old_weight = ( ( std::numeric_limits< uint64_t >::max() * fc::uint128_t( 1000000 * old_vote_rshares.value ) ) / ( two_s + ( 1000000 * old_vote_rshares.value ) ) ).to_uint64();
-                  uint64_t new_weight = ( ( std::numeric_limits< uint64_t >::max() * fc::uint128_t( 1000000 * comment.vote_rshares.value ) ) / ( two_s + ( 1000000 * comment.vote_rshares.value ) ) ).to_uint64();
-                  cv.weight = new_weight - old_weight;
-               }
-            }
-
-            max_vote_weight = cv.weight;
-
-            if( _db.head_block_time() > fc::time_point_sec(COLAB_HARDFORK_0_6_REVERSE_AUCTION_TIME) )  /// start enforcing this prior to the hardfork
-            {
-               /// discount weight by time
-               uint128_t w(max_vote_weight);
-               uint64_t delta_t = std::min( uint64_t((cv.last_update - comment.created).to_seconds()), dgpo.reverse_auction_seconds );
-
-               w *= delta_t;
-               w /= dgpo.reverse_auction_seconds;
-               cv.weight = w.to_uint64();
-            }
-         }
-         else
-         {
-            cv.weight = 0;
-         }
-      });
-
-      if( max_vote_weight ) // Optimization
-      {
-         _db.modify( comment, [&]( comment_object& c )
-         {
-            c.total_vote_weight += max_vote_weight;
-         });
-      }
-      if( !_db.has_hardfork( COLAB_HARDFORK_0_17__774) )
-         _db.adjust_rshares2( comment, old_rshares, new_rshares );
-   }
-   else
-   {
-      FC_ASSERT( itr->num_changes < COLAB_MAX_VOTE_CHANGES, "Voter has used the maximum number of vote changes on this comment." );
-
-      if( _db.has_hardfork( COLAB_HARDFORK_0_6__112 ) )
-         FC_ASSERT( itr->vote_percent != o.weight, "You have already voted in a similar way." );
-
-      /// this is the rshares voting for or against the post
-      int64_t rshares        = o.weight < 0 ? -abs_rshares : abs_rshares;
-
-      if( itr->rshares < rshares )
-      {
-         if( _db.has_hardfork( COLAB_HARDFORK_0_17__900 ) )
-            FC_ASSERT( _db.head_block_time() < comment.cashout_time - COLAB_UPVOTE_LOCKOUT_HF17, "Cannot increase payout within last twelve hours before payout." );
-         else if( _db.has_hardfork( COLAB_HARDFORK_0_7 ) )
-            FC_ASSERT( _db.head_block_time() < _db.calculate_discussion_payout_time( comment ) - COLAB_UPVOTE_LOCKOUT_HF7, "Cannot increase payout within last minute before payout." );
-      }
-
-      _db.modify( voter, [&]( account_object& a ){
-         a.voting_manabar.current_mana = current_power - used_power;
-         a.last_vote_time = _db.head_block_time();
-         a.voting_manabar.last_update_time = a.last_vote_time.sec_since_epoch();
-      });
-
-      /// if the current net_rshares is less than 0, the post is getting 0 rewards so it is not factored into total rshares^2
-      fc::uint128_t old_rshares = std::max(comment.net_rshares.value, int64_t(0));
-      const auto& root = _db.get( comment.root_comment );
-      auto old_root_abs_rshares = root.children_abs_rshares.value;
-
-      fc::uint128_t avg_cashout_sec;
-
-      if( !_db.has_hardfork( COLAB_HARDFORK_0_17__769 ) )
-      {
-         fc::uint128_t cur_cashout_time_sec = _db.calculate_discussion_payout_time( comment ).sec_since_epoch();
-         fc::uint128_t new_cashout_time_sec;
-
-         if( _db.has_hardfork( COLAB_HARDFORK_0_12__177 ) && ! _db.has_hardfork( COLAB_HARDFORK_0_13__257 )  )
-            new_cashout_time_sec = _db.head_block_time().sec_since_epoch() + COLAB_CASHOUT_WINDOW_SECONDS_PRE_HF17;
-         else
-            new_cashout_time_sec = _db.head_block_time().sec_since_epoch() + COLAB_CASHOUT_WINDOW_SECONDS_PRE_HF12;
-
-         if( _db.has_hardfork( COLAB_HARDFORK_0_14__259 ) && abs_rshares == 0 )
-            avg_cashout_sec = cur_cashout_time_sec;
-         else
-            avg_cashout_sec = ( cur_cashout_time_sec * old_root_abs_rshares + new_cashout_time_sec * abs_rshares ) / ( old_root_abs_rshares + abs_rshares );
-      }
-
-      _db.modify( comment, [&]( comment_object& c )
-      {
-         c.net_rshares -= itr->rshares;
-         c.net_rshares += rshares;
-         c.abs_rshares += abs_rshares;
-
-         /// TODO: figure out how to handle remove a vote (rshares == 0 )
-         if( rshares > 0 && itr->rshares < 0 )
-            c.net_votes += 2;
-         else if( rshares > 0 && itr->rshares == 0 )
-            c.net_votes += 1;
-         else if( rshares == 0 && itr->rshares < 0 )
-            c.net_votes += 1;
-         else if( rshares == 0 && itr->rshares > 0 )
-            c.net_votes -= 1;
-         else if( rshares < 0 && itr->rshares == 0 )
-            c.net_votes -= 1;
-         else if( rshares < 0 && itr->rshares > 0 )
-            c.net_votes -= 2;
-      });
-
-      _db.modify( root, [&]( comment_object& c )
-      {
-         c.children_abs_rshares += abs_rshares;
-
-         if( !_db.has_hardfork( COLAB_HARDFORK_0_17__769 ) )
-         {
-            if( _db.has_hardfork( COLAB_HARDFORK_0_12__177 ) && c.last_payout > fc::time_point_sec::min() )
-               c.cashout_time = c.last_payout + COLAB_SECOND_CASHOUT_WINDOW;
-            else
-               c.cashout_time = fc::time_point_sec( std::min( uint32_t( avg_cashout_sec.to_uint64() ), c.max_cashout_time.sec_since_epoch() ) );
-
-            if( c.max_cashout_time == fc::time_point_sec::maximum() )
-               c.max_cashout_time = _db.head_block_time() + fc::seconds( COLAB_MAX_CASHOUT_WINDOW_SECONDS );
-         }
-      });
-
-      fc::uint128_t new_rshares = std::max( comment.net_rshares.value, int64_t(0));
-
-      /// calculate rshares2 value
-      new_rshares = util::evaluate_reward_curve( new_rshares );
-      old_rshares = util::evaluate_reward_curve( old_rshares );
-
-
-      _db.modify( comment, [&]( comment_object& c )
-      {
-         c.total_vote_weight -= itr->weight;
-      });
-
-      _db.modify( *itr, [&]( comment_vote_object& cv )
-      {
-         cv.rshares = rshares;
-         cv.vote_percent = o.weight;
-         cv.last_update = _db.head_block_time();
-         cv.weight = 0;
-         cv.num_changes += 1;
-      });
-
-      if( !_db.has_hardfork( COLAB_HARDFORK_0_17__774) )
-         _db.adjust_rshares2( comment, old_rshares, new_rshares );
-   }
-}
+// void hf20_vote_evaluator( const vote_operation& o, database& _db )
+// {
+// 	const auto& comment = _db.get_comment( o.author, o.permlink );
+//    const auto& voter   = _db.get_account( o.voter );
+// 
+//    FC_ASSERT( voter.can_vote, "Voter has declined their voting rights." );
+// 
+//    if( o.weight > 0 ) FC_ASSERT( comment.allow_votes, "Votes are not allowed on the comment." );
+// 
+//    if( _db.calculate_discussion_payout_time( comment ) == fc::time_point_sec::maximum() )
+//    {
+// #ifndef CLEAR_VOTES
+//       const auto& comment_vote_idx = _db.get_index< comment_vote_index >().indices().get< by_comment_voter >();
+//       auto itr = comment_vote_idx.find( std::make_tuple( comment.id, voter.id ) );
+// 
+//       if( itr == comment_vote_idx.end() )
+//          _db.create< comment_vote_object >( [&]( comment_vote_object& cvo )
+//          {
+//             cvo.voter = voter.id;
+//             cvo.comment = comment.id;
+//             cvo.vote_percent = o.weight;
+//             cvo.last_update = _db.head_block_time();
+//          });
+//       else
+//          _db.modify( *itr, [&]( comment_vote_object& cvo )
+//          {
+//             cvo.vote_percent = o.weight;
+//             cvo.last_update = _db.head_block_time();
+//          });
+// #endif
+//       return;
+//    }
+//    else
+//    {
+//       FC_ASSERT( _db.head_block_time() < comment.cashout_time, "Comment is actively being rewarded. Cannot vote on comment." );
+//    }
+// 
+//    const auto& comment_vote_idx = _db.get_index< comment_vote_index, by_comment_voter >();
+//    auto itr = comment_vote_idx.find( std::make_tuple( comment.id, voter.id ) );
+// 
+//    // Lazily delete vote
+//    if( itr != comment_vote_idx.end() && itr->num_changes == -1 )
+//    {
+//       FC_TODO( "This looks suspicious. We might not be deleting vote objects that we should be on nodes that are configured to clear votes" );
+//       FC_ASSERT( false, "Cannot vote again on a comment after payout." );
+// 
+//       _db.remove( *itr );
+//       itr = comment_vote_idx.end();
+//    }
+// 
+//    auto now = _db.head_block_time();
+//    FC_ASSERT( ( now - voter.last_vote_time ).to_seconds() >= COLAB_MIN_VOTE_INTERVAL_SEC, "Can only vote once every 3 seconds." );
+// 
+//    _db.modify( voter, [&]( account_object& a )
+//    {
+//       util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
+//       a.voting_manabar.regenerate_mana( params, now );
+//    });
+//    FC_ASSERT( voter.voting_manabar.current_mana > 0, "Account does not have enough mana to vote." );
+// 
+//    int16_t abs_weight = abs( o.weight );
+//    uint128_t used_mana = ( uint128_t( voter.voting_manabar.current_mana ) * abs_weight * 60 * 60 * 24 ) / COLAB_100_PERCENT;
+// 
+//    const dynamic_global_property_object& dgpo = _db.get_dynamic_global_properties();
+// 
+//    int64_t max_vote_denom = dgpo.vote_power_reserve_rate * COLAB_VOTING_MANA_REGENERATION_SECONDS;
+//    FC_ASSERT( max_vote_denom > 0 );
+// 
+//    used_mana = ( used_mana + max_vote_denom - 1 ) / max_vote_denom;
+//    FC_ASSERT( voter.voting_manabar.has_mana( used_mana.to_uint64() ), "Account does not have enough mana to vote." );
+// 
+//    int64_t abs_rshares = used_mana.to_uint64();
+// 
+//    abs_rshares -= COLAB_VOTE_DUST_THRESHOLD;
+//    abs_rshares = std::max( int64_t(0), abs_rshares );
+// 
+//    uint32_t cashout_delta = ( comment.cashout_time - _db.head_block_time() ).to_seconds();
+// 
+//    if( cashout_delta < COLAB_UPVOTE_LOCKOUT_SECONDS )
+//    {
+//       abs_rshares = (int64_t) ( ( uint128_t( abs_rshares ) * cashout_delta ) / COLAB_UPVOTE_LOCKOUT_SECONDS ).to_uint64();
+//    }
+// 
+//    if( itr == comment_vote_idx.end() )
+//    {
+//       FC_ASSERT( o.weight != 0, "Vote weight cannot be 0." );
+//       /// this is the rshares voting for or against the post
+// 
+//       int64_t rshares = o.weight < 0 ? -abs_rshares : abs_rshares;
+// 
+//       _db.modify( voter, [&]( account_object& a )
+//       {
+//          a.voting_manabar.use_mana( used_mana.to_uint64() );
+//          a.last_vote_time = _db.head_block_time();
+//       });
+// 
+//       /// if the current net_rshares is less than 0, the post is getting 0 rewards so it is not factored into total rshares^2
+//       fc::uint128_t old_rshares = std::max(comment.net_rshares.value, int64_t(0));
+//       const auto& root = _db.get( comment.root_comment );
+// 
+//       auto old_vote_rshares = comment.vote_rshares;
+// 
+//       _db.modify( comment, [&]( comment_object& c )
+//       {
+//          c.net_rshares += rshares;
+//          c.abs_rshares += abs_rshares;
+//          if( rshares > 0 )
+//             c.vote_rshares += rshares;
+//          if( rshares > 0 )
+//             c.net_votes++;
+//          else
+//             c.net_votes--;
+//       });
+// 
+//       _db.modify( root, [&]( comment_object& c )
+//       {
+//          c.children_abs_rshares += abs_rshares;
+//       });
+// 
+//       fc::uint128_t new_rshares = std::max( comment.net_rshares.value, int64_t(0) );
+// 
+//       /// calculate rshares2 value
+//       new_rshares = util::evaluate_reward_curve( new_rshares );
+//       old_rshares = util::evaluate_reward_curve( old_rshares );
+// 
+//       uint64_t max_vote_weight = 0;
+// 
+//       /** this verifies uniqueness of voter
+//        *
+//        *  cv.weight / c.total_vote_weight ==> % of rshares increase that is accounted for by the vote
+//        *
+//        *  W(R) = B * R / ( R + 2S )
+//        *  W(R) is bounded above by B. B is fixed at 2^64 - 1, so all weights fit in a 64 bit integer.
+//        *
+//        *  The equation for an individual vote is:
+//        *    W(R_N) - W(R_N-1), which is the delta increase of proportional weight
+//        *
+//        *  c.total_vote_weight =
+//        *    W(R_1) - W(R_0) +
+//        *    W(R_2) - W(R_1) + ...
+//        *    W(R_N) - W(R_N-1) = W(R_N) - W(R_0)
+//        *
+//        *  Since W(R_0) = 0, c.total_vote_weight is also bounded above by B and will always fit in a 64 bit integer.
+//        *
+//       **/
+//       _db.create<comment_vote_object>( [&]( comment_vote_object& cv )
+//       {
+//          cv.voter   = voter.id;
+//          cv.comment = comment.id;
+//          cv.rshares = rshares;
+//          cv.vote_percent = o.weight;
+//          cv.last_update = _db.head_block_time();
+// 
+//          bool curation_reward_eligible = rshares > 0 && (comment.last_payout == fc::time_point_sec()) && comment.allow_curation_rewards;
+// 
+//          if( curation_reward_eligible )
+//          {
+//             curation_reward_eligible = _db.get_curation_rewards_percent( comment ) > 0;
+//          }
+// 
+//          if( curation_reward_eligible )
+//          {
+//             // cv.weight = W(R_1) - W(R_0)
+//             const auto& reward_fund = _db.get_reward_fund( comment );
+//             auto curve = reward_fund.curation_reward_curve;
+//             uint64_t old_weight = util::evaluate_reward_curve( old_vote_rshares.value, curve, reward_fund.content_constant ).to_uint64();
+//             uint64_t new_weight = util::evaluate_reward_curve( comment.vote_rshares.value, curve, reward_fund.content_constant ).to_uint64();
+//             cv.weight = new_weight - old_weight;
+// 
+//             max_vote_weight = cv.weight;
+// 
+//             /// discount weight by time
+//             uint128_t w(max_vote_weight);
+//             uint64_t delta_t = std::min( uint64_t((cv.last_update - comment.created).to_seconds()), uint64_t( dgpo.reverse_auction_seconds ) );
+// 
+//             w *= delta_t;
+//             w /= dgpo.reverse_auction_seconds;
+//             cv.weight = w.to_uint64();
+//          }
+//          else
+//          {
+//             cv.weight = 0;
+//          }
+//       });
+// 
+//       if( max_vote_weight ) // Optimization
+//       {
+//          _db.modify( comment, [&]( comment_object& c )
+//          {
+//             c.total_vote_weight += max_vote_weight;
+//          });
+//       }
+//    }
+//    else
+//    {
+//       FC_ASSERT( itr->num_changes < COLAB_MAX_VOTE_CHANGES, "Voter has used the maximum number of vote changes on this comment." );
+//       FC_ASSERT( itr->vote_percent != o.weight, "Your current vote on this comment is identical to this vote." );
+// 
+//       int64_t rshares = o.weight < 0 ? -abs_rshares : abs_rshares;
+// 
+//       _db.modify( voter, [&]( account_object& a )
+//       {
+//          a.voting_manabar.use_mana( used_mana.to_uint64() );
+//          a.last_vote_time = _db.head_block_time();
+//       });
+// 
+//       /// if the current net_rshares is less than 0, the post is getting 0 rewards so it is not factored into total rshares^2
+//       fc::uint128_t old_rshares = std::max( comment.net_rshares.value, int64_t( 0 ) );
+//       const auto& root = _db.get( comment.root_comment );
+// 
+//       _db.modify( comment, [&]( comment_object& c )
+//       {
+//          c.net_rshares -= itr->rshares;
+//          c.net_rshares += rshares;
+//          c.abs_rshares += abs_rshares;
+// 
+//          /// TODO: figure out how to handle remove a vote (rshares == 0 )
+//          if( rshares > 0 && itr->rshares < 0 )
+//             c.net_votes += 2;
+//          else if( rshares > 0 && itr->rshares == 0 )
+//             c.net_votes += 1;
+//          else if( rshares == 0 && itr->rshares < 0 )
+//             c.net_votes += 1;
+//          else if( rshares == 0 && itr->rshares > 0 )
+//             c.net_votes -= 1;
+//          else if( rshares < 0 && itr->rshares == 0 )
+//             c.net_votes -= 1;
+//          else if( rshares < 0 && itr->rshares > 0 )
+//             c.net_votes -= 2;
+//       });
+// 
+//       _db.modify( root, [&]( comment_object& c )
+//       {
+//          c.children_abs_rshares += abs_rshares;
+//       });
+// 
+//       fc::uint128_t new_rshares = std::max( comment.net_rshares.value, int64_t(0));
+// 
+//       /// calculate rshares2 value
+//       new_rshares = util::evaluate_reward_curve( new_rshares );
+//       old_rshares = util::evaluate_reward_curve( old_rshares );
+// 
+//       _db.modify( comment, [&]( comment_object& c )
+//       {
+//          c.total_vote_weight -= itr->weight;
+//       });
+// 
+//       _db.modify( *itr, [&]( comment_vote_object& cv )
+//       {
+//          cv.rshares = rshares;
+//          cv.vote_percent = o.weight;
+//          cv.last_update = _db.head_block_time();
+//          cv.weight = 0;
+//          cv.num_changes += 1;
+//       });
+//    }
+// }
+// 
+// void pre_hf20_vote_evaluator( const vote_operation& o, database& _db )
+// {
+//    const auto& comment = _db.get_comment( o.author, o.permlink );
+//    const auto& voter   = _db.get_account( o.voter );
+// 
+//    FC_ASSERT( voter.can_vote, "Voter has declined their voting rights." );
+// 
+//    if( o.weight > 0 ) FC_ASSERT( comment.allow_votes, "Votes are not allowed on the comment." );
+// 
+//    if( _db.has_hardfork( COLAB_HARDFORK_0_12__177 ) && _db.calculate_discussion_payout_time( comment ) == fc::time_point_sec::maximum() )
+//    {
+// #ifndef CLEAR_VOTES
+//       const auto& comment_vote_idx = _db.get_index< comment_vote_index >().indices().get< by_comment_voter >();
+//       auto itr = comment_vote_idx.find( std::make_tuple( comment.id, voter.id ) );
+// 
+//       if( itr == comment_vote_idx.end() )
+//          _db.create< comment_vote_object >( [&]( comment_vote_object& cvo )
+//          {
+//             cvo.voter = voter.id;
+//             cvo.comment = comment.id;
+//             cvo.vote_percent = o.weight;
+//             cvo.last_update = _db.head_block_time();
+//          });
+//       else
+//          _db.modify( *itr, [&]( comment_vote_object& cvo )
+//          {
+//             cvo.vote_percent = o.weight;
+//             cvo.last_update = _db.head_block_time();
+//          });
+// #endif
+//       return;
+//    }
+// 
+//    const auto& comment_vote_idx = _db.get_index< comment_vote_index >().indices().get< by_comment_voter >();
+//    auto itr = comment_vote_idx.find( std::make_tuple( comment.id, voter.id ) );
+// 
+//    int64_t elapsed_seconds = _db.head_block_time().sec_since_epoch() - voter.voting_manabar.last_update_time;
+// 
+//    if( _db.has_hardfork( COLAB_HARDFORK_0_11 ) )
+//       FC_ASSERT( elapsed_seconds >= COLAB_MIN_VOTE_INTERVAL_SEC, "Can only vote once every 3 seconds." );
+// 
+//    int64_t regenerated_power = (COLAB_100_PERCENT * elapsed_seconds) / COLAB_VOTING_MANA_REGENERATION_SECONDS;
+//    int64_t current_power     = std::min( int64_t(voter.voting_manabar.current_mana) + regenerated_power, int64_t(COLAB_100_PERCENT) );
+//    FC_ASSERT( current_power > 0, "Account currently does not have voting power." );
+// 
+//    int64_t  abs_weight    = abs(o.weight);
+//    // Less rounding error would occur if we did the division last, but we need to maintain backward
+//    // compatibility with the previous implementation which was replaced in #1285
+//    int64_t  used_power  = ((current_power * abs_weight) / COLAB_100_PERCENT) * (60*60*24);
+// 
+//    const dynamic_global_property_object& dgpo = _db.get_dynamic_global_properties();
+// 
+//    // The second multiplication is rounded up as of HF 259
+//    int64_t max_vote_denom = dgpo.vote_power_reserve_rate * COLAB_VOTING_MANA_REGENERATION_SECONDS;
+//    FC_ASSERT( max_vote_denom > 0 );
+// 
+//    if( !_db.has_hardfork( COLAB_HARDFORK_0_14__259 ) )
+//    {
+//       used_power = (used_power / max_vote_denom)+1;
+//    }
+//    else
+//    {
+//       used_power = (used_power + max_vote_denom - 1) / max_vote_denom;
+//    }
+//    FC_ASSERT( used_power <= current_power, "Account does not have enough power to vote." );
+// 
+//    int64_t abs_rshares    = ((uint128_t( _db.get_effective_vesting_shares( voter, VESTS_SYMBOL ).amount.value ) * used_power) / (COLAB_100_PERCENT)).to_uint64();
+//    if( !_db.has_hardfork( COLAB_HARDFORK_0_14__259 ) && abs_rshares == 0 ) abs_rshares = 1;
+// 
+//    if( _db.has_hardfork( COLAB_HARDFORK_0_20__1764 ) )
+//    {
+//       abs_rshares -= COLAB_VOTE_DUST_THRESHOLD;
+//       abs_rshares = std::max( int64_t(0), abs_rshares );
+//    }
+//    else if( _db.has_hardfork( COLAB_HARDFORK_0_14__259 ) )
+//    {
+//       FC_ASSERT( abs_rshares > COLAB_VOTE_DUST_THRESHOLD || o.weight == 0, "Voting weight is too small, please accumulate more voting power or colab power." );
+//    }
+//    else if( _db.has_hardfork( COLAB_HARDFORK_0_13__248 ) )
+//    {
+//       FC_ASSERT( abs_rshares > COLAB_VOTE_DUST_THRESHOLD || abs_rshares == 1, "Voting weight is too small, please accumulate more voting power or colab power." );
+//    }
+// 
+//    // Lazily delete vote
+//    if( itr != comment_vote_idx.end() && itr->num_changes == -1 )
+//    {
+//       if( _db.has_hardfork( COLAB_HARDFORK_0_12__177 ) )
+//          FC_ASSERT( false, "Cannot vote again on a comment after payout." );
+// 
+//       _db.remove( *itr );
+//       itr = comment_vote_idx.end();
+//    }
+// 
+//    if( itr == comment_vote_idx.end() )
+//    {
+//       FC_ASSERT( o.weight != 0, "Vote weight cannot be 0." );
+//       /// this is the rshares voting for or against the post
+//       int64_t rshares        = o.weight < 0 ? -abs_rshares : abs_rshares;
+// 
+//       if( rshares > 0 )
+//       {
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_17__900 ) )
+//             FC_ASSERT( _db.head_block_time() < comment.cashout_time - COLAB_UPVOTE_LOCKOUT_HF17, "Cannot increase payout within last twelve hours before payout." );
+//          else if( _db.has_hardfork( COLAB_HARDFORK_0_7 ) )
+//             FC_ASSERT( _db.head_block_time() < _db.calculate_discussion_payout_time( comment ) - COLAB_UPVOTE_LOCKOUT_HF7, "Cannot increase payout within last minute before payout." );
+//       }
+// 
+//       //used_power /= (50*7); /// a 100% vote means use .28% of voting power which should force users to spread their votes around over 50+ posts day for a week
+//       //if( used_power == 0 ) used_power = 1;
+// 
+//       _db.modify( voter, [&]( account_object& a ){
+//          a.voting_manabar.current_mana = current_power - used_power;
+//          a.last_vote_time = _db.head_block_time();
+//          a.voting_manabar.last_update_time = a.last_vote_time.sec_since_epoch();
+//       });
+// 
+//       /// if the current net_rshares is less than 0, the post is getting 0 rewards so it is not factored into total rshares^2
+//       fc::uint128_t old_rshares = std::max(comment.net_rshares.value, int64_t(0));
+//       const auto& root = _db.get( comment.root_comment );
+//       auto old_root_abs_rshares = root.children_abs_rshares.value;
+// 
+//       fc::uint128_t avg_cashout_sec;
+// 
+//       if( !_db.has_hardfork( COLAB_HARDFORK_0_17__769 ) )
+//       {
+//          fc::uint128_t cur_cashout_time_sec = _db.calculate_discussion_payout_time( comment ).sec_since_epoch();
+//          fc::uint128_t new_cashout_time_sec;
+// 
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_12__177 ) && !_db.has_hardfork( COLAB_HARDFORK_0_13__257)  )
+//             new_cashout_time_sec = _db.head_block_time().sec_since_epoch() + COLAB_CASHOUT_WINDOW_SECONDS_PRE_HF17;
+//          else
+//             new_cashout_time_sec = _db.head_block_time().sec_since_epoch() + COLAB_CASHOUT_WINDOW_SECONDS_PRE_HF12;
+// 
+//          avg_cashout_sec = ( cur_cashout_time_sec * old_root_abs_rshares + new_cashout_time_sec * abs_rshares ) / ( old_root_abs_rshares + abs_rshares );
+//       }
+// 
+//       FC_ASSERT( abs_rshares > 0, "Cannot vote with 0 rshares." );
+// 
+//       auto old_vote_rshares = comment.vote_rshares;
+// 
+//       _db.modify( comment, [&]( comment_object& c ){
+//          c.net_rshares += rshares;
+//          c.abs_rshares += abs_rshares;
+//          if( rshares > 0 )
+//             c.vote_rshares += rshares;
+//          if( rshares > 0 )
+//             c.net_votes++;
+//          else
+//             c.net_votes--;
+//          if( !_db.has_hardfork( COLAB_HARDFORK_0_6__114 ) && c.net_rshares == -c.abs_rshares) FC_ASSERT( c.net_votes < 0, "Comment has negative net votes?" );
+//       });
+// 
+//       _db.modify( root, [&]( comment_object& c )
+//       {
+//          c.children_abs_rshares += abs_rshares;
+// 
+//          if( !_db.has_hardfork( COLAB_HARDFORK_0_17__769 ) )
+//          {
+//             if( _db.has_hardfork( COLAB_HARDFORK_0_12__177 ) && c.last_payout > fc::time_point_sec::min() )
+//                c.cashout_time = c.last_payout + COLAB_SECOND_CASHOUT_WINDOW;
+//             else
+//                c.cashout_time = fc::time_point_sec( std::min( uint32_t( avg_cashout_sec.to_uint64() ), c.max_cashout_time.sec_since_epoch() ) );
+// 
+//             if( c.max_cashout_time == fc::time_point_sec::maximum() )
+//                c.max_cashout_time = _db.head_block_time() + fc::seconds( COLAB_MAX_CASHOUT_WINDOW_SECONDS );
+//          }
+//       });
+// 
+//       fc::uint128_t new_rshares = std::max( comment.net_rshares.value, int64_t(0));
+// 
+//       /// calculate rshares2 value
+//       new_rshares = util::evaluate_reward_curve( new_rshares );
+//       old_rshares = util::evaluate_reward_curve( old_rshares );
+// 
+//       uint64_t max_vote_weight = 0;
+// 
+//       /** this verifies uniqueness of voter
+//        *
+//        *  cv.weight / c.total_vote_weight ==> % of rshares increase that is accounted for by the vote
+//        *
+//        *  W(R) = B * R / ( R + 2S )
+//        *  W(R) is bounded above by B. B is fixed at 2^64 - 1, so all weights fit in a 64 bit integer.
+//        *
+//        *  The equation for an individual vote is:
+//        *    W(R_N) - W(R_N-1), which is the delta increase of proportional weight
+//        *
+//        *  c.total_vote_weight =
+//        *    W(R_1) - W(R_0) +
+//        *    W(R_2) - W(R_1) + ...
+//        *    W(R_N) - W(R_N-1) = W(R_N) - W(R_0)
+//        *
+//        *  Since W(R_0) = 0, c.total_vote_weight is also bounded above by B and will always fit in a 64 bit integer.
+//        *
+//       **/
+//       _db.create<comment_vote_object>( [&]( comment_vote_object& cv ){
+//          cv.voter   = voter.id;
+//          cv.comment = comment.id;
+//          cv.rshares = rshares;
+//          cv.vote_percent = o.weight;
+//          cv.last_update = _db.head_block_time();
+// 
+//          bool curation_reward_eligible = rshares > 0 && (comment.last_payout == fc::time_point_sec()) && comment.allow_curation_rewards;
+// 
+//          if( curation_reward_eligible && _db.has_hardfork( COLAB_HARDFORK_0_17__774 ) )
+//             curation_reward_eligible = _db.get_curation_rewards_percent( comment ) > 0;
+// 
+//          if( curation_reward_eligible )
+//          {
+//             if( comment.created < fc::time_point_sec(COLAB_HARDFORK_0_6_REVERSE_AUCTION_TIME) ) {
+//                u512 rshares3(rshares);
+//                u256 total2( comment.abs_rshares.value );
+// 
+//                if( !_db.has_hardfork( COLAB_HARDFORK_0_1 ) )
+//                {
+//                   rshares3 *= 1000000;
+//                   total2 *= 1000000;
+//                }
+// 
+//                rshares3 = rshares3 * rshares3 * rshares3;
+// 
+//                total2 *= total2;
+//                cv.weight = static_cast<uint64_t>( rshares3 / total2 );
+//             } else {// cv.weight = W(R_1) - W(R_0)
+//                const uint128_t two_s = 2 * util::get_content_constant_s();
+//                if( _db.has_hardfork( COLAB_HARDFORK_0_17__774 ) )
+//                {
+//                   const auto& reward_fund = _db.get_reward_fund( comment );
+//                   auto curve = !_db.has_hardfork( COLAB_HARDFORK_0_19__1052 ) && comment.created > COLAB_HF_19_SQRT_PRE_CALC
+//                                  ? curve_id::square_root : reward_fund.curation_reward_curve;
+//                   uint64_t old_weight = util::evaluate_reward_curve( old_vote_rshares.value, curve, reward_fund.content_constant ).to_uint64();
+//                   uint64_t new_weight = util::evaluate_reward_curve( comment.vote_rshares.value, curve, reward_fund.content_constant ).to_uint64();
+//                   cv.weight = new_weight - old_weight;
+//                }
+//                else if ( _db.has_hardfork( COLAB_HARDFORK_0_1 ) )
+//                {
+//                   uint64_t old_weight = ( ( std::numeric_limits< uint64_t >::max() * fc::uint128_t( old_vote_rshares.value ) ) / ( two_s + old_vote_rshares.value ) ).to_uint64();
+//                   uint64_t new_weight = ( ( std::numeric_limits< uint64_t >::max() * fc::uint128_t( comment.vote_rshares.value ) ) / ( two_s + comment.vote_rshares.value ) ).to_uint64();
+//                   cv.weight = new_weight - old_weight;
+//                }
+//                else
+//                {
+//                   uint64_t old_weight = ( ( std::numeric_limits< uint64_t >::max() * fc::uint128_t( 1000000 * old_vote_rshares.value ) ) / ( two_s + ( 1000000 * old_vote_rshares.value ) ) ).to_uint64();
+//                   uint64_t new_weight = ( ( std::numeric_limits< uint64_t >::max() * fc::uint128_t( 1000000 * comment.vote_rshares.value ) ) / ( two_s + ( 1000000 * comment.vote_rshares.value ) ) ).to_uint64();
+//                   cv.weight = new_weight - old_weight;
+//                }
+//             }
+// 
+//             max_vote_weight = cv.weight;
+// 
+//             if( _db.head_block_time() > fc::time_point_sec(COLAB_HARDFORK_0_6_REVERSE_AUCTION_TIME) )  /// start enforcing this prior to the hardfork
+//             {
+//                /// discount weight by time
+//                uint128_t w(max_vote_weight);
+//                uint64_t delta_t = std::min( uint64_t((cv.last_update - comment.created).to_seconds()), dgpo.reverse_auction_seconds );
+// 
+//                w *= delta_t;
+//                w /= dgpo.reverse_auction_seconds;
+//                cv.weight = w.to_uint64();
+//             }
+//          }
+//          else
+//          {
+//             cv.weight = 0;
+//          }
+//       });
+// 
+//       if( max_vote_weight ) // Optimization
+//       {
+//          _db.modify( comment, [&]( comment_object& c )
+//          {
+//             c.total_vote_weight += max_vote_weight;
+//          });
+//       }
+//       if( !_db.has_hardfork( COLAB_HARDFORK_0_17__774) )
+//          _db.adjust_rshares2( comment, old_rshares, new_rshares );
+//    }
+//    else
+//    {
+//       FC_ASSERT( itr->num_changes < COLAB_MAX_VOTE_CHANGES, "Voter has used the maximum number of vote changes on this comment." );
+// 
+//       if( _db.has_hardfork( COLAB_HARDFORK_0_6__112 ) )
+//          FC_ASSERT( itr->vote_percent != o.weight, "You have already voted in a similar way." );
+// 
+//       /// this is the rshares voting for or against the post
+//       int64_t rshares        = o.weight < 0 ? -abs_rshares : abs_rshares;
+// 
+//       if( itr->rshares < rshares )
+//       {
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_17__900 ) )
+//             FC_ASSERT( _db.head_block_time() < comment.cashout_time - COLAB_UPVOTE_LOCKOUT_HF17, "Cannot increase payout within last twelve hours before payout." );
+//          else if( _db.has_hardfork( COLAB_HARDFORK_0_7 ) )
+//             FC_ASSERT( _db.head_block_time() < _db.calculate_discussion_payout_time( comment ) - COLAB_UPVOTE_LOCKOUT_HF7, "Cannot increase payout within last minute before payout." );
+//       }
+// 
+//       _db.modify( voter, [&]( account_object& a ){
+//          a.voting_manabar.current_mana = current_power - used_power;
+//          a.last_vote_time = _db.head_block_time();
+//          a.voting_manabar.last_update_time = a.last_vote_time.sec_since_epoch();
+//       });
+// 
+//       /// if the current net_rshares is less than 0, the post is getting 0 rewards so it is not factored into total rshares^2
+//       fc::uint128_t old_rshares = std::max(comment.net_rshares.value, int64_t(0));
+//       const auto& root = _db.get( comment.root_comment );
+//       auto old_root_abs_rshares = root.children_abs_rshares.value;
+// 
+//       fc::uint128_t avg_cashout_sec;
+// 
+//       if( !_db.has_hardfork( COLAB_HARDFORK_0_17__769 ) )
+//       {
+//          fc::uint128_t cur_cashout_time_sec = _db.calculate_discussion_payout_time( comment ).sec_since_epoch();
+//          fc::uint128_t new_cashout_time_sec;
+// 
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_12__177 ) && ! _db.has_hardfork( COLAB_HARDFORK_0_13__257 )  )
+//             new_cashout_time_sec = _db.head_block_time().sec_since_epoch() + COLAB_CASHOUT_WINDOW_SECONDS_PRE_HF17;
+//          else
+//             new_cashout_time_sec = _db.head_block_time().sec_since_epoch() + COLAB_CASHOUT_WINDOW_SECONDS_PRE_HF12;
+// 
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_14__259 ) && abs_rshares == 0 )
+//             avg_cashout_sec = cur_cashout_time_sec;
+//          else
+//             avg_cashout_sec = ( cur_cashout_time_sec * old_root_abs_rshares + new_cashout_time_sec * abs_rshares ) / ( old_root_abs_rshares + abs_rshares );
+//       }
+// 
+//       _db.modify( comment, [&]( comment_object& c )
+//       {
+//          c.net_rshares -= itr->rshares;
+//          c.net_rshares += rshares;
+//          c.abs_rshares += abs_rshares;
+// 
+//          /// TODO: figure out how to handle remove a vote (rshares == 0 )
+//          if( rshares > 0 && itr->rshares < 0 )
+//             c.net_votes += 2;
+//          else if( rshares > 0 && itr->rshares == 0 )
+//             c.net_votes += 1;
+//          else if( rshares == 0 && itr->rshares < 0 )
+//             c.net_votes += 1;
+//          else if( rshares == 0 && itr->rshares > 0 )
+//             c.net_votes -= 1;
+//          else if( rshares < 0 && itr->rshares == 0 )
+//             c.net_votes -= 1;
+//          else if( rshares < 0 && itr->rshares > 0 )
+//             c.net_votes -= 2;
+//       });
+// 
+//       _db.modify( root, [&]( comment_object& c )
+//       {
+//          c.children_abs_rshares += abs_rshares;
+// 
+//          if( !_db.has_hardfork( COLAB_HARDFORK_0_17__769 ) )
+//          {
+//             if( _db.has_hardfork( COLAB_HARDFORK_0_12__177 ) && c.last_payout > fc::time_point_sec::min() )
+//                c.cashout_time = c.last_payout + COLAB_SECOND_CASHOUT_WINDOW;
+//             else
+//                c.cashout_time = fc::time_point_sec( std::min( uint32_t( avg_cashout_sec.to_uint64() ), c.max_cashout_time.sec_since_epoch() ) );
+// 
+//             if( c.max_cashout_time == fc::time_point_sec::maximum() )
+//                c.max_cashout_time = _db.head_block_time() + fc::seconds( COLAB_MAX_CASHOUT_WINDOW_SECONDS );
+//          }
+//       });
+// 
+//       fc::uint128_t new_rshares = std::max( comment.net_rshares.value, int64_t(0));
+// 
+//       /// calculate rshares2 value
+//       new_rshares = util::evaluate_reward_curve( new_rshares );
+//       old_rshares = util::evaluate_reward_curve( old_rshares );
+// 
+// 
+//       _db.modify( comment, [&]( comment_object& c )
+//       {
+//          c.total_vote_weight -= itr->weight;
+//       });
+// 
+//       _db.modify( *itr, [&]( comment_vote_object& cv )
+//       {
+//          cv.rshares = rshares;
+//          cv.vote_percent = o.weight;
+//          cv.last_update = _db.head_block_time();
+//          cv.weight = 0;
+//          cv.num_changes += 1;
+//       });
+// 
+//       if( !_db.has_hardfork( COLAB_HARDFORK_0_17__774) )
+//          _db.adjust_rshares2( comment, old_rshares, new_rshares );
+//    }
+// }
 #endif//////~~~~~CLC~~~~~}
 
 void vote_evaluator::do_apply( const vote_operation& o )
 { try {
-#if 0 //~~~~~CLC~~~~~{
-   if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-   {
-      hf20_vote_evaluator( o, _db );
-   }
-   else
-   {
-      pre_hf20_vote_evaluator( o, _db );
-   }
-#endif //~~~~~CLC~~~~~}
+#if 0 ///~~~~~CLC~~~~~{
+//    if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//    {
+//       hf20_vote_evaluator( o, _db );
+//    }
+//    else
+//    {
+//       pre_hf20_vote_evaluator( o, _db );
+//    }
+#endif ///~~~~~CLC~~~~~}
    colab_vote_evaluator( o, _db );//~~~~~CLC~~~~~
 } FC_CAPTURE_AND_RETHROW( (o) ) }
 
@@ -2767,28 +2760,28 @@ void feed_publish_evaluator::do_apply( const feed_publish_operation& o )
    });
 }
 
-void convert_evaluator::do_apply( const convert_operation& o )
-{
-  FC_ASSERT( _db.get_balance( o.owner, o.amount.symbol ) >= o.amount, "Account does not have sufficient balance for conversion." );
-
-  _db.adjust_balance( o.owner, -o.amount );
-
-  const auto& fhistory = _db.get_feed_history();
-  FC_ASSERT( !fhistory.current_median_history.is_null(), "Cannot convert SBD because there is no price feed." );
-
-  auto colab_conversion_delay = COLAB_CONVERSION_DELAY_PRE_HF_16;
-  if( _db.has_hardfork( COLAB_HARDFORK_0_16__551) )
-     colab_conversion_delay = COLAB_CONVERSION_DELAY;
-
-  _db.create<convert_request_object>( [&]( convert_request_object& obj )
-  {
-      obj.owner           = o.owner;
-      obj.requestid       = o.requestid;
-      obj.amount          = o.amount;
-      obj.conversion_date = _db.head_block_time() + colab_conversion_delay;
-  });
-
-}
+// void convert_evaluator::do_apply( const convert_operation& o )
+// {
+//   FC_ASSERT( _db.get_balance( o.owner, o.amount.symbol ) >= o.amount, "Account does not have sufficient balance for conversion." );
+// 
+//   _db.adjust_balance( o.owner, -o.amount );
+// 
+//   const auto& fhistory = _db.get_feed_history();
+//   FC_ASSERT( !fhistory.current_median_history.is_null(), "Cannot convert SBD because there is no price feed." );
+// 
+//   auto colab_conversion_delay = COLAB_CONVERSION_DELAY_PRE_HF_16;
+//   if( _db.has_hardfork( COLAB_HARDFORK_0_16__551) )
+//      colab_conversion_delay = COLAB_CONVERSION_DELAY;
+// 
+//   _db.create<convert_request_object>( [&]( convert_request_object& obj )
+//   {
+//       obj.owner           = o.owner;
+//       obj.requestid       = o.requestid;
+//       obj.amount          = o.amount;
+//       obj.conversion_date = _db.head_block_time() + colab_conversion_delay;
+//   });
+// 
+// }
 
 void limit_order_create_evaluator::do_apply( const limit_order_create_operation& o )
 {
@@ -3228,30 +3221,30 @@ void claim_reward_balance_evaluator::do_apply( const claim_reward_balance_operat
    _db.adjust_balance( acnt, op.reward_colab );
 //   _db.adjust_balance( acnt, op.reward_sbd );
 
-   _db.modify( acnt, [&]( account_object& a )
-   {
-      if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-      {
-         util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
-         a.voting_manabar.regenerate_mana( params, _db.head_block_time() );
-         a.voting_manabar.use_mana( -op.reward_vests.amount.value );
-      }
-
-      a.vesting_shares += op.reward_vests;
+//    _db.modify( acnt, [&]( account_object& a )
+//    {
+//       if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//       {
+//          util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
+//          a.voting_manabar.regenerate_mana( params, _db.head_block_time() );
+//          a.voting_manabar.use_mana( -op.reward_vests.amount.value );
+//       }
+// 
+//       a.vesting_shares += op.reward_vests;
 //      a.reward_vesting_balance -= op.reward_vests;
 //      a.reward_vesting_clc -= reward_vesting_clc_to_move;
-   });
+//   });
 
-   _db.modify( _db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
-   {
-      gpo.total_vesting_shares += op.reward_vests;
-      //gpo.total_vesting_fund_clc += reward_vesting_clc_to_move;
+//    _db.modify( _db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
+//    {
+//       //gpo.total_vesting_shares += op.reward_vests;
+//       //gpo.total_vesting_fund_clc += reward_vesting_clc_to_move;
+// 
+//       //gpo.pending_rewarded_vesting_shares -= op.reward_vests;
+//       //gpo.pending_rewarded_vesting_clc -= reward_vesting_clc_to_move;
+//    });
 
-      gpo.pending_rewarded_vesting_shares -= op.reward_vests;
-      //gpo.pending_rewarded_vesting_clc -= reward_vesting_clc_to_move;
-   });
-
-   _db.adjust_proxied_witness_votes( acnt, op.reward_vests.amount );
+   _db.adjust_proxied_witness_votes( acnt, op.reward_colab.amount );
 }
 
 #ifdef COLAB_ENABLE_SMT
@@ -3324,192 +3317,192 @@ void claim_reward_balance2_evaluator::do_apply( const claim_reward_balance2_oper
 }
 #endif
 
-void delegate_vesting_shares_evaluator::do_apply( const delegate_vesting_shares_operation& op )
-{
-#pragma message( "TODO: Update get_effective_vesting_shares when modifying this operation to support SMTs." )
-
-   const auto& delegator = _db.get_account( op.delegator );
-   const auto& delegatee = _db.get_account( op.delegatee );
-   auto delegation = _db.find< vesting_delegation_object, by_delegation >( boost::make_tuple( op.delegator, op.delegatee ) );
-
-   asset available_shares;
-
-   if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-   {
-      auto max_mana = util::get_effective_vesting_shares( delegator );
-
-      _db.modify( delegator, [&]( account_object& a )
-      {
-         util::manabar_params params( max_mana, COLAB_VOTING_MANA_REGENERATION_SECONDS );
-         a.voting_manabar.regenerate_mana( params, _db.head_block_time() );
-      });
-
-      available_shares = asset( delegator.voting_manabar.current_mana, VESTS_SYMBOL );
-
-      // Assume delegated VESTS are used first when consuming mana. You cannot delegate received vesting shares
-      available_shares.amount = std::min( available_shares.amount, max_mana - delegator.received_vesting_shares.amount );
-
-      if( delegator.next_vesting_withdrawal < fc::time_point_sec::maximum()
-         && delegator.to_withdraw - delegator.withdrawn > delegator.vesting_withdraw_rate.amount )
-      {
-         /*
-         current voting mana does not include the current week's power down:
-
-         std::min(
-            account.vesting_withdraw_rate.amount.value,           // Weekly amount
-            account.to_withdraw.value - account.withdrawn.value   // Or remainder
-            );
-
-         But an account cannot delegate **any** VESTS that they are powering down.
-         The remaining withdrawal needs to be added in but then the current week is double counted.
-         */
-
-         auto weekly_withdraw = asset( std::min(
-            delegator.vesting_withdraw_rate.amount.value,           // Weekly amount
-            delegator.to_withdraw.value - delegator.withdrawn.value   // Or remainder
-            ), VESTS_SYMBOL );
-
-         available_shares += weekly_withdraw - asset( delegator.to_withdraw - delegator.withdrawn, VESTS_SYMBOL );
-      }
-   }
-   else
-   {
-      available_shares = delegator.vesting_shares - delegator.delegated_vesting_shares - asset( delegator.to_withdraw - delegator.withdrawn, VESTS_SYMBOL );
-   }
-
-   const auto& wso = _db.get_witness_schedule_object();
-   const auto& gpo = _db.get_dynamic_global_properties();
-
-   // HF 20 increase fee meaning by 30x, reduce these thresholds to compensate.
-   auto min_delegation = _db.has_hardfork( COLAB_HARDFORK_0_20__1761 ) ?
-      asset( wso.median_props.account_creation_fee.amount / 3, CLC_SYMBOL ) * gpo.get_vesting_share_price() :
-      asset( wso.median_props.account_creation_fee.amount * 10, CLC_SYMBOL ) * gpo.get_vesting_share_price();
-   auto min_update = _db.has_hardfork( COLAB_HARDFORK_0_20__1761 ) ?
-      asset( wso.median_props.account_creation_fee.amount / 30, CLC_SYMBOL ) * gpo.get_vesting_share_price() :
-      wso.median_props.account_creation_fee * gpo.get_vesting_share_price();
-
-   // If delegation doesn't exist, create it
-   if( delegation == nullptr )
-   {
-      FC_ASSERT( available_shares >= op.vesting_shares, "Account ${acc} does not have enough mana to delegate. required: ${r} available: ${a}",
-         ("acc", op.delegator)("r", op.vesting_shares)("a", available_shares) );
-      FC_ASSERT( op.vesting_shares >= min_delegation, "Account must delegate a minimum of ${v}", ("v", min_delegation) );
-
-      _db.create< vesting_delegation_object >( [&]( vesting_delegation_object& obj )
-      {
-         obj.delegator = op.delegator;
-         obj.delegatee = op.delegatee;
-         obj.vesting_shares = op.vesting_shares;
-         obj.min_delegation_time = _db.head_block_time();
-      });
-
-      _db.modify( delegator, [&]( account_object& a )
-      {
-         a.delegated_vesting_shares += op.vesting_shares;
-
-         if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-         {
-            a.voting_manabar.use_mana( op.vesting_shares.amount.value );
-         }
-      });
-
-      _db.modify( delegatee, [&]( account_object& a )
-      {
-         if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-         {
-            util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
-            a.voting_manabar.regenerate_mana( params, _db.head_block_time() );
-            a.voting_manabar.use_mana( -op.vesting_shares.amount.value );
-         }
-
-         a.received_vesting_shares += op.vesting_shares;
-      });
-   }
-   // Else if the delegation is increasing
-   else if( op.vesting_shares >= delegation->vesting_shares )
-   {
-      auto delta = op.vesting_shares - delegation->vesting_shares;
-
-      FC_ASSERT( delta >= min_update, "Colab Power increase is not enough of a difference. min_update: ${min}", ("min", min_update) );
-      FC_ASSERT( available_shares >= delta, "Account ${acc} does not have enough mana to delegate. required: ${r} available: ${a}",
-         ("acc", op.delegator)("r", delta)("a", available_shares) );
-
-      _db.modify( delegator, [&]( account_object& a )
-      {
-         a.delegated_vesting_shares += delta;
-
-         if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-         {
-            a.voting_manabar.use_mana( delta.amount.value );
-         }
-      });
-
-      _db.modify( delegatee, [&]( account_object& a )
-      {
-         if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-         {
-            util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
-            a.voting_manabar.regenerate_mana( params, _db.head_block_time() );
-            a.voting_manabar.use_mana( -delta.amount.value );
-         }
-
-         a.received_vesting_shares += delta;
-      });
-
-      _db.modify( *delegation, [&]( vesting_delegation_object& obj )
-      {
-         obj.vesting_shares = op.vesting_shares;
-      });
-   }
-   // Else the delegation is decreasing
-   else /* delegation->vesting_shares > op.vesting_shares */
-   {
-      auto delta = delegation->vesting_shares - op.vesting_shares;
-
-      if( op.vesting_shares.amount > 0 )
-      {
-         FC_ASSERT( delta >= min_update, "Colab Power decrease is not enough of a difference. min_update: ${min}", ("min", min_update) );
-         FC_ASSERT( op.vesting_shares >= min_delegation, "Delegation must be removed or leave minimum delegation amount of ${v}", ("v", min_delegation) );
-      }
-      else
-      {
-         FC_ASSERT( delegation->vesting_shares.amount > 0, "Delegation would set vesting_shares to zero, but it is already zero");
-      }
-
-      _db.create< vesting_delegation_expiration_object >( [&]( vesting_delegation_expiration_object& obj )
-      {
-         obj.delegator = op.delegator;
-         obj.vesting_shares = delta;
-         obj.expiration = std::max( _db.head_block_time() + gpo.delegation_return_period, delegation->min_delegation_time );
-      });
-
-      _db.modify( delegatee, [&]( account_object& a )
-      {
-         a.received_vesting_shares -= delta;
-
-         if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-         {
-            a.voting_manabar.use_mana( delta.amount.value );
-
-            if( a.voting_manabar.current_mana < 0 )
-            {
-               a.voting_manabar.current_mana = 0;
-            }
-         }
-      });
-
-      if( op.vesting_shares.amount > 0 )
-      {
-         _db.modify( *delegation, [&]( vesting_delegation_object& obj )
-         {
-            obj.vesting_shares = op.vesting_shares;
-         });
-      }
-      else
-      {
-         _db.remove( *delegation );
-      }
-   }
-}
+// void delegate_vesting_shares_evaluator::do_apply( const delegate_vesting_shares_operation& op )
+// {
+// #pragma message( "TODO: Update get_effective_vesting_shares when modifying this operation to support SMTs." )
+// 
+//    const auto& delegator = _db.get_account( op.delegator );
+//    const auto& delegatee = _db.get_account( op.delegatee );
+//    auto delegation = _db.find< vesting_delegation_object, by_delegation >( boost::make_tuple( op.delegator, op.delegatee ) );
+// 
+//    asset available_shares;
+// 
+//    if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//    {
+//       auto max_mana = util::get_effective_vesting_shares( delegator );
+// 
+//       _db.modify( delegator, [&]( account_object& a )
+//       {
+//          util::manabar_params params( max_mana, COLAB_VOTING_MANA_REGENERATION_SECONDS );
+//          a.voting_manabar.regenerate_mana( params, _db.head_block_time() );
+//       });
+// 
+//       available_shares = asset( delegator.voting_manabar.current_mana, VESTS_SYMBOL );
+// 
+//       // Assume delegated VESTS are used first when consuming mana. You cannot delegate received vesting shares
+//       available_shares.amount = std::min( available_shares.amount, max_mana - delegator.received_vesting_shares.amount );
+// 
+//       if( delegator.next_vesting_withdrawal < fc::time_point_sec::maximum()
+//          && delegator.to_withdraw - delegator.withdrawn > delegator.vesting_withdraw_rate.amount )
+//       {
+//          /*
+//          current voting mana does not include the current week's power down:
+// 
+//          std::min(
+//             account.vesting_withdraw_rate.amount.value,           // Weekly amount
+//             account.to_withdraw.value - account.withdrawn.value   // Or remainder
+//             );
+// 
+//          But an account cannot delegate **any** VESTS that they are powering down.
+//          The remaining withdrawal needs to be added in but then the current week is double counted.
+//          */
+// 
+//          auto weekly_withdraw = asset( std::min(
+//             delegator.vesting_withdraw_rate.amount.value,           // Weekly amount
+//             delegator.to_withdraw.value - delegator.withdrawn.value   // Or remainder
+//             ), VESTS_SYMBOL );
+// 
+//          available_shares += weekly_withdraw - asset( delegator.to_withdraw - delegator.withdrawn, VESTS_SYMBOL );
+//       }
+//    }
+//    else
+//    {
+//       available_shares = delegator.vesting_shares - delegator.delegated_vesting_shares - asset( delegator.to_withdraw - delegator.withdrawn, VESTS_SYMBOL );
+//    }
+// 
+//    const auto& wso = _db.get_witness_schedule_object();
+//    const auto& gpo = _db.get_dynamic_global_properties();
+// 
+//    // HF 20 increase fee meaning by 30x, reduce these thresholds to compensate.
+//    auto min_delegation = _db.has_hardfork( COLAB_HARDFORK_0_20__1761 ) ?
+//       asset( wso.median_props.account_creation_fee.amount / 3, CLC_SYMBOL ) * gpo.get_vesting_share_price() :
+//       asset( wso.median_props.account_creation_fee.amount * 10, CLC_SYMBOL ) * gpo.get_vesting_share_price();
+//    auto min_update = _db.has_hardfork( COLAB_HARDFORK_0_20__1761 ) ?
+//       asset( wso.median_props.account_creation_fee.amount / 30, CLC_SYMBOL ) * gpo.get_vesting_share_price() :
+//       wso.median_props.account_creation_fee * gpo.get_vesting_share_price();
+// 
+//    // If delegation doesn't exist, create it
+//    if( delegation == nullptr )
+//    {
+//       FC_ASSERT( available_shares >= op.vesting_shares, "Account ${acc} does not have enough mana to delegate. required: ${r} available: ${a}",
+//          ("acc", op.delegator)("r", op.vesting_shares)("a", available_shares) );
+//       FC_ASSERT( op.vesting_shares >= min_delegation, "Account must delegate a minimum of ${v}", ("v", min_delegation) );
+// 
+//       _db.create< vesting_delegation_object >( [&]( vesting_delegation_object& obj )
+//       {
+//          obj.delegator = op.delegator;
+//          obj.delegatee = op.delegatee;
+//          obj.vesting_shares = op.vesting_shares;
+//          obj.min_delegation_time = _db.head_block_time();
+//       });
+// 
+//       _db.modify( delegator, [&]( account_object& a )
+//       {
+//          a.delegated_vesting_shares += op.vesting_shares;
+// 
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//          {
+//             a.voting_manabar.use_mana( op.vesting_shares.amount.value );
+//          }
+//       });
+// 
+//       _db.modify( delegatee, [&]( account_object& a )
+//       {
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//          {
+//             util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
+//             a.voting_manabar.regenerate_mana( params, _db.head_block_time() );
+//             a.voting_manabar.use_mana( -op.vesting_shares.amount.value );
+//          }
+// 
+//          a.received_vesting_shares += op.vesting_shares;
+//       });
+//    }
+//    // Else if the delegation is increasing
+//    else if( op.vesting_shares >= delegation->vesting_shares )
+//    {
+//       auto delta = op.vesting_shares - delegation->vesting_shares;
+// 
+//       FC_ASSERT( delta >= min_update, "Colab Power increase is not enough of a difference. min_update: ${min}", ("min", min_update) );
+//       FC_ASSERT( available_shares >= delta, "Account ${acc} does not have enough mana to delegate. required: ${r} available: ${a}",
+//          ("acc", op.delegator)("r", delta)("a", available_shares) );
+// 
+//       _db.modify( delegator, [&]( account_object& a )
+//       {
+//          a.delegated_vesting_shares += delta;
+// 
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//          {
+//             a.voting_manabar.use_mana( delta.amount.value );
+//          }
+//       });
+// 
+//       _db.modify( delegatee, [&]( account_object& a )
+//       {
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//          {
+//             util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
+//             a.voting_manabar.regenerate_mana( params, _db.head_block_time() );
+//             a.voting_manabar.use_mana( -delta.amount.value );
+//          }
+// 
+//          a.received_vesting_shares += delta;
+//       });
+// 
+//       _db.modify( *delegation, [&]( vesting_delegation_object& obj )
+//       {
+//          obj.vesting_shares = op.vesting_shares;
+//       });
+//    }
+//    // Else the delegation is decreasing
+//    else /* delegation->vesting_shares > op.vesting_shares */
+//    {
+//       auto delta = delegation->vesting_shares - op.vesting_shares;
+// 
+//       if( op.vesting_shares.amount > 0 )
+//       {
+//          FC_ASSERT( delta >= min_update, "Colab Power decrease is not enough of a difference. min_update: ${min}", ("min", min_update) );
+//          FC_ASSERT( op.vesting_shares >= min_delegation, "Delegation must be removed or leave minimum delegation amount of ${v}", ("v", min_delegation) );
+//       }
+//       else
+//       {
+//          FC_ASSERT( delegation->vesting_shares.amount > 0, "Delegation would set vesting_shares to zero, but it is already zero");
+//       }
+// 
+//       _db.create< vesting_delegation_expiration_object >( [&]( vesting_delegation_expiration_object& obj )
+//       {
+//          obj.delegator = op.delegator;
+//          obj.vesting_shares = delta;
+//          obj.expiration = std::max( _db.head_block_time() + gpo.delegation_return_period, delegation->min_delegation_time );
+//       });
+// 
+//       _db.modify( delegatee, [&]( account_object& a )
+//       {
+//          a.received_vesting_shares -= delta;
+// 
+//          if( _db.has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//          {
+//             a.voting_manabar.use_mana( delta.amount.value );
+// 
+//             if( a.voting_manabar.current_mana < 0 )
+//             {
+//                a.voting_manabar.current_mana = 0;
+//             }
+//          }
+//       });
+// 
+//       if( op.vesting_shares.amount > 0 )
+//       {
+//          _db.modify( *delegation, [&]( vesting_delegation_object& obj )
+//          {
+//             obj.vesting_shares = op.vesting_shares;
+//          });
+//       }
+//       else
+//       {
+//          _db.remove( *delegation );
+//       }
+//    }
+// }
 
 } } // colab::chain

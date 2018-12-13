@@ -66,23 +66,23 @@ namespace colab { namespace protocol {
    };
 
 
-   struct account_create_with_delegation_operation : public base_operation
-   {
-      asset             fee;
-      asset             delegation;
-      account_name_type creator;
-      account_name_type new_account_name;
-      authority         owner;
-      authority         active;
-      authority         posting;
-      public_key_type   memo_key;
-      string            json_metadata;
-
-      extensions_type   extensions;
-
-      void validate()const;
-      void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(creator); }
-   };
+//    struct account_create_with_delegation_operation : public base_operation
+//    {
+//       asset             fee;
+//       asset             delegation;
+//       account_name_type creator;
+//       account_name_type new_account_name;
+//       authority         owner;
+//       authority         active;
+//       authority         posting;
+//       public_key_type   memo_key;
+//       string            json_metadata;
+// 
+//       extensions_type   extensions;
+// 
+//       void validate()const;
+//       void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(creator); }
+//    };
 
 
    struct account_update_operation : public base_operation
@@ -502,7 +502,7 @@ namespace colab { namespace protocol {
        *  to tune rate limiting and capacity
        */
       uint32_t          maximum_block_size = COLAB_MIN_BLOCK_SIZE_LIMIT * 2;
-      uint16_t          sbd_interest_rate  = COLAB_DEFAULT_SBD_INTEREST_RATE;
+//      uint16_t          sbd_interest_rate  = COLAB_DEFAULT_SBD_INTEREST_RATE;
 
       template< bool force_canon >
       void validate()const
@@ -513,8 +513,8 @@ namespace colab { namespace protocol {
          }
          FC_ASSERT( account_creation_fee.amount >= COLAB_MIN_ACCOUNT_CREATION_FEE);
          FC_ASSERT( maximum_block_size >= COLAB_MIN_BLOCK_SIZE_LIMIT);
-         FC_ASSERT( sbd_interest_rate >= 0 );
-         FC_ASSERT( sbd_interest_rate <= COLAB_100_PERCENT );
+//          FC_ASSERT( sbd_interest_rate >= 0 );
+//          FC_ASSERT( sbd_interest_rate <= COLAB_100_PERCENT );
       }
    };
 
@@ -662,15 +662,15 @@ namespace colab { namespace protocol {
     *  This operation instructs the blockchain to start a conversion between CLC and SBD,
     *  The funds are deposited after COLAB_CONVERSION_DELAY
     */
-   struct convert_operation : public base_operation
-   {
-      account_name_type owner;
-      uint32_t          requestid = 0;
-      asset             amount;
-
-      void  validate()const;
-      void  get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(owner); }
-   };
+//    struct convert_operation : public base_operation
+//    {
+//       account_name_type owner;
+//       uint32_t          requestid = 0;
+//       asset             amount;
+// 
+//       void  validate()const;
+//       void  get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(owner); }
+//    };
 
 
    /**
@@ -1053,8 +1053,6 @@ namespace colab { namespace protocol {
    {
       account_name_type account;
       asset             reward_colab;
-      asset             reward_sbd;
-      asset             reward_vests;
 
       void get_required_posting_authorities( flat_set< account_name_type >& a )const{ a.insert( account ); }
       void validate() const;
@@ -1088,15 +1086,15 @@ namespace colab { namespace protocol {
     * When a delegation is removed the shares are placed in limbo for a week to prevent a satoshi
     * of VESTS from voting on the same content twice.
     */
-   struct delegate_vesting_shares_operation : public base_operation
-   {
-      account_name_type delegator;        ///< The account delegating vesting shares
-      account_name_type delegatee;        ///< The account receiving vesting shares
-      asset             vesting_shares;   ///< The amount of vesting shares delegated
-
-      void get_required_active_authorities( flat_set< account_name_type >& a ) const { a.insert( delegator ); }
-      void validate() const;
-   };
+//    struct delegate_vesting_shares_operation : public base_operation
+//    {
+//       account_name_type delegator;        ///< The account delegating vesting shares
+//       account_name_type delegatee;        ///< The account receiving vesting shares
+//       asset             vesting_shares;   ///< The amount of vesting shares delegated
+// 
+//       void get_required_active_authorities( flat_set< account_name_type >& a ) const { a.insert( delegator ); }
+//       void validate() const;
+//    };
 } } // colab::protocol
 
 
@@ -1109,7 +1107,7 @@ FC_REFLECT( colab::protocol::set_reset_account_operation, (account)(current_rese
 
 
 FC_REFLECT( colab::protocol::report_over_production_operation, (reporter)(first_block)(second_block) )
-FC_REFLECT( colab::protocol::convert_operation, (owner)(requestid)(amount) )
+//FC_REFLECT( colab::protocol::convert_operation, (owner)(requestid)(amount) )
 FC_REFLECT( colab::protocol::feed_publish_operation, (publisher)(exchange_rate) )
 FC_REFLECT( colab::protocol::pow, (worker)(input)(signature)(work) )
 FC_REFLECT( colab::protocol::pow2, (input)(pow_summary) )
@@ -1118,7 +1116,7 @@ FC_REFLECT( colab::protocol::equihash_pow, (input)(proof)(prev_block)(pow_summar
 FC_REFLECT( colab::protocol::legacy_chain_properties,
             (account_creation_fee)
             (maximum_block_size)
-            (sbd_interest_rate)
+//            (sbd_interest_rate)
           )
 
 FC_REFLECT_TYPENAME( colab::protocol::pow2_work )
@@ -1157,17 +1155,17 @@ FC_REFLECT( colab::protocol::account_create_operation,
             (memo_key)
             (json_metadata) )
 
-FC_REFLECT( colab::protocol::account_create_with_delegation_operation,
-            (fee)
-            (delegation)
-            (creator)
-            (new_account_name)
-            (owner)
-            (active)
-            (posting)
-            (memo_key)
-            (json_metadata)
-            (extensions) )
+// FC_REFLECT( colab::protocol::account_create_with_delegation_operation,
+//             (fee)
+//             (delegation)
+//             (creator)
+//             (new_account_name)
+//             (owner)
+//             (active)
+//             (posting)
+//             (memo_key)
+//             (json_metadata)
+//             (extensions) )
 
 FC_REFLECT( colab::protocol::account_update_operation,
             (account)
@@ -1220,8 +1218,8 @@ FC_REFLECT( colab::protocol::request_account_recovery_operation, (recovery_accou
 FC_REFLECT( colab::protocol::recover_account_operation, (account_to_recover)(new_owner_authority)(recent_owner_authority)(extensions) );
 FC_REFLECT( colab::protocol::change_recovery_account_operation, (account_to_recover)(new_recovery_account)(extensions) );
 FC_REFLECT( colab::protocol::decline_voting_rights_operation, (account)(decline) );
-FC_REFLECT( colab::protocol::claim_reward_balance_operation, (account)(reward_colab)(reward_sbd)(reward_vests) )
+FC_REFLECT( colab::protocol::claim_reward_balance_operation, (account)(reward_colab)/*(reward_sbd)(reward_vests)*/ )
 #ifdef COLAB_ENABLE_SMT
 FC_REFLECT( colab::protocol::claim_reward_balance2_operation, (account)(extensions)(reward_tokens) )
 #endif
-FC_REFLECT( colab::protocol::delegate_vesting_shares_operation, (delegator)(delegatee)(vesting_shares) );
+//FC_REFLECT( colab::protocol::delegate_vesting_shares_operation, (delegator)(delegatee)(vesting_shares) );

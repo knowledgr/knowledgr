@@ -1349,36 +1349,36 @@ condenser_api::legacy_signed_transaction wallet_api::create_account_with_keys(
  * provide their desired keys. The resulting account may not be controllable by this
  * wallet.
  */
-condenser_api::legacy_signed_transaction wallet_api::create_account_with_keys_delegated(
-   string creator,
-   condenser_api::legacy_asset clc_fee,
-   condenser_api::legacy_asset delegated_clc,
-   string new_account_name,
-   string json_meta,
-   public_key_type owner,
-   public_key_type active,
-   public_key_type posting,
-   public_key_type memo,
-   bool broadcast )const
-{ try {
-   FC_ASSERT( !is_locked() );
-   account_create_with_delegation_operation op;
-   op.creator = creator;
-   op.new_account_name = new_account_name;
-   op.owner = authority( 1, owner, 1 );
-   op.active = authority( 1, active, 1 );
-   op.posting = authority( 1, posting, 1 );
-   op.memo_key = memo;
-   op.json_metadata = json_meta;
-   op.fee = clc_fee.to_asset();
-   op.delegation = delegated_clc.to_asset();
-
-   signed_transaction tx;
-   tx.operations.push_back(op);
-   tx.validate();
-
-   return my->sign_transaction( tx, broadcast );
-} FC_CAPTURE_AND_RETHROW( (creator)(new_account_name)(json_meta)(owner)(active)(memo)(broadcast) ) }
+// condenser_api::legacy_signed_transaction wallet_api::create_account_with_keys_delegated(
+//    string creator,
+//    condenser_api::legacy_asset clc_fee,
+//    condenser_api::legacy_asset delegated_clc,
+//    string new_account_name,
+//    string json_meta,
+//    public_key_type owner,
+//    public_key_type active,
+//    public_key_type posting,
+//    public_key_type memo,
+//    bool broadcast )const
+// { try {
+//    FC_ASSERT( !is_locked() );
+//    account_create_with_delegation_operation op;
+//    op.creator = creator;
+//    op.new_account_name = new_account_name;
+//    op.owner = authority( 1, owner, 1 );
+//    op.active = authority( 1, active, 1 );
+//    op.posting = authority( 1, posting, 1 );
+//    op.memo_key = memo;
+//    op.json_metadata = json_meta;
+//    op.fee = clc_fee.to_asset();
+//    op.delegation = delegated_clc.to_asset();
+// 
+//    signed_transaction tx;
+//    tx.operations.push_back(op);
+//    tx.validate();
+// 
+//    return my->sign_transaction( tx, broadcast );
+// } FC_CAPTURE_AND_RETHROW( (creator)(new_account_name)(json_meta)(owner)(active)(memo)(broadcast) ) }
 
 condenser_api::legacy_signed_transaction wallet_api::request_account_recovery( string recovery_account, string account_to_recover, authority new_authority, bool broadcast )
 {
@@ -1764,30 +1764,30 @@ condenser_api::legacy_signed_transaction wallet_api::update_account_memo_key(
    return my->sign_transaction( tx, broadcast );
 }
 
-condenser_api::legacy_signed_transaction wallet_api::delegate_vesting_shares(
-   string delegator,
-   string delegatee,
-   condenser_api::legacy_asset vesting_shares,
-   bool broadcast )
-{
-   FC_ASSERT( !is_locked() );
-
-   auto accounts = my->_remote_api->get_accounts( { delegator, delegatee } );
-   FC_ASSERT( accounts.size() == 2 , "One or more of the accounts specified do not exist." );
-   FC_ASSERT( delegator == accounts[0].name, "Delegator account is not right?" );
-   FC_ASSERT( delegatee == accounts[1].name, "Delegator account is not right?" );
-
-   delegate_vesting_shares_operation op;
-   op.delegator = delegator;
-   op.delegatee = delegatee;
-   op.vesting_shares = vesting_shares.to_asset();
-
-   signed_transaction tx;
-   tx.operations.push_back( op );
-   tx.validate();
-
-   return my->sign_transaction( tx, broadcast );
-}
+// condenser_api::legacy_signed_transaction wallet_api::delegate_vesting_shares(
+//    string delegator,
+//    string delegatee,
+//    condenser_api::legacy_asset vesting_shares,
+//    bool broadcast )
+// {
+//    FC_ASSERT( !is_locked() );
+// 
+//    auto accounts = my->_remote_api->get_accounts( { delegator, delegatee } );
+//    FC_ASSERT( accounts.size() == 2 , "One or more of the accounts specified do not exist." );
+//    FC_ASSERT( delegator == accounts[0].name, "Delegator account is not right?" );
+//    FC_ASSERT( delegatee == accounts[1].name, "Delegator account is not right?" );
+// 
+//    delegate_vesting_shares_operation op;
+//    op.delegator = delegator;
+//    op.delegatee = delegatee;
+//    op.vesting_shares = vesting_shares.to_asset();
+// 
+//    signed_transaction tx;
+//    tx.operations.push_back( op );
+//    tx.validate();
+// 
+//    return my->sign_transaction( tx, broadcast );
+// }
 
 /**
  *  This method will genrate new owner, active, and memo keys for the new account which
@@ -1815,25 +1815,25 @@ condenser_api::legacy_signed_transaction wallet_api::create_account(
  *  This method will genrate new owner, active, and memo keys for the new account which
  *  will be controlable by this wallet.
  */
-condenser_api::legacy_signed_transaction wallet_api::create_account_delegated(
-   string creator,
-   condenser_api::legacy_asset clc_fee,
-   condenser_api::legacy_asset delegated_clc,
-   string new_account_name,
-   string json_meta,
-   bool broadcast )
-{ try {
-   FC_ASSERT( !is_locked() );
-   auto owner = suggest_brain_key();
-   auto active = suggest_brain_key();
-   auto posting = suggest_brain_key();
-   auto memo = suggest_brain_key();
-   import_key( owner.wif_priv_key );
-   import_key( active.wif_priv_key );
-   import_key( posting.wif_priv_key );
-   import_key( memo.wif_priv_key );
-   return create_account_with_keys_delegated( creator, clc_fee, delegated_clc, new_account_name, json_meta,  owner.pub_key, active.pub_key, posting.pub_key, memo.pub_key, broadcast );
-} FC_CAPTURE_AND_RETHROW( (creator)(new_account_name)(json_meta) ) }
+// condenser_api::legacy_signed_transaction wallet_api::create_account_delegated(
+//    string creator,
+//    condenser_api::legacy_asset clc_fee,
+//    condenser_api::legacy_asset delegated_clc,
+//    string new_account_name,
+//    string json_meta,
+//    bool broadcast )
+// { try {
+//    FC_ASSERT( !is_locked() );
+//    auto owner = suggest_brain_key();
+//    auto active = suggest_brain_key();
+//    auto posting = suggest_brain_key();
+//    auto memo = suggest_brain_key();
+//    import_key( owner.wif_priv_key );
+//    import_key( active.wif_priv_key );
+//    import_key( posting.wif_priv_key );
+//    import_key( memo.wif_priv_key );
+//    return create_account_with_keys_delegated( creator, clc_fee, delegated_clc, new_account_name, json_meta,  owner.pub_key, active.pub_key, posting.pub_key, memo.pub_key, broadcast );
+// } FC_CAPTURE_AND_RETHROW( (creator)(new_account_name)(json_meta) ) }
 
 
 condenser_api::legacy_signed_transaction wallet_api::update_witness(
@@ -2242,23 +2242,23 @@ condenser_api::legacy_signed_transaction wallet_api::cancel_transfer_from_saving
 //    return my->sign_transaction( tx, broadcast );
 // }
 
-condenser_api::legacy_signed_transaction wallet_api::convert_sbd(
-   string from,
-   condenser_api::legacy_asset amount,
-   bool broadcast )
-{
-   FC_ASSERT( !is_locked() );
-   convert_operation op;
-   op.owner = from;
-   op.requestid = fc::time_point::now().sec_since_epoch();
-   op.amount = amount.to_asset();
-
-   signed_transaction tx;
-   tx.operations.push_back( op );
-   tx.validate();
-
-   return my->sign_transaction( tx, broadcast );
-}
+// condenser_api::legacy_signed_transaction wallet_api::convert_sbd(
+//    string from,
+//    condenser_api::legacy_asset amount,
+//    bool broadcast )
+// {
+//    FC_ASSERT( !is_locked() );
+//    convert_operation op;
+//    op.owner = from;
+//    op.requestid = fc::time_point::now().sec_since_epoch();
+//    op.amount = amount.to_asset();
+// 
+//    signed_transaction tx;
+//    tx.operations.push_back( op );
+//    tx.validate();
+// 
+//    return my->sign_transaction( tx, broadcast );
+// }
 
 condenser_api::legacy_signed_transaction wallet_api::publish_feed(
    string witness,
@@ -2277,10 +2277,10 @@ condenser_api::legacy_signed_transaction wallet_api::publish_feed(
    return my->sign_transaction( tx, broadcast );
 }
 
-vector< condenser_api::api_convert_request_object > wallet_api::get_conversion_requests( string owner_account )
-{
-   return my->_remote_api->get_conversion_requests( owner_account );
-}
+// vector< condenser_api::api_convert_request_object > wallet_api::get_conversion_requests( string owner_account )
+// {
+//    return my->_remote_api->get_conversion_requests( owner_account );
+// }
 
 string wallet_api::decrypt_memo( string encrypted_memo )
 {
@@ -2344,16 +2344,16 @@ condenser_api::legacy_signed_transaction wallet_api::decline_voting_rights(
 condenser_api::legacy_signed_transaction wallet_api::claim_reward_balance(
    string account,
    condenser_api::legacy_asset reward_colab,
-   condenser_api::legacy_asset reward_sbd,
-   condenser_api::legacy_asset reward_vests,
+//    condenser_api::legacy_asset reward_sbd,
+//    condenser_api::legacy_asset reward_vests,
    bool broadcast )
 {
    FC_ASSERT( !is_locked() );
    claim_reward_balance_operation op;
    op.account = account;
    op.reward_colab = reward_colab.to_asset();
-   op.reward_sbd = reward_sbd.to_asset();
-   op.reward_vests = reward_vests.to_asset();
+//    op.reward_sbd = reward_sbd.to_asset();
+//    op.reward_vests = reward_vests.to_asset();
 
    signed_transaction tx;
    tx.operations.push_back( op );

@@ -29,7 +29,7 @@ void initialize_core_indexes( database& db )
    add_core_index< witness_vote_index                      >( db );
    add_core_index< limit_order_index                       >( db );
    add_core_index< feed_history_index                      >( db );
-   add_core_index< convert_request_index                   >( db );
+//   add_core_index< convert_request_index                   >( db );
    add_core_index< liquidity_reward_balance_index          >( db );
    add_core_index< operation_index                         >( db );
    add_core_index< account_history_index                   >( db );
@@ -42,8 +42,8 @@ void initialize_core_indexes( database& db )
    add_core_index< savings_withdraw_index                  >( db );
    add_core_index< decline_voting_rights_request_index     >( db );
    add_core_index< reward_fund_index                       >( db );
-   add_core_index< vesting_delegation_index                >( db );
-   add_core_index< vesting_delegation_expiration_index     >( db );
+//   add_core_index< vesting_delegation_index                >( db );
+//   add_core_index< vesting_delegation_expiration_index     >( db );
    add_core_index< pending_required_action_index           >( db );
    add_core_index< pending_optional_action_index           >( db );
    add_core_index< stake_pending_index			           >( db );///~~~~~CLC~~~~~

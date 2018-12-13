@@ -102,21 +102,21 @@ void create_rc_account( database& db, uint32_t now, const account_object& accoun
          return;
    }
 
-   if( max_rc_creation_adjustment.symbol == CLC_SYMBOL )
-   {
-      const dynamic_global_property_object& gpo = db.get_dynamic_global_properties();
-      max_rc_creation_adjustment = max_rc_creation_adjustment * gpo.get_vesting_share_price();
-   }
-   else if( max_rc_creation_adjustment.symbol == VESTS_SYMBOL )
-   {
-      // This occurs naturally when rc_account is initialized, so don't logspam
-      // wlog( "Encountered max_rc_creation_adjustment.symbol == VESTS_SYMBOL creating account ${acct}", ("acct", account.name) );
-   }
-   else
-   {
-      elog( "Encountered unknown max_rc_creation_adjustment creating account ${acct}", ("acct", account.name) );
-      max_rc_creation_adjustment = asset( 0, VESTS_SYMBOL );
-   }
+//    if( max_rc_creation_adjustment.symbol == CLC_SYMBOL )
+//    {
+//       const dynamic_global_property_object& gpo = db.get_dynamic_global_properties();
+//       max_rc_creation_adjustment = max_rc_creation_adjustment * gpo.get_vesting_share_price();
+//    }
+//    else if( max_rc_creation_adjustment.symbol == VESTS_SYMBOL )
+//    {
+//       // This occurs naturally when rc_account is initialized, so don't logspam
+//       // wlog( "Encountered max_rc_creation_adjustment.symbol == VESTS_SYMBOL creating account ${acct}", ("acct", account.name) );
+//    }
+//    else
+//    {
+//       elog( "Encountered unknown max_rc_creation_adjustment creating account ${acct}", ("acct", account.name) );
+//       max_rc_creation_adjustment = asset( 0, VESTS_SYMBOL );
+//    }
 
    db.create< rc_account_object >( [&]( rc_account_object& rca )
    {
@@ -634,10 +634,10 @@ struct pre_apply_operation_visitor
       regenerate( *account, *rc_account );
    }
 
-   void operator()( const account_create_with_delegation_operation& op )const
-   {
-      regenerate( op.creator );
-   }
+//    void operator()( const account_create_with_delegation_operation& op )const
+//    {
+//       regenerate( op.creator );
+//    }
 
 //    void operator()( const transfer_to_vesting_operation& op )const
 //    {
@@ -655,11 +655,11 @@ struct pre_apply_operation_visitor
 //       regenerate( op.from_account );
 //    }
 
-   void operator()( const delegate_vesting_shares_operation& op )const
-   {
-      regenerate( op.delegator );
-      regenerate( op.delegatee );
-   }
+//    void operator()( const delegate_vesting_shares_operation& op )const
+//    {
+//       regenerate( op.delegator );
+//       regenerate( op.delegatee );
+//    }
 
    void operator()( const author_reward_operation& op )const
    {
@@ -778,11 +778,11 @@ struct post_apply_operation_visitor
       create_rc_account( _db, _current_time, op.new_account_name, op.fee );
    }
 
-   void operator()( const account_create_with_delegation_operation& op )const
-   {
-      create_rc_account( _db, _current_time, op.new_account_name, op.fee );
-      _mod_accounts.emplace_back( op.creator );
-   }
+//    void operator()( const account_create_with_delegation_operation& op )const
+//    {
+//       create_rc_account( _db, _current_time, op.new_account_name, op.fee );
+//       _mod_accounts.emplace_back( op.creator );
+//    }
 
    void operator()( const create_claimed_account_operation& op )const
    {
@@ -816,11 +816,11 @@ struct post_apply_operation_visitor
 //       _mod_accounts.emplace_back( op.account, false );
 //    }
 
-   void operator()( const delegate_vesting_shares_operation& op )const
-   {
-      _mod_accounts.emplace_back( op.delegator );
-      _mod_accounts.emplace_back( op.delegatee );
-   }
+//    void operator()( const delegate_vesting_shares_operation& op )const
+//    {
+//       _mod_accounts.emplace_back( op.delegator );
+//       _mod_accounts.emplace_back( op.delegatee );
+//    }
 
    void operator()( const author_reward_operation& op )const
    {
@@ -922,9 +922,9 @@ void rc_plugin_impl::on_pre_apply_operation( const operation_notification& note 
    const dynamic_global_property_object& gpo = _db.get_dynamic_global_properties();
    pre_apply_operation_visitor vtor( _db );
 
-   // TODO: Add issue number to HF constant
-   if( _db.has_hardfork( COLAB_HARDFORK_0_20 ) )
-      vtor._vesting_share_price = gpo.get_vesting_share_price();
+//    // TODO: Add issue number to HF constant
+//    if( _db.has_hardfork( COLAB_HARDFORK_0_20 ) )
+//       vtor._vesting_share_price = gpo.get_vesting_share_price();
 
    vtor._current_witness = gpo.current_witness;
    vtor._skip = _skip;
@@ -999,7 +999,7 @@ void rc_plugin_impl::on_post_apply_optional_action( const optional_action_notifi
    update_modified_accounts( _db, modified_accounts );
 
    // There is no transaction equivalent for actions, so post apply transaction logic for actions go here.
-   int64_t rc_regen = (gpo.total_vesting_shares.amount.value / (COLAB_RC_REGEN_TIME / COLAB_BLOCK_INTERVAL));
+//   int64_t rc_regen = (gpo.total_vesting_shares.amount.value / (COLAB_RC_REGEN_TIME / COLAB_BLOCK_INTERVAL));
 
    rc_optional_action_info opt_action_info;
 
@@ -1007,25 +1007,25 @@ void rc_plugin_impl::on_post_apply_optional_action( const optional_action_notifi
    count_resources( note.action, opt_action_info.usage );
 
    // How many RC does this transaction cost?
-   const rc_resource_param_object& params_obj = _db.get< rc_resource_param_object, by_id >( rc_resource_param_object::id_type() );
-   const rc_pool_object& pool_obj = _db.get< rc_pool_object, by_id >( rc_pool_object::id_type() );
+//    const rc_resource_param_object& params_obj = _db.get< rc_resource_param_object, by_id >( rc_resource_param_object::id_type() );
+//    const rc_pool_object& pool_obj = _db.get< rc_pool_object, by_id >( rc_pool_object::id_type() );
+// 
+//    int64_t total_cost = 0;
 
-   int64_t total_cost = 0;
-
-   // When rc_regen is 0, everything is free
-   if( rc_regen > 0 )
-   {
-      for( size_t i=0; i<COLAB_NUM_RESOURCE_TYPES; i++ )
-      {
-         const rc_resource_params& params = params_obj.resource_param_array[i];
-         int64_t pool = pool_obj.pool_array[i];
-
-         // TODO:  Move this multiplication to resource_count.cpp
-         opt_action_info.usage.resource_count[i] *= int64_t( params.resource_dynamics_params.resource_unit );
-         opt_action_info.cost[i] = compute_rc_cost_of_resource( params.price_curve_params, pool, opt_action_info.usage.resource_count[i], rc_regen );
-         total_cost += opt_action_info.cost[i];
-      }
-   }
+//    // When rc_regen is 0, everything is free
+//    if( rc_regen > 0 )
+//    {
+//       for( size_t i=0; i<COLAB_NUM_RESOURCE_TYPES; i++ )
+//       {
+//          const rc_resource_params& params = params_obj.resource_param_array[i];
+//          int64_t pool = pool_obj.pool_array[i];
+// 
+//          // TODO:  Move this multiplication to resource_count.cpp
+//          opt_action_info.usage.resource_count[i] *= int64_t( params.resource_dynamics_params.resource_unit );
+//          opt_action_info.cost[i] = compute_rc_cost_of_resource( params.price_curve_params, pool, opt_action_info.usage.resource_count[i], rc_regen );
+//          total_cost += opt_action_info.cost[i];
+//       }
+//    }
 
    opt_action_info.resource_user = get_resource_user( note.action );
    use_account_rcs( _db, gpo, opt_action_info.resource_user, total_cost, _skip );
@@ -1166,8 +1166,8 @@ void exp_rc_data::to_variant( fc::variant& v )const
 int64_t get_maximum_rc( const account_object& account, const rc_account_object& rc_account )
 {
    int64_t result = account.vesting_shares.amount.value;
-   result = fc::signed_sat_sub( result, account.delegated_vesting_shares.amount.value );
-   result = fc::signed_sat_add( result, account.received_vesting_shares.amount.value );
+   //result = fc::signed_sat_sub( result, account.delegated_vesting_shares.amount.value );
+   //result = fc::signed_sat_add( result, account.received_vesting_shares.amount.value );
    result = fc::signed_sat_add( result, rc_account.max_rc_creation_adjustment.amount.value );
    result = fc::signed_sat_sub( result, detail::get_next_vesting_withdrawal( account ) );
    return result;

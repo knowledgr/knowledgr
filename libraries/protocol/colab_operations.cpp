@@ -58,26 +58,26 @@ namespace colab { namespace protocol {
       FC_ASSERT( fee >= asset( 0, CLC_SYMBOL ), "Account creation fee cannot be negative" );
    }
 
-   void account_create_with_delegation_operation::validate() const
-   {
-      validate_account_name( new_account_name );
-      validate_account_name( creator );
-      FC_ASSERT( is_asset_type( fee, CLC_SYMBOL ), "Account creation fee must be CLC" );
-      FC_ASSERT( is_asset_type( delegation, VESTS_SYMBOL ), "Delegation must be VESTS" );
-
-      owner.validate();
-      active.validate();
-      posting.validate();
-
-      if( json_metadata.size() > 0 )
-      {
-         FC_ASSERT( fc::is_utf8(json_metadata), "JSON Metadata not formatted in UTF8" );
-         FC_ASSERT( fc::json::is_valid(json_metadata), "JSON Metadata not valid JSON" );
-      }
-
-      FC_ASSERT( fee >= asset( 0, CLC_SYMBOL ), "Account creation fee cannot be negative" );
-      FC_ASSERT( delegation >= asset( 0, VESTS_SYMBOL ), "Delegation cannot be negative" );
-   }
+//    void account_create_with_delegation_operation::validate() const
+//    {
+//       validate_account_name( new_account_name );
+//       validate_account_name( creator );
+//       FC_ASSERT( is_asset_type( fee, CLC_SYMBOL ), "Account creation fee must be CLC" );
+//       FC_ASSERT( is_asset_type( delegation, VESTS_SYMBOL ), "Delegation must be VESTS" );
+// 
+//       owner.validate();
+//       active.validate();
+//       posting.validate();
+// 
+//       if( json_metadata.size() > 0 )
+//       {
+//          FC_ASSERT( fc::is_utf8(json_metadata), "JSON Metadata not formatted in UTF8" );
+//          FC_ASSERT( fc::json::is_valid(json_metadata), "JSON Metadata not valid JSON" );
+//       }
+// 
+//       FC_ASSERT( fee >= asset( 0, CLC_SYMBOL ), "Account creation fee cannot be negative" );
+//       FC_ASSERT( delegation >= asset( 0, VESTS_SYMBOL ), "Delegation cannot be negative" );
+//    }
 
    void account_update_operation::validate() const
    {
@@ -278,14 +278,14 @@ namespace colab { namespace protocol {
          FC_ASSERT( maximum_block_size >= COLAB_MIN_BLOCK_SIZE_LIMIT, "maximum_block_size smaller than minimum max block size" );
       }
 
-      itr = props.find( "sbd_interest_rate" );
-      if( itr != props.end() )
-      {
-         uint16_t sbd_interest_rate;
-         fc::raw::unpack_from_vector( itr->second, sbd_interest_rate );
-         FC_ASSERT( sbd_interest_rate >= 0, "sbd_interest_rate must be positive" );
-         FC_ASSERT( sbd_interest_rate <= COLAB_100_PERCENT, "sbd_interest_rate must not exceed 100%" );
-      }
+//       itr = props.find( "sbd_interest_rate" );
+//       if( itr != props.end() )
+//       {
+//          uint16_t sbd_interest_rate;
+//          fc::raw::unpack_from_vector( itr->second, sbd_interest_rate );
+//          FC_ASSERT( sbd_interest_rate >= 0, "sbd_interest_rate must be positive" );
+//          FC_ASSERT( sbd_interest_rate <= COLAB_100_PERCENT, "sbd_interest_rate must not exceed 100%" );
+//       }
 
       itr = props.find( "new_signing_key" );
       if( itr != props.end() )
@@ -295,15 +295,15 @@ namespace colab { namespace protocol {
          FC_UNUSED( signing_key ); // This tests the deserialization of the key
       }
 
-      itr = props.find( "sbd_exchange_rate" );
-      if( itr != props.end() )
-      {
-         price sbd_exchange_rate;
-         fc::raw::unpack_from_vector( itr->second, sbd_exchange_rate );
-         FC_ASSERT( ( is_asset_type( sbd_exchange_rate.base, SBD_SYMBOL ) && is_asset_type( sbd_exchange_rate.quote, CLC_SYMBOL ) ),
-            "Price feed must be a CLC/SBD price" );
-         sbd_exchange_rate.validate();
-      }
+//       itr = props.find( "sbd_exchange_rate" );
+//       if( itr != props.end() )
+//       {
+//          price sbd_exchange_rate;
+//          fc::raw::unpack_from_vector( itr->second, sbd_exchange_rate );
+//          FC_ASSERT( ( is_asset_type( sbd_exchange_rate.base, SBD_SYMBOL ) && is_asset_type( sbd_exchange_rate.quote, CLC_SYMBOL ) ),
+//             "Price feed must be a CLC/SBD price" );
+//          sbd_exchange_rate.validate();
+//       }
 
       itr = props.find( "url" );
       if( itr != props.end() )
@@ -546,14 +546,14 @@ namespace colab { namespace protocol {
       validate_account_name( owner );
    }
 
-   void convert_operation::validate()const
-   {
-      validate_account_name( owner );
-      /// only allow conversion from SBD to CLC, allowing the opposite can enable traders to abuse
-      /// market fluxuations through converting large quantities without moving the price.
-      FC_ASSERT( is_asset_type( amount, SBD_SYMBOL ), "Can only convert SBD to CLC" );
-      FC_ASSERT( amount.amount > 0, "Must convert some SBD" );
-   }
+//    void convert_operation::validate()const
+//    {
+//       validate_account_name( owner );
+//       /// only allow conversion from SBD to CLC, allowing the opposite can enable traders to abuse
+//       /// market fluxuations through converting large quantities without moving the price.
+//       FC_ASSERT( is_asset_type( amount, SBD_SYMBOL ), "Can only convert SBD to CLC" );
+//       FC_ASSERT( amount.amount > 0, "Must convert some SBD" );
+//    }
 
    void report_over_production_operation::validate()const
    {
@@ -691,12 +691,12 @@ namespace colab { namespace protocol {
    {
       validate_account_name( account );
       FC_ASSERT( is_asset_type( reward_colab, CLC_SYMBOL ), "Reward Colab must be CLC" );
-      FC_ASSERT( is_asset_type( reward_sbd, SBD_SYMBOL ), "Reward Colab must be SBD" );
-      FC_ASSERT( is_asset_type( reward_vests, VESTS_SYMBOL ), "Reward Colab must be VESTS" );
+//       FC_ASSERT( is_asset_type( reward_sbd, SBD_SYMBOL ), "Reward Colab must be SBD" );
+//       FC_ASSERT( is_asset_type( reward_vests, VESTS_SYMBOL ), "Reward Colab must be VESTS" );
       FC_ASSERT( reward_colab.amount >= 0, "Cannot claim a negative amount" );
-      FC_ASSERT( reward_sbd.amount >= 0, "Cannot claim a negative amount" );
-      FC_ASSERT( reward_vests.amount >= 0, "Cannot claim a negative amount" );
-      FC_ASSERT( reward_colab.amount > 0 || reward_sbd.amount > 0 || reward_vests.amount > 0, "Must claim something." );
+//       FC_ASSERT( reward_sbd.amount >= 0, "Cannot claim a negative amount" );
+//       FC_ASSERT( reward_vests.amount >= 0, "Cannot claim a negative amount" );
+      FC_ASSERT( reward_colab.amount > 0/* || reward_sbd.amount > 0 || reward_vests.amount > 0*/, "Must claim something." );
    }
 
 #ifdef COLAB_ENABLE_SMT
@@ -719,13 +719,13 @@ namespace colab { namespace protocol {
    }
 #endif
 
-   void delegate_vesting_shares_operation::validate()const
-   {
-      validate_account_name( delegator );
-      validate_account_name( delegatee );
-      FC_ASSERT( delegator != delegatee, "You cannot delegate VESTS to yourself" );
-      FC_ASSERT( is_asset_type( vesting_shares, VESTS_SYMBOL ), "Delegation must be VESTS" );
-      FC_ASSERT( vesting_shares >= asset( 0, VESTS_SYMBOL ), "Delegation cannot be negative" );
-   }
+//    void delegate_vesting_shares_operation::validate()const
+//    {
+//       validate_account_name( delegator );
+//       validate_account_name( delegatee );
+//       FC_ASSERT( delegator != delegatee, "You cannot delegate VESTS to yourself" );
+//       FC_ASSERT( is_asset_type( vesting_shares, VESTS_SYMBOL ), "Delegation must be VESTS" );
+//       FC_ASSERT( vesting_shares >= asset( 0, VESTS_SYMBOL ), "Delegation cannot be negative" );
+//    }
 
 } } // colab::protocol

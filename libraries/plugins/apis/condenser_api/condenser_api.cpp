@@ -75,10 +75,10 @@ namespace detail
             (get_withdraw_routes)
             (get_savings_withdraw_from)
             (get_savings_withdraw_to)
-            (get_vesting_delegations)
-            (get_expiring_vesting_delegations)
+//            (get_vesting_delegations)
+//            (get_expiring_vesting_delegations)
             (get_witnesses)
-            (get_conversion_requests)
+//            (get_conversion_requests)
             (get_witness_by_account)
             (get_witnesses_by_vote)
             (lookup_witness_accounts)
@@ -1044,47 +1044,47 @@ namespace detail
       return result;
    }
 
-   DEFINE_API_IMPL( condenser_api_impl, get_vesting_delegations )
-   {
-      FC_ASSERT( args.size() == 2 || args.size() == 3, "Expected 2-3 arguments, was ${n}", ("n", args.size()) );
+//    DEFINE_API_IMPL( condenser_api_impl, get_vesting_delegations )
+//    {
+//       FC_ASSERT( args.size() == 2 || args.size() == 3, "Expected 2-3 arguments, was ${n}", ("n", args.size()) );
+// 
+//       database_api::list_vesting_delegations_args a;
+//       account_name_type account = args[0].as< account_name_type >();
+//       a.start = fc::variant( (vector< variant >){ args[0], args[1] } );
+//       a.limit = args.size() == 3 ? args[2].as< uint32_t >() : 100;
+//       a.order = database_api::by_delegation;
+// 
+//       auto delegations = _database_api->list_vesting_delegations( a ).delegations;
+//       get_vesting_delegations_return result;
+// 
+//       for( auto itr = delegations.begin(); itr != delegations.end() && itr->delegator == account; ++itr )
+//       {
+//          result.push_back( api_vesting_delegation_object( *itr ) );
+//       }
+// 
+//       return result;
+//    }
 
-      database_api::list_vesting_delegations_args a;
-      account_name_type account = args[0].as< account_name_type >();
-      a.start = fc::variant( (vector< variant >){ args[0], args[1] } );
-      a.limit = args.size() == 3 ? args[2].as< uint32_t >() : 100;
-      a.order = database_api::by_delegation;
-
-      auto delegations = _database_api->list_vesting_delegations( a ).delegations;
-      get_vesting_delegations_return result;
-
-      for( auto itr = delegations.begin(); itr != delegations.end() && itr->delegator == account; ++itr )
-      {
-         result.push_back( api_vesting_delegation_object( *itr ) );
-      }
-
-      return result;
-   }
-
-   DEFINE_API_IMPL( condenser_api_impl, get_expiring_vesting_delegations )
-   {
-      FC_ASSERT( args.size() == 2 || args.size() == 3, "Expected 2-3 arguments, was ${n}", ("n", args.size()) );
-
-      database_api::list_vesting_delegation_expirations_args a;
-      account_name_type account = args[0].as< account_name_type >();
-      a.start = fc::variant( (vector< variant >){ args[0], args[1], fc::variant( vesting_delegation_expiration_id_type() ) } );
-      a.limit = args.size() == 3 ? args[2].as< uint32_t >() : 100;
-      a.order = database_api::by_account_expiration;
-
-      auto delegations = _database_api->list_vesting_delegation_expirations( a ).delegations;
-      get_expiring_vesting_delegations_return result;
-
-      for( auto itr = delegations.begin(); itr != delegations.end() && itr->delegator == account; ++itr )
-      {
-         result.push_back( api_vesting_delegation_expiration_object( *itr ) );
-      }
-
-      return result;
-   }
+//    DEFINE_API_IMPL( condenser_api_impl, get_expiring_vesting_delegations )
+//    {
+//       FC_ASSERT( args.size() == 2 || args.size() == 3, "Expected 2-3 arguments, was ${n}", ("n", args.size()) );
+// 
+//       database_api::list_vesting_delegation_expirations_args a;
+//       account_name_type account = args[0].as< account_name_type >();
+//       a.start = fc::variant( (vector< variant >){ args[0], args[1], fc::variant( vesting_delegation_expiration_id_type() ) } );
+//       a.limit = args.size() == 3 ? args[2].as< uint32_t >() : 100;
+//       a.order = database_api::by_account_expiration;
+// 
+//       auto delegations = _database_api->list_vesting_delegation_expirations( a ).delegations;
+//       get_expiring_vesting_delegations_return result;
+// 
+//       for( auto itr = delegations.begin(); itr != delegations.end() && itr->delegator == account; ++itr )
+//       {
+//          result.push_back( api_vesting_delegation_expiration_object( *itr ) );
+//       }
+// 
+//       return result;
+//    }
 
    DEFINE_API_IMPL( condenser_api_impl, get_witnesses )
    {
@@ -1108,23 +1108,23 @@ namespace detail
       return result;
    }
 
-   DEFINE_API_IMPL( condenser_api_impl, get_conversion_requests )
-   {
-      CHECK_ARG_SIZE( 1 )
-      auto requests = _database_api->find_sbd_conversion_requests(
-         {
-            args[0].as< account_name_type >()
-         }).requests;
-
-      get_conversion_requests_return result;
-
-      for( auto& r : requests )
-      {
-         result.push_back( api_convert_request_object( r ) );
-      }
-
-      return result;
-   }
+//    DEFINE_API_IMPL( condenser_api_impl, get_conversion_requests )
+//    {
+//       CHECK_ARG_SIZE( 1 )
+//       auto requests = _database_api->find_sbd_conversion_requests(
+//          {
+//             args[0].as< account_name_type >()
+//          }).requests;
+// 
+//       get_conversion_requests_return result;
+// 
+//       for( auto& r : requests )
+//       {
+//          result.push_back( api_convert_request_object( r ) );
+//       }
+// 
+//       return result;
+//    }
 
    DEFINE_API_IMPL( condenser_api_impl, get_witness_by_account )
    {
@@ -2155,37 +2155,37 @@ uint16_t api_account_object::_compute_voting_power( const database_api::api_acco
 {
 	return 0;
 #if 0///~~~~~CLC~~~~~{
-   if( a.voting_manabar.last_update_time < COLAB_HARDFORK_0_20_TIME )
-      return (uint16_t) a.voting_manabar.current_mana;
-
-   auto vests = chain::util::get_effective_vesting_shares( a );
-   if( vests <= 0 )
-      return 0;
-
-   //
-   // Let t1 = last_vote_time, t2 = last_update_time
-   // vp_t2 = COLAB_100_PERCENT * current_mana / vests
-   // vp_t1 = vp_t2 - COLAB_100_PERCENT * (t2 - t1) / COLAB_VOTING_MANA_REGENERATION_SECONDS
-   //
-
-   uint32_t t1 = a.last_vote_time.sec_since_epoch();
-   uint32_t t2 = a.voting_manabar.last_update_time;
-   uint64_t dt = (t2 > t1) ? (t2 - t1) : 0;
-   uint64_t vp_dt = COLAB_100_PERCENT * dt / COLAB_VOTING_MANA_REGENERATION_SECONDS;
-
-   uint128_t vp_t2 = COLAB_100_PERCENT;
-   vp_t2 *= a.voting_manabar.current_mana;
-   vp_t2 /= vests;
-
-   uint64_t vp_t2u = vp_t2.to_uint64();
-   if( vp_t2u >= COLAB_100_PERCENT )
-   {
-      wlog( "Truncated vp_t2u to COLAB_100_PERCENT for account ${a}", ("a", a.name) );
-      vp_t2u = COLAB_100_PERCENT;
-   }
-   uint16_t vp_t1 = uint16_t( vp_t2u ) - uint16_t( std::min( vp_t2u, vp_dt ) );
-
-   return vp_t1;
+//    if( a.voting_manabar.last_update_time < COLAB_HARDFORK_0_20_TIME )
+//       return (uint16_t) a.voting_manabar.current_mana;
+// 
+//    auto vests = chain::util::get_effective_vesting_shares( a );
+//    if( vests <= 0 )
+//       return 0;
+// 
+//    //
+//    // Let t1 = last_vote_time, t2 = last_update_time
+//    // vp_t2 = COLAB_100_PERCENT * current_mana / vests
+//    // vp_t1 = vp_t2 - COLAB_100_PERCENT * (t2 - t1) / COLAB_VOTING_MANA_REGENERATION_SECONDS
+//    //
+// 
+//    uint32_t t1 = a.last_vote_time.sec_since_epoch();
+//    uint32_t t2 = a.voting_manabar.last_update_time;
+//    uint64_t dt = (t2 > t1) ? (t2 - t1) : 0;
+//    uint64_t vp_dt = COLAB_100_PERCENT * dt / COLAB_VOTING_MANA_REGENERATION_SECONDS;
+// 
+//    uint128_t vp_t2 = COLAB_100_PERCENT;
+//    vp_t2 *= a.voting_manabar.current_mana;
+//    vp_t2 /= vests;
+// 
+//    uint64_t vp_t2u = vp_t2.to_uint64();
+//    if( vp_t2u >= COLAB_100_PERCENT )
+//    {
+//       wlog( "Truncated vp_t2u to COLAB_100_PERCENT for account ${a}", ("a", a.name) );
+//       vp_t2u = COLAB_100_PERCENT;
+//    }
+//    uint16_t vp_t1 = uint16_t( vp_t2u ) - uint16_t( std::min( vp_t2u, vp_dt ) );
+// 
+//    return vp_t1;
 #endif///~~~~~CLC~~~~~}
 }
 
@@ -2296,10 +2296,10 @@ DEFINE_READ_APIS( condenser_api,
    (get_withdraw_routes)
    (get_savings_withdraw_from)
    (get_savings_withdraw_to)
-   (get_vesting_delegations)
-   (get_expiring_vesting_delegations)
+//   (get_vesting_delegations)
+//   (get_expiring_vesting_delegations)
    (get_witnesses)
-   (get_conversion_requests)
+//   (get_conversion_requests)
    (get_witness_by_account)
    (get_witnesses_by_vote)
    (lookup_witness_accounts)

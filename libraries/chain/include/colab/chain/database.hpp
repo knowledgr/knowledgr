@@ -209,7 +209,7 @@ namespace colab { namespace chain {
          const time_point_sec                   calculate_discussion_payout_time( const comment_object& comment )const;
          const reward_fund_object&              get_reward_fund( const comment_object& c )const;
 
-         asset get_effective_vesting_shares( const account_object& account, asset_symbol_type vested_symbol )const;
+         //asset get_effective_vesting_shares( const account_object& account, asset_symbol_type vested_symbol )const;
 
          void max_bandwidth_per_share()const;
 
@@ -380,12 +380,12 @@ namespace colab { namespace chain {
           * adjust_proxied_witness_votes( a, -a.witness_vote_weight() )
           */
          void clear_witness_votes( const account_object& a );
-         void process_vesting_withdrawals();
+         //void process_vesting_withdrawals();
          share_type pay_curators( const comment_object& c, share_type& max_rewards );
          share_type cashout_comment_helper( util::comment_reward_context& ctx, const comment_object& comment, bool forward_curation_remainder = true );
          void process_comment_cashout();
          void process_funds();
-         void process_conversions();
+         //void process_conversions();
          void process_savings_withdraws();
          void process_subsidized_accounts();
 #ifdef COLAB_ENABLE_SMT
@@ -395,7 +395,7 @@ namespace colab { namespace chain {
          void account_recovery_processing();
          void expire_escrow_ratification();
          void process_decline_voting_rights();
-         void update_median_feed();
+         //void update_median_feed();
 
          asset get_liquidity_reward()const;
          asset get_content_reward()const;
@@ -450,7 +450,7 @@ namespace colab { namespace chain {
          void cancel_order( const limit_order_object& obj );
          int  match( const limit_order_object& bid, const limit_order_object& ask, const price& trade_price );
 
-         void perform_vesting_share_split( uint32_t magnitude );
+//         void perform_vesting_share_split( uint32_t magnitude );
          void retally_comment_children();
          void retally_witness_votes();
          void retally_witness_vote_counts( bool force = false );

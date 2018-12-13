@@ -24,7 +24,7 @@ namespace colab { namespace protocol {
             limit_order_cancel_operation,
 
             feed_publish_operation,
-            convert_operation,
+            //convert_operation,
 
 			account_create_operation,
 			account_admin_update_operation,///~~~~~CLC~~~~~
@@ -66,8 +66,8 @@ namespace colab { namespace protocol {
             reset_account_operation,
             set_reset_account_operation,
             claim_reward_balance_operation,
-            delegate_vesting_shares_operation,
-            account_create_with_delegation_operation,
+//            delegate_vesting_shares_operation,
+//            account_create_with_delegation_operation,
             witness_set_properties_operation,
 
 #ifdef COLAB_ENABLE_SMT

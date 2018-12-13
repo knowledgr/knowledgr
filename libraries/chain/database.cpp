@@ -585,26 +585,26 @@ const reward_fund_object& database::get_reward_fund( const comment_object& c ) c
    return get< reward_fund_object, by_name >( COLAB_POST_REWARD_FUND_NAME );
 }
 
-asset database::get_effective_vesting_shares( const account_object& account, asset_symbol_type vested_symbol )const
-{
-   if( vested_symbol == VESTS_SYMBOL )
-      return account.vesting_shares - account.delegated_vesting_shares + account.received_vesting_shares;
-
-#ifdef COLAB_ENABLE_SMT
-   FC_ASSERT( vested_symbol.space() == asset_symbol_type::smt_nai_space );
-   FC_ASSERT( vested_symbol.is_vesting() );
-
-#pragma message( "TODO: Update the code below when delegation is modified to support SMTs." )
-   const account_regular_balance_object* bo = find< account_regular_balance_object, by_owner_liquid_symbol >(
-      boost::make_tuple( account.name, vested_symbol.get_paired_symbol() ) );
-   if( bo == nullptr )
-      return asset( 0, vested_symbol );
-
-   return bo->vesting;
-#else
-   FC_ASSERT( false, "Invalid symbol" );
-#endif
-}
+// asset database::get_effective_vesting_shares( const account_object& account, asset_symbol_type vested_symbol )const
+// {
+//    if( vested_symbol == VESTS_SYMBOL )
+//       return account.vesting_shares - account.delegated_vesting_shares + account.received_vesting_shares;
+// 
+// #ifdef COLAB_ENABLE_SMT
+//    FC_ASSERT( vested_symbol.space() == asset_symbol_type::smt_nai_space );
+//    FC_ASSERT( vested_symbol.is_vesting() );
+// 
+// #pragma message( "TODO: Update the code below when delegation is modified to support SMTs." )
+//    const account_regular_balance_object* bo = find< account_regular_balance_object, by_owner_liquid_symbol >(
+//       boost::make_tuple( account.name, vested_symbol.get_paired_symbol() ) );
+//    if( bo == nullptr )
+//       return asset( 0, vested_symbol );
+// 
+//    return bo->vesting;
+// #else
+//    FC_ASSERT( false, "Invalid symbol" );
+// #endif
+// }
 
 uint32_t database::witness_participation_rate()const
 {
@@ -1114,12 +1114,12 @@ asset create_vesting2( database& db, const account_object& to_account, asset liq
       
       // Update global vesting pool numbers.
 
-	  const auto& cprops = db.get_dynamic_global_properties();
-      db.modify( cprops, [&]( dynamic_global_property_object& props )
-      {
-		  props.total_vesting_fund_clc += new_token;///~~~ ???
-//		  props.total_vesting_shares += new_token;///~~~ ???
-      } );
+// 	  const auto& cprops = db.get_dynamic_global_properties();
+//       db.modify( cprops, [&]( dynamic_global_property_object& props )
+//       {
+// 		  props.total_vesting_fund_clc += new_token;
+// 		  props.total_vesting_shares += new_token;
+//       } );
       // Update witness voting numbers.
       if( !to_reward_balance )
          db.adjust_proxied_witness_votes( to_account, new_token.amount );///~~~ ???
@@ -1237,7 +1237,7 @@ void database::adjust_witness_vote( const witness_object& witness, share_type de
 
       w.virtual_last_update = wso.current_virtual_time;
       w.votes += delta;
-      FC_ASSERT( w.votes <= get_dynamic_global_properties().total_vesting_shares.amount, "", ("w.votes", w.votes)("props",get_dynamic_global_properties().total_vesting_shares) );
+//      FC_ASSERT( w.votes <= get_dynamic_global_properties().total_vesting_shares.amount, "", ("w.votes", w.votes)("props",get_dynamic_global_properties().total_vesting_shares) );
 
       if( has_hardfork( COLAB_HARDFORK_0_2 ) )
          w.virtual_scheduled_time = w.virtual_last_update + (COLAB_VIRTUAL_SCHEDULE_LAP_LENGTH2 - w.virtual_position)/(w.votes.value+1);
@@ -1278,9 +1278,9 @@ void database::clear_null_account_balance()
    const auto& null_account = get_account( COLAB_NULL_ACCOUNT );
    asset total_colab( 0, CLC_SYMBOL );
 //   asset total_sbd( 0, SBD_SYMBOL );///~~~~~CLC~~~~~ NO NEED
-   asset total_vests( 0, VESTS_SYMBOL );
+//   asset total_vests( 0, VESTS_SYMBOL );
 
-   asset vesting_shares_colab_value = asset( 0, CLC_SYMBOL );
+//   asset vesting_shares_colab_value = asset( 0, CLC_SYMBOL );
 
    if( null_account.balance.amount > 0 )
    {
@@ -1302,13 +1302,13 @@ void database::clear_null_account_balance()
 //    }
 ///~~~~~CLC~~~~~} NO NEED for CoLab
 
-   if( null_account.vesting_shares.amount > 0 )
-   {
-      const auto& gpo = get_dynamic_global_properties();
-      vesting_shares_colab_value = null_account.vesting_shares * gpo.get_vesting_share_price();
-      total_colab += vesting_shares_colab_value;
-      total_vests += null_account.vesting_shares;
-   }
+//    if( null_account.vesting_shares.amount > 0 )
+//    {
+//       const auto& gpo = get_dynamic_global_properties();
+//      vesting_shares_colab_value = null_account.vesting_shares * gpo.get_vesting_share_price();
+//      total_colab += vesting_shares_colab_value;
+//      total_vests += null_account.vesting_shares;
+//   }
 
    if( null_account.reward_clc_balance.amount > 0 )
    {
@@ -1327,15 +1327,15 @@ void database::clear_null_account_balance()
 //    }
 ///~~~~~CLC~~~~~} NO NEED for CoLab
 
-   if( (total_colab.amount.value == 0) && /*(total_sbd.amount.value == 0) &&*/ (total_vests.amount.value == 0) )
+   if( (total_colab.amount.value == 0)/* && (total_sbd.amount.value == 0) && (total_vests.amount.value == 0)*/ )
       return;
 
    operation vop_op = clear_null_account_balance_operation();
    clear_null_account_balance_operation& vop = vop_op.get< clear_null_account_balance_operation >();
    if( total_colab.amount.value > 0 )
       vop.total_cleared.push_back( total_colab );
-   if( total_vests.amount.value > 0 )
-      vop.total_cleared.push_back( total_vests );
+//    if( total_vests.amount.value > 0 )
+//       vop.total_cleared.push_back( total_vests );
 ///~~~~~CLC~~~~~{ NO NEED for CoLab
 //    if( total_sbd.amount.value > 0 )
 //       vop.total_cleared.push_back( total_sbd );
@@ -1366,21 +1366,21 @@ void database::clear_null_account_balance()
 //    }
 ///~~~~~CLC~~~~~} NO NEED for CoLab
 
-   if( null_account.vesting_shares.amount > 0 )
-   {
-      const auto& gpo = get_dynamic_global_properties();
-
-      modify( gpo, [&]( dynamic_global_property_object& g )
-      {
-         g.total_vesting_shares -= null_account.vesting_shares;
-         g.total_vesting_fund_clc -= vesting_shares_colab_value;
-      });
-
-      modify( null_account, [&]( account_object& a )
-      {
-         a.vesting_shares.amount = 0;
-      });
-   }
+//    if( null_account.vesting_shares.amount > 0 )
+//    {
+//       const auto& gpo = get_dynamic_global_properties();
+// 
+//       modify( gpo, [&]( dynamic_global_property_object& g )
+//       {
+//          g.total_vesting_shares -= null_account.vesting_shares;
+//          g.total_vesting_fund_clc -= vesting_shares_colab_value;
+//       });
+// 
+//       modify( null_account, [&]( account_object& a )
+//       {
+//          a.vesting_shares.amount = 0;
+//       });
+//    }
 
    if( null_account.reward_clc_balance.amount > 0 )
    {
@@ -1457,136 +1457,136 @@ void database::update_owner_authority( const account_object& account, const auth
    });
 }
 
-void database::process_vesting_withdrawals()
-{
-   const auto& widx = get_index< account_index, by_next_vesting_withdrawal >();
-   const auto& didx = get_index< withdraw_vesting_route_index, by_withdraw_route >();
-   auto current = widx.begin();
-
-   const auto& cprops = get_dynamic_global_properties();
-
-   while( current != widx.end() && current->next_vesting_withdrawal <= head_block_time() )
-   {
-      const auto& from_account = *current; ++current;
-
-      /**
-      *  Let T = total tokens in vesting fund
-      *  Let V = total vesting shares
-      *  Let v = total vesting shares being cashed out
-      *
-      *  The user may withdraw  vT / V tokens
-      */
-      share_type to_withdraw;
-      if ( from_account.to_withdraw - from_account.withdrawn < from_account.vesting_withdraw_rate.amount )
-         to_withdraw = std::min( from_account.vesting_shares.amount, from_account.to_withdraw % from_account.vesting_withdraw_rate.amount ).value;
-      else
-         to_withdraw = std::min( from_account.vesting_shares.amount, from_account.vesting_withdraw_rate.amount ).value;
-
-      share_type vests_deposited_as_colab = 0;
-      share_type vests_deposited_as_vests = 0;
-      asset total_colab_converted = asset( 0, CLC_SYMBOL );
-
-      // Do two passes, the first for vests, the second for colab. Try to maintain as much accuracy for vests as possible.
-      for( auto itr = didx.upper_bound( boost::make_tuple( from_account.name, account_name_type() ) );
-           itr != didx.end() && itr->from_account == from_account.name;
-           ++itr )
-      {
-         if( itr->auto_vest )
-         {
-            share_type to_deposit = ( ( fc::uint128_t ( to_withdraw.value ) * itr->percent ) / COLAB_100_PERCENT ).to_uint64();
-            vests_deposited_as_vests += to_deposit;
-
-            if( to_deposit > 0 )
-            {
-               const auto& to_account = get< account_object, by_name >( itr->to_account );
-
-               operation vop = fill_vesting_withdraw_operation( from_account.name, to_account.name, asset( to_deposit, VESTS_SYMBOL ), asset( to_deposit, VESTS_SYMBOL ) );
-
-               pre_push_virtual_operation( vop );
-
-               modify( to_account, [&]( account_object& a )
-               {
-                  a.vesting_shares.amount += to_deposit;
-               });
-
-               adjust_proxied_witness_votes( to_account, to_deposit );
-
-               post_push_virtual_operation( vop );
-            }
-         }
-      }
-
-      for( auto itr = didx.upper_bound( boost::make_tuple( from_account.name, account_name_type() ) );
-           itr != didx.end() && itr->from_account == from_account.name;
-           ++itr )
-      {
-         if( !itr->auto_vest )
-         {
-            const auto& to_account = get< account_object, by_name >( itr->to_account );
-
-            share_type to_deposit = ( ( fc::uint128_t ( to_withdraw.value ) * itr->percent ) / COLAB_100_PERCENT ).to_uint64();
-            vests_deposited_as_colab += to_deposit;
-            auto converted_colab = asset( to_deposit, VESTS_SYMBOL ) * cprops.get_vesting_share_price();
-            total_colab_converted += converted_colab;
-
-            if( to_deposit > 0 )
-            {
-               operation vop = fill_vesting_withdraw_operation( from_account.name, to_account.name, asset( to_deposit, VESTS_SYMBOL), converted_colab );
-
-               pre_push_virtual_operation( vop );
-
-               modify( to_account, [&]( account_object& a )
-               {
-                  a.balance += converted_colab;
-               });
-
-               modify( cprops, [&]( dynamic_global_property_object& o )
-               {
-                  o.total_vesting_fund_clc -= converted_colab;
-                  o.total_vesting_shares.amount -= to_deposit;
-               });
-
-               post_push_virtual_operation( vop );
-            }
-         }
-      }
-
-      share_type to_convert = to_withdraw - vests_deposited_as_colab - vests_deposited_as_vests;
-      FC_ASSERT( to_convert >= 0, "Deposited more vests than were supposed to be withdrawn" );
-
-      auto converted_colab = asset( to_convert, VESTS_SYMBOL ) * cprops.get_vesting_share_price();
-      operation vop = fill_vesting_withdraw_operation( from_account.name, from_account.name, asset( to_convert, VESTS_SYMBOL ), converted_colab );
-      pre_push_virtual_operation( vop );
-
-      modify( from_account, [&]( account_object& a )
-      {
-         a.vesting_shares.amount -= to_withdraw;
-         a.balance += converted_colab;
-         a.withdrawn += to_withdraw;
-
-         if( a.withdrawn >= a.to_withdraw || a.vesting_shares.amount == 0 )
-         {
-            a.vesting_withdraw_rate.amount = 0;
-            a.next_vesting_withdrawal = fc::time_point_sec::maximum();
-         }
-         else
-         {
-            a.next_vesting_withdrawal += fc::seconds( COLAB_VESTING_WITHDRAW_INTERVAL_SECONDS );
-         }
-      });
-
-      modify( cprops, [&]( dynamic_global_property_object& o )
-      {
-         o.total_vesting_fund_clc -= converted_colab;
-         o.total_vesting_shares.amount -= to_convert;
-      });
-
-      if( to_withdraw > 0 )
-         adjust_proxied_witness_votes( from_account, -to_withdraw );
-
-      post_push_virtual_operation( vop );
-   }
-}
+// void database::process_vesting_withdrawals()
+// {
+//    const auto& widx = get_index< account_index, by_next_vesting_withdrawal >();
+//    const auto& didx = get_index< withdraw_vesting_route_index, by_withdraw_route >();
+//    auto current = widx.begin();
+// 
+//    const auto& cprops = get_dynamic_global_properties();
+// 
+//    while( current != widx.end() && current->next_vesting_withdrawal <= head_block_time() )
+//    {
+//       const auto& from_account = *current; ++current;
+// 
+//       /**
+//       *  Let T = total tokens in vesting fund
+//       *  Let V = total vesting shares
+//       *  Let v = total vesting shares being cashed out
+//       *
+//       *  The user may withdraw  vT / V tokens
+//       */
+//       share_type to_withdraw;
+//       if ( from_account.to_withdraw - from_account.withdrawn < from_account.vesting_withdraw_rate.amount )
+//          to_withdraw = std::min( from_account.vesting_shares.amount, from_account.to_withdraw % from_account.vesting_withdraw_rate.amount ).value;
+//       else
+//          to_withdraw = std::min( from_account.vesting_shares.amount, from_account.vesting_withdraw_rate.amount ).value;
+// 
+//       share_type vests_deposited_as_colab = 0;
+//       share_type vests_deposited_as_vests = 0;
+//       asset total_colab_converted = asset( 0, CLC_SYMBOL );
+// 
+//       // Do two passes, the first for vests, the second for colab. Try to maintain as much accuracy for vests as possible.
+//       for( auto itr = didx.upper_bound( boost::make_tuple( from_account.name, account_name_type() ) );
+//            itr != didx.end() && itr->from_account == from_account.name;
+//            ++itr )
+//       {
+//          if( itr->auto_vest )
+//          {
+//             share_type to_deposit = ( ( fc::uint128_t ( to_withdraw.value ) * itr->percent ) / COLAB_100_PERCENT ).to_uint64();
+//             vests_deposited_as_vests += to_deposit;
+// 
+//             if( to_deposit > 0 )
+//             {
+//                const auto& to_account = get< account_object, by_name >( itr->to_account );
+// 
+//                operation vop = fill_vesting_withdraw_operation( from_account.name, to_account.name, asset( to_deposit, VESTS_SYMBOL ), asset( to_deposit, VESTS_SYMBOL ) );
+// 
+//                pre_push_virtual_operation( vop );
+// 
+//                modify( to_account, [&]( account_object& a )
+//                {
+//                   a.vesting_shares.amount += to_deposit;
+//                });
+// 
+//                adjust_proxied_witness_votes( to_account, to_deposit );
+// 
+//                post_push_virtual_operation( vop );
+//             }
+//          }
+//       }
+// 
+//       for( auto itr = didx.upper_bound( boost::make_tuple( from_account.name, account_name_type() ) );
+//            itr != didx.end() && itr->from_account == from_account.name;
+//            ++itr )
+//       {
+//          if( !itr->auto_vest )
+//          {
+//             const auto& to_account = get< account_object, by_name >( itr->to_account );
+// 
+//             share_type to_deposit = ( ( fc::uint128_t ( to_withdraw.value ) * itr->percent ) / COLAB_100_PERCENT ).to_uint64();
+//             vests_deposited_as_colab += to_deposit;
+//             auto converted_colab = asset( to_deposit, VESTS_SYMBOL ) * cprops.get_vesting_share_price();
+//             total_colab_converted += converted_colab;
+// 
+//             if( to_deposit > 0 )
+//             {
+//                operation vop = fill_vesting_withdraw_operation( from_account.name, to_account.name, asset( to_deposit, VESTS_SYMBOL), converted_colab );
+// 
+//                pre_push_virtual_operation( vop );
+// 
+//                modify( to_account, [&]( account_object& a )
+//                {
+//                   a.balance += converted_colab;
+//                });
+// 
+//                modify( cprops, [&]( dynamic_global_property_object& o )
+//                {
+//                   o.total_vesting_fund_clc -= converted_colab;
+//                   o.total_vesting_shares.amount -= to_deposit;
+//                });
+// 
+//                post_push_virtual_operation( vop );
+//             }
+//          }
+//       }
+// 
+//       share_type to_convert = to_withdraw - vests_deposited_as_colab - vests_deposited_as_vests;
+//       FC_ASSERT( to_convert >= 0, "Deposited more vests than were supposed to be withdrawn" );
+// 
+//       auto converted_colab = asset( to_convert, VESTS_SYMBOL ) * cprops.get_vesting_share_price();
+//       operation vop = fill_vesting_withdraw_operation( from_account.name, from_account.name, asset( to_convert, VESTS_SYMBOL ), converted_colab );
+//       pre_push_virtual_operation( vop );
+// 
+//       modify( from_account, [&]( account_object& a )
+//       {
+//          a.vesting_shares.amount -= to_withdraw;
+//          a.balance += converted_colab;
+//          a.withdrawn += to_withdraw;
+// 
+//          if( a.withdrawn >= a.to_withdraw || a.vesting_shares.amount == 0 )
+//          {
+//             a.vesting_withdraw_rate.amount = 0;
+//             a.next_vesting_withdrawal = fc::time_point_sec::maximum();
+//          }
+//          else
+//          {
+//             a.next_vesting_withdrawal += fc::seconds( COLAB_VESTING_WITHDRAW_INTERVAL_SECONDS );
+//          }
+//       });
+// 
+//       modify( cprops, [&]( dynamic_global_property_object& o )
+//       {
+//          o.total_vesting_fund_clc -= converted_colab;
+//          o.total_vesting_shares.amount -= to_convert;
+//       });
+// 
+//       if( to_withdraw > 0 )
+//          adjust_proxied_witness_votes( from_account, -to_withdraw );
+// 
+//       post_push_virtual_operation( vop );
+//    }
+// }
 
 void database::adjust_total_payout( const comment_object& cur, const asset& sbd_created, const asset& curator_sbd_value, const asset& beneficiary_value )
 {///~~~~~CLC~~~~~ HERE, TOO ~~~:)
@@ -2061,7 +2061,7 @@ void database::process_funds()
 
       modify( props, [&]( dynamic_global_property_object& p )
       {
-         p.total_vesting_fund_clc += asset( vesting_reward, CLC_SYMBOL );
+//         p.total_vesting_fund_clc += asset( vesting_reward, CLC_SYMBOL );
          if( !has_hardfork( COLAB_HARDFORK_0_17__774 ) )
             p.total_reward_fund_colab  += asset( content_reward, CLC_SYMBOL );
          p.current_supply           += asset( new_colab, CLC_SYMBOL );
@@ -2104,7 +2104,7 @@ void database::process_funds()
 	  std::cerr<<"~~~ [database::process_funds()] - vesting_reward = "<<vesting_reward.amount.value<<" "<<vesting_reward.symbol.to_string()<<"\n";
       modify( props, [&]( dynamic_global_property_object& p )
       {
-          p.total_vesting_fund_clc += vesting_reward;
+//          p.total_vesting_fund_clc += vesting_reward;
           p.total_reward_fund_colab  += content_reward;
           p.current_supply += content_reward + witness_pay + vesting_reward;
           p.virtual_supply += content_reward + witness_pay + vesting_reward;
@@ -2359,48 +2359,48 @@ share_type database::pay_reward_funds( share_type reward )
    return used_rewards;
 }
 
-/**
- *  Iterates over all conversion requests with a conversion date before
- *  the head block time and then converts them to/from colab/sbd at the
- *  current median price feed history price times the premium
- */
-void database::process_conversions()
-{
-   auto now = head_block_time();
-   const auto& request_by_date = get_index< convert_request_index >().indices().get< by_conversion_date >();
-   auto itr = request_by_date.begin();
-
-   const auto& fhistory = get_feed_history();
-   if( fhistory.current_median_history.is_null() )
-      return;
-
-   asset net_sbd( 0, SBD_SYMBOL );
-   asset net_colab( 0, CLC_SYMBOL );
-
-   while( itr != request_by_date.end() && itr->conversion_date <= now )
-   {
-      auto amount_to_issue = itr->amount * fhistory.current_median_history;
-
-      adjust_balance( itr->owner, amount_to_issue );
-
-      net_sbd   += itr->amount;
-      net_colab += amount_to_issue;
-
-      push_virtual_operation( fill_convert_request_operation ( itr->owner, itr->requestid, itr->amount, amount_to_issue ) );
-
-      remove( *itr );
-      itr = request_by_date.begin();
-   }
-
-   const auto& props = get_dynamic_global_properties();
-   modify( props, [&]( dynamic_global_property_object& p )
-   {
-       p.current_supply += net_colab;
-       p.current_sbd_supply -= net_sbd;
-       p.virtual_supply += net_colab;
-       p.virtual_supply -= net_sbd * get_feed_history().current_median_history;
-   } );
-}
+// /**
+//  *  Iterates over all conversion requests with a conversion date before
+//  *  the head block time and then converts them to/from colab/sbd at the
+//  *  current median price feed history price times the premium
+//  */
+// void database::process_conversions()
+// {
+//    auto now = head_block_time();
+//    const auto& request_by_date = get_index< convert_request_index >().indices().get< by_conversion_date >();
+//    auto itr = request_by_date.begin();
+// 
+//    const auto& fhistory = get_feed_history();
+//    if( fhistory.current_median_history.is_null() )
+//       return;
+// 
+//    asset net_sbd( 0, SBD_SYMBOL );
+//    asset net_colab( 0, CLC_SYMBOL );
+// 
+//    while( itr != request_by_date.end() && itr->conversion_date <= now )
+//    {
+//       auto amount_to_issue = itr->amount * fhistory.current_median_history;
+// 
+//       adjust_balance( itr->owner, amount_to_issue );
+// 
+//       net_sbd   += itr->amount;
+//       net_colab += amount_to_issue;
+// 
+//       push_virtual_operation( fill_convert_request_operation ( itr->owner, itr->requestid, itr->amount, amount_to_issue ) );
+// 
+//       remove( *itr );
+//       itr = request_by_date.begin();
+//    }
+// 
+//    const auto& props = get_dynamic_global_properties();
+//    modify( props, [&]( dynamic_global_property_object& p )
+//    {
+//        p.current_supply += net_colab;
+//        p.current_sbd_supply -= net_sbd;
+//        p.virtual_supply += net_colab;
+//        p.virtual_supply -= net_sbd * get_feed_history().current_median_history;
+//    } );
+// }
 
 asset database::to_sbd( const asset& colab )const
 {
@@ -2550,7 +2550,7 @@ void database::initialize_evaluators()
    _my->_evaluator_registry.register_evaluator< pow2_evaluator                           >();
    _my->_evaluator_registry.register_evaluator< report_over_production_evaluator         >();
    _my->_evaluator_registry.register_evaluator< feed_publish_evaluator                   >();
-   _my->_evaluator_registry.register_evaluator< convert_evaluator                        >();
+//   _my->_evaluator_registry.register_evaluator< convert_evaluator                        >();
    _my->_evaluator_registry.register_evaluator< limit_order_create_evaluator             >();
    _my->_evaluator_registry.register_evaluator< limit_order_create2_evaluator            >();
    _my->_evaluator_registry.register_evaluator< limit_order_cancel_evaluator             >();
@@ -2573,8 +2573,8 @@ void database::initialize_evaluators()
 #ifdef COLAB_ENABLE_SMT
    _my->_evaluator_registry.register_evaluator< claim_reward_balance2_evaluator          >();
 #endif
-   _my->_evaluator_registry.register_evaluator< account_create_with_delegation_evaluator >();
-   _my->_evaluator_registry.register_evaluator< delegate_vesting_shares_evaluator        >();
+//   _my->_evaluator_registry.register_evaluator< account_create_with_delegation_evaluator >();
+//   _my->_evaluator_registry.register_evaluator< delegate_vesting_shares_evaluator        >();
    _my->_evaluator_registry.register_evaluator< witness_set_properties_evaluator         >();
 
 #ifdef COLAB_ENABLE_SMT
@@ -3086,19 +3086,19 @@ void database::_apply_block( const signed_block& next_block )
    create_block_summary(next_block);
    clear_expired_transactions();
    clear_expired_orders();
-   clear_expired_delegations();
+//   clear_expired_delegations();
    update_witness_schedule(*this);
 
 #if 0///~~~~~CLC~~~~~{NO NEED for CoLab
-   update_median_feed();
+//   update_median_feed();
 #endif///~~~~~CLC~~~~~}
    update_virtual_supply();
 
    clear_null_account_balance();
    process_funds();///
-   process_conversions();/// WILL NOT NEED for CoLab
+//   process_conversions();/// WILL NOT NEED for CoLab
    process_comment_cashout();
-   process_vesting_withdrawals();
+//   process_vesting_withdrawals();
    process_savings_withdraws();
    process_subsidized_accounts();
    pay_liquidity_reward();
@@ -3198,83 +3198,83 @@ void database::process_header_extensions( const signed_block& next_block, requir
       e.visit( _v );
 }
 
-void database::update_median_feed() {
-try {
-   if( (head_block_num() % COLAB_FEED_INTERVAL_BLOCKS) != 0 )
-      return;
-
-   auto now = head_block_time();
-   const witness_schedule_object& wso = get_witness_schedule_object();
-   vector<price> feeds; feeds.reserve( wso.num_scheduled_witnesses );
-   for( int i = 0; i < wso.num_scheduled_witnesses; i++ )
-   {
-      const auto& wit = get_witness( wso.current_shuffled_witnesses[i] );
-      if( has_hardfork( COLAB_HARDFORK_0_19__822 ) )
-      {
-         if( now < wit.last_sbd_exchange_update + COLAB_MAX_FEED_AGE_SECONDS
-            && !wit.sbd_exchange_rate.is_null() )
-         {
-            feeds.push_back( wit.sbd_exchange_rate );
-         }
-      }
-      else if( wit.last_sbd_exchange_update < now + COLAB_MAX_FEED_AGE_SECONDS &&
-          !wit.sbd_exchange_rate.is_null() )
-      {
-         feeds.push_back( wit.sbd_exchange_rate );
-      }
-   }
-
-   if( feeds.size() >= COLAB_MIN_FEEDS )
-   {
-      std::sort( feeds.begin(), feeds.end() );
-      auto median_feed = feeds[feeds.size()/2];
-
-      modify( get_feed_history(), [&]( feed_history_object& fho )
-      {
-         fho.price_history.push_back( median_feed );
-         size_t colab_feed_history_window = COLAB_FEED_HISTORY_WINDOW_PRE_HF_16;
-         if( has_hardfork( COLAB_HARDFORK_0_16__551) )
-            colab_feed_history_window = COLAB_FEED_HISTORY_WINDOW;
-
-         if( fho.price_history.size() > colab_feed_history_window )
-            fho.price_history.pop_front();
-
-         if( fho.price_history.size() )
-         {
-            /// BW-TODO Why deque is used here ? Also why don't make copy of whole container ?
-            std::deque< price > copy;
-            for( const auto& i : fho.price_history )
-            {
-               copy.push_back( i );
-            }
-
-            std::sort( copy.begin(), copy.end() ); /// TODO: use nth_item
-            fho.current_median_history = copy[copy.size()/2];
-
-#ifdef IS_TEST_NET
-            if( skip_price_feed_limit_check )
-               return;
-#endif
-            if( has_hardfork( COLAB_HARDFORK_0_14__230 ) )
-            {
-               // This block limits the effective median price to force SBD to remain at or
-               // below 10% of the combined market cap of CLC and SBD.
-               //
-               // For example, if we have 500 CLC and 100 SBD, the price is limited to
-               // 900 SBD / 500 CLC which works out to be $1.80.  At this price, 500 Colab
-               // would be valued at 500 * $1.80 = $900.  100 SBD is by definition always $100,
-               // so the combined market cap is $900 + $100 = $1000.
-
-               const auto& gpo = get_dynamic_global_properties();
-               price min_price( asset( 9 * gpo.current_sbd_supply.amount, SBD_SYMBOL ), gpo.current_supply );
-
-               if( min_price > fho.current_median_history )
-                  fho.current_median_history = min_price;
-            }
-         }
-      });
-   }
-} FC_CAPTURE_AND_RETHROW() }
+// void database::update_median_feed() {
+// try {
+//    if( (head_block_num() % COLAB_FEED_INTERVAL_BLOCKS) != 0 )
+//       return;
+// 
+//    auto now = head_block_time();
+//    const witness_schedule_object& wso = get_witness_schedule_object();
+//    vector<price> feeds; feeds.reserve( wso.num_scheduled_witnesses );
+//    for( int i = 0; i < wso.num_scheduled_witnesses; i++ )
+//    {
+//       const auto& wit = get_witness( wso.current_shuffled_witnesses[i] );
+//       if( has_hardfork( COLAB_HARDFORK_0_19__822 ) )
+//       {
+//          if( now < wit.last_sbd_exchange_update + COLAB_MAX_FEED_AGE_SECONDS
+//             && !wit.sbd_exchange_rate.is_null() )
+//          {
+//             feeds.push_back( wit.sbd_exchange_rate );
+//          }
+//       }
+//       else if( wit.last_sbd_exchange_update < now + COLAB_MAX_FEED_AGE_SECONDS &&
+//           !wit.sbd_exchange_rate.is_null() )
+//       {
+//          feeds.push_back( wit.sbd_exchange_rate );
+//       }
+//    }
+// 
+//    if( feeds.size() >= COLAB_MIN_FEEDS )
+//    {
+//       std::sort( feeds.begin(), feeds.end() );
+//       auto median_feed = feeds[feeds.size()/2];
+// 
+//       modify( get_feed_history(), [&]( feed_history_object& fho )
+//       {
+//          fho.price_history.push_back( median_feed );
+//          size_t colab_feed_history_window = COLAB_FEED_HISTORY_WINDOW_PRE_HF_16;
+//          if( has_hardfork( COLAB_HARDFORK_0_16__551) )
+//             colab_feed_history_window = COLAB_FEED_HISTORY_WINDOW;
+// 
+//          if( fho.price_history.size() > colab_feed_history_window )
+//             fho.price_history.pop_front();
+// 
+//          if( fho.price_history.size() )
+//          {
+//             /// BW-TODO Why deque is used here ? Also why don't make copy of whole container ?
+//             std::deque< price > copy;
+//             for( const auto& i : fho.price_history )
+//             {
+//                copy.push_back( i );
+//             }
+// 
+//             std::sort( copy.begin(), copy.end() ); /// TODO: use nth_item
+//             fho.current_median_history = copy[copy.size()/2];
+// 
+// #ifdef IS_TEST_NET
+//             if( skip_price_feed_limit_check )
+//                return;
+// #endif
+//             if( has_hardfork( COLAB_HARDFORK_0_14__230 ) )
+//             {
+//                // This block limits the effective median price to force SBD to remain at or
+//                // below 10% of the combined market cap of CLC and SBD.
+//                //
+//                // For example, if we have 500 CLC and 100 SBD, the price is limited to
+//                // 900 SBD / 500 CLC which works out to be $1.80.  At this price, 500 Colab
+//                // would be valued at 500 * $1.80 = $900.  100 SBD is by definition always $100,
+//                // so the combined market cap is $900 + $100 = $1000.
+// 
+//                const auto& gpo = get_dynamic_global_properties();
+//                price min_price( asset( 9 * gpo.current_sbd_supply.amount, SBD_SYMBOL ), gpo.current_supply );
+// 
+//                if( min_price > fho.current_median_history )
+//                   fho.current_median_history = min_price;
+//             }
+//          }
+//       });
+//    }
+// } FC_CAPTURE_AND_RETHROW() }
 
 void database::apply_transaction(const signed_transaction& trx, uint32_t skip)
 {
@@ -3762,23 +3762,23 @@ void database::update_virtual_supply()
 { try {
    modify( get_dynamic_global_properties(), [&]( dynamic_global_property_object& dgp )
    {
-      dgp.virtual_supply = dgp.current_supply
-         + ( get_feed_history().current_median_history.is_null() ? asset( 0, CLC_SYMBOL ) : dgp.current_sbd_supply * get_feed_history().current_median_history );
+      dgp.virtual_supply = dgp.current_supply;
+         //+ ( get_feed_history().current_median_history.is_null() ? asset( 0, CLC_SYMBOL ) : dgp.current_sbd_supply * get_feed_history().current_median_history );
 
-      auto median_price = get_feed_history().current_median_history;
-
-      if( !median_price.is_null() && has_hardfork( COLAB_HARDFORK_0_14__230 ) )
-      {
-         auto percent_sbd = uint16_t( ( ( fc::uint128_t( ( dgp.current_sbd_supply * get_feed_history().current_median_history ).amount.value ) * COLAB_100_PERCENT )
-            / dgp.virtual_supply.amount.value ).to_uint64() );
-
-         if( percent_sbd <= dgp.sbd_start_percent )
-            dgp.sbd_print_rate = COLAB_100_PERCENT;
-         else if( percent_sbd >= dgp.sbd_stop_percent )
-            dgp.sbd_print_rate = 0;
-         else
-            dgp.sbd_print_rate = ( ( dgp.sbd_stop_percent - percent_sbd ) * COLAB_100_PERCENT ) / ( dgp.sbd_stop_percent - dgp.sbd_start_percent );
-      }
+//       auto median_price = get_feed_history().current_median_history;
+// 
+//       if( !median_price.is_null() && has_hardfork( COLAB_HARDFORK_0_14__230 ) )
+//       {
+//          auto percent_sbd = uint16_t( ( ( fc::uint128_t( ( dgp.current_sbd_supply * get_feed_history().current_median_history ).amount.value ) * COLAB_100_PERCENT )
+//             / dgp.virtual_supply.amount.value ).to_uint64() );
+// 
+//          if( percent_sbd <= dgp.sbd_start_percent )
+//             dgp.sbd_print_rate = COLAB_100_PERCENT;
+//          else if( percent_sbd >= dgp.sbd_stop_percent )
+//             dgp.sbd_print_rate = 0;
+//          else
+//             dgp.sbd_print_rate = ( ( dgp.sbd_stop_percent - percent_sbd ) * COLAB_100_PERCENT ) / ( dgp.sbd_stop_percent - dgp.sbd_start_percent );
+//       }
    });
 } FC_CAPTURE_AND_RETHROW() }
 
@@ -4138,35 +4138,35 @@ void database::clear_expired_orders()
    }
 }
 
-void database::clear_expired_delegations()
-{
-   auto now = head_block_time();
-   const auto& delegations_by_exp = get_index< vesting_delegation_expiration_index, by_expiration >();
-   auto itr = delegations_by_exp.begin();
-   while( itr != delegations_by_exp.end() && itr->expiration < now )
-   {
-      operation vop = return_vesting_delegation_operation( itr->delegator, itr->vesting_shares );
-      pre_push_virtual_operation( vop );
-
-      modify( get_account( itr->delegator ), [&]( account_object& a )
-      {
-         if( has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-         {
-            util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
-FC_TODO( "Set skip_cap_regen=true without breaking consensus" );
-            a.voting_manabar.regenerate_mana( params, head_block_time() );
-            a.voting_manabar.use_mana( -itr->vesting_shares.amount.value );
-         }
-
-         a.delegated_vesting_shares -= itr->vesting_shares;
-      });
-
-      post_push_virtual_operation( vop );
-
-      remove( *itr );
-      itr = delegations_by_exp.begin();
-   }
-}
+// void database::clear_expired_delegations()
+// {
+//    auto now = head_block_time();
+//    const auto& delegations_by_exp = get_index< vesting_delegation_expiration_index, by_expiration >();
+//    auto itr = delegations_by_exp.begin();
+//    while( itr != delegations_by_exp.end() && itr->expiration < now )
+//    {
+//       operation vop = return_vesting_delegation_operation( itr->delegator, itr->vesting_shares );
+//       pre_push_virtual_operation( vop );
+// 
+//       modify( get_account( itr->delegator ), [&]( account_object& a )
+//       {
+//          if( has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//          {
+//             util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
+// FC_TODO( "Set skip_cap_regen=true without breaking consensus" );
+//             a.voting_manabar.regenerate_mana( params, head_block_time() );
+//             a.voting_manabar.use_mana( -itr->vesting_shares.amount.value );
+//          }
+// 
+//          a.delegated_vesting_shares -= itr->vesting_shares;
+//       });
+// 
+//       post_push_virtual_operation( vop );
+// 
+//       remove( *itr );
+//       itr = delegations_by_exp.begin();
+//    }
+// }
 #ifdef COLAB_ENABLE_SMT
 template< typename smt_balance_object_type, class balance_operator_type >
 void database::adjust_smt_balance( const account_name_type& name, const asset& delta, bool check_account,
@@ -4779,7 +4779,7 @@ void database::apply_hardfork( uint32_t hardfork )
    switch( hardfork )
    {
       case COLAB_HARDFORK_0_1:
-         perform_vesting_share_split( 1000000 );
+//         perform_vesting_share_split( 1000000 );
          break;
       case COLAB_HARDFORK_0_2:
          retally_witness_votes();
@@ -5006,22 +5006,22 @@ void database::apply_hardfork( uint32_t hardfork )
             });
 
             /* Remove all 0 delegation objects */
-            vector< const vesting_delegation_object* > to_remove;
-            const auto& delegation_idx = get_index< vesting_delegation_index, by_id >();
-            auto delegation_itr = delegation_idx.begin();
-
-            while( delegation_itr != delegation_idx.end() )
-            {
-               if( delegation_itr->vesting_shares.amount == 0 )
-                  to_remove.push_back( &(*delegation_itr) );
-
-               ++delegation_itr;
-            }
-
-            for( const vesting_delegation_object* delegation_ptr: to_remove )
-            {
-               remove( *delegation_ptr );
-            }
+//             vector< const vesting_delegation_object* > to_remove;
+//             const auto& delegation_idx = get_index< vesting_delegation_index, by_id >();
+//             auto delegation_itr = delegation_idx.begin();
+// 
+//             while( delegation_itr != delegation_idx.end() )
+//             {
+//                if( delegation_itr->vesting_shares.amount == 0 )
+//                   to_remove.push_back( &(*delegation_itr) );
+// 
+//                ++delegation_itr;
+//             }
+// 
+//             for( const vesting_delegation_object* delegation_ptr: to_remove )
+//             {
+//                remove( *delegation_ptr );
+//             }
          }
          break;
       case COLAB_HARDFORK_0_20:
@@ -5103,17 +5103,17 @@ void database::validate_invariants()const
    {
       const auto& account_idx = get_index<account_index>().indices().get<by_name>();
       asset total_supply = asset( 0, CLC_SYMBOL );
-      asset total_sbd = asset( 0, SBD_SYMBOL );
-      asset total_vesting = asset( 0, VESTS_SYMBOL );
-      asset pending_vesting_colab = asset( 0, CLC_SYMBOL );
+//       asset total_sbd = asset( 0, SBD_SYMBOL );
+//       asset total_vesting = asset( 0, VESTS_SYMBOL );
+//      asset pending_vesting_colab = asset( 0, CLC_SYMBOL );
       share_type total_vsf_votes = share_type( 0 );
 
       auto gpo = get_dynamic_global_properties();
 
       /// verify no witness has too many votes
-      const auto& witness_idx = get_index< witness_index >().indices();
-      for( auto itr = witness_idx.begin(); itr != witness_idx.end(); ++itr )
-         FC_ASSERT( itr->votes <= gpo.total_vesting_shares.amount, "", ("itr",*itr) );
+//      const auto& witness_idx = get_index< witness_index >().indices();
+//       for( auto itr = witness_idx.begin(); itr != witness_idx.end(); ++itr )
+//          FC_ASSERT( itr->votes <= gpo.total_vesting_shares.amount, "", ("itr",*itr) );
 
       for( auto itr = account_idx.begin(); itr != account_idx.end(); ++itr )
       {
@@ -5123,7 +5123,7 @@ void database::validate_invariants()const
 ///         total_sbd += itr->sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
 ///         total_sbd += itr->savings_sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
 ///         total_sbd += itr->reward_sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
-         total_vesting += itr->vesting_shares;
+///         total_vesting += itr->vesting_shares;
 ///         total_vesting += itr->reward_vesting_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
 ///         pending_vesting_colab += itr->reward_vesting_clc;
          total_vsf_votes += ( itr->proxy == COLAB_PROXY_TO_SELF_ACCOUNT ?
@@ -5133,17 +5133,17 @@ void database::validate_invariants()const
                                       itr->vesting_shares.amount ) );
       }
 
-      const auto& convert_request_idx = get_index< convert_request_index >().indices();
-
-      for( auto itr = convert_request_idx.begin(); itr != convert_request_idx.end(); ++itr )
-      {
-         if( itr->amount.symbol == CLC_SYMBOL )
-            total_supply += itr->amount;
-         else if( itr->amount.symbol == SBD_SYMBOL )
-            total_sbd += itr->amount;
-         else
-            FC_ASSERT( false, "Encountered illegal symbol in convert_request_object" );
-      }
+//       const auto& convert_request_idx = get_index< convert_request_index >().indices();
+// 
+//       for( auto itr = convert_request_idx.begin(); itr != convert_request_idx.end(); ++itr )
+//       {
+//          if( itr->amount.symbol == CLC_SYMBOL )
+//             total_supply += itr->amount;
+//          else if( itr->amount.symbol == SBD_SYMBOL )
+//             total_sbd += itr->amount;
+//          else
+//             FC_ASSERT( false, "Encountered illegal symbol in convert_request_object" );
+//       }
 
       const auto& limit_order_idx = get_index< limit_order_index >().indices();
 
@@ -5153,10 +5153,10 @@ void database::validate_invariants()const
          {
             total_supply += asset( itr->for_sale, CLC_SYMBOL );
          }
-         else if ( itr->sell_price.base.symbol == SBD_SYMBOL )
-         {
-            total_sbd += asset( itr->for_sale, SBD_SYMBOL );
-         }
+//          else if ( itr->sell_price.base.symbol == SBD_SYMBOL )
+//          {
+//             total_sbd += asset( itr->for_sale, SBD_SYMBOL );
+//          }
       }
 
       const auto& escrow_idx = get_index< escrow_index >().indices().get< by_id >();
@@ -5168,8 +5168,8 @@ void database::validate_invariants()const
 
          if( itr->pending_fee.symbol == CLC_SYMBOL )
             total_supply += itr->pending_fee;
-         else if( itr->pending_fee.symbol == SBD_SYMBOL )
-            total_sbd += itr->pending_fee;
+//          else if( itr->pending_fee.symbol == SBD_SYMBOL )
+//             total_sbd += itr->pending_fee;
          else
             FC_ASSERT( false, "found escrow pending fee that is not SBD or CLC" );
       }
@@ -5180,8 +5180,8 @@ void database::validate_invariants()const
       {
          if( itr->amount.symbol == CLC_SYMBOL )
             total_supply += itr->amount;
-         else if( itr->amount.symbol == SBD_SYMBOL )
-            total_sbd += itr->amount;
+//          else if( itr->amount.symbol == SBD_SYMBOL )
+//             total_sbd += itr->amount;
          else
             FC_ASSERT( false, "found savings withdraw that is not SBD or CLC" );
       }
@@ -5196,17 +5196,17 @@ void database::validate_invariants()const
       total_supply += gpo.total_vesting_fund_clc + gpo.total_reward_fund_colab + gpo.pending_rewarded_vesting_clc;
 
       FC_ASSERT( gpo.current_supply == total_supply, "", ("gpo.current_supply",gpo.current_supply)("total_supply",total_supply) );
-      FC_ASSERT( gpo.current_sbd_supply == total_sbd, "", ("gpo.current_sbd_supply",gpo.current_sbd_supply)("total_sbd",total_sbd) );
-      FC_ASSERT( gpo.total_vesting_shares + gpo.pending_rewarded_vesting_shares == total_vesting, "", ("gpo.total_vesting_shares",gpo.total_vesting_shares)("total_vesting",total_vesting) );
-      FC_ASSERT( gpo.total_vesting_shares.amount == total_vsf_votes, "", ("total_vesting_shares",gpo.total_vesting_shares)("total_vsf_votes",total_vsf_votes) );
-      FC_ASSERT( gpo.pending_rewarded_vesting_clc == pending_vesting_colab, "", ("pending_rewarded_vesting_clc",gpo.pending_rewarded_vesting_clc)("pending_vesting_colab", pending_vesting_colab));
+//       FC_ASSERT( gpo.current_sbd_supply == total_sbd, "", ("gpo.current_sbd_supply",gpo.current_sbd_supply)("total_sbd",total_sbd) );
+//       FC_ASSERT( gpo.total_vesting_shares + gpo.pending_rewarded_vesting_shares == total_vesting, "", ("gpo.total_vesting_shares",gpo.total_vesting_shares)("total_vesting",total_vesting) );
+//       FC_ASSERT( gpo.total_vesting_shares.amount == total_vsf_votes, "", ("total_vesting_shares",gpo.total_vesting_shares)("total_vsf_votes",total_vsf_votes) );
+//       FC_ASSERT( gpo.pending_rewarded_vesting_clc == pending_vesting_colab, "", ("pending_rewarded_vesting_clc",gpo.pending_rewarded_vesting_clc)("pending_vesting_colab", pending_vesting_colab));
 
       FC_ASSERT( gpo.virtual_supply >= gpo.current_supply );
-      if ( !get_feed_history().current_median_history.is_null() )
-      {
-         FC_ASSERT( gpo.current_sbd_supply * get_feed_history().current_median_history + gpo.current_supply
-            == gpo.virtual_supply, "", ("gpo.current_sbd_supply",gpo.current_sbd_supply)("get_feed_history().current_median_history",get_feed_history().current_median_history)("gpo.current_supply",gpo.current_supply)("gpo.virtual_supply",gpo.virtual_supply) );
-      }
+//       if ( !get_feed_history().current_median_history.is_null() )
+//       {
+//          FC_ASSERT( gpo.current_sbd_supply * get_feed_history().current_median_history + gpo.current_supply
+//             == gpo.virtual_supply, "", ("gpo.current_sbd_supply",gpo.current_sbd_supply)("get_feed_history().current_median_history",get_feed_history().current_median_history)("gpo.current_supply",gpo.current_supply)("gpo.virtual_supply",gpo.virtual_supply) );
+//       }
    }
    FC_CAPTURE_LOG_AND_RETHROW( (head_block_num()) );
 }
@@ -5332,53 +5332,53 @@ void database::validate_smt_invariants()const
 }
 #endif
 
-void database::perform_vesting_share_split( uint32_t magnitude )
-{
-   try
-   {
-      modify( get_dynamic_global_properties(), [&]( dynamic_global_property_object& d )
-      {
-         d.total_vesting_shares.amount *= magnitude;
-         d.total_reward_shares2 = 0;
-      } );
-
-      // Need to update all VESTS in accounts and the total VESTS in the dgpo
-      for( const auto& account : get_index<account_index>().indices() )
-      {
-         modify( account, [&]( account_object& a )
-         {
-            a.vesting_shares.amount *= magnitude;
-            a.withdrawn             *= magnitude;
-            a.to_withdraw           *= magnitude;
-            a.vesting_withdraw_rate  = asset( a.to_withdraw / COLAB_VESTING_WITHDRAW_INTERVALS_PRE_HF_16, VESTS_SYMBOL );
-            if( a.vesting_withdraw_rate.amount == 0 )
-               a.vesting_withdraw_rate.amount = 1;
-
-            for( uint32_t i = 0; i < COLAB_MAX_PROXY_RECURSION_DEPTH; ++i )
-               a.proxied_vsf_votes[i] *= magnitude;
-         } );
-      }
-
-      const auto& comments = get_index< comment_index >().indices();
-      for( const auto& comment : comments )
-      {
-         modify( comment, [&]( comment_object& c )
-         {
-            c.net_rshares       *= magnitude;
-            c.abs_rshares       *= magnitude;
-            c.vote_rshares      *= magnitude;
-         } );
-      }
-
-      for( const auto& c : comments )
-      {
-         if( c.net_rshares.value > 0 )
-            adjust_rshares2( c, 0, util::evaluate_reward_curve( c.net_rshares.value ) );
-      }
-
-   }
-   FC_CAPTURE_AND_RETHROW()
-}
+// void database::perform_vesting_share_split( uint32_t magnitude )
+// {
+//    try
+//    {
+//       modify( get_dynamic_global_properties(), [&]( dynamic_global_property_object& d )
+//       {
+//          d.total_vesting_shares.amount *= magnitude;
+//          d.total_reward_shares2 = 0;
+//       } );
+// 
+//       // Need to update all VESTS in accounts and the total VESTS in the dgpo
+//       for( const auto& account : get_index<account_index>().indices() )
+//       {
+//          modify( account, [&]( account_object& a )
+//          {
+//             a.vesting_shares.amount *= magnitude;
+//             a.withdrawn             *= magnitude;
+//             a.to_withdraw           *= magnitude;
+//             a.vesting_withdraw_rate  = asset( a.to_withdraw / COLAB_VESTING_WITHDRAW_INTERVALS_PRE_HF_16, VESTS_SYMBOL );
+//             if( a.vesting_withdraw_rate.amount == 0 )
+//                a.vesting_withdraw_rate.amount = 1;
+// 
+//             for( uint32_t i = 0; i < COLAB_MAX_PROXY_RECURSION_DEPTH; ++i )
+//                a.proxied_vsf_votes[i] *= magnitude;
+//          } );
+//       }
+// 
+//       const auto& comments = get_index< comment_index >().indices();
+//       for( const auto& comment : comments )
+//       {
+//          modify( comment, [&]( comment_object& c )
+//          {
+//             c.net_rshares       *= magnitude;
+//             c.abs_rshares       *= magnitude;
+//             c.vote_rshares      *= magnitude;
+//          } );
+//       }
+// 
+//       for( const auto& c : comments )
+//       {
+//          if( c.net_rshares.value > 0 )
+//             adjust_rshares2( c, 0, util::evaluate_reward_curve( c.net_rshares.value ) );
+//       }
+// 
+//    }
+//    FC_CAPTURE_AND_RETHROW()
+// }
 
 void database::retally_comment_children()
 {

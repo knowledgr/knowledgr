@@ -41,7 +41,7 @@ namespace colab { namespace chain {
        *  to tune rate limiting and capacity
        */
       uint32_t          maximum_block_size = COLAB_MIN_BLOCK_SIZE_LIMIT * 2;
-      uint16_t          sbd_interest_rate  = COLAB_DEFAULT_SBD_INTEREST_RATE;
+//      uint16_t          sbd_interest_rate  = COLAB_DEFAULT_SBD_INTEREST_RATE;
       /**
        * How many free accounts should be created per elected witness block.
        * Scaled so that COLAB_ACCOUNT_SUBSIDY_PRECISION represents one account.
@@ -283,7 +283,7 @@ FC_REFLECT_ENUM( colab::chain::witness_object::witness_schedule_type, (elected)(
 FC_REFLECT( colab::chain::chain_properties,
              (account_creation_fee)
              (maximum_block_size)
-             (sbd_interest_rate)
+//             (sbd_interest_rate)
              (account_subsidy_budget)
              (account_subsidy_decay)
           )

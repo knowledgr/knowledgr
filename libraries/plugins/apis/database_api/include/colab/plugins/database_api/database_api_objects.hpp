@@ -17,15 +17,15 @@ using namespace colab::chain;
 typedef change_recovery_account_request_object api_change_recovery_account_request_object;
 typedef block_summary_object                   api_block_summary_object;
 typedef dynamic_global_property_object         api_dynamic_global_property_object;
-typedef convert_request_object                 api_convert_request_object;
+//typedef convert_request_object                 api_convert_request_object;
 typedef escrow_object                          api_escrow_object;
 typedef liquidity_reward_balance_object        api_liquidity_reward_balance_object;
 typedef limit_order_object                     api_limit_order_object;
 typedef withdraw_vesting_route_object          api_withdraw_vesting_route_object;
 typedef decline_voting_rights_request_object   api_decline_voting_rights_request_object;
 typedef witness_vote_object                    api_witness_vote_object;
-typedef vesting_delegation_object              api_vesting_delegation_object;
-typedef vesting_delegation_expiration_object   api_vesting_delegation_expiration_object;
+//typedef vesting_delegation_object              api_vesting_delegation_object;
+//typedef vesting_delegation_expiration_object   api_vesting_delegation_expiration_object;
 typedef reward_fund_object                     api_reward_fund_object;
 
 struct api_comment_object
@@ -201,8 +201,8 @@ struct api_account_object
       curation_rewards( a.curation_rewards ),
       posting_rewards( a.posting_rewards ),
       vesting_shares( a.vesting_shares ),
-      delegated_vesting_shares( a.delegated_vesting_shares ),
-      received_vesting_shares( a.received_vesting_shares ),
+//      delegated_vesting_shares( a.delegated_vesting_shares ),
+//      received_vesting_shares( a.received_vesting_shares ),
       vesting_withdraw_rate( a.vesting_withdraw_rate ),
       next_vesting_withdrawal( a.next_vesting_withdrawal ),
       withdrawn( a.withdrawn ),
@@ -289,8 +289,8 @@ struct api_account_object
    share_type        posting_rewards;
 
    asset             vesting_shares;
-   asset             delegated_vesting_shares;
-   asset             received_vesting_shares;
+//   asset             delegated_vesting_shares;
+//   asset             received_vesting_shares;
    asset             vesting_withdraw_rate;
    time_point_sec    next_vesting_withdrawal;
    share_type        withdrawn;
@@ -611,7 +611,7 @@ FC_REFLECT( colab::plugins::database_api::api_account_object,
              /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~CLC~~~~~ NO NEED for CoLab
 			 (savings_withdraw_requests)
              (reward_clc_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_clc)*////~~~~~CLC~~~~~ NO NEED for CoLab
-             (vesting_shares)(delegated_vesting_shares)(received_vesting_shares)(vesting_withdraw_rate)(next_vesting_withdrawal)(withdrawn)(to_withdraw)(withdraw_routes)
+             (vesting_shares)/*(delegated_vesting_shares)(received_vesting_shares)*/(vesting_withdraw_rate)(next_vesting_withdrawal)(withdrawn)(to_withdraw)(withdraw_routes)
              (curation_rewards)
              (posting_rewards)
              (proxied_vsf_votes)(witnesses_voted_for)
