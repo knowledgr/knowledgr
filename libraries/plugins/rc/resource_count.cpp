@@ -80,11 +80,11 @@ struct count_operation_visitor
       execution_time_count += _e.comment_options_operation_exec_time;
    }
 
-   void operator()( const convert_operation& op ) const
-   {
-      state_bytes_count += _w.convert_request_object_base_size;
-      execution_time_count += _e.convert_operation_exec_time;
-   }
+//    void operator()( const convert_operation& op ) const
+//    {
+//       state_bytes_count += _w.convert_request_object_base_size;
+//       execution_time_count += _e.convert_operation_exec_time;
+//    }
 
    void operator()( const create_claimed_account_operation& op )const
    {

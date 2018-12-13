@@ -54,7 +54,7 @@ struct state_object_size_info
    int64_t comment_vote_object_base_size      = 47     *STATE_COMMENT_VOTE_BYTE_SIZE;
 
    // convert_request_object
-   int64_t convert_request_object_base_size   = 48     *STATE_BYTES_SCALE;
+   //int64_t convert_request_object_base_size   = 48     *STATE_BYTES_SCALE;
 
    // decline_voting_rights_request_object
    int64_t decline_voting_rights_request_object_base_size = 28*STATE_BYTES_SCALE;
@@ -76,7 +76,7 @@ struct state_object_size_info
    //int64_t vesting_delegation_object_base_size = 60*STATE_BYTES_SCALE;
 
    // vesting_delegation_expiration_object
-   int64_t vesting_delegation_expiration_object_base_size = 44*STATE_BYTES_SCALE;
+   //int64_t vesting_delegation_expiration_object_base_size = 44*STATE_BYTES_SCALE;
 
    // withdraw_vesting_route_object
    int64_t withdraw_vesting_route_object_base_size = 43*STATE_BYTES_SCALE;
@@ -106,7 +106,7 @@ struct operation_exec_info
    int64_t claim_reward_balance_operation_exec_time            =  50300;
    int64_t comment_operation_exec_time                         = 114100;
    int64_t comment_options_operation_exec_time                 =  13200;
-   int64_t convert_operation_exec_time                         =  15700;
+   //int64_t convert_operation_exec_time                         =  15700;
    int64_t create_claimed_account_operation_exec_time          =  57700;
    int64_t custom_operation_exec_time                          =  11400;
    int64_t custom_json_operation_exec_time                     =  11400;
@@ -159,7 +159,7 @@ FC_REFLECT( colab::plugins::rc::state_object_size_info,
    ( comment_object_parent_permlink_char_size )
    ( comment_object_beneficiaries_member_size )
    ( comment_vote_object_base_size )
-   ( convert_request_object_base_size )
+//   ( convert_request_object_base_size )
    ( decline_voting_rights_request_object_base_size )
    ( escrow_object_base_size )
    ( limit_order_object_base_size )
@@ -167,7 +167,7 @@ FC_REFLECT( colab::plugins::rc::state_object_size_info,
    ( transaction_object_base_size )
    ( transaction_object_byte_size )
 //   ( vesting_delegation_object_base_size )
-   ( vesting_delegation_expiration_object_base_size )
+//   ( vesting_delegation_expiration_object_base_size )
    ( withdraw_vesting_route_object_base_size )
    ( witness_object_base_size )
    ( witness_object_url_char_size )
@@ -186,7 +186,7 @@ FC_REFLECT( colab::plugins::rc::operation_exec_info,
    ( claim_reward_balance_operation_exec_time )
    ( comment_operation_exec_time )
    ( comment_options_operation_exec_time )
-   ( convert_operation_exec_time )
+//   ( convert_operation_exec_time )
    ( create_claimed_account_operation_exec_time )
    ( custom_operation_exec_time )
    ( custom_json_operation_exec_time )

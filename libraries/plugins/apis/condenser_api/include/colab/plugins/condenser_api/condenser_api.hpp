@@ -134,8 +134,8 @@ struct api_account_object
       curation_rewards( a.curation_rewards ),
       posting_rewards( a.posting_rewards ),
       vesting_shares( legacy_asset::from_asset( a.vesting_shares ) ),
-      delegated_vesting_shares( legacy_asset::from_asset( a.delegated_vesting_shares ) ),
-      received_vesting_shares( legacy_asset::from_asset( a.received_vesting_shares ) ),
+//      delegated_vesting_shares( legacy_asset::from_asset( a.delegated_vesting_shares ) ),
+//      received_vesting_shares( legacy_asset::from_asset( a.received_vesting_shares ) ),
       vesting_withdraw_rate( legacy_asset::from_asset( a.vesting_withdraw_rate ) ),
       next_vesting_withdrawal( a.next_vesting_withdrawal ),
       withdrawn( a.withdrawn ),
@@ -211,8 +211,8 @@ struct api_account_object
    share_type        posting_rewards;
 
    legacy_asset      vesting_shares;
-   legacy_asset      delegated_vesting_shares;
-   legacy_asset      received_vesting_shares;
+//   legacy_asset      delegated_vesting_shares;
+//   legacy_asset      received_vesting_shares;
    legacy_asset      vesting_withdraw_rate;
    time_point_sec    next_vesting_withdrawal;
    share_type        withdrawn;
@@ -670,41 +670,41 @@ struct api_savings_withdraw_object
 //    time_point_sec    min_delegation_time;
 // };
 
-struct api_vesting_delegation_expiration_object
-{
-   api_vesting_delegation_expiration_object() {}
-   api_vesting_delegation_expiration_object( const database_api::api_vesting_delegation_expiration_object& v ) :
-      id( v.id ),
-      delegator( v.delegator ),
-      vesting_shares( legacy_asset::from_asset( v.vesting_shares ) ),
-      expiration( v.expiration )
-   {}
+// struct api_vesting_delegation_expiration_object
+// {
+//    api_vesting_delegation_expiration_object() {}
+//    api_vesting_delegation_expiration_object( const database_api::api_vesting_delegation_expiration_object& v ) :
+//       id( v.id ),
+//       delegator( v.delegator ),
+//       vesting_shares( legacy_asset::from_asset( v.vesting_shares ) ),
+//       expiration( v.expiration )
+//    {}
+// 
+//    vesting_delegation_expiration_id_type id;
+//    account_name_type delegator;
+//    legacy_asset      vesting_shares;
+//    time_point_sec    expiration;
+// };
 
-   vesting_delegation_expiration_id_type id;
-   account_name_type delegator;
-   legacy_asset      vesting_shares;
-   time_point_sec    expiration;
-};
-
-struct api_convert_request_object
-{
-   api_convert_request_object() {}
-   api_convert_request_object( const database_api::api_convert_request_object& c ) :
-      id( c.id ),
-      owner( c.owner ),
-      requestid( c.requestid ),
-      amount( legacy_asset::from_asset( c.amount ) ),
-      conversion_date( c.conversion_date )
-   {}
-
-
-   convert_request_id_type id;
-
-   account_name_type owner;
-   uint32_t          requestid = 0;
-   legacy_asset      amount;
-   time_point_sec    conversion_date;
-};
+// struct api_convert_request_object
+// {
+//    api_convert_request_object() {}
+//    api_convert_request_object( const database_api::api_convert_request_object& c ) :
+//       id( c.id ),
+//       owner( c.owner ),
+//       requestid( c.requestid ),
+//       amount( legacy_asset::from_asset( c.amount ) ),
+//       conversion_date( c.conversion_date )
+//    {}
+// 
+// 
+//    convert_request_id_type id;
+// 
+//    account_name_type owner;
+//    uint32_t          requestid = 0;
+//    legacy_asset      amount;
+//    time_point_sec    conversion_date;
+// };
 
 struct discussion : public api_comment_object
 {
@@ -995,9 +995,9 @@ DEFINE_API_ARGS( get_withdraw_routes,                    vector< variant >,   ve
 DEFINE_API_ARGS( get_savings_withdraw_from,              vector< variant >,   vector< api_savings_withdraw_object > )
 DEFINE_API_ARGS( get_savings_withdraw_to,                vector< variant >,   vector< api_savings_withdraw_object > )
 //DEFINE_API_ARGS( get_vesting_delegations,                vector< variant >,   vector< api_vesting_delegation_object > )
-DEFINE_API_ARGS( get_expiring_vesting_delegations,       vector< variant >,   vector< api_vesting_delegation_expiration_object > )
+//DEFINE_API_ARGS( get_expiring_vesting_delegations,       vector< variant >,   vector< api_vesting_delegation_expiration_object > )
 DEFINE_API_ARGS( get_witnesses,                          vector< variant >,   vector< optional< api_witness_object > > )
-DEFINE_API_ARGS( get_conversion_requests,                vector< variant >,   vector< api_convert_request_object > )
+//DEFINE_API_ARGS( get_conversion_requests,                vector< variant >,   vector< api_convert_request_object > )
 DEFINE_API_ARGS( get_witness_by_account,                 vector< variant >,   optional< api_witness_object > )
 DEFINE_API_ARGS( get_witnesses_by_vote,                  vector< variant >,   vector< api_witness_object > )
 DEFINE_API_ARGS( lookup_witness_accounts,                vector< variant >,   vector< account_name_type > )
@@ -1093,9 +1093,9 @@ public:
       (get_savings_withdraw_from)
       (get_savings_withdraw_to)
 //      (get_vesting_delegations)
-      (get_expiring_vesting_delegations)
+//      (get_expiring_vesting_delegations)
       (get_witnesses)
-      (get_conversion_requests)
+//      (get_conversion_requests)
       (get_witness_by_account)
       (get_witnesses_by_vote)
       (lookup_witness_accounts)
@@ -1192,7 +1192,7 @@ FC_REFLECT( colab::plugins::condenser_api::api_account_object,
              /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~CLC~~~~~ NO NEED for CoLab
 			 (savings_withdraw_requests)
              (reward_clc_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_clc)*/////~~~~~CLC~~~~~ NO NEED for CoLab
-             (vesting_shares)(delegated_vesting_shares)(received_vesting_shares)(vesting_withdraw_rate)(next_vesting_withdrawal)(withdrawn)(to_withdraw)(withdraw_routes)
+             (vesting_shares)/*(delegated_vesting_shares)(received_vesting_shares)*/(vesting_withdraw_rate)(next_vesting_withdrawal)(withdrawn)(to_withdraw)(withdraw_routes)
              (curation_rewards)
              (posting_rewards)
              (proxied_vsf_votes)(witnesses_voted_for)
@@ -1305,11 +1305,11 @@ FC_REFLECT( colab::plugins::condenser_api::api_savings_withdraw_object,
 // FC_REFLECT( colab::plugins::condenser_api::api_vesting_delegation_object,
 //             (id)(delegator)(delegatee)(vesting_shares)(min_delegation_time) )
 
-FC_REFLECT( colab::plugins::condenser_api::api_vesting_delegation_expiration_object,
-            (id)(delegator)(vesting_shares)(expiration) )
+// FC_REFLECT( colab::plugins::condenser_api::api_vesting_delegation_expiration_object,
+//             (id)(delegator)(vesting_shares)(expiration) )
 
-FC_REFLECT( colab::plugins::condenser_api::api_convert_request_object,
-             (id)(owner)(requestid)(amount)(conversion_date) )
+// FC_REFLECT( colab::plugins::condenser_api::api_convert_request_object,
+//              (id)(owner)(requestid)(amount)(conversion_date) )
 
 FC_REFLECT_DERIVED( colab::plugins::condenser_api::discussion, (colab::plugins::condenser_api::api_comment_object),
              (url)(root_title)(pending_payout_value)(total_pending_payout_value)

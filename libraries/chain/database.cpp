@@ -585,26 +585,26 @@ const reward_fund_object& database::get_reward_fund( const comment_object& c ) c
    return get< reward_fund_object, by_name >( COLAB_POST_REWARD_FUND_NAME );
 }
 
-asset database::get_effective_vesting_shares( const account_object& account, asset_symbol_type vested_symbol )const
-{
-   if( vested_symbol == VESTS_SYMBOL )
-      return account.vesting_shares - account.delegated_vesting_shares + account.received_vesting_shares;
-
-#ifdef COLAB_ENABLE_SMT
-   FC_ASSERT( vested_symbol.space() == asset_symbol_type::smt_nai_space );
-   FC_ASSERT( vested_symbol.is_vesting() );
-
-#pragma message( "TODO: Update the code below when delegation is modified to support SMTs." )
-   const account_regular_balance_object* bo = find< account_regular_balance_object, by_owner_liquid_symbol >(
-      boost::make_tuple( account.name, vested_symbol.get_paired_symbol() ) );
-   if( bo == nullptr )
-      return asset( 0, vested_symbol );
-
-   return bo->vesting;
-#else
-   FC_ASSERT( false, "Invalid symbol" );
-#endif
-}
+// asset database::get_effective_vesting_shares( const account_object& account, asset_symbol_type vested_symbol )const
+// {
+//    if( vested_symbol == VESTS_SYMBOL )
+//       return account.vesting_shares - account.delegated_vesting_shares + account.received_vesting_shares;
+// 
+// #ifdef COLAB_ENABLE_SMT
+//    FC_ASSERT( vested_symbol.space() == asset_symbol_type::smt_nai_space );
+//    FC_ASSERT( vested_symbol.is_vesting() );
+// 
+// #pragma message( "TODO: Update the code below when delegation is modified to support SMTs." )
+//    const account_regular_balance_object* bo = find< account_regular_balance_object, by_owner_liquid_symbol >(
+//       boost::make_tuple( account.name, vested_symbol.get_paired_symbol() ) );
+//    if( bo == nullptr )
+//       return asset( 0, vested_symbol );
+// 
+//    return bo->vesting;
+// #else
+//    FC_ASSERT( false, "Invalid symbol" );
+// #endif
+// }
 
 uint32_t database::witness_participation_rate()const
 {
@@ -2359,48 +2359,48 @@ share_type database::pay_reward_funds( share_type reward )
    return used_rewards;
 }
 
-/**
- *  Iterates over all conversion requests with a conversion date before
- *  the head block time and then converts them to/from colab/sbd at the
- *  current median price feed history price times the premium
- */
-void database::process_conversions()
-{
-   auto now = head_block_time();
-   const auto& request_by_date = get_index< convert_request_index >().indices().get< by_conversion_date >();
-   auto itr = request_by_date.begin();
-
-   const auto& fhistory = get_feed_history();
-   if( fhistory.current_median_history.is_null() )
-      return;
-
-   asset net_sbd( 0, SBD_SYMBOL );
-   asset net_colab( 0, CLC_SYMBOL );
-
-   while( itr != request_by_date.end() && itr->conversion_date <= now )
-   {
-      auto amount_to_issue = itr->amount * fhistory.current_median_history;
-
-      adjust_balance( itr->owner, amount_to_issue );
-
-      net_sbd   += itr->amount;
-      net_colab += amount_to_issue;
-
-      push_virtual_operation( fill_convert_request_operation ( itr->owner, itr->requestid, itr->amount, amount_to_issue ) );
-
-      remove( *itr );
-      itr = request_by_date.begin();
-   }
-
-   const auto& props = get_dynamic_global_properties();
-   modify( props, [&]( dynamic_global_property_object& p )
-   {
-       p.current_supply += net_colab;
-       p.current_sbd_supply -= net_sbd;
-       p.virtual_supply += net_colab;
-       p.virtual_supply -= net_sbd * get_feed_history().current_median_history;
-   } );
-}
+// /**
+//  *  Iterates over all conversion requests with a conversion date before
+//  *  the head block time and then converts them to/from colab/sbd at the
+//  *  current median price feed history price times the premium
+//  */
+// void database::process_conversions()
+// {
+//    auto now = head_block_time();
+//    const auto& request_by_date = get_index< convert_request_index >().indices().get< by_conversion_date >();
+//    auto itr = request_by_date.begin();
+// 
+//    const auto& fhistory = get_feed_history();
+//    if( fhistory.current_median_history.is_null() )
+//       return;
+// 
+//    asset net_sbd( 0, SBD_SYMBOL );
+//    asset net_colab( 0, CLC_SYMBOL );
+// 
+//    while( itr != request_by_date.end() && itr->conversion_date <= now )
+//    {
+//       auto amount_to_issue = itr->amount * fhistory.current_median_history;
+// 
+//       adjust_balance( itr->owner, amount_to_issue );
+// 
+//       net_sbd   += itr->amount;
+//       net_colab += amount_to_issue;
+// 
+//       push_virtual_operation( fill_convert_request_operation ( itr->owner, itr->requestid, itr->amount, amount_to_issue ) );
+// 
+//       remove( *itr );
+//       itr = request_by_date.begin();
+//    }
+// 
+//    const auto& props = get_dynamic_global_properties();
+//    modify( props, [&]( dynamic_global_property_object& p )
+//    {
+//        p.current_supply += net_colab;
+//        p.current_sbd_supply -= net_sbd;
+//        p.virtual_supply += net_colab;
+//        p.virtual_supply -= net_sbd * get_feed_history().current_median_history;
+//    } );
+// }
 
 asset database::to_sbd( const asset& colab )const
 {
@@ -2550,7 +2550,7 @@ void database::initialize_evaluators()
    _my->_evaluator_registry.register_evaluator< pow2_evaluator                           >();
    _my->_evaluator_registry.register_evaluator< report_over_production_evaluator         >();
    _my->_evaluator_registry.register_evaluator< feed_publish_evaluator                   >();
-   _my->_evaluator_registry.register_evaluator< convert_evaluator                        >();
+//   _my->_evaluator_registry.register_evaluator< convert_evaluator                        >();
    _my->_evaluator_registry.register_evaluator< limit_order_create_evaluator             >();
    _my->_evaluator_registry.register_evaluator< limit_order_create2_evaluator            >();
    _my->_evaluator_registry.register_evaluator< limit_order_cancel_evaluator             >();
@@ -3086,7 +3086,7 @@ void database::_apply_block( const signed_block& next_block )
    create_block_summary(next_block);
    clear_expired_transactions();
    clear_expired_orders();
-   clear_expired_delegations();
+//   clear_expired_delegations();
    update_witness_schedule(*this);
 
 #if 0///~~~~~CLC~~~~~{NO NEED for CoLab
@@ -3096,7 +3096,7 @@ void database::_apply_block( const signed_block& next_block )
 
    clear_null_account_balance();
    process_funds();///
-   process_conversions();/// WILL NOT NEED for CoLab
+//   process_conversions();/// WILL NOT NEED for CoLab
    process_comment_cashout();
    process_vesting_withdrawals();
    process_savings_withdraws();
@@ -4138,35 +4138,35 @@ void database::clear_expired_orders()
    }
 }
 
-void database::clear_expired_delegations()
-{
-   auto now = head_block_time();
-   const auto& delegations_by_exp = get_index< vesting_delegation_expiration_index, by_expiration >();
-   auto itr = delegations_by_exp.begin();
-   while( itr != delegations_by_exp.end() && itr->expiration < now )
-   {
-      operation vop = return_vesting_delegation_operation( itr->delegator, itr->vesting_shares );
-      pre_push_virtual_operation( vop );
-
-      modify( get_account( itr->delegator ), [&]( account_object& a )
-      {
-         if( has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
-         {
-            util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
-FC_TODO( "Set skip_cap_regen=true without breaking consensus" );
-            a.voting_manabar.regenerate_mana( params, head_block_time() );
-            a.voting_manabar.use_mana( -itr->vesting_shares.amount.value );
-         }
-
-         a.delegated_vesting_shares -= itr->vesting_shares;
-      });
-
-      post_push_virtual_operation( vop );
-
-      remove( *itr );
-      itr = delegations_by_exp.begin();
-   }
-}
+// void database::clear_expired_delegations()
+// {
+//    auto now = head_block_time();
+//    const auto& delegations_by_exp = get_index< vesting_delegation_expiration_index, by_expiration >();
+//    auto itr = delegations_by_exp.begin();
+//    while( itr != delegations_by_exp.end() && itr->expiration < now )
+//    {
+//       operation vop = return_vesting_delegation_operation( itr->delegator, itr->vesting_shares );
+//       pre_push_virtual_operation( vop );
+// 
+//       modify( get_account( itr->delegator ), [&]( account_object& a )
+//       {
+//          if( has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//          {
+//             util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
+// FC_TODO( "Set skip_cap_regen=true without breaking consensus" );
+//             a.voting_manabar.regenerate_mana( params, head_block_time() );
+//             a.voting_manabar.use_mana( -itr->vesting_shares.amount.value );
+//          }
+// 
+//          a.delegated_vesting_shares -= itr->vesting_shares;
+//       });
+// 
+//       post_push_virtual_operation( vop );
+// 
+//       remove( *itr );
+//       itr = delegations_by_exp.begin();
+//    }
+// }
 #ifdef COLAB_ENABLE_SMT
 template< typename smt_balance_object_type, class balance_operator_type >
 void database::adjust_smt_balance( const account_name_type& name, const asset& delta, bool check_account,
@@ -5133,17 +5133,17 @@ void database::validate_invariants()const
                                       itr->vesting_shares.amount ) );
       }
 
-      const auto& convert_request_idx = get_index< convert_request_index >().indices();
-
-      for( auto itr = convert_request_idx.begin(); itr != convert_request_idx.end(); ++itr )
-      {
-         if( itr->amount.symbol == CLC_SYMBOL )
-            total_supply += itr->amount;
-         else if( itr->amount.symbol == SBD_SYMBOL )
-            total_sbd += itr->amount;
-         else
-            FC_ASSERT( false, "Encountered illegal symbol in convert_request_object" );
-      }
+//       const auto& convert_request_idx = get_index< convert_request_index >().indices();
+// 
+//       for( auto itr = convert_request_idx.begin(); itr != convert_request_idx.end(); ++itr )
+//       {
+//          if( itr->amount.symbol == CLC_SYMBOL )
+//             total_supply += itr->amount;
+//          else if( itr->amount.symbol == SBD_SYMBOL )
+//             total_sbd += itr->amount;
+//          else
+//             FC_ASSERT( false, "Encountered illegal symbol in convert_request_object" );
+//       }
 
       const auto& limit_order_idx = get_index< limit_order_index >().indices();
 

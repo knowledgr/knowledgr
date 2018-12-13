@@ -209,7 +209,7 @@ namespace colab { namespace chain {
          const time_point_sec                   calculate_discussion_payout_time( const comment_object& comment )const;
          const reward_fund_object&              get_reward_fund( const comment_object& c )const;
 
-         asset get_effective_vesting_shares( const account_object& account, asset_symbol_type vested_symbol )const;
+         //asset get_effective_vesting_shares( const account_object& account, asset_symbol_type vested_symbol )const;
 
          void max_bandwidth_per_share()const;
 
@@ -385,7 +385,7 @@ namespace colab { namespace chain {
          share_type cashout_comment_helper( util::comment_reward_context& ctx, const comment_object& comment, bool forward_curation_remainder = true );
          void process_comment_cashout();
          void process_funds();
-         void process_conversions();
+         //void process_conversions();
          void process_savings_withdraws();
          void process_subsidized_accounts();
 #ifdef COLAB_ENABLE_SMT

@@ -50,7 +50,7 @@ enum object_type
    witness_vote_object_type,
    limit_order_object_type,
    feed_history_object_type,
-   convert_request_object_type,
+//   convert_request_object_type,
    liquidity_reward_balance_object_type,
    operation_object_type,
    account_history_object_type,
@@ -65,7 +65,7 @@ enum object_type
    block_stats_object_type,
    reward_fund_object_type,
 //   vesting_delegation_object_type,
-   vesting_delegation_expiration_object_type,
+//   vesting_delegation_expiration_object_type,
    pending_required_action_object_type,
    pending_optional_action_object_type,
 #ifdef COLAB_ENABLE_SMT
@@ -92,7 +92,7 @@ class comment_vote_object;
 class witness_vote_object;
 class limit_order_object;
 class feed_history_object;
-class convert_request_object;
+//class convert_request_object;
 class liquidity_reward_balance_object;
 class operation_object;
 class account_history_object;
@@ -107,7 +107,7 @@ class decline_voting_rights_request_object;
 class block_stats_object;
 class reward_fund_object;
 //class vesting_delegation_object;
-class vesting_delegation_expiration_object;
+//class vesting_delegation_expiration_object;
 class pending_required_action_object;
 class pending_optional_action_object;
 
@@ -134,7 +134,7 @@ typedef oid< comment_vote_object                    > comment_vote_id_type;
 typedef oid< witness_vote_object                    > witness_vote_id_type;
 typedef oid< limit_order_object                     > limit_order_id_type;
 typedef oid< feed_history_object                    > feed_history_id_type;
-typedef oid< convert_request_object                 > convert_request_id_type;
+//typedef oid< convert_request_object                 > convert_request_id_type;
 typedef oid< liquidity_reward_balance_object        > liquidity_reward_balance_id_type;
 typedef oid< operation_object                       > operation_id_type;
 typedef oid< account_history_object                 > account_history_id_type;
@@ -149,7 +149,7 @@ typedef oid< decline_voting_rights_request_object   > decline_voting_rights_requ
 typedef oid< block_stats_object                     > block_stats_id_type;
 typedef oid< reward_fund_object                     > reward_fund_id_type;
 //typedef oid< vesting_delegation_object              > vesting_delegation_id_type;
-typedef oid< vesting_delegation_expiration_object   > vesting_delegation_expiration_id_type;
+//typedef oid< vesting_delegation_expiration_object   > vesting_delegation_expiration_id_type;
 typedef oid< pending_required_action_object         > pending_required_action_id_type;
 typedef oid< pending_optional_action_object         > pending_optional_action_id_type;
 
@@ -308,7 +308,7 @@ FC_REFLECT_ENUM( colab::chain::object_type,
                  (witness_vote_object_type)
                  (limit_order_object_type)
                  (feed_history_object_type)
-                 (convert_request_object_type)
+//                 (convert_request_object_type)
                  (liquidity_reward_balance_object_type)
                  (operation_object_type)
                  (account_history_object_type)
@@ -323,7 +323,7 @@ FC_REFLECT_ENUM( colab::chain::object_type,
                  (block_stats_object_type)
                  (reward_fund_object_type)
 //                 (vesting_delegation_object_type)
-                 (vesting_delegation_expiration_object_type)
+//                 (vesting_delegation_expiration_object_type)
                  (pending_required_action_object_type)
                  (pending_optional_action_object_type)
 

@@ -662,15 +662,15 @@ namespace colab { namespace protocol {
     *  This operation instructs the blockchain to start a conversion between CLC and SBD,
     *  The funds are deposited after COLAB_CONVERSION_DELAY
     */
-   struct convert_operation : public base_operation
-   {
-      account_name_type owner;
-      uint32_t          requestid = 0;
-      asset             amount;
-
-      void  validate()const;
-      void  get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(owner); }
-   };
+//    struct convert_operation : public base_operation
+//    {
+//       account_name_type owner;
+//       uint32_t          requestid = 0;
+//       asset             amount;
+// 
+//       void  validate()const;
+//       void  get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(owner); }
+//    };
 
 
    /**
@@ -1109,7 +1109,7 @@ FC_REFLECT( colab::protocol::set_reset_account_operation, (account)(current_rese
 
 
 FC_REFLECT( colab::protocol::report_over_production_operation, (reporter)(first_block)(second_block) )
-FC_REFLECT( colab::protocol::convert_operation, (owner)(requestid)(amount) )
+//FC_REFLECT( colab::protocol::convert_operation, (owner)(requestid)(amount) )
 FC_REFLECT( colab::protocol::feed_publish_operation, (publisher)(exchange_rate) )
 FC_REFLECT( colab::protocol::pow, (worker)(input)(signature)(work) )
 FC_REFLECT( colab::protocol::pow2, (input)(pow_summary) )

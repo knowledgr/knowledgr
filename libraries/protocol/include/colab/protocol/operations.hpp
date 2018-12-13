@@ -24,7 +24,7 @@ namespace colab { namespace protocol {
             limit_order_cancel_operation,
 
             feed_publish_operation,
-            convert_operation,
+            //convert_operation,
 
 			account_create_operation,
 			account_admin_update_operation,///~~~~~CLC~~~~~

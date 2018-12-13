@@ -695,13 +695,13 @@ class wallet_api
        */
       optional< condenser_api::api_witness_object > get_witness(string owner_account);
 
-      /** Returns conversion requests by an account
-       *
-       * @param owner Account name of the account owning the requests
-       *
-       * @returns All pending conversion requests by account
-       */
-      vector< condenser_api::api_convert_request_object > get_conversion_requests( string owner );
+//       /** Returns conversion requests by an account
+//        *
+//        * @param owner Account name of the account owning the requests
+//        *
+//        * @returns All pending conversion requests by account
+//        */
+//       vector< condenser_api::api_convert_request_object > get_conversion_requests( string owner );
 
 
       /**
@@ -918,31 +918,31 @@ class wallet_api
          request_id,
          bool broadcast = false );
 
-      /**
-       * Set up a vesting withdraw request. The request is fulfilled once a week over the next two year (104 weeks).
-       *
-       * @param from The account the VESTS are withdrawn from
-       * @param vesting_shares The amount of VESTS to withdraw over the next two years. Each week (amount/104) shares are
-       *    withdrawn and deposited back as CLC. i.e. "10.000000 VESTS"
-       * @param broadcast true if you wish to broadcast the transaction
-       */
+//       /**
+//        * Set up a vesting withdraw request. The request is fulfilled once a week over the next two year (104 weeks).
+//        *
+//        * @param from The account the VESTS are withdrawn from
+//        * @param vesting_shares The amount of VESTS to withdraw over the next two years. Each week (amount/104) shares are
+//        *    withdrawn and deposited back as CLC. i.e. "10.000000 VESTS"
+//        * @param broadcast true if you wish to broadcast the transaction
+//        */
 //       condenser_api::legacy_signed_transaction withdraw_vesting(
 //          string from,
 //          condenser_api::legacy_asset vesting_shares,
 //          bool broadcast = false );
 
-      /**
-       * Set up a vesting withdraw route. When vesting shares are withdrawn, they will be routed to these accounts
-       * based on the specified weights.
-       *
-       * @param from The account the VESTS are withdrawn from.
-       * @param to   The account receiving either VESTS or CLC.
-       * @param percent The percent of the withdraw to go to the 'to' account. This is denoted in hundreths of a percent.
-       *    i.e. 100 is 1% and 10000 is 100%. This value must be between 1 and 100000
-       * @param auto_vest Set to true if the from account should receive the VESTS as VESTS, or false if it should receive
-       *    them as CLC.
-       * @param broadcast true if you wish to broadcast the transaction.
-       */
+//       /**
+//        * Set up a vesting withdraw route. When vesting shares are withdrawn, they will be routed to these accounts
+//        * based on the specified weights.
+//        *
+//        * @param from The account the VESTS are withdrawn from.
+//        * @param to   The account receiving either VESTS or CLC.
+//        * @param percent The percent of the withdraw to go to the 'to' account. This is denoted in hundreths of a percent.
+//        *    i.e. 100 is 1% and 10000 is 100%. This value must be between 1 and 100000
+//        * @param auto_vest Set to true if the from account should receive the VESTS as VESTS, or false if it should receive
+//        *    them as CLC.
+//        * @param broadcast true if you wish to broadcast the transaction.
+//        */
 //       condenser_api::legacy_signed_transaction set_withdraw_vesting_route(
 //          string from,
 //          string to,
@@ -950,18 +950,18 @@ class wallet_api
 //          bool auto_vest,
 //          bool broadcast = false );
 
-      /**
-       *  This method will convert SBD to CLC at the current_median_history price one
-       *  week from the time it is executed. This method depends upon there being a valid price feed.
-       *
-       *  @param from The account requesting conversion of its SBD i.e. "1.000 SBD"
-       *  @param amount The amount of SBD to convert
-       *  @param broadcast true if you wish to broadcast the transaction
-       */
-      condenser_api::legacy_signed_transaction convert_sbd(
-         string from,
-         condenser_api::legacy_asset amount,
-         bool broadcast = false );
+//       /**
+//        *  This method will convert SBD to CLC at the current_median_history price one
+//        *  week from the time it is executed. This method depends upon there being a valid price feed.
+//        *
+//        *  @param from The account requesting conversion of its SBD i.e. "1.000 SBD"
+//        *  @param amount The amount of SBD to convert
+//        *  @param broadcast true if you wish to broadcast the transaction
+//        */
+//       condenser_api::legacy_signed_transaction convert_sbd(
+//          string from,
+//          condenser_api::legacy_asset amount,
+//          bool broadcast = false );
 
       /**
        * A witness can public a price feed for the CLC:SBD market. The median price feed is used
@@ -1271,7 +1271,7 @@ FC_API( colab::wallet::wallet_api,
         (get_block)
         (get_ops_in_block)
         (get_feed_history)
-        (get_conversion_requests)
+        //(get_conversion_requests)
         (get_account_history)
         (get_state)
         (get_withdraw_routes)
@@ -1315,7 +1315,7 @@ FC_API( colab::wallet::wallet_api,
         //(transfer_to_vesting)
         //(withdraw_vesting)
         //(set_withdraw_vesting_route)
-        (convert_sbd)
+        //(convert_sbd)
         (publish_feed)
         (get_order_book)
         (get_open_orders)

@@ -546,14 +546,14 @@ namespace colab { namespace protocol {
       validate_account_name( owner );
    }
 
-   void convert_operation::validate()const
-   {
-      validate_account_name( owner );
-      /// only allow conversion from SBD to CLC, allowing the opposite can enable traders to abuse
-      /// market fluxuations through converting large quantities without moving the price.
-      FC_ASSERT( is_asset_type( amount, SBD_SYMBOL ), "Can only convert SBD to CLC" );
-      FC_ASSERT( amount.amount > 0, "Must convert some SBD" );
-   }
+//    void convert_operation::validate()const
+//    {
+//       validate_account_name( owner );
+//       /// only allow conversion from SBD to CLC, allowing the opposite can enable traders to abuse
+//       /// market fluxuations through converting large quantities without moving the price.
+//       FC_ASSERT( is_asset_type( amount, SBD_SYMBOL ), "Can only convert SBD to CLC" );
+//       FC_ASSERT( amount.amount > 0, "Must convert some SBD" );
+//    }
 
    void report_over_production_operation::validate()const
    {

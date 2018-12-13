@@ -29,7 +29,8 @@ using fc::string;
 
 inline uint16_t get_voting_power( const account_object& a )
 {
-   return (uint16_t)( a.voting_manabar.current_mana / chain::util::get_effective_vesting_shares( a ) );
+	return 0;
+//   return (uint16_t)( a.voting_manabar.current_mana / chain::util::get_effective_vesting_shares( a ) );
 }
 
 BOOST_FIXTURE_TEST_SUITE( operation_tests, clean_database_fixture )
@@ -760,367 +761,367 @@ BOOST_AUTO_TEST_CASE( vote_authorities )
    FC_LOG_AND_RETHROW()
 }
 
-BOOST_AUTO_TEST_CASE( vote_apply )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: vote_apply" );
-
-      ACTORS( (alice)(bob)(sam)(dave) )
-      generate_block();
-
-      vest( COLAB_INIT_MINER_NAME, "alice", ASSET( "10.000 TESTS" ) );
-      validate_database();
-      vest( COLAB_INIT_MINER_NAME, "bob" , ASSET( "10.000 TESTS" ) );
-      vest( COLAB_INIT_MINER_NAME, "sam" , ASSET( "10.000 TESTS" ) );
-      vest( COLAB_INIT_MINER_NAME, "dave" , ASSET( "10.000 TESTS" ) );
-      generate_block();
-
-      const auto& vote_idx = db->get_index< comment_vote_index >().indices().get< by_comment_voter >();
-
-      {
-         const auto& alice = db->get_account( "alice" );
-
-         signed_transaction tx;
-         comment_operation comment_op;
-         comment_op.author = "alice";
-         comment_op.permlink = "foo";
-         comment_op.parent_permlink = "test";
-         comment_op.title = "bar";
-         comment_op.body = "foo bar";
-         tx.operations.push_back( comment_op );
-         tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-         sign( tx, alice_private_key );
-         db->push_transaction( tx, 0 );
-
-         BOOST_TEST_MESSAGE( "--- Testing voting on a non-existent comment" );
-
-         tx.operations.clear();
-         tx.signatures.clear();
-
-         vote_operation op;
-         op.voter = "alice";
-         op.author = "bob";
-         op.permlink = "foo";
-         op.weight = COLAB_100_PERCENT;
-         tx.operations.push_back( op );
-         sign( tx, alice_private_key );
-
-         COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
-
-         validate_database();
-
-         BOOST_TEST_MESSAGE( "--- Testing voting with a weight of 0" );
-
-         op.weight = (int16_t) 0;
-         tx.operations.clear();
-         tx.signatures.clear();
-         tx.operations.push_back( op );
-         sign( tx, alice_private_key );
-
-         COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
-
-         validate_database();
-
-         BOOST_TEST_MESSAGE( "--- Testing success" );
-
-         auto old_mana = alice.voting_manabar.current_mana;
-
-         op.weight = COLAB_100_PERCENT;
-         op.author = "alice";
-         tx.operations.clear();
-         tx.signatures.clear();
-         tx.operations.push_back( op );
-         sign( tx, alice_private_key );
-
-         db->push_transaction( tx, 0 );
-
-         auto& alice_comment = db->get_comment( "alice", string( "foo" ) );
-         auto itr = vote_idx.find( std::make_tuple( alice_comment.id, alice.id ) );
-         int64_t max_vote_denom = ( db->get_dynamic_global_properties().vote_power_reserve_rate * COLAB_VOTING_MANA_REGENERATION_SECONDS ) / (60*60*24);
-
-         BOOST_REQUIRE( alice.last_vote_time == db->head_block_time() );
-         BOOST_REQUIRE( alice_comment.net_rshares.value == ( old_mana - alice.voting_manabar.current_mana ) - COLAB_VOTE_DUST_THRESHOLD );
-         BOOST_REQUIRE( alice_comment.cashout_time == alice_comment.created + COLAB_CASHOUT_WINDOW_SECONDS );
-         BOOST_REQUIRE( itr->rshares == ( old_mana - alice.voting_manabar.current_mana ) - COLAB_VOTE_DUST_THRESHOLD );
-         BOOST_REQUIRE( itr != vote_idx.end() );
-         validate_database();
-
-         BOOST_TEST_MESSAGE( "--- Test reduced power for quick voting" );
-
-         generate_blocks( db->head_block_time() + COLAB_MIN_VOTE_INTERVAL_SEC );
-
-         util::manabar old_manabar = db->get_account( "alice" ).voting_manabar;
-         util::manabar_params params( util::get_effective_vesting_shares( db->get_account( "alice" ) ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
-         old_manabar.regenerate_mana( params, db->head_block_time() );
-
-         comment_op.author = "bob";
-         comment_op.permlink = "foo";
-         comment_op.title = "bar";
-         comment_op.body = "foo bar";
-         tx.operations.clear();
-         tx.signatures.clear();
-         tx.operations.push_back( comment_op );
-         sign( tx, bob_private_key );
-         db->push_transaction( tx, 0 );
-
-         op.weight = COLAB_100_PERCENT / 2;
-         op.voter = "alice";
-         op.author = "bob";
-         op.permlink = "foo";
-         tx.operations.clear();
-         tx.signatures.clear();
-         tx.operations.push_back( op );
-         sign( tx, alice_private_key );
-         db->push_transaction( tx, 0 );
-
-         const auto& bob_comment = db->get_comment( "bob", string( "foo" ) );
-         itr = vote_idx.find( std::make_tuple( bob_comment.id, alice.id ) );
-
-         BOOST_REQUIRE( bob_comment.net_rshares.value == ( old_manabar.current_mana - db->get_account( "alice" ).voting_manabar.current_mana ) - COLAB_VOTE_DUST_THRESHOLD );
-         BOOST_REQUIRE( bob_comment.cashout_time == bob_comment.created + COLAB_CASHOUT_WINDOW_SECONDS );
-         BOOST_REQUIRE( itr != vote_idx.end() );
-         validate_database();
-
-         BOOST_TEST_MESSAGE( "--- Test payout time extension on vote" );
-
-         old_mana = db->get_account( "bob" ).voting_manabar.current_mana;
-         auto old_abs_rshares = db->get_comment( "alice", string( "foo" ) ).abs_rshares.value;
-
-         generate_blocks( db->head_block_time() + fc::seconds( ( COLAB_CASHOUT_WINDOW_SECONDS / 2 ) ), true );
-
-         const auto& new_bob = db->get_account( "bob" );
-         const auto& new_alice_comment = db->get_comment( "alice", string( "foo" ) );
-
-         op.weight = COLAB_100_PERCENT;
-         op.voter = "bob";
-         op.author = "alice";
-         op.permlink = "foo";
-         tx.operations.clear();
-         tx.signatures.clear();
-         tx.operations.push_back( op );
-         tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-         sign( tx, bob_private_key );
-         db->push_transaction( tx, 0 );
-
-         itr = vote_idx.find( std::make_tuple( new_alice_comment.id, new_bob.id ) );
-
-         BOOST_REQUIRE( new_alice_comment.net_rshares.value == old_abs_rshares + ( old_mana - new_bob.voting_manabar.current_mana ) - COLAB_VOTE_DUST_THRESHOLD );
-         BOOST_REQUIRE( new_alice_comment.cashout_time == new_alice_comment.created + COLAB_CASHOUT_WINDOW_SECONDS );
-         BOOST_REQUIRE( itr != vote_idx.end() );
-         validate_database();
-
-         BOOST_TEST_MESSAGE( "--- Test negative vote" );
-
-         const auto& new_sam = db->get_account( "sam" );
-         const auto& new_bob_comment = db->get_comment( "bob", string( "foo" ) );
-
-         old_abs_rshares = new_bob_comment.abs_rshares.value;
-
-         old_manabar = db->get_account( "sam" ).voting_manabar;
-         params.max_mana = util::get_effective_vesting_shares( db->get_account( "sam" ) );
-         old_manabar.regenerate_mana( params, db->head_block_time() );
-
-         op.weight = -1 * COLAB_100_PERCENT / 2;
-         op.voter = "sam";
-         op.author = "bob";
-         op.permlink = "foo";
-         tx.operations.clear();
-         tx.signatures.clear();
-         tx.operations.push_back( op );
-         sign( tx, sam_private_key );
-         db->push_transaction( tx, 0 );
-
-         itr = vote_idx.find( std::make_tuple( new_bob_comment.id, new_sam.id ) );
-         int64_t sam_weight = old_manabar.current_mana - db->get_account( "sam" ).voting_manabar.current_mana - COLAB_VOTE_DUST_THRESHOLD;
-
-         BOOST_REQUIRE( new_bob_comment.net_rshares.value == old_abs_rshares - sam_weight );
-         BOOST_REQUIRE( new_bob_comment.abs_rshares.value == old_abs_rshares + sam_weight );
-         BOOST_REQUIRE( new_bob_comment.cashout_time == new_bob_comment.created + COLAB_CASHOUT_WINDOW_SECONDS );
-         BOOST_REQUIRE( itr != vote_idx.end() );
-         validate_database();
-
-         BOOST_TEST_MESSAGE( "--- Test nested voting on nested comments" );
-
-         old_abs_rshares = new_alice_comment.children_abs_rshares.value;
-         int64_t regenerated_power = (COLAB_100_PERCENT * ( db->head_block_time() - db->get_account( "alice").last_vote_time ).to_seconds() ) / COLAB_VOTING_MANA_REGENERATION_SECONDS;
-         int64_t used_power = ( get_voting_power( db->get_account( "alice" ) ) + regenerated_power + max_vote_denom - 1 ) / max_vote_denom;
-
-         comment_op.author = "sam";
-         comment_op.permlink = "foo";
-         comment_op.title = "bar";
-         comment_op.body = "foo bar";
-         comment_op.parent_author = "alice";
-         comment_op.parent_permlink = "foo";
-         tx.operations.clear();
-         tx.signatures.clear();
-         tx.operations.push_back( comment_op );
-         sign( tx, sam_private_key );
-         db->push_transaction( tx, 0 );
-
-         op.weight = COLAB_100_PERCENT;
-         op.voter = "alice";
-         op.author = "sam";
-         op.permlink = "foo";
-         tx.operations.clear();
-         tx.signatures.clear();
-         tx.operations.push_back( op );
-         sign( tx, alice_private_key );
-         db->push_transaction( tx, 0 );
-
-         int64_t new_rshares = ( ( fc::uint128_t( db->get_account( "alice" ).vesting_shares.amount.value ) * used_power ) / COLAB_100_PERCENT ).to_uint64() - COLAB_VOTE_DUST_THRESHOLD;
-
-         BOOST_REQUIRE( db->get_comment( "alice", string( "foo" ) ).cashout_time == db->get_comment( "alice", string( "foo" ) ).created + COLAB_CASHOUT_WINDOW_SECONDS );
-
-         validate_database();
-
-         BOOST_TEST_MESSAGE( "--- Test increasing vote rshares" );
-
-         generate_blocks( db->head_block_time() + COLAB_MIN_VOTE_INTERVAL_SEC );
-
-         auto new_alice = db->get_account( "alice" );
-         auto alice_bob_vote = vote_idx.find( std::make_tuple( new_bob_comment.id, new_alice.id ) );
-         auto old_vote_rshares = alice_bob_vote->rshares;
-         auto old_net_rshares = new_bob_comment.net_rshares.value;
-         old_abs_rshares = new_bob_comment.abs_rshares.value;
-         used_power = ( ( COLAB_1_PERCENT * 25 * ( get_voting_power( new_alice ) ) / COLAB_100_PERCENT ) + max_vote_denom - 1 ) / max_vote_denom;
-         auto alice_voting_power = get_voting_power( new_alice ) - used_power;
-
-         old_manabar = db->get_account( "alice" ).voting_manabar;
-         params.max_mana = util::get_effective_vesting_shares( db->get_account( "alice" ) );
-         old_manabar.regenerate_mana( params, db->head_block_time() );
-
-         op.voter = "alice";
-         op.weight = COLAB_1_PERCENT * 25;
-         op.author = "bob";
-         op.permlink = "foo";
-         tx.operations.clear();
-         tx.signatures.clear();
-         tx.operations.push_back( op );
-         sign( tx, alice_private_key );
-         db->push_transaction( tx, 0 );
-         alice_bob_vote = vote_idx.find( std::make_tuple( new_bob_comment.id, new_alice.id ) );
-
-         new_rshares = old_manabar.current_mana - db->get_account( "alice" ).voting_manabar.current_mana - COLAB_VOTE_DUST_THRESHOLD;
-
-         BOOST_REQUIRE( new_bob_comment.net_rshares == old_net_rshares - old_vote_rshares + new_rshares );
-         BOOST_REQUIRE( new_bob_comment.abs_rshares == old_abs_rshares + new_rshares );
-         BOOST_REQUIRE( new_bob_comment.cashout_time == new_bob_comment.created + COLAB_CASHOUT_WINDOW_SECONDS );
-         BOOST_REQUIRE( alice_bob_vote->rshares == new_rshares );
-         BOOST_REQUIRE( alice_bob_vote->last_update == db->head_block_time() );
-         BOOST_REQUIRE( alice_bob_vote->vote_percent == op.weight );
-         validate_database();
-
-         BOOST_TEST_MESSAGE( "--- Test decreasing vote rshares" );
-
-         generate_blocks( db->head_block_time() + COLAB_MIN_VOTE_INTERVAL_SEC );
-
-         old_vote_rshares = new_rshares;
-         old_net_rshares = new_bob_comment.net_rshares.value;
-         old_abs_rshares = new_bob_comment.abs_rshares.value;
-         used_power = ( uint64_t( COLAB_1_PERCENT ) * 75 * uint64_t( alice_voting_power ) ) / COLAB_100_PERCENT;
-         used_power = ( used_power + max_vote_denom - 1 ) / max_vote_denom;
-         alice_voting_power -= used_power;
-
-         old_manabar = db->get_account( "alice" ).voting_manabar;
-         params.max_mana = util::get_effective_vesting_shares( db->get_account( "alice" ) );
-         old_manabar.regenerate_mana( params, db->head_block_time() );
-
-         op.weight = COLAB_1_PERCENT * -75;
-         tx.operations.clear();
-         tx.signatures.clear();
-         tx.operations.push_back( op );
-         sign( tx, alice_private_key );
-         db->push_transaction( tx, 0 );
-         alice_bob_vote = vote_idx.find( std::make_tuple( new_bob_comment.id, new_alice.id ) );
-
-         new_rshares = old_manabar.current_mana - db->get_account( "alice" ).voting_manabar.current_mana - COLAB_VOTE_DUST_THRESHOLD;
-
-         BOOST_REQUIRE( new_bob_comment.net_rshares == old_net_rshares - old_vote_rshares - new_rshares );
-         BOOST_REQUIRE( new_bob_comment.abs_rshares == old_abs_rshares + new_rshares );
-         BOOST_REQUIRE( new_bob_comment.cashout_time == new_bob_comment.created + COLAB_CASHOUT_WINDOW_SECONDS );
-         BOOST_REQUIRE( alice_bob_vote->rshares == -1 * new_rshares );
-         BOOST_REQUIRE( alice_bob_vote->last_update == db->head_block_time() );
-         BOOST_REQUIRE( alice_bob_vote->vote_percent == op.weight );
-         validate_database();
-
-         BOOST_TEST_MESSAGE( "--- Test changing a vote to 0 weight (aka: removing a vote)" );
-
-         generate_blocks( db->head_block_time() + COLAB_MIN_VOTE_INTERVAL_SEC );
-
-         old_vote_rshares = alice_bob_vote->rshares;
-         old_net_rshares = new_bob_comment.net_rshares.value;
-         old_abs_rshares = new_bob_comment.abs_rshares.value;
-
-         op.weight = 0;
-         tx.operations.clear();
-         tx.signatures.clear();
-         tx.operations.push_back( op );
-         sign( tx, alice_private_key );
-         db->push_transaction( tx, 0 );
-         alice_bob_vote = vote_idx.find( std::make_tuple( new_bob_comment.id, new_alice.id ) );
-
-         BOOST_REQUIRE( new_bob_comment.net_rshares == old_net_rshares - old_vote_rshares );
-         BOOST_REQUIRE( new_bob_comment.abs_rshares == old_abs_rshares );
-         BOOST_REQUIRE( new_bob_comment.cashout_time == new_bob_comment.created + COLAB_CASHOUT_WINDOW_SECONDS );
-         BOOST_REQUIRE( alice_bob_vote->rshares == 0 );
-         BOOST_REQUIRE( alice_bob_vote->last_update == db->head_block_time() );
-         BOOST_REQUIRE( alice_bob_vote->vote_percent == op.weight );
-         validate_database();
-
-         BOOST_TEST_MESSAGE( "--- Test reduced effectiveness when increasing rshares within lockout period" );
-
-         generate_blocks( fc::time_point_sec( ( new_bob_comment.cashout_time - COLAB_UPVOTE_LOCKOUT_HF17 ).sec_since_epoch() + COLAB_BLOCK_INTERVAL ), true );
-
-         old_manabar = db->get_account( "dave" ).voting_manabar;
-         params.max_mana = util::get_effective_vesting_shares( db->get_account( "dave" ) );
-         old_manabar.regenerate_mana( params, db->head_block_time() );
-
-         op.voter = "dave";
-         op.weight = COLAB_100_PERCENT;
-         tx.operations.clear();
-         tx.signatures.clear();
-         tx.operations.push_back( op );
-         sign( tx, dave_private_key );
-         db->push_transaction( tx, 0 );
-
-         new_rshares = old_manabar.current_mana - db->get_account( "dave" ).voting_manabar.current_mana - COLAB_VOTE_DUST_THRESHOLD;
-         new_rshares = ( new_rshares * ( COLAB_UPVOTE_LOCKOUT_SECONDS - COLAB_BLOCK_INTERVAL ) ) / COLAB_UPVOTE_LOCKOUT_SECONDS;
-         account_id_type dave_id = db->get_account( "dave" ).id;
-         comment_id_type bob_comment_id = db->get_comment( "bob", string( "foo" ) ).id;
-
-         {
-            auto dave_bob_vote = db->get< comment_vote_object, by_comment_voter >( boost::make_tuple( bob_comment_id, dave_id ) );
-            BOOST_REQUIRE( dave_bob_vote.rshares = new_rshares );
-         }
-         validate_database();
-
-         BOOST_TEST_MESSAGE( "--- Test rediced effectiveness when reducing rshares within lockout period" );
-
-         generate_block();
-         old_manabar = db->get_account( "dave" ).voting_manabar;
-         params.max_mana = util::get_effective_vesting_shares( db->get_account( "dave" ) );
-         old_manabar.regenerate_mana( params, db->head_block_time() );
-
-         op.weight = -1 * COLAB_100_PERCENT;
-         tx.operations.clear();
-         tx.signatures.clear();
-         tx.operations.push_back( op );
-         sign( tx, dave_private_key );
-         db->push_transaction( tx, 0 );
-
-         new_rshares = old_manabar.current_mana - db->get_account( "dave" ).voting_manabar.current_mana - COLAB_VOTE_DUST_THRESHOLD;
-         new_rshares = ( new_rshares * ( COLAB_UPVOTE_LOCKOUT_SECONDS - COLAB_BLOCK_INTERVAL - COLAB_BLOCK_INTERVAL ) ) / COLAB_UPVOTE_LOCKOUT_SECONDS;
-
-         {
-            auto dave_bob_vote = db->get< comment_vote_object, by_comment_voter >( boost::make_tuple( bob_comment_id, dave_id ) );
-            BOOST_REQUIRE( dave_bob_vote.rshares = new_rshares );
-         }
-         validate_database();
-      }
-   }
-   FC_LOG_AND_RETHROW()
-}
+// BOOST_AUTO_TEST_CASE( vote_apply )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: vote_apply" );
+// 
+//       ACTORS( (alice)(bob)(sam)(dave) )
+//       generate_block();
+// 
+//       vest( COLAB_INIT_MINER_NAME, "alice", ASSET( "10.000 TESTS" ) );
+//       validate_database();
+//       vest( COLAB_INIT_MINER_NAME, "bob" , ASSET( "10.000 TESTS" ) );
+//       vest( COLAB_INIT_MINER_NAME, "sam" , ASSET( "10.000 TESTS" ) );
+//       vest( COLAB_INIT_MINER_NAME, "dave" , ASSET( "10.000 TESTS" ) );
+//       generate_block();
+// 
+//       const auto& vote_idx = db->get_index< comment_vote_index >().indices().get< by_comment_voter >();
+// 
+//       {
+//          const auto& alice = db->get_account( "alice" );
+// 
+//          signed_transaction tx;
+//          comment_operation comment_op;
+//          comment_op.author = "alice";
+//          comment_op.permlink = "foo";
+//          comment_op.parent_permlink = "test";
+//          comment_op.title = "bar";
+//          comment_op.body = "foo bar";
+//          tx.operations.push_back( comment_op );
+//          tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//          sign( tx, alice_private_key );
+//          db->push_transaction( tx, 0 );
+// 
+//          BOOST_TEST_MESSAGE( "--- Testing voting on a non-existent comment" );
+// 
+//          tx.operations.clear();
+//          tx.signatures.clear();
+// 
+//          vote_operation op;
+//          op.voter = "alice";
+//          op.author = "bob";
+//          op.permlink = "foo";
+//          op.weight = COLAB_100_PERCENT;
+//          tx.operations.push_back( op );
+//          sign( tx, alice_private_key );
+// 
+//          COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
+// 
+//          validate_database();
+// 
+//          BOOST_TEST_MESSAGE( "--- Testing voting with a weight of 0" );
+// 
+//          op.weight = (int16_t) 0;
+//          tx.operations.clear();
+//          tx.signatures.clear();
+//          tx.operations.push_back( op );
+//          sign( tx, alice_private_key );
+// 
+//          COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
+// 
+//          validate_database();
+// 
+//          BOOST_TEST_MESSAGE( "--- Testing success" );
+// 
+//          auto old_mana = alice.voting_manabar.current_mana;
+// 
+//          op.weight = COLAB_100_PERCENT;
+//          op.author = "alice";
+//          tx.operations.clear();
+//          tx.signatures.clear();
+//          tx.operations.push_back( op );
+//          sign( tx, alice_private_key );
+// 
+//          db->push_transaction( tx, 0 );
+// 
+//          auto& alice_comment = db->get_comment( "alice", string( "foo" ) );
+//          auto itr = vote_idx.find( std::make_tuple( alice_comment.id, alice.id ) );
+//          int64_t max_vote_denom = ( db->get_dynamic_global_properties().vote_power_reserve_rate * COLAB_VOTING_MANA_REGENERATION_SECONDS ) / (60*60*24);
+// 
+//          BOOST_REQUIRE( alice.last_vote_time == db->head_block_time() );
+//          BOOST_REQUIRE( alice_comment.net_rshares.value == ( old_mana - alice.voting_manabar.current_mana ) - COLAB_VOTE_DUST_THRESHOLD );
+//          BOOST_REQUIRE( alice_comment.cashout_time == alice_comment.created + COLAB_CASHOUT_WINDOW_SECONDS );
+//          BOOST_REQUIRE( itr->rshares == ( old_mana - alice.voting_manabar.current_mana ) - COLAB_VOTE_DUST_THRESHOLD );
+//          BOOST_REQUIRE( itr != vote_idx.end() );
+//          validate_database();
+// 
+//          BOOST_TEST_MESSAGE( "--- Test reduced power for quick voting" );
+// 
+//          generate_blocks( db->head_block_time() + COLAB_MIN_VOTE_INTERVAL_SEC );
+// 
+//          util::manabar old_manabar = db->get_account( "alice" ).voting_manabar;
+//          util::manabar_params params( util::get_effective_vesting_shares( db->get_account( "alice" ) ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
+//          old_manabar.regenerate_mana( params, db->head_block_time() );
+// 
+//          comment_op.author = "bob";
+//          comment_op.permlink = "foo";
+//          comment_op.title = "bar";
+//          comment_op.body = "foo bar";
+//          tx.operations.clear();
+//          tx.signatures.clear();
+//          tx.operations.push_back( comment_op );
+//          sign( tx, bob_private_key );
+//          db->push_transaction( tx, 0 );
+// 
+//          op.weight = COLAB_100_PERCENT / 2;
+//          op.voter = "alice";
+//          op.author = "bob";
+//          op.permlink = "foo";
+//          tx.operations.clear();
+//          tx.signatures.clear();
+//          tx.operations.push_back( op );
+//          sign( tx, alice_private_key );
+//          db->push_transaction( tx, 0 );
+// 
+//          const auto& bob_comment = db->get_comment( "bob", string( "foo" ) );
+//          itr = vote_idx.find( std::make_tuple( bob_comment.id, alice.id ) );
+// 
+//          BOOST_REQUIRE( bob_comment.net_rshares.value == ( old_manabar.current_mana - db->get_account( "alice" ).voting_manabar.current_mana ) - COLAB_VOTE_DUST_THRESHOLD );
+//          BOOST_REQUIRE( bob_comment.cashout_time == bob_comment.created + COLAB_CASHOUT_WINDOW_SECONDS );
+//          BOOST_REQUIRE( itr != vote_idx.end() );
+//          validate_database();
+// 
+//          BOOST_TEST_MESSAGE( "--- Test payout time extension on vote" );
+// 
+//          old_mana = db->get_account( "bob" ).voting_manabar.current_mana;
+//          auto old_abs_rshares = db->get_comment( "alice", string( "foo" ) ).abs_rshares.value;
+// 
+//          generate_blocks( db->head_block_time() + fc::seconds( ( COLAB_CASHOUT_WINDOW_SECONDS / 2 ) ), true );
+// 
+//          const auto& new_bob = db->get_account( "bob" );
+//          const auto& new_alice_comment = db->get_comment( "alice", string( "foo" ) );
+// 
+//          op.weight = COLAB_100_PERCENT;
+//          op.voter = "bob";
+//          op.author = "alice";
+//          op.permlink = "foo";
+//          tx.operations.clear();
+//          tx.signatures.clear();
+//          tx.operations.push_back( op );
+//          tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//          sign( tx, bob_private_key );
+//          db->push_transaction( tx, 0 );
+// 
+//          itr = vote_idx.find( std::make_tuple( new_alice_comment.id, new_bob.id ) );
+// 
+//          BOOST_REQUIRE( new_alice_comment.net_rshares.value == old_abs_rshares + ( old_mana - new_bob.voting_manabar.current_mana ) - COLAB_VOTE_DUST_THRESHOLD );
+//          BOOST_REQUIRE( new_alice_comment.cashout_time == new_alice_comment.created + COLAB_CASHOUT_WINDOW_SECONDS );
+//          BOOST_REQUIRE( itr != vote_idx.end() );
+//          validate_database();
+// 
+//          BOOST_TEST_MESSAGE( "--- Test negative vote" );
+// 
+//          const auto& new_sam = db->get_account( "sam" );
+//          const auto& new_bob_comment = db->get_comment( "bob", string( "foo" ) );
+// 
+//          old_abs_rshares = new_bob_comment.abs_rshares.value;
+// 
+//          old_manabar = db->get_account( "sam" ).voting_manabar;
+//          params.max_mana = util::get_effective_vesting_shares( db->get_account( "sam" ) );
+//          old_manabar.regenerate_mana( params, db->head_block_time() );
+// 
+//          op.weight = -1 * COLAB_100_PERCENT / 2;
+//          op.voter = "sam";
+//          op.author = "bob";
+//          op.permlink = "foo";
+//          tx.operations.clear();
+//          tx.signatures.clear();
+//          tx.operations.push_back( op );
+//          sign( tx, sam_private_key );
+//          db->push_transaction( tx, 0 );
+// 
+//          itr = vote_idx.find( std::make_tuple( new_bob_comment.id, new_sam.id ) );
+//          int64_t sam_weight = old_manabar.current_mana - db->get_account( "sam" ).voting_manabar.current_mana - COLAB_VOTE_DUST_THRESHOLD;
+// 
+//          BOOST_REQUIRE( new_bob_comment.net_rshares.value == old_abs_rshares - sam_weight );
+//          BOOST_REQUIRE( new_bob_comment.abs_rshares.value == old_abs_rshares + sam_weight );
+//          BOOST_REQUIRE( new_bob_comment.cashout_time == new_bob_comment.created + COLAB_CASHOUT_WINDOW_SECONDS );
+//          BOOST_REQUIRE( itr != vote_idx.end() );
+//          validate_database();
+// 
+//          BOOST_TEST_MESSAGE( "--- Test nested voting on nested comments" );
+// 
+//          old_abs_rshares = new_alice_comment.children_abs_rshares.value;
+//          int64_t regenerated_power = (COLAB_100_PERCENT * ( db->head_block_time() - db->get_account( "alice").last_vote_time ).to_seconds() ) / COLAB_VOTING_MANA_REGENERATION_SECONDS;
+//          int64_t used_power = ( get_voting_power( db->get_account( "alice" ) ) + regenerated_power + max_vote_denom - 1 ) / max_vote_denom;
+// 
+//          comment_op.author = "sam";
+//          comment_op.permlink = "foo";
+//          comment_op.title = "bar";
+//          comment_op.body = "foo bar";
+//          comment_op.parent_author = "alice";
+//          comment_op.parent_permlink = "foo";
+//          tx.operations.clear();
+//          tx.signatures.clear();
+//          tx.operations.push_back( comment_op );
+//          sign( tx, sam_private_key );
+//          db->push_transaction( tx, 0 );
+// 
+//          op.weight = COLAB_100_PERCENT;
+//          op.voter = "alice";
+//          op.author = "sam";
+//          op.permlink = "foo";
+//          tx.operations.clear();
+//          tx.signatures.clear();
+//          tx.operations.push_back( op );
+//          sign( tx, alice_private_key );
+//          db->push_transaction( tx, 0 );
+// 
+//          int64_t new_rshares = ( ( fc::uint128_t( db->get_account( "alice" ).vesting_shares.amount.value ) * used_power ) / COLAB_100_PERCENT ).to_uint64() - COLAB_VOTE_DUST_THRESHOLD;
+// 
+//          BOOST_REQUIRE( db->get_comment( "alice", string( "foo" ) ).cashout_time == db->get_comment( "alice", string( "foo" ) ).created + COLAB_CASHOUT_WINDOW_SECONDS );
+// 
+//          validate_database();
+// 
+//          BOOST_TEST_MESSAGE( "--- Test increasing vote rshares" );
+// 
+//          generate_blocks( db->head_block_time() + COLAB_MIN_VOTE_INTERVAL_SEC );
+// 
+//          auto new_alice = db->get_account( "alice" );
+//          auto alice_bob_vote = vote_idx.find( std::make_tuple( new_bob_comment.id, new_alice.id ) );
+//          auto old_vote_rshares = alice_bob_vote->rshares;
+//          auto old_net_rshares = new_bob_comment.net_rshares.value;
+//          old_abs_rshares = new_bob_comment.abs_rshares.value;
+//          used_power = ( ( COLAB_1_PERCENT * 25 * ( get_voting_power( new_alice ) ) / COLAB_100_PERCENT ) + max_vote_denom - 1 ) / max_vote_denom;
+//          auto alice_voting_power = get_voting_power( new_alice ) - used_power;
+// 
+//          old_manabar = db->get_account( "alice" ).voting_manabar;
+//          params.max_mana = util::get_effective_vesting_shares( db->get_account( "alice" ) );
+//          old_manabar.regenerate_mana( params, db->head_block_time() );
+// 
+//          op.voter = "alice";
+//          op.weight = COLAB_1_PERCENT * 25;
+//          op.author = "bob";
+//          op.permlink = "foo";
+//          tx.operations.clear();
+//          tx.signatures.clear();
+//          tx.operations.push_back( op );
+//          sign( tx, alice_private_key );
+//          db->push_transaction( tx, 0 );
+//          alice_bob_vote = vote_idx.find( std::make_tuple( new_bob_comment.id, new_alice.id ) );
+// 
+//          new_rshares = old_manabar.current_mana - db->get_account( "alice" ).voting_manabar.current_mana - COLAB_VOTE_DUST_THRESHOLD;
+// 
+//          BOOST_REQUIRE( new_bob_comment.net_rshares == old_net_rshares - old_vote_rshares + new_rshares );
+//          BOOST_REQUIRE( new_bob_comment.abs_rshares == old_abs_rshares + new_rshares );
+//          BOOST_REQUIRE( new_bob_comment.cashout_time == new_bob_comment.created + COLAB_CASHOUT_WINDOW_SECONDS );
+//          BOOST_REQUIRE( alice_bob_vote->rshares == new_rshares );
+//          BOOST_REQUIRE( alice_bob_vote->last_update == db->head_block_time() );
+//          BOOST_REQUIRE( alice_bob_vote->vote_percent == op.weight );
+//          validate_database();
+// 
+//          BOOST_TEST_MESSAGE( "--- Test decreasing vote rshares" );
+// 
+//          generate_blocks( db->head_block_time() + COLAB_MIN_VOTE_INTERVAL_SEC );
+// 
+//          old_vote_rshares = new_rshares;
+//          old_net_rshares = new_bob_comment.net_rshares.value;
+//          old_abs_rshares = new_bob_comment.abs_rshares.value;
+//          used_power = ( uint64_t( COLAB_1_PERCENT ) * 75 * uint64_t( alice_voting_power ) ) / COLAB_100_PERCENT;
+//          used_power = ( used_power + max_vote_denom - 1 ) / max_vote_denom;
+//          alice_voting_power -= used_power;
+// 
+//          old_manabar = db->get_account( "alice" ).voting_manabar;
+//          params.max_mana = util::get_effective_vesting_shares( db->get_account( "alice" ) );
+//          old_manabar.regenerate_mana( params, db->head_block_time() );
+// 
+//          op.weight = COLAB_1_PERCENT * -75;
+//          tx.operations.clear();
+//          tx.signatures.clear();
+//          tx.operations.push_back( op );
+//          sign( tx, alice_private_key );
+//          db->push_transaction( tx, 0 );
+//          alice_bob_vote = vote_idx.find( std::make_tuple( new_bob_comment.id, new_alice.id ) );
+// 
+//          new_rshares = old_manabar.current_mana - db->get_account( "alice" ).voting_manabar.current_mana - COLAB_VOTE_DUST_THRESHOLD;
+// 
+//          BOOST_REQUIRE( new_bob_comment.net_rshares == old_net_rshares - old_vote_rshares - new_rshares );
+//          BOOST_REQUIRE( new_bob_comment.abs_rshares == old_abs_rshares + new_rshares );
+//          BOOST_REQUIRE( new_bob_comment.cashout_time == new_bob_comment.created + COLAB_CASHOUT_WINDOW_SECONDS );
+//          BOOST_REQUIRE( alice_bob_vote->rshares == -1 * new_rshares );
+//          BOOST_REQUIRE( alice_bob_vote->last_update == db->head_block_time() );
+//          BOOST_REQUIRE( alice_bob_vote->vote_percent == op.weight );
+//          validate_database();
+// 
+//          BOOST_TEST_MESSAGE( "--- Test changing a vote to 0 weight (aka: removing a vote)" );
+// 
+//          generate_blocks( db->head_block_time() + COLAB_MIN_VOTE_INTERVAL_SEC );
+// 
+//          old_vote_rshares = alice_bob_vote->rshares;
+//          old_net_rshares = new_bob_comment.net_rshares.value;
+//          old_abs_rshares = new_bob_comment.abs_rshares.value;
+// 
+//          op.weight = 0;
+//          tx.operations.clear();
+//          tx.signatures.clear();
+//          tx.operations.push_back( op );
+//          sign( tx, alice_private_key );
+//          db->push_transaction( tx, 0 );
+//          alice_bob_vote = vote_idx.find( std::make_tuple( new_bob_comment.id, new_alice.id ) );
+// 
+//          BOOST_REQUIRE( new_bob_comment.net_rshares == old_net_rshares - old_vote_rshares );
+//          BOOST_REQUIRE( new_bob_comment.abs_rshares == old_abs_rshares );
+//          BOOST_REQUIRE( new_bob_comment.cashout_time == new_bob_comment.created + COLAB_CASHOUT_WINDOW_SECONDS );
+//          BOOST_REQUIRE( alice_bob_vote->rshares == 0 );
+//          BOOST_REQUIRE( alice_bob_vote->last_update == db->head_block_time() );
+//          BOOST_REQUIRE( alice_bob_vote->vote_percent == op.weight );
+//          validate_database();
+// 
+//          BOOST_TEST_MESSAGE( "--- Test reduced effectiveness when increasing rshares within lockout period" );
+// 
+//          generate_blocks( fc::time_point_sec( ( new_bob_comment.cashout_time - COLAB_UPVOTE_LOCKOUT_HF17 ).sec_since_epoch() + COLAB_BLOCK_INTERVAL ), true );
+// 
+//          old_manabar = db->get_account( "dave" ).voting_manabar;
+//          params.max_mana = util::get_effective_vesting_shares( db->get_account( "dave" ) );
+//          old_manabar.regenerate_mana( params, db->head_block_time() );
+// 
+//          op.voter = "dave";
+//          op.weight = COLAB_100_PERCENT;
+//          tx.operations.clear();
+//          tx.signatures.clear();
+//          tx.operations.push_back( op );
+//          sign( tx, dave_private_key );
+//          db->push_transaction( tx, 0 );
+// 
+//          new_rshares = old_manabar.current_mana - db->get_account( "dave" ).voting_manabar.current_mana - COLAB_VOTE_DUST_THRESHOLD;
+//          new_rshares = ( new_rshares * ( COLAB_UPVOTE_LOCKOUT_SECONDS - COLAB_BLOCK_INTERVAL ) ) / COLAB_UPVOTE_LOCKOUT_SECONDS;
+//          account_id_type dave_id = db->get_account( "dave" ).id;
+//          comment_id_type bob_comment_id = db->get_comment( "bob", string( "foo" ) ).id;
+// 
+//          {
+//             auto dave_bob_vote = db->get< comment_vote_object, by_comment_voter >( boost::make_tuple( bob_comment_id, dave_id ) );
+//             BOOST_REQUIRE( dave_bob_vote.rshares = new_rshares );
+//          }
+//          validate_database();
+// 
+//          BOOST_TEST_MESSAGE( "--- Test rediced effectiveness when reducing rshares within lockout period" );
+// 
+//          generate_block();
+//          old_manabar = db->get_account( "dave" ).voting_manabar;
+//          params.max_mana = util::get_effective_vesting_shares( db->get_account( "dave" ) );
+//          old_manabar.regenerate_mana( params, db->head_block_time() );
+// 
+//          op.weight = -1 * COLAB_100_PERCENT;
+//          tx.operations.clear();
+//          tx.signatures.clear();
+//          tx.operations.push_back( op );
+//          sign( tx, dave_private_key );
+//          db->push_transaction( tx, 0 );
+// 
+//          new_rshares = old_manabar.current_mana - db->get_account( "dave" ).voting_manabar.current_mana - COLAB_VOTE_DUST_THRESHOLD;
+//          new_rshares = ( new_rshares * ( COLAB_UPVOTE_LOCKOUT_SECONDS - COLAB_BLOCK_INTERVAL - COLAB_BLOCK_INTERVAL ) ) / COLAB_UPVOTE_LOCKOUT_SECONDS;
+// 
+//          {
+//             auto dave_bob_vote = db->get< comment_vote_object, by_comment_voter >( boost::make_tuple( bob_comment_id, dave_id ) );
+//             BOOST_REQUIRE( dave_bob_vote.rshares = new_rshares );
+//          }
+//          validate_database();
+//       }
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
 
 BOOST_AUTO_TEST_CASE( transfer_validate )
 {
@@ -2405,172 +2406,172 @@ BOOST_AUTO_TEST_CASE( convert_validate )
    FC_LOG_AND_RETHROW()
 }
 
-BOOST_AUTO_TEST_CASE( convert_authorities )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: convert_authorities" );
+// BOOST_AUTO_TEST_CASE( convert_authorities )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: convert_authorities" );
+// 
+//       ACTORS( (alice)(bob) )
+//       fund( "alice", 10000 );
+// 
+//       set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
+// 
+//       convert( "alice", ASSET( "2.500 TESTS" ) );
+// 
+//       validate_database();
+// 
+//       convert_operation op;
+//       op.owner = "alice";
+//       op.amount = ASSET( "2.500 TBD" );
+// 
+//       signed_transaction tx;
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       tx.operations.push_back( op );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when no signatures" );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_missing_active_auth );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when signed by a signature not in the account's authority" );
+//       sign( tx, alice_post_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_missing_active_auth );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when duplicate signatures" );
+//       tx.signatures.clear();
+//       sign( tx, alice_private_key );
+//       sign( tx, alice_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_duplicate_sig );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when signed by an additional signature not in the creator's authority" );
+//       tx.signatures.clear();
+//       sign( tx, alice_private_key );
+//       sign( tx, bob_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_irrelevant_sig );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test success with owner signature" );
+//       tx.signatures.clear();
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+// 
+//       validate_database();
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
+// 
+// BOOST_AUTO_TEST_CASE( convert_apply )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: convert_apply" );
+//       ACTORS( (alice)(bob) );
+//       fund( "alice", 10000 );
+//       fund( "bob" , 10000 );
+// 
+//       convert_operation op;
+//       signed_transaction tx;
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+// 
+//       const auto& convert_request_idx = db->get_index< convert_request_index >().indices().get< by_owner >();
+// 
+//       set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
+// 
+//       convert( "alice", ASSET( "2.500 TESTS" ) );
+//       convert( "bob", ASSET( "7.000 TESTS" ) );
+// 
+//       const auto& new_alice = db->get_account( "alice" );
+//       const auto& new_bob = db->get_account( "bob" );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when account does not have the required TESTS" );
+//       op.owner = "bob";
+//       op.amount = ASSET( "5.000 TESTS" );
+//       tx.operations.push_back( op );
+//       sign( tx, bob_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
+// 
+//       BOOST_REQUIRE( new_bob.balance.amount.value == ASSET( "3.000 TESTS" ).amount.value );
+//       //BOOST_REQUIRE( new_bob.sbd_balance.amount.value == ASSET( "7.000 TBD" ).amount.value );///~~~~~CLC~~~~~ NO NEED for CoLab
+//       validate_database();
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when account does not have the required TBD" );
+//       op.owner = "alice";
+//       op.amount = ASSET( "5.000 TBD" );
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       tx.operations.push_back( op );
+//       sign( tx, alice_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
+// 
+//       BOOST_REQUIRE( new_alice.balance.amount.value == ASSET( "7.500 TESTS" ).amount.value );
+//       //BOOST_REQUIRE( new_alice.sbd_balance.amount.value == ASSET( "2.500 TBD" ).amount.value );///~~~~~CLC~~~~~ NO NEED for CoLab
+//       validate_database();
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when account does not exist" );
+//       op.owner = "sam";
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       tx.operations.push_back( op );
+//       sign( tx, alice_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test success converting SBD to TESTS" );
+//       op.owner = "bob";
+//       op.amount = ASSET( "3.000 TBD" );
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       tx.operations.push_back( op );
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, bob_private_key );
+//       db->push_transaction( tx, 0 );
+// 
+//       BOOST_REQUIRE( new_bob.balance.amount.value == ASSET( "3.000 TESTS" ).amount.value );
+//       //BOOST_REQUIRE( new_bob.sbd_balance.amount.value == ASSET( "4.000 TBD" ).amount.value );///~~~~~CLC~~~~~ NO NEED for CoLab
+// 
+//       auto convert_request = convert_request_idx.find( std::make_tuple( op.owner, op.requestid ) );
+//       BOOST_REQUIRE( convert_request != convert_request_idx.end() );
+//       BOOST_REQUIRE( convert_request->owner == op.owner );
+//       BOOST_REQUIRE( convert_request->requestid == op.requestid );
+//       BOOST_REQUIRE( convert_request->amount.amount.value == op.amount.amount.value );
+//       //BOOST_REQUIRE( convert_request->premium == 100000 );
+//       BOOST_REQUIRE( convert_request->conversion_date == db->head_block_time() + COLAB_CONVERSION_DELAY );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure from repeated id" );
+//       op.amount = ASSET( "2.000 TESTS" );
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       tx.operations.push_back( op );
+//       sign( tx, alice_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
+// 
+//       BOOST_REQUIRE( new_bob.balance.amount.value == ASSET( "3.000 TESTS" ).amount.value );
+//       //BOOST_REQUIRE( new_bob.sbd_balance.amount.value == ASSET( "4.000 TBD" ).amount.value );///~~~~~CLC~~~~~ NO NEED for CoLab
+// 
+//       convert_request = convert_request_idx.find( std::make_tuple( op.owner, op.requestid ) );
+//       BOOST_REQUIRE( convert_request != convert_request_idx.end() );
+//       BOOST_REQUIRE( convert_request->owner == op.owner );
+//       BOOST_REQUIRE( convert_request->requestid == op.requestid );
+//       BOOST_REQUIRE( convert_request->amount.amount.value == ASSET( "3.000 TBD" ).amount.value );
+//       //BOOST_REQUIRE( convert_request->premium == 100000 );
+//       BOOST_REQUIRE( convert_request->conversion_date == db->head_block_time() + COLAB_CONVERSION_DELAY );
+//       validate_database();
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
 
-      ACTORS( (alice)(bob) )
-      fund( "alice", 10000 );
-
-      set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
-
-      convert( "alice", ASSET( "2.500 TESTS" ) );
-
-      validate_database();
-
-      convert_operation op;
-      op.owner = "alice";
-      op.amount = ASSET( "2.500 TBD" );
-
-      signed_transaction tx;
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      tx.operations.push_back( op );
-
-      BOOST_TEST_MESSAGE( "--- Test failure when no signatures" );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_missing_active_auth );
-
-      BOOST_TEST_MESSAGE( "--- Test failure when signed by a signature not in the account's authority" );
-      sign( tx, alice_post_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_missing_active_auth );
-
-      BOOST_TEST_MESSAGE( "--- Test failure when duplicate signatures" );
-      tx.signatures.clear();
-      sign( tx, alice_private_key );
-      sign( tx, alice_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_duplicate_sig );
-
-      BOOST_TEST_MESSAGE( "--- Test failure when signed by an additional signature not in the creator's authority" );
-      tx.signatures.clear();
-      sign( tx, alice_private_key );
-      sign( tx, bob_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), tx_irrelevant_sig );
-
-      BOOST_TEST_MESSAGE( "--- Test success with owner signature" );
-      tx.signatures.clear();
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      validate_database();
-   }
-   FC_LOG_AND_RETHROW()
-}
-
-BOOST_AUTO_TEST_CASE( convert_apply )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: convert_apply" );
-      ACTORS( (alice)(bob) );
-      fund( "alice", 10000 );
-      fund( "bob" , 10000 );
-
-      convert_operation op;
-      signed_transaction tx;
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-
-      const auto& convert_request_idx = db->get_index< convert_request_index >().indices().get< by_owner >();
-
-      set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
-
-      convert( "alice", ASSET( "2.500 TESTS" ) );
-      convert( "bob", ASSET( "7.000 TESTS" ) );
-
-      const auto& new_alice = db->get_account( "alice" );
-      const auto& new_bob = db->get_account( "bob" );
-
-      BOOST_TEST_MESSAGE( "--- Test failure when account does not have the required TESTS" );
-      op.owner = "bob";
-      op.amount = ASSET( "5.000 TESTS" );
-      tx.operations.push_back( op );
-      sign( tx, bob_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
-
-      BOOST_REQUIRE( new_bob.balance.amount.value == ASSET( "3.000 TESTS" ).amount.value );
-      //BOOST_REQUIRE( new_bob.sbd_balance.amount.value == ASSET( "7.000 TBD" ).amount.value );///~~~~~CLC~~~~~ NO NEED for CoLab
-      validate_database();
-
-      BOOST_TEST_MESSAGE( "--- Test failure when account does not have the required TBD" );
-      op.owner = "alice";
-      op.amount = ASSET( "5.000 TBD" );
-      tx.operations.clear();
-      tx.signatures.clear();
-      tx.operations.push_back( op );
-      sign( tx, alice_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
-
-      BOOST_REQUIRE( new_alice.balance.amount.value == ASSET( "7.500 TESTS" ).amount.value );
-      //BOOST_REQUIRE( new_alice.sbd_balance.amount.value == ASSET( "2.500 TBD" ).amount.value );///~~~~~CLC~~~~~ NO NEED for CoLab
-      validate_database();
-
-      BOOST_TEST_MESSAGE( "--- Test failure when account does not exist" );
-      op.owner = "sam";
-      tx.operations.clear();
-      tx.signatures.clear();
-      tx.operations.push_back( op );
-      sign( tx, alice_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
-
-      BOOST_TEST_MESSAGE( "--- Test success converting SBD to TESTS" );
-      op.owner = "bob";
-      op.amount = ASSET( "3.000 TBD" );
-      tx.operations.clear();
-      tx.signatures.clear();
-      tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, bob_private_key );
-      db->push_transaction( tx, 0 );
-
-      BOOST_REQUIRE( new_bob.balance.amount.value == ASSET( "3.000 TESTS" ).amount.value );
-      //BOOST_REQUIRE( new_bob.sbd_balance.amount.value == ASSET( "4.000 TBD" ).amount.value );///~~~~~CLC~~~~~ NO NEED for CoLab
-
-      auto convert_request = convert_request_idx.find( std::make_tuple( op.owner, op.requestid ) );
-      BOOST_REQUIRE( convert_request != convert_request_idx.end() );
-      BOOST_REQUIRE( convert_request->owner == op.owner );
-      BOOST_REQUIRE( convert_request->requestid == op.requestid );
-      BOOST_REQUIRE( convert_request->amount.amount.value == op.amount.amount.value );
-      //BOOST_REQUIRE( convert_request->premium == 100000 );
-      BOOST_REQUIRE( convert_request->conversion_date == db->head_block_time() + COLAB_CONVERSION_DELAY );
-
-      BOOST_TEST_MESSAGE( "--- Test failure from repeated id" );
-      op.amount = ASSET( "2.000 TESTS" );
-      tx.operations.clear();
-      tx.signatures.clear();
-      tx.operations.push_back( op );
-      sign( tx, alice_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
-
-      BOOST_REQUIRE( new_bob.balance.amount.value == ASSET( "3.000 TESTS" ).amount.value );
-      //BOOST_REQUIRE( new_bob.sbd_balance.amount.value == ASSET( "4.000 TBD" ).amount.value );///~~~~~CLC~~~~~ NO NEED for CoLab
-
-      convert_request = convert_request_idx.find( std::make_tuple( op.owner, op.requestid ) );
-      BOOST_REQUIRE( convert_request != convert_request_idx.end() );
-      BOOST_REQUIRE( convert_request->owner == op.owner );
-      BOOST_REQUIRE( convert_request->requestid == op.requestid );
-      BOOST_REQUIRE( convert_request->amount.amount.value == ASSET( "3.000 TBD" ).amount.value );
-      //BOOST_REQUIRE( convert_request->premium == 100000 );
-      BOOST_REQUIRE( convert_request->conversion_date == db->head_block_time() + COLAB_CONVERSION_DELAY );
-      validate_database();
-   }
-   FC_LOG_AND_RETHROW()
-}
-
-BOOST_AUTO_TEST_CASE( fixture_convert_checks_balance )
-{
-   // This actually tests the convert() method of the database fixture can't result in negative
-   //   balances, see issue #1825
-   try
-   {
-      set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
-      ACTORS( (dany) )
-
-      fund( "dany", 5000 );
-      COLAB_REQUIRE_THROW( convert( "dany", ASSET( "5000.000 TESTS" ) ), fc::exception );
-   }
-   FC_LOG_AND_RETHROW()
-
-}
+// BOOST_AUTO_TEST_CASE( fixture_convert_checks_balance )
+// {
+//    // This actually tests the convert() method of the database fixture can't result in negative
+//    //   balances, see issue #1825
+//    try
+//    {
+//       set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
+//       ACTORS( (dany) )
+// 
+//       fund( "dany", 5000 );
+//       COLAB_REQUIRE_THROW( convert( "dany", ASSET( "5000.000 TESTS" ) ), fc::exception );
+//    }
+//    FC_LOG_AND_RETHROW()
+// 
+// }
 
 BOOST_AUTO_TEST_CASE( limit_order_create_validate )
 {
