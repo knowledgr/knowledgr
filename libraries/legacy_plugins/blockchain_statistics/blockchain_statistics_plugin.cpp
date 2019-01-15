@@ -196,8 +196,8 @@ struct operation_process
          else
             b.vests_transferred += op.withdrawn.amount;
 
-         if( account.vesting_withdraw_rate.amount == 0 )
-            b.finished_vesting_withdrawals++;
+//          if( account.vesting_withdraw_rate.amount == 0 )
+//             b.finished_vesting_withdrawals++;
       });
    }
 

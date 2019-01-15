@@ -1127,7 +1127,7 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance2_apply )
             gpo.current_supply += ASSET( "20.000 TESTS" );
             gpo.virtual_supply += ASSET( "20.000 TESTS" );
             //gpo.pending_rewarded_vesting_shares += ASSET( "10.000000 VESTS" );
-            gpo.pending_rewarded_vesting_clc += ASSET( "10.000 TESTS" );
+            //gpo.pending_rewarded_vesting_clc += ASSET( "10.000 TESTS" );
          });
       });
 

@@ -82,14 +82,14 @@ class rc_plugin_impl
       boost::signals2::connection   _post_apply_optional_action_conn;
 };
 
-inline int64_t get_next_vesting_withdrawal( const account_object& account )
-{
-   int64_t total_left = account.to_withdraw.value - account.withdrawn.value;
-   int64_t withdraw_per_period = account.vesting_withdraw_rate.amount.value;
-   int64_t next_withdrawal = (withdraw_per_period <= total_left) ? withdraw_per_period : total_left;
-   bool is_done = (account.next_vesting_withdrawal == fc::time_point_sec::maximum());
-   return is_done ? 0 : next_withdrawal;
-}
+// inline int64_t get_next_vesting_withdrawal( const account_object& account )
+// {
+//    int64_t total_left = account.to_withdraw.value - account.withdrawn.value;
+//    int64_t withdraw_per_period = account.vesting_withdraw_rate.amount.value;
+//    int64_t next_withdrawal = (withdraw_per_period <= total_left) ? withdraw_per_period : total_left;
+//    bool is_done = (account.next_vesting_withdrawal == fc::time_point_sec::maximum());
+//    return is_done ? 0 : next_withdrawal;
+// }
 
 template< bool account_may_exist = false >
 void create_rc_account( database& db, uint32_t now, const account_object& account, asset max_rc_creation_adjustment )
@@ -236,56 +236,57 @@ void use_account_rcs(
    }
 
    // ilog( "use_account_rcs( ${n}, ${rc} )", ("n", account_name)("rc", rc) );
-   const account_object& account = db.get< account_object, by_name >( account_name );
-   const rc_account_object& rc_account = db.get< rc_account_object, by_name >( account_name );
-
-   manabar_params mbparams;
-   mbparams.max_mana = get_maximum_rc( account, rc_account );
-   mbparams.regen_time = COLAB_RC_REGEN_TIME;
-
-   db.modify( rc_account, [&]( rc_account_object& rca )
-   {
-      rca.rc_manabar.regenerate_mana< true >( mbparams, gpo.time.sec_since_epoch() );
-
-      bool has_mana = rc_account.rc_manabar.has_mana( rc );
-
-      if( (!skip.skip_reject_not_enough_rc) && db.has_hardfork( COLAB_HARDFORK_0_20 ) )
-      {
-         if( db.is_producing() )
-         {
-            COLAB_ASSERT( has_mana, plugin_exception,
-               "Account: ${account} has ${rc_current} RC, needs ${rc_needed} RC. Please wait to transact, or power up CLC.",
-               ("account", account_name)
-               ("rc_needed", rc)
-               ("rc_current", rca.rc_manabar.current_mana)
-               );
-         }
-         else
-         {
-            if( !has_mana )
-            {
-               const dynamic_global_property_object& gpo = db.get_dynamic_global_properties();
-               ilog( "Accepting transaction by ${account}, has ${rc_current} RC, needs ${rc_needed} RC, block ${b}, witness ${w}.",
-                  ("account", account_name)
-                  ("rc_needed", rc)
-                  ("rc_current", rca.rc_manabar.current_mana)
-                  ("b", gpo.head_block_number)
-                  ("w", gpo.current_witness)
-                  );
-            }
-         }
-      }
-
-      if( (!has_mana) && ( skip.skip_negative_rc_balance || (gpo.time.sec_since_epoch() <= 1538211600) ) )
-         return;
-
-      if( skip.skip_deduct_rc )
-         return;
-
-      int64_t min_mana = -1 * ( COLAB_RC_MAX_NEGATIVE_PERCENT * mbparams.max_mana ) / COLAB_100_PERCENT;
-
-      rca.rc_manabar.use_mana( rc, min_mana );
-   } );
+///WILL BE COME soon ;-)
+//    const account_object& account = db.get< account_object, by_name >( account_name );
+//    const rc_account_object& rc_account = db.get< rc_account_object, by_name >( account_name );
+// 
+//    manabar_params mbparams;
+//    mbparams.max_mana = get_maximum_rc( account, rc_account );
+//    mbparams.regen_time = COLAB_RC_REGEN_TIME;
+// 
+//    db.modify( rc_account, [&]( rc_account_object& rca )
+//    {
+//       rca.rc_manabar.regenerate_mana< true >( mbparams, gpo.time.sec_since_epoch() );
+// 
+//       bool has_mana = rc_account.rc_manabar.has_mana( rc );
+// 
+//       if( (!skip.skip_reject_not_enough_rc) && db.has_hardfork( COLAB_HARDFORK_0_20 ) )
+//       {
+//          if( db.is_producing() )
+//          {
+//             COLAB_ASSERT( has_mana, plugin_exception,
+//                "Account: ${account} has ${rc_current} RC, needs ${rc_needed} RC. Please wait to transact, or power up CLC.",
+//                ("account", account_name)
+//                ("rc_needed", rc)
+//                ("rc_current", rca.rc_manabar.current_mana)
+//                );
+//          }
+//          else
+//          {
+//             if( !has_mana )
+//             {
+//                const dynamic_global_property_object& gpo = db.get_dynamic_global_properties();
+//                ilog( "Accepting transaction by ${account}, has ${rc_current} RC, needs ${rc_needed} RC, block ${b}, witness ${w}.",
+//                   ("account", account_name)
+//                   ("rc_needed", rc)
+//                   ("rc_current", rca.rc_manabar.current_mana)
+//                   ("b", gpo.head_block_number)
+//                   ("w", gpo.current_witness)
+//                   );
+//             }
+//          }
+//       }
+// 
+//       if( (!has_mana) && ( skip.skip_negative_rc_balance || (gpo.time.sec_since_epoch() <= 1538211600) ) )
+//          return;
+// 
+//       if( skip.skip_deduct_rc )
+//          return;
+// 
+//       int64_t min_mana = -1 * ( COLAB_RC_MAX_NEGATIVE_PERCENT * mbparams.max_mana ) / COLAB_100_PERCENT;
+// 
+//       rca.rc_manabar.use_mana( rc, min_mana );
+//    } );
 }
 
 void rc_plugin_impl::on_post_apply_transaction( const transaction_notification& note )
@@ -294,7 +295,7 @@ void rc_plugin_impl::on_post_apply_transaction( const transaction_notification& 
    if( before_first_block() )
       return;
 
-   int64_t rc_regen = (gpo.total_vesting_shares.amount.value / (COLAB_RC_REGEN_TIME / COLAB_BLOCK_INTERVAL));
+//   int64_t rc_regen = (gpo.total_vesting_shares.amount.value / (COLAB_RC_REGEN_TIME / COLAB_BLOCK_INTERVAL));
 
    rc_transaction_info tx_info;
 
@@ -302,25 +303,25 @@ void rc_plugin_impl::on_post_apply_transaction( const transaction_notification& 
    count_resources( note.transaction, tx_info.usage );
 
    // How many RC does this transaction cost?
-   const rc_resource_param_object& params_obj = _db.get< rc_resource_param_object, by_id >( rc_resource_param_object::id_type() );
-   const rc_pool_object& pool_obj = _db.get< rc_pool_object, by_id >( rc_pool_object::id_type() );
+//    const rc_resource_param_object& params_obj = _db.get< rc_resource_param_object, by_id >( rc_resource_param_object::id_type() );
+//    const rc_pool_object& pool_obj = _db.get< rc_pool_object, by_id >( rc_pool_object::id_type() );
 
    int64_t total_cost = 0;
 
-   // When rc_regen is 0, everything is free
-   if( rc_regen > 0 )
-   {
-      for( size_t i=0; i<COLAB_NUM_RESOURCE_TYPES; i++ )
-      {
-         const rc_resource_params& params = params_obj.resource_param_array[i];
-         int64_t pool = pool_obj.pool_array[i];
-
-         // TODO:  Move this multiplication to resource_count.cpp
-         tx_info.usage.resource_count[i] *= int64_t( params.resource_dynamics_params.resource_unit );
-         tx_info.cost[i] = compute_rc_cost_of_resource( params.price_curve_params, pool, tx_info.usage.resource_count[i], rc_regen );
-         total_cost += tx_info.cost[i];
-      }
-   }
+//    // When rc_regen is 0, everything is free
+//    if( rc_regen > 0 )
+//    {
+//       for( size_t i=0; i<COLAB_NUM_RESOURCE_TYPES; i++ )
+//       {
+//          const rc_resource_params& params = params_obj.resource_param_array[i];
+//          int64_t pool = pool_obj.pool_array[i];
+// 
+//          // TODO:  Move this multiplication to resource_count.cpp
+//          tx_info.usage.resource_count[i] *= int64_t( params.resource_dynamics_params.resource_unit );
+//          tx_info.cost[i] = compute_rc_cost_of_resource( params.price_curve_params, pool, tx_info.usage.resource_count[i], rc_regen );
+//          total_cost += tx_info.cost[i];
+//       }
+//    }
 
    tx_info.resource_user = get_resource_user( note.transaction );
    use_account_rcs( _db, gpo, tx_info.resource_user, total_cost, _skip );
@@ -396,10 +397,10 @@ void rc_plugin_impl::on_post_apply_block( const block_notification& note )
    }
    */
 
-   if( gpo.total_vesting_shares.amount <= 0 )
-   {
-      return;
-   }
+//    if( gpo.total_vesting_shares.amount <= 0 )
+//    {
+//       return;
+//    }
 
    // How many resources did transactions use?
    count_resources_result count;
@@ -470,13 +471,13 @@ void rc_plugin_impl::on_post_apply_block( const block_notification& note )
 
             pool = new_pool + block_info.adjustment[i];
 
-            if( debug_print )
-            {
-               double k = 27.027027027027028;
-               double a = double(params.pool_eq - pool);
-               a /= k*double(pool);
-               dlog( "a=${a}   aR=${aR}", ("a", a)("aR", a*gpo.total_vesting_shares.amount.value/COLAB_RC_REGEN_TIME) );
-            }
+//             if( debug_print )
+//             {
+//                double k = 27.027027027027028;
+//                double a = double(params.pool_eq - pool);
+//                a /= k*double(pool);
+//                dlog( "a=${a}   aR=${aR}", ("a", a)("aR", a*gpo.total_vesting_shares.amount.value/COLAB_RC_REGEN_TIME) );
+//             }
          }
          if( debug_print )
          {
@@ -585,33 +586,34 @@ struct pre_apply_operation_visitor
       //
       // TODO:  Issue number
       //
-      static_assert( COLAB_RC_REGEN_TIME <= COLAB_VOTING_MANA_REGENERATION_SECONDS, "RC regen time must be smaller than vote regen time" );
-
-      // ilog( "regenerate(${a})", ("a", account.name) );
-
-      manabar_params mbparams;
-      mbparams.max_mana = get_maximum_rc( account, rc_account );
-      mbparams.regen_time = COLAB_RC_REGEN_TIME;
-
-      if( mbparams.max_mana != rc_account.last_max_rc )
-      {
-         if( !_skip.skip_reject_unknown_delta_vests )
-         {
-            COLAB_ASSERT( false, plugin_exception,
-               "Account ${a} max RC changed from ${old} to ${new} without triggering an op, noticed on block ${b}",
-               ("a", account.name)("old", rc_account.last_max_rc)("new", mbparams.max_mana)("b", _db.head_block_num()) );
-         }
-         else
-         {
-            wlog( "NOTIFYALERT! Account ${a} max RC changed from ${old} to ${new} without triggering an op, noticed on block ${b}",
-               ("a", account.name)("old", rc_account.last_max_rc)("new", mbparams.max_mana)("b", _db.head_block_num()) );
-         }
-      }
-
-      _db.modify( rc_account, [&]( rc_account_object& rca )
-      {
-         rca.rc_manabar.regenerate_mana< true >( mbparams, _current_time );
-      } );
+///WILL BE COME soon ;-)
+//       static_assert( COLAB_RC_REGEN_TIME <= COLAB_VOTING_MANA_REGENERATION_SECONDS, "RC regen time must be smaller than vote regen time" );
+// 
+//       // ilog( "regenerate(${a})", ("a", account.name) );
+// 
+//       manabar_params mbparams;
+//       mbparams.max_mana = get_maximum_rc( account, rc_account );
+//       mbparams.regen_time = COLAB_RC_REGEN_TIME;
+// 
+//       if( mbparams.max_mana != rc_account.last_max_rc )
+//       {
+//          if( !_skip.skip_reject_unknown_delta_vests )
+//          {
+//             COLAB_ASSERT( false, plugin_exception,
+//                "Account ${a} max RC changed from ${old} to ${new} without triggering an op, noticed on block ${b}",
+//                ("a", account.name)("old", rc_account.last_max_rc)("new", mbparams.max_mana)("b", _db.head_block_num()) );
+//          }
+//          else
+//          {
+//             wlog( "NOTIFYALERT! Account ${a} max RC changed from ${old} to ${new} without triggering an op, noticed on block ${b}",
+//                ("a", account.name)("old", rc_account.last_max_rc)("new", mbparams.max_mana)("b", _db.head_block_num()) );
+//          }
+//       }
+// 
+//       _db.modify( rc_account, [&]( rc_account_object& rca )
+//       {
+//          rca.rc_manabar.regenerate_mana< true >( mbparams, _current_time );
+//       } );
    }
 
    template< bool account_may_not_exist = false >
@@ -1010,7 +1012,7 @@ void rc_plugin_impl::on_post_apply_optional_action( const optional_action_notifi
 //    const rc_resource_param_object& params_obj = _db.get< rc_resource_param_object, by_id >( rc_resource_param_object::id_type() );
 //    const rc_pool_object& pool_obj = _db.get< rc_pool_object, by_id >( rc_pool_object::id_type() );
 // 
-//    int64_t total_cost = 0;
+    int64_t total_cost = 0;
 
 //    // When rc_regen is 0, everything is free
 //    if( rc_regen > 0 )
@@ -1165,11 +1167,13 @@ void exp_rc_data::to_variant( fc::variant& v )const
 
 int64_t get_maximum_rc( const account_object& account, const rc_account_object& rc_account )
 {
-   int64_t result = account.vesting_shares.amount.value;
+   //int64_t result = account.vesting_shares.amount.value;
    //result = fc::signed_sat_sub( result, account.delegated_vesting_shares.amount.value );
    //result = fc::signed_sat_add( result, account.received_vesting_shares.amount.value );
-   result = fc::signed_sat_add( result, rc_account.max_rc_creation_adjustment.amount.value );
-   result = fc::signed_sat_sub( result, detail::get_next_vesting_withdrawal( account ) );
+   //result = fc::signed_sat_add( result, rc_account.max_rc_creation_adjustment.amount.value );
+   //result = fc::signed_sat_sub( result, detail::get_next_vesting_withdrawal( account ) );
+	int64_t result = account.balance.amount.value;///~~~~~CLC~~~~~
+	result = fc::signed_sat_add( result, rc_account.max_rc_creation_adjustment.amount.value );///~~~~~CLC~~~~~
    return result;
 }
 

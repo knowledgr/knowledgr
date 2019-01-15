@@ -99,12 +99,12 @@ namespace colab { namespace chain {
          share_type        curation_rewards = 0;
          share_type        posting_rewards = 0;
 
-         asset             vesting_shares = asset( 0, VESTS_SYMBOL ); ///< total vesting shares held by this account, controls its voting power ///~~~~~CLC~~~~~ NO NEED for CoLab
+//         asset             vesting_shares = asset( 0, VESTS_SYMBOL ); ///< total vesting shares held by this account, controls its voting power ///~~~~~CLC~~~~~ NO NEED for CoLab
 //         asset             delegated_vesting_shares = asset( 0, VESTS_SYMBOL );
 //         asset             received_vesting_shares = asset( 0, VESTS_SYMBOL );
 
-         asset             vesting_withdraw_rate = asset( 0, VESTS_SYMBOL ); ///< at the time this is updated it can be at most vesting_shares/104
-         time_point_sec    next_vesting_withdrawal = fc::time_point_sec::maximum(); ///< after every withdrawal this is incremented by 1 week
+//         asset             vesting_withdraw_rate = asset( 0, VESTS_SYMBOL ); ///< at the time this is updated it can be at most vesting_shares/104
+//         time_point_sec    next_vesting_withdrawal = fc::time_point_sec::maximum(); ///< after every withdrawal this is incremented by 1 week
          share_type        withdrawn = 0; /// Track how many shares have been withdrawn
          share_type        to_withdraw = 0; /// Might be able to look this up with operation history.
          uint16_t          withdraw_routes = 0;
@@ -262,7 +262,7 @@ namespace colab { namespace chain {
    };
 
    struct by_proxy;
-   struct by_next_vesting_withdrawal;
+//   struct by_next_vesting_withdrawal;
 
    /**
     * @ingroup object_index
@@ -279,13 +279,13 @@ namespace colab { namespace chain {
                member< account_object, account_name_type, &account_object::proxy >,
                member< account_object, account_name_type, &account_object::name >
             > /// composite key by proxy
-         >,
-         ordered_unique< tag< by_next_vesting_withdrawal >,
-            composite_key< account_object,
-               member< account_object, time_point_sec, &account_object::next_vesting_withdrawal >,
-               member< account_object, account_name_type, &account_object::name >
-            > /// composite key by_next_vesting_withdrawal
-         >
+         >//,
+//          ordered_unique< tag< by_next_vesting_withdrawal >,
+//             composite_key< account_object,
+//                member< account_object, time_point_sec, &account_object::next_vesting_withdrawal >,
+//                member< account_object, account_name_type, &account_object::name >
+//             > /// composite key by_next_vesting_withdrawal
+//          >
       >,
       allocator< account_object >
    > account_index;
@@ -441,8 +441,8 @@ FC_REFLECT( colab::chain::account_object,
              /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~CLC~~~~~ NO NEED for CoLab
 			 (savings_withdraw_requests)
              (reward_clc_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_clc)*////~~~~~CLC~~~~~ NO NEED for CoLab
-             (vesting_shares)/*(delegated_vesting_shares)(received_vesting_shares)*/
-             (vesting_withdraw_rate)(next_vesting_withdrawal)(withdrawn)(to_withdraw)(withdraw_routes)
+             /*(vesting_shares)(delegated_vesting_shares)(received_vesting_shares)*/
+             /*(vesting_withdraw_rate)(next_vesting_withdrawal)*/(withdrawn)(to_withdraw)(withdraw_routes)
              (curation_rewards)
              (posting_rewards)
              (proxied_vsf_votes)(witnesses_voted_for)

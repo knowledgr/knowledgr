@@ -364,16 +364,16 @@ DEFINE_API_IMPL( database_api_impl, list_accounts )
             [&]( const account_object& a ){ return api_account_object( a, _db ); } );
          break;
       }
-      case( by_next_vesting_withdrawal ):
-      {
-         auto key = args.start.as< std::pair< fc::time_point_sec, account_name_type > >();
-         iterate_results< chain::account_index, chain::by_next_vesting_withdrawal >(
-            boost::make_tuple( key.first, key.second ),
-            result.accounts,
-            args.limit,
-            [&]( const account_object& a ){ return api_account_object( a, _db ); } );
-         break;
-      }
+//       case( by_next_vesting_withdrawal ):
+//       {
+//          auto key = args.start.as< std::pair< fc::time_point_sec, account_name_type > >();
+//          iterate_results< chain::account_index, chain::by_next_vesting_withdrawal >(
+//             boost::make_tuple( key.first, key.second ),
+//             result.accounts,
+//             args.limit,
+//             [&]( const account_object& a ){ return api_account_object( a, _db ); } );
+//          break;
+//       }
       default:
          FC_ASSERT( false, "Unknown or unsupported sort order" );
    }

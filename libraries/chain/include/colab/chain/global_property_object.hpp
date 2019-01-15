@@ -54,12 +54,12 @@ namespace colab { namespace chain {
          asset       confidential_supply        = asset( 0, CLC_SYMBOL ); ///< total asset held in confidential balances
 //         asset       current_sbd_supply         = asset( 0, SBD_SYMBOL );
 //         asset       confidential_sbd_supply    = asset( 0, SBD_SYMBOL ); ///< total asset held in confidential balances
-         asset       total_vesting_fund_clc   = asset( 0, CLC_SYMBOL );
+//         asset       total_vesting_fund_clc   = asset( 0, CLC_SYMBOL );
 //         asset       total_vesting_shares       = asset( 0, VESTS_SYMBOL );
          asset       total_reward_fund_colab    = asset( 0, CLC_SYMBOL );
          fc::uint128 total_reward_shares2; ///< the running total of REWARD^2
-         asset       pending_rewarded_vesting_shares = asset( 0, VESTS_SYMBOL );
-         asset       pending_rewarded_vesting_clc = asset( 0, CLC_SYMBOL );
+//         asset       pending_rewarded_vesting_shares = asset( 0, VESTS_SYMBOL );
+//         asset       pending_rewarded_vesting_clc = asset( 0, CLC_SYMBOL );
 
 //          price       get_vesting_share_price() const
 //          {
@@ -75,12 +75,12 @@ namespace colab { namespace chain {
 //                total_vesting_fund_clc + pending_rewarded_vesting_clc );
 //          }
 
-         /**
-          *  This property defines the interest rate that SBD deposits receive.
-          */
+//          /**
+//           *  This property defines the interest rate that SBD deposits receive.
+//           */
 //         uint16_t sbd_interest_rate = 0;
 
-         uint16_t sbd_print_rate = COLAB_100_PERCENT;
+//         uint16_t sbd_print_rate = COLAB_100_PERCENT;
 
          /**
           *  Maximum block size is decided by the set of active witnesses which change every round.
@@ -129,8 +129,8 @@ namespace colab { namespace chain {
 
          int64_t available_account_subsidies = 0;
 
-         uint16_t sbd_stop_percent = 0;
-         uint16_t sbd_start_percent = 0;
+//          uint16_t sbd_stop_percent = 0;
+//          uint16_t sbd_start_percent = 0;
 #ifdef COLAB_ENABLE_SMT
          asset smt_creation_fee = asset( 1000, SBD_SYMBOL );
 #endif
@@ -160,14 +160,14 @@ FC_REFLECT( colab::chain::dynamic_global_property_object,
              (confidential_supply)
 //             (current_sbd_supply)
 //             (confidential_sbd_supply)
-             (total_vesting_fund_clc)
+//             (total_vesting_fund_clc)
 //             (total_vesting_shares)
              (total_reward_fund_colab)
              (total_reward_shares2)
-             (pending_rewarded_vesting_shares)
-             (pending_rewarded_vesting_clc)
+//             (pending_rewarded_vesting_shares)
+//             (pending_rewarded_vesting_clc)
 //             (sbd_interest_rate)
-             (sbd_print_rate)
+//             (sbd_print_rate)
              (maximum_block_size)
              (required_actions_partition_percent)
              (current_aslot)
@@ -178,8 +178,8 @@ FC_REFLECT( colab::chain::dynamic_global_property_object,
              (delegation_return_period)
              (reverse_auction_seconds)
              (available_account_subsidies)
-             (sbd_stop_percent)
-             (sbd_start_percent)
+//              (sbd_stop_percent)
+//              (sbd_start_percent)
 #ifdef COLAB_ENABLE_SMT
              (smt_creation_fee)
 #endif

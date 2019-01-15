@@ -28,7 +28,7 @@ public:
    /// Name of the account, the balance is held for.
    account_name_type   owner;
    asset               liquid;   /// 'balance' for CLC
-   asset               vesting;  /// 'vesting_shares' for VESTS
+//   asset               vesting;  /// 'vesting_shares' for VESTS
 
    /** Set of simple methods that allow unification of
     *  regular and rewards balance manipulation code.
@@ -44,15 +44,15 @@ public:
       liquid = asset( 0, liquid_symbol);
       vesting = asset( 0, liquid_symbol.get_paired_symbol() );
    }
-   void add_vesting( const asset& vesting_shares, const asset& vesting_value )
-   {
-      // There's no need to store vesting value (in liquid SMT variant) in regular balance.
-      vesting += vesting_shares;
-   }
+//    void add_vesting( const asset& vesting_shares, const asset& vesting_value )
+//    {
+//       // There's no need to store vesting value (in liquid SMT variant) in regular balance.
+//       vesting += vesting_shares;
+//    }
    ///@}
 
    bool validate() const
-   { return liquid.symbol == vesting.symbol.get_paired_symbol(); }
+   { return liquid.symbol == CLC_SYMBOL/*vesting.symbol.get_paired_symbol()*/; }
 };
 
 /**
@@ -149,7 +149,7 @@ FC_REFLECT( colab::chain::account_regular_balance_object,
    (id)
    (owner)
    (liquid)
-   (vesting)
+//   (vesting)
 )
 
 FC_REFLECT( colab::chain::account_rewards_balance_object,

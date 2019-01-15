@@ -19,7 +19,7 @@ enum sort_order_type
 {
    by_name,
    by_proxy,
-   by_next_vesting_withdrawal,
+//   by_next_vesting_withdrawal,
    by_account,
    by_expiration,
    by_effective_date,
@@ -605,7 +605,7 @@ FC_REFLECT( colab::plugins::database_api::get_version_return,
 FC_REFLECT_ENUM( colab::plugins::database_api::sort_order_type,
    (by_name)
    (by_proxy)
-   (by_next_vesting_withdrawal)
+//   (by_next_vesting_withdrawal)
    (by_account)
    (by_expiration)
    (by_effective_date)
