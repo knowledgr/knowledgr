@@ -164,7 +164,7 @@ void database::open( const open_args& args )
          modify( *account, []( account_object& a )
          {
             a.to_withdraw = 0;
-            a.next_vesting_withdrawal = fc::time_point_sec::maximum();
+//            a.next_vesting_withdrawal = fc::time_point_sec::maximum();
          });
          session.squash();
       }
@@ -1049,55 +1049,55 @@ uint32_t database::get_slot_at_time(fc::time_point_sec when)const
    return (when - first_slot_time).to_seconds() / COLAB_BLOCK_INTERVAL + 1;
 }
 
-/**
- *  Converts CLC into sbd and adds it to to_account while reducing the CLC supply
- *  by CLC and increasing the sbd supply by the specified amount.
- */
-std::pair< asset, asset > database::create_sbd( const account_object& to_account, asset colab, bool to_reward_balance )
-{
-   std::pair< asset, asset > assets( asset( 0, SBD_SYMBOL ), asset( 0, CLC_SYMBOL ) );
-
-   try
-   {
-      if( colab.amount == 0 )
-         return assets;
-
-      const auto& median_price = get_feed_history().current_median_history;
-      const auto& gpo = get_dynamic_global_properties();
-
-      if( !median_price.is_null() )
-      {
-         auto to_sbd = ( gpo.sbd_print_rate * colab.amount ) / COLAB_100_PERCENT;
-         auto to_colab = colab.amount - to_sbd;
-
-         auto sbd = asset( to_sbd, CLC_SYMBOL ) * median_price;
-
-         if( to_reward_balance )
-         {
-            adjust_reward_balance( to_account, sbd );
-            adjust_reward_balance( to_account, asset( to_colab, CLC_SYMBOL ) );
-         }
-         else
-         {
-            adjust_balance( to_account, sbd );
-            adjust_balance( to_account, asset( to_colab, CLC_SYMBOL ) );
-         }
-
-         adjust_supply( asset( -to_sbd, CLC_SYMBOL ) );
-         adjust_supply( sbd );
-         assets.first = sbd;
-         assets.second = asset( to_colab, CLC_SYMBOL );
-      }
-      else
-      {
-         adjust_balance( to_account, colab );
-         assets.second = colab;
-      }
-   }
-   FC_CAPTURE_LOG_AND_RETHROW( (to_account.name)(colab) )
-
-   return assets;
-}
+// /**
+//  *  Converts CLC into sbd and adds it to to_account while reducing the CLC supply
+//  *  by CLC and increasing the sbd supply by the specified amount.
+//  */
+// std::pair< asset, asset > database::create_sbd( const account_object& to_account, asset colab, bool to_reward_balance )
+// {
+//    std::pair< asset, asset > assets( asset( 0, SBD_SYMBOL ), asset( 0, CLC_SYMBOL ) );
+// 
+//    try
+//    {
+//       if( colab.amount == 0 )
+//          return assets;
+// 
+//       const auto& median_price = get_feed_history().current_median_history;
+//       const auto& gpo = get_dynamic_global_properties();
+// 
+//       if( !median_price.is_null() )
+//       {
+//          auto to_sbd = ( gpo.sbd_print_rate * colab.amount ) / COLAB_100_PERCENT;
+//          auto to_colab = colab.amount - to_sbd;
+// 
+//          auto sbd = asset( to_sbd, CLC_SYMBOL ) * median_price;
+// 
+//          if( to_reward_balance )
+//          {
+//             adjust_reward_balance( to_account, sbd );
+//             adjust_reward_balance( to_account, asset( to_colab, CLC_SYMBOL ) );
+//          }
+//          else
+//          {
+//             adjust_balance( to_account, sbd );
+//             adjust_balance( to_account, asset( to_colab, CLC_SYMBOL ) );
+//          }
+// 
+//          adjust_supply( asset( -to_sbd, CLC_SYMBOL ) );
+//          adjust_supply( sbd );
+//          assets.first = sbd;
+//          assets.second = asset( to_colab, CLC_SYMBOL );
+//       }
+//       else
+//       {
+//          adjust_balance( to_account, colab );
+//          assets.second = colab;
+//       }
+//    }
+//    FC_CAPTURE_LOG_AND_RETHROW( (to_account.name)(colab) )
+// 
+//    return assets;
+// }
 // pay to_account new token(liquid), then a caller-supplied callback after determining how many shares to create, but before
 // we modify the database.
 // This allows us to implement virtual op pre-notifications in the Before function.
@@ -2070,9 +2070,9 @@ void database::process_funds()
 
       operation vop = producer_reward_operation( cwit.owner, asset( 0, CLC_SYMBOL ) );
       create_vesting2( *this, get_account( cwit.owner ), asset( witness_reward, CLC_SYMBOL ), false,
-         [&]( const asset& vesting_shares )
+         [&]( const asset& tokens )
          {
-            vop.get< producer_reward_operation >().vesting_shares = vesting_shares;
+            vop.get< producer_reward_operation >().clc_tokens = tokens;
             pre_push_virtual_operation( vop );
          } );
       post_push_virtual_operation( vop );
@@ -2252,14 +2252,14 @@ asset database::get_producer_reward()
    const auto& witness_account = get_account( props.current_witness );
 
    /// pay witness in vesting shares
-   if( props.head_block_number >= COLAB_START_MINER_VOTING_BLOCK || (witness_account.vesting_shares.amount.value == 0) )
+   if( props.head_block_number >= COLAB_START_MINER_VOTING_BLOCK/* || (witness_account.vesting_shares.amount.value == 0)*/ )
    {
       // const auto& witness_obj = get_witness( props.current_witness );
-      operation vop = producer_reward_operation( witness_account.name, asset( 0, VESTS_SYMBOL ) );
+      operation vop = producer_reward_operation( witness_account.name, asset( 0, CLC_SYMBOL ) );
       create_vesting2( *this, witness_account, pay, false,
-         [&]( const asset& vesting_shares )
+         [&]( const asset& tokens )
          {
-            vop.get< producer_reward_operation >().vesting_shares = vesting_shares;
+            vop.get< producer_reward_operation >().clc_tokens = tokens;
             pre_push_virtual_operation( vop );
          } );
       post_push_virtual_operation( vop );
@@ -2481,7 +2481,7 @@ void database::process_decline_voting_rights()
 
       /// remove all current votes
       std::array<share_type, COLAB_MAX_PROXY_RECURSION_DEPTH+1> delta;
-      delta[0] = -account.vesting_shares.amount;
+      delta[0] = -account.balance/*vesting_shares*/.amount;
       for( int i = 0; i < COLAB_MAX_PROXY_RECURSION_DEPTH; ++i )
          delta[i+1] = -account.proxied_vsf_votes[i];
       adjust_proxied_witness_votes( account, delta );
@@ -2766,8 +2766,8 @@ void database::init_genesis( uint64_t init_supply )
          p.virtual_supply = p.current_supply;
          p.maximum_block_size = COLAB_MAX_BLOCK_SIZE;
          p.reverse_auction_seconds = COLAB_REVERSE_AUCTION_WINDOW_SECONDS_HF6;
-         p.sbd_stop_percent = COLAB_SBD_STOP_PERCENT_HF14;
-         p.sbd_start_percent = COLAB_SBD_START_PERCENT_HF14;
+//          p.sbd_stop_percent = COLAB_SBD_STOP_PERCENT_HF14;
+//          p.sbd_start_percent = COLAB_SBD_START_PERCENT_HF14;
       } );
 
       // Nothing to do
@@ -4544,7 +4544,7 @@ void database::adjust_supply( const asset& delta, bool adjust_vesting )
             asset new_vesting( (adjust_vesting && delta.amount > 0) ? delta.amount * 9 : 0, CLC_SYMBOL );
             props.current_supply += delta + new_vesting;
             props.virtual_supply += delta + new_vesting;
-            props.total_vesting_fund_clc += new_vesting;
+//            props.total_vesting_fund_clc += new_vesting;
             if( check_supply )
             {
                FC_ASSERT( props.current_supply.amount.value >= 0 );
@@ -5030,8 +5030,8 @@ void database::apply_hardfork( uint32_t hardfork )
             {
                gpo.delegation_return_period = COLAB_DELEGATION_RETURN_PERIOD_HF20;
                gpo.reverse_auction_seconds = COLAB_REVERSE_AUCTION_WINDOW_SECONDS_HF20;
-               gpo.sbd_stop_percent = COLAB_SBD_STOP_PERCENT_HF20;
-               gpo.sbd_start_percent = COLAB_SBD_START_PERCENT_HF20;
+//                gpo.sbd_stop_percent = COLAB_SBD_STOP_PERCENT_HF20;
+//                gpo.sbd_start_percent = COLAB_SBD_START_PERCENT_HF20;
                gpo.available_account_subsidies = 0;
             });
 
@@ -5130,7 +5130,7 @@ void database::validate_invariants()const
                                  itr->witness_vote_weight() :
                                  ( COLAB_MAX_PROXY_RECURSION_DEPTH > 0 ?
                                       itr->proxied_vsf_votes[COLAB_MAX_PROXY_RECURSION_DEPTH - 1] :
-                                      itr->vesting_shares.amount ) );
+                                      itr->balance/*vesting_shares*/.amount ) );
       }
 
 //       const auto& convert_request_idx = get_index< convert_request_index >().indices();
@@ -5193,7 +5193,7 @@ void database::validate_invariants()const
          total_supply += itr->reward_balance;
       }
 
-      total_supply += gpo.total_vesting_fund_clc + gpo.total_reward_fund_colab + gpo.pending_rewarded_vesting_clc;
+      total_supply += /*gpo.total_vesting_fund_clc + */gpo.total_reward_fund_colab/* + gpo.pending_rewarded_vesting_clc*/;
 
       FC_ASSERT( gpo.current_supply == total_supply, "", ("gpo.current_supply",gpo.current_supply)("total_supply",total_supply) );
 //       FC_ASSERT( gpo.current_sbd_supply == total_sbd, "", ("gpo.current_sbd_supply",gpo.current_sbd_supply)("total_sbd",total_sbd) );

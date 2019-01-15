@@ -133,11 +133,11 @@ struct api_account_object
       /*reward_vesting_clc( legacy_asset::from_asset( a.reward_vesting_clc ) ),*////~~~~~CLC~~~~~ NO NEED for CoLab
       curation_rewards( a.curation_rewards ),
       posting_rewards( a.posting_rewards ),
-      vesting_shares( legacy_asset::from_asset( a.vesting_shares ) ),
+//      vesting_shares( legacy_asset::from_asset( a.vesting_shares ) ),
 //      delegated_vesting_shares( legacy_asset::from_asset( a.delegated_vesting_shares ) ),
 //      received_vesting_shares( legacy_asset::from_asset( a.received_vesting_shares ) ),
-      vesting_withdraw_rate( legacy_asset::from_asset( a.vesting_withdraw_rate ) ),
-      next_vesting_withdrawal( a.next_vesting_withdrawal ),
+//      vesting_withdraw_rate( legacy_asset::from_asset( a.vesting_withdraw_rate ) ),
+//      next_vesting_withdrawal( a.next_vesting_withdrawal ),
       withdrawn( a.withdrawn ),
       to_withdraw( a.to_withdraw ),
       withdraw_routes( a.withdraw_routes ),
@@ -210,11 +210,11 @@ struct api_account_object
    share_type        curation_rewards;
    share_type        posting_rewards;
 
-   legacy_asset      vesting_shares;
+//   legacy_asset      vesting_shares;
 //   legacy_asset      delegated_vesting_shares;
 //   legacy_asset      received_vesting_shares;
-   legacy_asset      vesting_withdraw_rate;
-   time_point_sec    next_vesting_withdrawal;
+//    legacy_asset      vesting_withdraw_rate;
+//    time_point_sec    next_vesting_withdrawal;
    share_type        withdrawn;
    share_type        to_withdraw;
    uint16_t          withdraw_routes = 0;
@@ -392,14 +392,14 @@ struct extended_dynamic_global_properties
       confidential_supply( legacy_asset::from_asset( o.confidential_supply ) ),
 //      current_sbd_supply( legacy_asset::from_asset( o.current_sbd_supply ) ),
 //      confidential_sbd_supply( legacy_asset::from_asset( o.confidential_sbd_supply ) ),
-      total_vesting_fund_clc( legacy_asset::from_asset( o.total_vesting_fund_clc ) ),
-      total_vesting_shares( legacy_asset::from_asset( o.total_vesting_shares ) ),
+//      total_vesting_fund_clc( legacy_asset::from_asset( o.total_vesting_fund_clc ) ),
+//      total_vesting_shares( legacy_asset::from_asset( o.total_vesting_shares ) ),
       total_reward_fund_colab( legacy_asset::from_asset( o.total_reward_fund_colab ) ),
       total_reward_shares2( o.total_reward_shares2 ),
-      pending_rewarded_vesting_shares( legacy_asset::from_asset( o.pending_rewarded_vesting_shares ) ),
-      pending_rewarded_vesting_clc( legacy_asset::from_asset( o.pending_rewarded_vesting_clc ) ),
+//      pending_rewarded_vesting_shares( legacy_asset::from_asset( o.pending_rewarded_vesting_shares ) ),
+//      pending_rewarded_vesting_clc( legacy_asset::from_asset( o.pending_rewarded_vesting_clc ) ),
 //      sbd_interest_rate( o.sbd_interest_rate ),
-      sbd_print_rate( o.sbd_print_rate ),
+//      sbd_print_rate( o.sbd_print_rate ),
       maximum_block_size( o.maximum_block_size ),
       current_aslot( o.current_aslot ),
       recent_slots_filled( o.recent_slots_filled ),
@@ -407,9 +407,9 @@ struct extended_dynamic_global_properties
       last_irreversible_block_num( o.last_irreversible_block_num ),
       vote_power_reserve_rate( o.vote_power_reserve_rate ),
       delegation_return_period( o.delegation_return_period ),
-      reverse_auction_seconds( o.reverse_auction_seconds ),
-      sbd_stop_percent( o.sbd_stop_percent ),
-      sbd_start_percent( o.sbd_start_percent )
+      reverse_auction_seconds( o.reverse_auction_seconds )//,
+//       sbd_stop_percent( o.sbd_stop_percent ),
+//       sbd_start_percent( o.sbd_start_percent )
    {}
 
    uint32_t          head_block_number = 0;
@@ -426,15 +426,15 @@ struct extended_dynamic_global_properties
    legacy_asset      confidential_supply;
 //   legacy_asset      current_sbd_supply;
 //   legacy_asset      confidential_sbd_supply;
-   legacy_asset      total_vesting_fund_clc;
-   legacy_asset      total_vesting_shares;
+//   legacy_asset      total_vesting_fund_clc;
+//   legacy_asset      total_vesting_shares;
    legacy_asset      total_reward_fund_colab;
    fc::uint128       total_reward_shares2;
-   legacy_asset      pending_rewarded_vesting_shares;
-   legacy_asset      pending_rewarded_vesting_clc;
+//   legacy_asset      pending_rewarded_vesting_shares;
+//   legacy_asset      pending_rewarded_vesting_clc;
 
 //   uint16_t          sbd_interest_rate = 0;
-   uint16_t          sbd_print_rate = COLAB_100_PERCENT;
+//   uint16_t          sbd_print_rate = COLAB_100_PERCENT;
 
    uint32_t          maximum_block_size = 0;
    uint64_t          current_aslot = 0;
@@ -448,8 +448,8 @@ struct extended_dynamic_global_properties
 
    uint64_t          reverse_auction_seconds = 0;
 
-   uint16_t          sbd_stop_percent = 0;
-   uint16_t          sbd_start_percent = 0;
+//    uint16_t          sbd_stop_percent = 0;
+//    uint16_t          sbd_start_percent = 0;
 };
 
 struct api_witness_object
@@ -1192,7 +1192,7 @@ FC_REFLECT( colab::plugins::condenser_api::api_account_object,
              /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~CLC~~~~~ NO NEED for CoLab
 			 (savings_withdraw_requests)
              (reward_clc_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_clc)*/////~~~~~CLC~~~~~ NO NEED for CoLab
-             (vesting_shares)/*(delegated_vesting_shares)(received_vesting_shares)*/(vesting_withdraw_rate)(next_vesting_withdrawal)(withdrawn)(to_withdraw)(withdraw_routes)
+             /*(vesting_shares)(delegated_vesting_shares)(received_vesting_shares)(vesting_withdraw_rate)(next_vesting_withdrawal)*/(withdrawn)(to_withdraw)(withdraw_routes)
              (curation_rewards)
              (posting_rewards)
              (proxied_vsf_votes)(witnesses_voted_for)
@@ -1224,11 +1224,11 @@ FC_REFLECT( colab::plugins::condenser_api::extended_dynamic_global_properties,
             (head_block_number)(head_block_id)(time)
             (current_witness)(total_pow)(num_pow_witnesses)
             (virtual_supply)(current_supply)(confidential_supply)/*(current_sbd_supply)(confidential_sbd_supply)*/
-            (total_vesting_fund_clc)(total_vesting_shares)
-            (total_reward_fund_colab)(total_reward_shares2)(pending_rewarded_vesting_shares)(pending_rewarded_vesting_clc)
+            /*(total_vesting_fund_clc)(total_vesting_shares)*/
+            (total_reward_fund_colab)(total_reward_shares2)/*(pending_rewarded_vesting_shares)(pending_rewarded_vesting_clc)*/
             /*(sbd_interest_rate)(sbd_print_rate)*/
             (maximum_block_size)(current_aslot)(recent_slots_filled)(participation_count)(last_irreversible_block_num)(vote_power_reserve_rate)
-            (delegation_return_period)(reverse_auction_seconds)(sbd_stop_percent)(sbd_start_percent) )
+            (delegation_return_period)(reverse_auction_seconds)/*(sbd_stop_percent)(sbd_start_percent)*/ )
 
 FC_REFLECT( colab::plugins::condenser_api::api_witness_object,
              (id)

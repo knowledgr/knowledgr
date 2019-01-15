@@ -654,14 +654,14 @@ class wallet_api
          bool broadcast );
 
 
-      /**
-       * This method delegates VESTS from one account to another.
-       *
-       * @param delegator The name of the account delegating VESTS
-       * @param delegatee The name of the account receiving VESTS
-       * @param vesting_shares The amount of VESTS to delegate
-       * @param broadcast true if you wish to broadcast the transaction
-       */
+//       /**
+//        * This method delegates VESTS from one account to another.
+//        *
+//        * @param delegator The name of the account delegating VESTS
+//        * @param delegatee The name of the account receiving VESTS
+//        * @param vesting_shares The amount of VESTS to delegate
+//        * @param broadcast true if you wish to broadcast the transaction
+//        */
 //        condenser_api::legacy_signed_transaction delegate_vesting_shares(
 //           string delegator,
 //           string delegatee,

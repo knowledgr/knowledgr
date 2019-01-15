@@ -764,22 +764,22 @@ public:
 
          auto accounts = result.as<vector<condenser_api::api_account_object>>();
          asset total_colab;
-         asset total_vest(0, VESTS_SYMBOL );
-         asset total_sbd(0, SBD_SYMBOL );
+//          asset total_vest(0, VESTS_SYMBOL );
+//          asset total_sbd(0, SBD_SYMBOL );
          for( const auto& a : accounts ) {
             total_colab += a.balance.to_asset();
-            total_vest  += a.vesting_shares.to_asset();
+            //total_vest  += a.vesting_shares.to_asset();
             //total_sbd  += a.sbd_balance.to_asset();///~~~~~CLC~~~~~ NO NEED for CoLab
             out << std::left << std::setw( 17 ) << std::string(a.name)
                 << std::right << std::setw(18) << fc::variant(a.balance).as_string() <<" "
-                << std::right << std::setw(26) << fc::variant(a.vesting_shares).as_string() <<" "<<"\n";
+                /*<< std::right << std::setw(26) << fc::variant(a.vesting_shares).as_string()*/ <<" "<<"\n";
                 //<< std::right << std::setw(16) << fc::variant(a.sbd_balance).as_string() ///~~~~~CLC~~~~~ NO NEED for CoLab
          }
          out << "-------------------------------------------------------------------------\n";
             out << std::left << std::setw( 17 ) << "TOTAL"
                 << std::right << std::setw(18) << legacy_asset::from_asset(total_colab).to_string() <<" "
-                << std::right << std::setw(26) << legacy_asset::from_asset(total_vest).to_string() <<" "
-                << std::right << std::setw(16) << legacy_asset::from_asset(total_sbd).to_string() <<"\n";
+                /*<< std::right << std::setw(26) << legacy_asset::from_asset(total_vest).to_string() <<" "*/
+                /*<< std::right << std::setw(16) << legacy_asset::from_asset(total_sbd).to_string() */<<"\n";
          return out.str();
       };
       m["get_account_history"] = []( variant result, const fc::variants& a ) {

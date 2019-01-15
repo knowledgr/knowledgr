@@ -36,38 +36,38 @@ struct manabar
 
 #if 1 ///~~~~~CLC~~~~~{
 
-   template< bool skip_cap_regen = false >
-   void regenerate_mana( const manabar_params& params, uint32_t now )
-   {
-      params.validate();
-
-      FC_ASSERT( now >= last_update_time );
-      uint32_t dt = now - last_update_time;
-      if( current_mana >= params.max_mana )
-      {
-         current_mana = params.max_mana;
-         last_update_time = now;
-         return;
-      }
-
-      if( !skip_cap_regen )
-         dt = (dt > params.regen_time) ? params.regen_time : dt;
-
-      uint128_t max_mana_dt = uint64_t( params.max_mana >= 0 ? params.max_mana : 0 );
-      max_mana_dt *= dt;
-      uint64_t u_regen = (max_mana_dt / params.regen_time).to_uint64();
-      FC_ASSERT( u_regen <= std::numeric_limits< int64_t >::max() );
-      int64_t new_current_mana = fc::signed_sat_add( current_mana, int64_t( u_regen ) );
-      current_mana = (new_current_mana > params.max_mana) ? params.max_mana : new_current_mana;
-
-      last_update_time = now;
-   }
-
-   template< bool skip_cap_regen = false >
-   void regenerate_mana( const manabar_params& params, fc::time_point_sec now )
-   {
-      regenerate_mana< skip_cap_regen >( params, now.sec_since_epoch() );
-   }
+//    template< bool skip_cap_regen = false >
+//    void regenerate_mana( const manabar_params& params, uint32_t now )
+//    {
+//       params.validate();
+// 
+//       FC_ASSERT( now >= last_update_time );
+//       uint32_t dt = now - last_update_time;
+//       if( current_mana >= params.max_mana )
+//       {
+//          current_mana = params.max_mana;
+//          last_update_time = now;
+//          return;
+//       }
+// 
+//       if( !skip_cap_regen )
+//          dt = (dt > params.regen_time) ? params.regen_time : dt;
+// 
+//       uint128_t max_mana_dt = uint64_t( params.max_mana >= 0 ? params.max_mana : 0 );
+//       max_mana_dt *= dt;
+//       uint64_t u_regen = (max_mana_dt / params.regen_time).to_uint64();
+//       FC_ASSERT( u_regen <= std::numeric_limits< int64_t >::max() );
+//       int64_t new_current_mana = fc::signed_sat_add( current_mana, int64_t( u_regen ) );
+//       current_mana = (new_current_mana > params.max_mana) ? params.max_mana : new_current_mana;
+// 
+//       last_update_time = now;
+//    }
+// 
+//    template< bool skip_cap_regen = false >
+//    void regenerate_mana( const manabar_params& params, fc::time_point_sec now )
+//    {
+//       regenerate_mana< skip_cap_regen >( params, now.sec_since_epoch() );
+//    }
 #endif ///~~~~~CLC~~~~~}
 
    bool has_mana( int64_t mana_needed )const

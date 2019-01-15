@@ -160,10 +160,10 @@ namespace colab { namespace protocol {
    struct return_vesting_delegation_operation : public virtual_operation
    {
       return_vesting_delegation_operation() {}
-      return_vesting_delegation_operation( const account_name_type& a, const asset& v ) : account( a ), vesting_shares( v ) {}
+      return_vesting_delegation_operation( const account_name_type& a, const asset& v ) : account( a ), clc_tokens( v ) {}
 
       account_name_type account;
-      asset             vesting_shares;
+      asset             clc_tokens;
    };
 
    struct comment_benefactor_reward_operation : public virtual_operation
@@ -181,10 +181,10 @@ namespace colab { namespace protocol {
    struct producer_reward_operation : public virtual_operation
    {
       producer_reward_operation(){}
-      producer_reward_operation( const string& p, const asset& v ) : producer( p ), vesting_shares( v ) {}
+      producer_reward_operation( const string& p, const asset& v ) : producer( p ), clc_shares( v ) {}
 
       account_name_type producer;
-      asset             vesting_shares;
+      asset             clc_tokens;//vesting_shares;
 
    };
 
@@ -208,7 +208,7 @@ FC_REFLECT( colab::protocol::fill_transfer_from_savings_operation, (from)(to)(am
 FC_REFLECT( colab::protocol::stake_process_time_operation, (account)(amount)(type)(created) )///~~~~~CLC~~~~~
 FC_REFLECT( colab::protocol::hardfork_operation, (hardfork_id) )
 FC_REFLECT( colab::protocol::comment_payout_update_operation, (author)(permlink) )
-FC_REFLECT( colab::protocol::return_vesting_delegation_operation, (account)(vesting_shares) )
+FC_REFLECT( colab::protocol::return_vesting_delegation_operation, (account)(clc_tokens/*vesting_shares*/) )
 FC_REFLECT( colab::protocol::comment_benefactor_reward_operation, (benefactor)(author)(permlink)(payout)/*(clc_payout)(vesting_payout)*/ )///~~~~~CLC~~~~~
-FC_REFLECT( colab::protocol::producer_reward_operation, (producer)(vesting_shares) )
+FC_REFLECT( colab::protocol::producer_reward_operation, (producer)(clc_tokens/*vesting_shares*/) )
 FC_REFLECT( colab::protocol::clear_null_account_balance_operation, (total_cleared) )

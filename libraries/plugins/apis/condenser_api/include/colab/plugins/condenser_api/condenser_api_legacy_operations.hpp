@@ -1006,19 +1006,19 @@ namespace colab { namespace plugins { namespace condenser_api {
       legacy_return_vesting_delegation_operation() {}
       legacy_return_vesting_delegation_operation( const return_vesting_delegation_operation& op ) :
          account( op.account ),
-         vesting_shares( legacy_asset::from_asset( op.vesting_shares ) )
+         clc_tokens( legacy_asset::from_asset( op.clc_tokens ) )
       {}
 
       operator return_vesting_delegation_operation()const
       {
          return_vesting_delegation_operation op;
          op.account = account;
-         op.vesting_shares = vesting_shares;
+         op.clc_tokens = clc_tokens;
          return op;
       }
 
       account_name_type account;
-      legacy_asset      vesting_shares;
+      legacy_asset      clc_tokens;
    };
 
    struct legacy_comment_benefactor_reward_operation
@@ -1052,19 +1052,19 @@ namespace colab { namespace plugins { namespace condenser_api {
       legacy_producer_reward_operation() {}
       legacy_producer_reward_operation( const producer_reward_operation& op ) :
          producer( op.producer ),
-         vesting_shares( legacy_asset::from_asset( op.vesting_shares ) )
+         clc_tokens( legacy_asset::from_asset( op.clc_tokens ) )
       {}
 
       operator producer_reward_operation()const
       {
          producer_reward_operation op;
          op.producer = producer;
-         op.vesting_shares = vesting_shares;
+         op.clc_tokens = clc_tokens;
          return op;
       }
 
       account_name_type producer;
-      legacy_asset      vesting_shares;
+      legacy_asset      clc_tokens;
    };
 
    struct legacy_claim_account_operation
@@ -1748,9 +1748,9 @@ FC_REFLECT( colab::plugins::condenser_api::legacy_fill_vesting_withdraw_operatio
 FC_REFLECT( colab::plugins::condenser_api::legacy_fill_order_operation, (current_owner)(current_orderid)(current_pays)(open_owner)(open_orderid)(open_pays) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_fill_transfer_from_savings_operation, (from)(to)(amount)(request_id)(memo) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_stake_process_time_operation, (account)(amount)(type)(created) )///~~~~~CLC~~~~~
-FC_REFLECT( colab::plugins::condenser_api::legacy_return_vesting_delegation_operation, (account)(vesting_shares) )
+FC_REFLECT( colab::plugins::condenser_api::legacy_return_vesting_delegation_operation, (account)(clc_tokens/*vesting_shares*/) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_comment_benefactor_reward_operation, (benefactor)(author)(permlink)(payout)/*(clc_payout)(vesting_payout)*/ )///~~~~~CLC~~~~~
-FC_REFLECT( colab::plugins::condenser_api::legacy_producer_reward_operation, (producer)(vesting_shares) )
+FC_REFLECT( colab::plugins::condenser_api::legacy_producer_reward_operation, (producer)(clc_tokens/*vesting_shares*/) )
 FC_REFLECT( colab::plugins::condenser_api::legacy_claim_account_operation, (creator)(fee)(extensions) )
 
 FC_REFLECT_TYPENAME( colab::plugins::condenser_api::legacy_operation )
