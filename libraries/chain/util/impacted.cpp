@@ -137,10 +137,10 @@ struct get_impacted_account_visitor
       _impacted.insert( op.proxy );
    }
 
-   void operator()( const feed_publish_operation& op )
-   {
-      _impacted.insert( op.publisher );
-   }
+//    void operator()( const feed_publish_operation& op )
+//    {
+//       _impacted.insert( op.publisher );
+//    }
 
    void operator()( const pow_operation& op )
    {

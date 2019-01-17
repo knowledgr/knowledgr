@@ -300,10 +300,10 @@ struct count_operation_visitor
       execution_time_count += _e.escrow_release_operation_exec_time;
    }
 
-   void operator()( const feed_publish_operation& )const
-   {
-      execution_time_count += _e.feed_publish_operation_exec_time;
-   }
+//    void operator()( const feed_publish_operation& )const
+//    {
+//       execution_time_count += _e.feed_publish_operation_exec_time;
+//    }
 
    void operator()( const limit_order_cancel_operation& )const
    {

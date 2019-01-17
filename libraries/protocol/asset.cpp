@@ -181,7 +181,6 @@ uint32_t asset_symbol_type::asset_num_from_nai( uint32_t nai, uint8_t decimal_pl
 
    switch( nai_data_digits )
    {
-<<<<<<< Updated upstream
       case COLAB_NAI_CLC:
          FC_ASSERT( decimal_places == COLAB_PRECISION_CLC );
          return COLAB_ASSET_NUM_CLC;
@@ -191,17 +190,6 @@ uint32_t asset_symbol_type::asset_num_from_nai( uint32_t nai, uint8_t decimal_pl
       case COLAB_NAI_VESTS:
          FC_ASSERT( decimal_places == COLAB_PRECISION_VESTS );
          return COLAB_ASSET_NUM_VESTS;
-=======
-      case KNOWLEDGR_NAI_KNLG:
-         FC_ASSERT( decimal_places == KNOWLEDGR_PRECISION_KNLG );
-         return KNOWLEDGR_ASSET_NUM_KNLG;
-//       case KNOWLEDGR_NAI_SBD:
-//          FC_ASSERT( decimal_places == KNOWLEDGR_PRECISION_SBD );
-//          return KNOWLEDGR_ASSET_NUM_SBD;
-//       case KNOWLEDGR_NAI_VESTS:
-//          FC_ASSERT( decimal_places == KNOWLEDGR_PRECISION_VESTS );
-//          return KNOWLEDGR_ASSET_NUM_VESTS;
->>>>>>> Stashed changes
       default:
          FC_ASSERT( decimal_places <= COLAB_ASSET_MAX_DECIMALS, "Invalid decimal_places" );
          return (nai_data_digits << COLAB_NAI_SHIFT) | SMT_ASSET_NUM_CONTROL_MASK | decimal_places;
@@ -218,21 +206,12 @@ uint32_t asset_symbol_type::to_nai()const
       case COLAB_ASSET_NUM_CLC:
          nai_data_digits = COLAB_NAI_CLC;
          break;
-<<<<<<< Updated upstream
       case COLAB_ASSET_NUM_SBD:
          nai_data_digits = COLAB_NAI_SBD;
          break;
       case COLAB_ASSET_NUM_VESTS:
          nai_data_digits = COLAB_NAI_VESTS;
          break;
-=======
-//       case KNOWLEDGR_ASSET_NUM_SBD:
-//          nai_data_digits = KNOWLEDGR_NAI_SBD;
-//          break;
-//       case KNOWLEDGR_ASSET_NUM_VESTS:
-//          nai_data_digits = KNOWLEDGR_NAI_VESTS;
-//          break;
->>>>>>> Stashed changes
       default:
          FC_ASSERT( space() == smt_nai_space );
          nai_data_digits = (asset_num >> COLAB_NAI_SHIFT);
@@ -244,7 +223,6 @@ uint32_t asset_symbol_type::to_nai()const
 
 bool asset_symbol_type::is_vesting() const
 {
-<<<<<<< Updated upstream
    switch( space() )
    {
       case legacy_space:
@@ -268,32 +246,6 @@ bool asset_symbol_type::is_vesting() const
       default:
          FC_ASSERT( false, "Unknown asset symbol" );
    }
-=======
-	return false;
-//    switch( space() )
-//    {
-//       case legacy_space:
-//       {
-//          switch( asset_num )
-//          {
-//             case KNOWLEDGR_ASSET_NUM_KNLG:
-//                return false;
-//             case KNOWLEDGR_ASSET_NUM_SBD:
-//                // SBD is certainly liquid.
-//                return false;
-//             case KNOWLEDGR_ASSET_NUM_VESTS:
-//                return true;
-//             default:
-//                FC_ASSERT( false, "Unknown asset symbol" );
-//          }
-//       }
-//       case smt_nai_space:
-//          // 6th bit of asset_num is used as vesting/liquid variant indicator.
-//          return asset_num & SMT_ASSET_NUM_VESTING_MASK;
-//       default:
-//          FC_ASSERT( false, "Unknown asset symbol" );
-//    }
->>>>>>> Stashed changes
 }
 
 asset_symbol_type asset_symbol_type::get_paired_symbol() const
@@ -304,21 +256,12 @@ asset_symbol_type asset_symbol_type::get_paired_symbol() const
       {
          switch( asset_num )
          {
-<<<<<<< Updated upstream
             case COLAB_ASSET_NUM_CLC:
                return from_asset_num( COLAB_ASSET_NUM_VESTS );
             case COLAB_ASSET_NUM_SBD:
                return *this;
             case COLAB_ASSET_NUM_VESTS:
                return from_asset_num( COLAB_ASSET_NUM_CLC );
-=======
-            case KNOWLEDGR_ASSET_NUM_KNLG:
-               return from_asset_num( KNOWLEDGR_ASSET_NUM_VESTS );
-//             case KNOWLEDGR_ASSET_NUM_SBD:
-//                return *this;
-//             case KNOWLEDGR_ASSET_NUM_VESTS:
-//                return from_asset_num( KNOWLEDGR_ASSET_NUM_KNLG );
->>>>>>> Stashed changes
             default:
                FC_ASSERT( false, "Unknown asset symbol" );
          }
@@ -339,15 +282,9 @@ asset_symbol_type::asset_symbol_space asset_symbol_type::space()const
    asset_symbol_type::asset_symbol_space s = legacy_space;
    switch( asset_num )
    {
-<<<<<<< Updated upstream
       case COLAB_ASSET_NUM_CLC:
       case COLAB_ASSET_NUM_SBD:
       case COLAB_ASSET_NUM_VESTS:
-=======
-      case KNOWLEDGR_ASSET_NUM_KNLG:
-//       case KNOWLEDGR_ASSET_NUM_SBD:
-//       case KNOWLEDGR_ASSET_NUM_VESTS:
->>>>>>> Stashed changes
          s = legacy_space;
          break;
       default:
@@ -360,15 +297,9 @@ void asset_symbol_type::validate()const
 {
    switch( asset_num )
    {
-<<<<<<< Updated upstream
       case COLAB_ASSET_NUM_CLC:
       case COLAB_ASSET_NUM_SBD:
       case COLAB_ASSET_NUM_VESTS:
-=======
-      case KNOWLEDGR_ASSET_NUM_KNLG:
-//       case KNOWLEDGR_ASSET_NUM_SBD:
-//       case KNOWLEDGR_ASSET_NUM_VESTS:
->>>>>>> Stashed changes
          break;
       default:
       {

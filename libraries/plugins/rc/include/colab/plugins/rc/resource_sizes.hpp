@@ -118,7 +118,7 @@ struct operation_exec_info
    int64_t escrow_dispute_operation_exec_time                  =  11500;
    int64_t escrow_release_operation_exec_time                  =  17200;
    int64_t escrow_transfer_operation_exec_time                 =  19100;
-   int64_t feed_publish_operation_exec_time                    =   6200;
+   //int64_t feed_publish_operation_exec_time                    =   6200;
    int64_t limit_order_cancel_operation_exec_time              =   9600;
    int64_t limit_order_create_operation_exec_time              =  31700;
    int64_t limit_order_create2_operation_exec_time             =  31700;
@@ -198,7 +198,7 @@ FC_REFLECT( colab::plugins::rc::operation_exec_info,
    ( escrow_dispute_operation_exec_time )
    ( escrow_release_operation_exec_time )
    ( escrow_transfer_operation_exec_time )
-   ( feed_publish_operation_exec_time )
+//   ( feed_publish_operation_exec_time )
    ( limit_order_cancel_operation_exec_time )
    ( limit_order_create_operation_exec_time )
    ( limit_order_create2_operation_exec_time )

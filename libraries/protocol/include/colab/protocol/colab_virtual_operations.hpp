@@ -181,7 +181,7 @@ namespace colab { namespace protocol {
    struct producer_reward_operation : public virtual_operation
    {
       producer_reward_operation(){}
-      producer_reward_operation( const string& p, const asset& v ) : producer( p ), clc_shares( v ) {}
+      producer_reward_operation( const string& p, const asset& v ) : producer( p ), clc_tokens( v ) {}
 
       account_name_type producer;
       asset             clc_tokens;//vesting_shares;
