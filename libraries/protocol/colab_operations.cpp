@@ -491,14 +491,14 @@ namespace colab { namespace protocol {
       FC_ASSERT( pow_summary == fc::sha256::hash( proof.inputs ).approx_log_32() );
    }
 
-   void feed_publish_operation::validate()const
-   {
-      validate_account_name( publisher );
-      FC_ASSERT( ( is_asset_type( exchange_rate.base, CLC_SYMBOL ) && is_asset_type( exchange_rate.quote, SBD_SYMBOL ) )
-         || ( is_asset_type( exchange_rate.base, SBD_SYMBOL ) && is_asset_type( exchange_rate.quote, CLC_SYMBOL ) ),
-         "Price feed must be a CLC/SBD price" );
-      exchange_rate.validate();
-   }
+//    void feed_publish_operation::validate()const
+//    {
+//       validate_account_name( publisher );
+//       FC_ASSERT( ( is_asset_type( exchange_rate.base, CLC_SYMBOL ) && is_asset_type( exchange_rate.quote, SBD_SYMBOL ) )
+//          || ( is_asset_type( exchange_rate.base, SBD_SYMBOL ) && is_asset_type( exchange_rate.quote, CLC_SYMBOL ) ),
+//          "Price feed must be a CLC/SBD price" );
+//       exchange_rate.validate();
+//    }
 
    void limit_order_create_operation::validate()const
    {

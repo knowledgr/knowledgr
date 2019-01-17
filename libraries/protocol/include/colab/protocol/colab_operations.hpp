@@ -644,18 +644,18 @@ namespace colab { namespace protocol {
    };
 
 
-   /**
-    *  Feeds can only be published by the top N witnesses which are included in every round and are
-    *  used to define the exchange rate between colab and the dollar.
-    */
-   struct feed_publish_operation : public base_operation
-   {
-      account_name_type publisher;
-      price             exchange_rate;
-
-      void  validate()const;
-      void  get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(publisher); }
-   };
+//    /**
+//     *  Feeds can only be published by the top N witnesses which are included in every round and are
+//     *  used to define the exchange rate between colab and the dollar.
+//     */
+//    struct feed_publish_operation : public base_operation
+//    {
+//       account_name_type publisher;
+//       price             exchange_rate;
+// 
+//       void  validate()const;
+//       void  get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(publisher); }
+//    };
 
 
    /**
@@ -1108,7 +1108,7 @@ FC_REFLECT( colab::protocol::set_reset_account_operation, (account)(current_rese
 
 FC_REFLECT( colab::protocol::report_over_production_operation, (reporter)(first_block)(second_block) )
 //FC_REFLECT( colab::protocol::convert_operation, (owner)(requestid)(amount) )
-FC_REFLECT( colab::protocol::feed_publish_operation, (publisher)(exchange_rate) )
+//FC_REFLECT( colab::protocol::feed_publish_operation, (publisher)(exchange_rate) )
 FC_REFLECT( colab::protocol::pow, (worker)(input)(signature)(work) )
 FC_REFLECT( colab::protocol::pow2, (input)(pow_summary) )
 FC_REFLECT( colab::protocol::pow2_input, (worker_account)(prev_block)(nonce) )

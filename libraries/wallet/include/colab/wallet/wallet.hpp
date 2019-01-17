@@ -963,18 +963,18 @@ class wallet_api
 //          condenser_api::legacy_asset amount,
 //          bool broadcast = false );
 
-      /**
-       * A witness can public a price feed for the CLC:SBD market. The median price feed is used
-       * to process conversion requests from SBD to CLC.
-       *
-       * @param witness The witness publishing the price feed
-       * @param exchange_rate The desired exchange rate
-       * @param broadcast true if you wish to broadcast the transaction
-       */
-      condenser_api::legacy_signed_transaction publish_feed(
-         string witness,
-         condenser_api::legacy_price exchange_rate,
-         bool broadcast );
+//       /**
+//        * A witness can public a price feed for the CLC:SBD market. The median price feed is used
+//        * to process conversion requests from SBD to CLC.
+//        *
+//        * @param witness The witness publishing the price feed
+//        * @param exchange_rate The desired exchange rate
+//        * @param broadcast true if you wish to broadcast the transaction
+//        */
+//       condenser_api::legacy_signed_transaction publish_feed(
+//          string witness,
+//          condenser_api::legacy_price exchange_rate,
+//          bool broadcast );
 
       /** Signs a transaction.
        *
@@ -1316,7 +1316,7 @@ FC_API( colab::wallet::wallet_api,
         //(withdraw_vesting)
         //(set_withdraw_vesting_route)
         //(convert_sbd)
-        (publish_feed)
+        //(publish_feed)
         (get_order_book)
         (get_open_orders)
         (create_order)

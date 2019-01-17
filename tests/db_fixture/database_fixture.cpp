@@ -556,30 +556,30 @@ void database_fixture::proxy( const string& account, const string& proxy )
    } FC_CAPTURE_AND_RETHROW( (account)(proxy) )
 }
 
-void database_fixture::set_price_feed( const price& new_price )
-{
-   for( size_t i = 1; i < 8; i++ )
-   {
-      witness_set_properties_operation op;
-      op.owner = COLAB_INIT_MINER_NAME + fc::to_string( i );
-      op.props[ "sbd_exchange_rate" ] = fc::raw::pack_to_vector( new_price );
-      op.props[ "key" ] = fc::raw::pack_to_vector( init_account_pub_key );
-
-      trx.operations.push_back( op );
-      trx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      db->push_transaction( trx, ~0 );
-      trx.clear();
-   }
-
-   generate_blocks( COLAB_BLOCKS_PER_HOUR );
-
-   BOOST_REQUIRE(
-#ifdef IS_TEST_NET
-      !db->skip_price_feed_limit_check ||
-#endif
-      db->get(feed_history_id_type()).current_median_history == new_price
-   );
-}
+// void database_fixture::set_price_feed( const price& new_price )
+// {
+//    for( size_t i = 1; i < 8; i++ )
+//    {
+//       witness_set_properties_operation op;
+//       op.owner = COLAB_INIT_MINER_NAME + fc::to_string( i );
+//       op.props[ "sbd_exchange_rate" ] = fc::raw::pack_to_vector( new_price );
+//       op.props[ "key" ] = fc::raw::pack_to_vector( init_account_pub_key );
+// 
+//       trx.operations.push_back( op );
+//       trx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       db->push_transaction( trx, ~0 );
+//       trx.clear();
+//    }
+// 
+//    generate_blocks( COLAB_BLOCKS_PER_HOUR );
+// 
+//    BOOST_REQUIRE(
+// #ifdef IS_TEST_NET
+//       !db->skip_price_feed_limit_check ||
+// #endif
+//       db->get(feed_history_id_type()).current_median_history == new_price
+//    );
+// }
 
 void database_fixture::set_witness_props( const flat_map< string, vector< char > >& props )
 {

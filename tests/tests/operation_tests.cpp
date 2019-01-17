@@ -2274,137 +2274,137 @@ BOOST_AUTO_TEST_CASE( custom_binary_authorities )
    BOOST_REQUIRE( auths == expected );
 }
 
-BOOST_AUTO_TEST_CASE( feed_publish_validate )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: feed_publish_validate" );
-   }
-   FC_LOG_AND_RETHROW()
-}
-
-BOOST_AUTO_TEST_CASE( feed_publish_authorities )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: feed_publish_authorities" );
-
-      ACTORS( (alice)(bob) )
-      fund( "alice", 10000 );
-      witness_create( "alice", alice_private_key, "foo.bar", alice_private_key.get_public_key(), 1000 );
-
-      feed_publish_operation op;
-      op.publisher = "alice";
-      op.exchange_rate = price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) );
-
-      signed_transaction tx;
-      tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-
-      BOOST_TEST_MESSAGE( "--- Test failure when no signature." );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_missing_active_auth );
-
-      BOOST_TEST_MESSAGE( "--- Test failure with incorrect signature" );
-      tx.signatures.clear();
-      sign( tx, alice_post_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_missing_active_auth );
-
-      BOOST_TEST_MESSAGE( "--- Test failure with duplicate signature" );
-      sign( tx, alice_private_key );
-      sign( tx, alice_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_duplicate_sig );
-
-      BOOST_TEST_MESSAGE( "--- Test failure with additional incorrect signature" );
-      tx.signatures.clear();
-      sign( tx, alice_private_key );
-      sign( tx, bob_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_irrelevant_sig );
-
-      BOOST_TEST_MESSAGE( "--- Test success with witness account signature" );
-      tx.signatures.clear();
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, database::skip_transaction_dupe_check );
-
-      validate_database();
-   }
-   FC_LOG_AND_RETHROW()
-}
-
-BOOST_AUTO_TEST_CASE( feed_publish_apply )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: feed_publish_apply" );
-
-      ACTORS( (alice) )
-      fund( "alice", 10000 );
-      witness_create( "alice", alice_private_key, "foo.bar", alice_private_key.get_public_key(), 1000 );
-
-      BOOST_TEST_MESSAGE( "--- Test publishing price feed" );
-      feed_publish_operation op;
-      op.publisher = "alice";
-      op.exchange_rate = price( ASSET( "1.000 TBD" ), ASSET( "1000.000 TESTS" ) ); // 1000 CLC : 1 SBD
-
-      signed_transaction tx;
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
-      tx.operations.push_back( op );
-      sign( tx, alice_private_key );
-
-      db->push_transaction( tx, 0 );
-
-      witness_object& alice_witness = const_cast< witness_object& >( db->get_witness( "alice" ) );
-
-      BOOST_REQUIRE( alice_witness.sbd_exchange_rate == op.exchange_rate );
-      BOOST_REQUIRE( alice_witness.last_sbd_exchange_update == db->head_block_time() );
-      validate_database();
-
-      BOOST_TEST_MESSAGE( "--- Test failure publishing to non-existent witness" );
-
-      tx.operations.clear();
-      tx.signatures.clear();
-      op.publisher = "bob";
-      sign( tx, alice_private_key );
-
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
-      validate_database();
-
-      BOOST_TEST_MESSAGE( "--- Test failure publishing with SBD base symbol" );
-
-      tx.operations.clear();
-      tx.signatures.clear();
-      op.exchange_rate = price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) );
-      sign( tx, alice_private_key );
-
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::assert_exception );
-      validate_database();
-
-      BOOST_TEST_MESSAGE( "--- Test updating price feed" );
-
-      tx.operations.clear();
-      tx.signatures.clear();
-      op.exchange_rate = price( ASSET(" 1.000 TBD" ), ASSET( "1500.000 TESTS" ) );
-      op.publisher = "alice";
-      tx.operations.push_back( op );
-      sign( tx, alice_private_key );
-
-      db->push_transaction( tx, 0 );
-
-      alice_witness = const_cast< witness_object& >( db->get_witness( "alice" ) );
-      // BOOST_REQUIRE( std::abs( alice_witness.sbd_exchange_rate.to_real() - op.exchange_rate.to_real() ) < 0.0000005 );
-      BOOST_REQUIRE( alice_witness.last_sbd_exchange_update == db->head_block_time() );
-      validate_database();
-   }
-   FC_LOG_AND_RETHROW()
-}
-
-BOOST_AUTO_TEST_CASE( convert_validate )
-{
-   try
-   {
-      BOOST_TEST_MESSAGE( "Testing: convert_validate" );
-   }
-   FC_LOG_AND_RETHROW()
-}
+// BOOST_AUTO_TEST_CASE( feed_publish_validate )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: feed_publish_validate" );
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
+// 
+// BOOST_AUTO_TEST_CASE( feed_publish_authorities )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: feed_publish_authorities" );
+// 
+//       ACTORS( (alice)(bob) )
+//       fund( "alice", 10000 );
+//       witness_create( "alice", alice_private_key, "foo.bar", alice_private_key.get_public_key(), 1000 );
+// 
+//       feed_publish_operation op;
+//       op.publisher = "alice";
+//       op.exchange_rate = price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) );
+// 
+//       signed_transaction tx;
+//       tx.operations.push_back( op );
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure when no signature." );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_missing_active_auth );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure with incorrect signature" );
+//       tx.signatures.clear();
+//       sign( tx, alice_post_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_missing_active_auth );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure with duplicate signature" );
+//       sign( tx, alice_private_key );
+//       sign( tx, alice_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_duplicate_sig );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure with additional incorrect signature" );
+//       tx.signatures.clear();
+//       sign( tx, alice_private_key );
+//       sign( tx, bob_private_key );
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, database::skip_transaction_dupe_check ), tx_irrelevant_sig );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test success with witness account signature" );
+//       tx.signatures.clear();
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, database::skip_transaction_dupe_check );
+// 
+//       validate_database();
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
+// 
+// BOOST_AUTO_TEST_CASE( feed_publish_apply )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: feed_publish_apply" );
+// 
+//       ACTORS( (alice) )
+//       fund( "alice", 10000 );
+//       witness_create( "alice", alice_private_key, "foo.bar", alice_private_key.get_public_key(), 1000 );
+// 
+//       BOOST_TEST_MESSAGE( "--- Test publishing price feed" );
+//       feed_publish_operation op;
+//       op.publisher = "alice";
+//       op.exchange_rate = price( ASSET( "1.000 TBD" ), ASSET( "1000.000 TESTS" ) ); // 1000 CLC : 1 SBD
+// 
+//       signed_transaction tx;
+//       tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+//       tx.operations.push_back( op );
+//       sign( tx, alice_private_key );
+// 
+//       db->push_transaction( tx, 0 );
+// 
+//       witness_object& alice_witness = const_cast< witness_object& >( db->get_witness( "alice" ) );
+// 
+//       BOOST_REQUIRE( alice_witness.sbd_exchange_rate == op.exchange_rate );
+//       BOOST_REQUIRE( alice_witness.last_sbd_exchange_update == db->head_block_time() );
+//       validate_database();
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure publishing to non-existent witness" );
+// 
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       op.publisher = "bob";
+//       sign( tx, alice_private_key );
+// 
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
+//       validate_database();
+// 
+//       BOOST_TEST_MESSAGE( "--- Test failure publishing with SBD base symbol" );
+// 
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       op.exchange_rate = price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) );
+//       sign( tx, alice_private_key );
+// 
+//       COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::assert_exception );
+//       validate_database();
+// 
+//       BOOST_TEST_MESSAGE( "--- Test updating price feed" );
+// 
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       op.exchange_rate = price( ASSET(" 1.000 TBD" ), ASSET( "1500.000 TESTS" ) );
+//       op.publisher = "alice";
+//       tx.operations.push_back( op );
+//       sign( tx, alice_private_key );
+// 
+//       db->push_transaction( tx, 0 );
+// 
+//       alice_witness = const_cast< witness_object& >( db->get_witness( "alice" ) );
+//       // BOOST_REQUIRE( std::abs( alice_witness.sbd_exchange_rate.to_real() - op.exchange_rate.to_real() ) < 0.0000005 );
+//       BOOST_REQUIRE( alice_witness.last_sbd_exchange_update == db->head_block_time() );
+//       validate_database();
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
+// 
+// BOOST_AUTO_TEST_CASE( convert_validate )
+// {
+//    try
+//    {
+//       BOOST_TEST_MESSAGE( "Testing: convert_validate" );
+//    }
+//    FC_LOG_AND_RETHROW()
+// }
 
 // BOOST_AUTO_TEST_CASE( convert_authorities )
 // {
@@ -6986,16 +6986,16 @@ BOOST_AUTO_TEST_CASE( witness_set_properties_apply )
       prop_op.props.erase( "new_signing_key" );
       prop_op.props[ "key" ].clear();
       prop_op.props[ "key" ] = fc::raw::pack_to_vector( signing_key.get_public_key() );
-      prop_op.props[ "sbd_exchange_rate" ] = fc::raw::pack_to_vector( price( ASSET(" 1.000 TBD" ), ASSET( "100.000 TESTS" ) ) );
+//      prop_op.props[ "sbd_exchange_rate" ] = fc::raw::pack_to_vector( price( ASSET(" 1.000 TBD" ), ASSET( "100.000 TESTS" ) ) );
       tx.clear();
       tx.operations.push_back( prop_op );
       sign( tx, signing_key );
       db->push_transaction( tx, 0 );
-      BOOST_REQUIRE( alice_witness.sbd_exchange_rate == price( ASSET( "1.000 TBD" ), ASSET( "100.000 TESTS" ) ) );
-      BOOST_REQUIRE( alice_witness.last_sbd_exchange_update == db->head_block_time() );
+//       BOOST_REQUIRE( alice_witness.sbd_exchange_rate == price( ASSET( "1.000 TBD" ), ASSET( "100.000 TESTS" ) ) );
+//       BOOST_REQUIRE( alice_witness.last_sbd_exchange_update == db->head_block_time() );
 
       // Setting new url
-      prop_op.props.erase( "sbd_exchange_rate" );
+//      prop_op.props.erase( "sbd_exchange_rate" );
       prop_op.props[ "url" ] = fc::raw::pack_to_vector( "foo.bar" );
       tx.clear();
       tx.operations.push_back( prop_op );
@@ -7004,7 +7004,7 @@ BOOST_AUTO_TEST_CASE( witness_set_properties_apply )
       BOOST_REQUIRE( alice_witness.url == "foo.bar" );
 
       // Setting new extranious_property
-      prop_op.props.erase( "sbd_exchange_rate" );
+//      prop_op.props.erase( "sbd_exchange_rate" );
       prop_op.props[ "extraneous_property" ] = fc::raw::pack_to_vector( "foo" );
       tx.clear();
       tx.operations.push_back( prop_op );

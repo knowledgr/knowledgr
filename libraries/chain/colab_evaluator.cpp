@@ -2746,19 +2746,19 @@ void pow2_evaluator::do_apply( const pow2_operation& o )
    }
 }
 
-void feed_publish_evaluator::do_apply( const feed_publish_operation& o )
-{
-   if( _db.has_hardfork( COLAB_HARDFORK_0_20__409 ) )
-      FC_ASSERT( is_asset_type( o.exchange_rate.base, SBD_SYMBOL ) && is_asset_type( o.exchange_rate.quote, CLC_SYMBOL ),
-            "Price feed must be a SBD/CLC price" );
-
-   const auto& witness = _db.get_witness( o.publisher );
-   _db.modify( witness, [&]( witness_object& w )
-   {
-      w.sbd_exchange_rate = o.exchange_rate;
-      w.last_sbd_exchange_update = _db.head_block_time();
-   });
-}
+// void feed_publish_evaluator::do_apply( const feed_publish_operation& o )
+// {
+//    if( _db.has_hardfork( COLAB_HARDFORK_0_20__409 ) )
+//       FC_ASSERT( is_asset_type( o.exchange_rate.base, SBD_SYMBOL ) && is_asset_type( o.exchange_rate.quote, CLC_SYMBOL ),
+//             "Price feed must be a SBD/CLC price" );
+// 
+//    const auto& witness = _db.get_witness( o.publisher );
+//    _db.modify( witness, [&]( witness_object& w )
+//    {
+//       w.sbd_exchange_rate = o.exchange_rate;
+//       w.last_sbd_exchange_update = _db.head_block_time();
+//    });
+// }
 
 // void convert_evaluator::do_apply( const convert_operation& o )
 // {

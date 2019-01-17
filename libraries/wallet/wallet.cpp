@@ -2260,22 +2260,22 @@ condenser_api::legacy_signed_transaction wallet_api::cancel_transfer_from_saving
 //    return my->sign_transaction( tx, broadcast );
 // }
 
-condenser_api::legacy_signed_transaction wallet_api::publish_feed(
-   string witness,
-   condenser_api::legacy_price exchange_rate,
-   bool broadcast )
-{
-   FC_ASSERT( !is_locked() );
-   feed_publish_operation op;
-   op.publisher     = witness;
-   op.exchange_rate = price( exchange_rate );
-
-   signed_transaction tx;
-   tx.operations.push_back( op );
-   tx.validate();
-
-   return my->sign_transaction( tx, broadcast );
-}
+// condenser_api::legacy_signed_transaction wallet_api::publish_feed(
+//    string witness,
+//    condenser_api::legacy_price exchange_rate,
+//    bool broadcast )
+// {
+//    FC_ASSERT( !is_locked() );
+//    feed_publish_operation op;
+//    op.publisher     = witness;
+//    op.exchange_rate = price( exchange_rate );
+// 
+//    signed_transaction tx;
+//    tx.operations.push_back( op );
+//    tx.validate();
+// 
+//    return my->sign_transaction( tx, broadcast );
+// }
 
 // vector< condenser_api::api_convert_request_object > wallet_api::get_conversion_requests( string owner_account )
 // {
