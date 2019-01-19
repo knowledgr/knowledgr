@@ -94,6 +94,7 @@ class rc_plugin_impl
 template< bool account_may_exist = false >
 void create_rc_account( database& db, uint32_t now, const account_object& account, asset max_rc_creation_adjustment )
 {
+	return; //////~~~~~CLC~~~~~ WILL COME SOON ;-)
    // ilog( "create_rc_account( ${a} )", ("a", account.name) );
    if( account_may_exist )
    {
@@ -224,19 +225,20 @@ void use_account_rcs(
    int64_t rc,
    rc_plugin_skip_flags skip )
 {
-   if( account_name == account_name_type() )
-   {
-      if( db.is_producing() )
-      {
-         COLAB_ASSERT( false, plugin_exception,
-            "Tried to execute transaction with no resource user",
-            );
-      }
-      return;
-   }
-
-   // ilog( "use_account_rcs( ${n}, ${rc} )", ("n", account_name)("rc", rc) );
-///WILL BE COME soon ;-)
+///~~~~~CLC~~~~~{ WILL COME SOON ;-)
+//    if( account_name == account_name_type() )
+//    {
+//       if( db.is_producing() )
+//       {
+//          COLAB_ASSERT( false, plugin_exception,
+//             "Tried to execute transaction with no resource user",
+//             );
+//       }
+//       return;
+//    }
+// 
+//    // ilog( "use_account_rcs( ${n}, ${rc} )", ("n", account_name)("rc", rc) );
+//
 //    const account_object& account = db.get< account_object, by_name >( account_name );
 //    const rc_account_object& rc_account = db.get< rc_account_object, by_name >( account_name );
 // 
@@ -287,6 +289,7 @@ void use_account_rcs(
 // 
 //       rca.rc_manabar.use_mana( rc, min_mana );
 //    } );
+///~~~~~CLC~~~~~} WILL COME SOON ;-)
 }
 
 void rc_plugin_impl::on_post_apply_transaction( const transaction_notification& note )
@@ -586,7 +589,7 @@ struct pre_apply_operation_visitor
       //
       // TODO:  Issue number
       //
-///WILL BE COME soon ;-)
+///~~~~~CLC~~~~~{ WILL COME SOON ;-)
 //       static_assert( COLAB_RC_REGEN_TIME <= COLAB_VOTING_MANA_REGENERATION_SECONDS, "RC regen time must be smaller than vote regen time" );
 // 
 //       // ilog( "regenerate(${a})", ("a", account.name) );
@@ -614,6 +617,7 @@ struct pre_apply_operation_visitor
 //       {
 //          rca.rc_manabar.regenerate_mana< true >( mbparams, _current_time );
 //       } );
+///~~~~~CLC~~~~~} WILL COME SOON ;-)
    }
 
    template< bool account_may_not_exist = false >
@@ -918,21 +922,24 @@ typedef post_apply_operation_visitor post_apply_optional_action_visitor;
 
 void rc_plugin_impl::on_pre_apply_operation( const operation_notification& note )
 {
-   if( before_first_block() )
-      return;
-
-   const dynamic_global_property_object& gpo = _db.get_dynamic_global_properties();
-   pre_apply_operation_visitor vtor( _db );
-
-//    // TODO: Add issue number to HF constant
-//    if( _db.has_hardfork( COLAB_HARDFORK_0_20 ) )
-//       vtor._vesting_share_price = gpo.get_vesting_share_price();
-
-   vtor._current_witness = gpo.current_witness;
-   vtor._skip = _skip;
-
-   // ilog( "Calling pre-vtor on ${op}", ("op", note.op) );
-   note.op.visit( vtor );
+	return;
+///~~~~~CLC~~~~~{ WILL COME SOON ;-)
+//    if( before_first_block() )
+//       return;
+// 
+//    const dynamic_global_property_object& gpo = _db.get_dynamic_global_properties();
+//    pre_apply_operation_visitor vtor( _db );
+// 
+// //    // TODO: Add issue number to HF constant
+// //    if( _db.has_hardfork( COLAB_HARDFORK_0_20 ) )
+// //       vtor._vesting_share_price = gpo.get_vesting_share_price();
+// 
+//    vtor._current_witness = gpo.current_witness;
+//    vtor._skip = _skip;
+// 
+//    // ilog( "Calling pre-vtor on ${op}", ("op", note.op) );
+//    note.op.visit( vtor );
+///~~~~~CLC~~~~~} WILL COME SOON ;-)
 }
 
 void update_modified_accounts( database& db, const std::vector< account_regen_info >& modified_accounts )
@@ -956,64 +963,72 @@ void update_modified_accounts( database& db, const std::vector< account_regen_in
 
 void rc_plugin_impl::on_post_apply_operation( const operation_notification& note )
 {
-   if( before_first_block() )
-      return;
-
-   const dynamic_global_property_object& gpo = _db.get_dynamic_global_properties();
-   const uint32_t now = gpo.time.sec_since_epoch();
-
-   vector< account_regen_info > modified_accounts;
-
-   // ilog( "Calling post-vtor on ${op}", ("op", note.op) );
-   post_apply_operation_visitor vtor( modified_accounts, _db, now, gpo.head_block_number, gpo.current_witness );
-   note.op.visit( vtor );
-
-   update_modified_accounts( _db, modified_accounts );
+	return;
+///~~~~~CLC~~~~~{ WILL COME SOON ;-)
+//    if( before_first_block() )
+//       return;
+// 
+//    const dynamic_global_property_object& gpo = _db.get_dynamic_global_properties();
+//    const uint32_t now = gpo.time.sec_since_epoch();
+// 
+//    vector< account_regen_info > modified_accounts;
+// 
+//    // ilog( "Calling post-vtor on ${op}", ("op", note.op) );
+//    post_apply_operation_visitor vtor( modified_accounts, _db, now, gpo.head_block_number, gpo.current_witness );
+//    note.op.visit( vtor );
+// 
+//    update_modified_accounts( _db, modified_accounts );
+///~~~~~CLC~~~~~} WILL COME SOON ;-)
 }
 
 void rc_plugin_impl::on_pre_apply_optional_action( const optional_action_notification& note )
 {
-   if( before_first_block() )
-      return;
-
-   const dynamic_global_property_object& gpo = _db.get_dynamic_global_properties();
-   pre_apply_optional_action_vistor vtor( _db );
-
-   vtor._current_witness = gpo.current_witness;
-   vtor._skip = _skip;
-
-   note.action.visit( vtor );
+	return;
+///~~~~~CLC~~~~~{ WILL COME SOON ;-)
+//    if( before_first_block() )
+//       return;
+// 
+//    const dynamic_global_property_object& gpo = _db.get_dynamic_global_properties();
+//    pre_apply_optional_action_vistor vtor( _db );
+// 
+//    vtor._current_witness = gpo.current_witness;
+//    vtor._skip = _skip;
+// 
+//    note.action.visit( vtor );
+///~~~~~CLC~~~~~} WILL COME SOON ;-)
 }
 
 void rc_plugin_impl::on_post_apply_optional_action( const optional_action_notification& note )
 {
-   if( before_first_block() )
-      return;
-
-   const dynamic_global_property_object& gpo = _db.get_dynamic_global_properties();
-   const uint32_t now = gpo.time.sec_since_epoch();
-
-   vector< account_regen_info > modified_accounts;
-
-   post_apply_optional_action_visitor vtor( modified_accounts, _db, now, gpo.head_block_number, gpo.current_witness );
-   note.action.visit( vtor );
-
-   update_modified_accounts( _db, modified_accounts );
-
-   // There is no transaction equivalent for actions, so post apply transaction logic for actions go here.
-//   int64_t rc_regen = (gpo.total_vesting_shares.amount.value / (COLAB_RC_REGEN_TIME / COLAB_BLOCK_INTERVAL));
-
-   rc_optional_action_info opt_action_info;
-
-   // How many resources does the transaction use?
-   count_resources( note.action, opt_action_info.usage );
-
-   // How many RC does this transaction cost?
+	return;
+///~~~~~CLC~~~~~{ WILL COME SOON ;-)
+//    if( before_first_block() )
+//       return;
+// 
+//    const dynamic_global_property_object& gpo = _db.get_dynamic_global_properties();
+//    const uint32_t now = gpo.time.sec_since_epoch();
+// 
+//    vector< account_regen_info > modified_accounts;
+// 
+//    post_apply_optional_action_visitor vtor( modified_accounts, _db, now, gpo.head_block_number, gpo.current_witness );
+//    note.action.visit( vtor );
+// 
+//    update_modified_accounts( _db, modified_accounts );
+// 
+//    // There is no transaction equivalent for actions, so post apply transaction logic for actions go here.
+//    int64_t rc_regen = (gpo.total_vesting_shares.amount.value / (COLAB_RC_REGEN_TIME / COLAB_BLOCK_INTERVAL));
+// 
+//    rc_optional_action_info opt_action_info;
+// 
+//    // How many resources does the transaction use?
+//    count_resources( note.action, opt_action_info.usage );
+// 
+//    // How many RC does this transaction cost?
 //    const rc_resource_param_object& params_obj = _db.get< rc_resource_param_object, by_id >( rc_resource_param_object::id_type() );
 //    const rc_pool_object& pool_obj = _db.get< rc_pool_object, by_id >( rc_pool_object::id_type() );
 // 
-    int64_t total_cost = 0;
-
+//     int64_t total_cost = 0;
+// 
 //    // When rc_regen is 0, everything is free
 //    if( rc_regen > 0 )
 //    {
@@ -1028,18 +1043,19 @@ void rc_plugin_impl::on_post_apply_optional_action( const optional_action_notifi
 //          total_cost += opt_action_info.cost[i];
 //       }
 //    }
-
-   opt_action_info.resource_user = get_resource_user( note.action );
-   use_account_rcs( _db, gpo, opt_action_info.resource_user, total_cost, _skip );
-
-   std::shared_ptr< exp_rc_data > export_data =
-      colab::plugins::block_data_export::find_export_data< exp_rc_data >( COLAB_RC_PLUGIN_NAME );
-   if( (gpo.head_block_number % 10000) == 0 )
-   {
-      dlog( "${t} : ${i}", ("t", gpo.time)("i", opt_action_info) );
-   }
-   if( export_data )
-      export_data->opt_action_info.push_back( opt_action_info );
+// 
+//    opt_action_info.resource_user = get_resource_user( note.action );
+//    use_account_rcs( _db, gpo, opt_action_info.resource_user, total_cost, _skip );
+// 
+//    std::shared_ptr< exp_rc_data > export_data =
+//       colab::plugins::block_data_export::find_export_data< exp_rc_data >( COLAB_RC_PLUGIN_NAME );
+//    if( (gpo.head_block_number % 10000) == 0 )
+//    {
+//       dlog( "${t} : ${i}", ("t", gpo.time)("i", opt_action_info) );
+//    }
+//    if( export_data )
+//       export_data->opt_action_info.push_back( opt_action_info );
+///~~~~~CLC~~~~~} WILL COME SOON ;-)
 }
 
 void rc_plugin_impl::validate_database()
@@ -1077,7 +1093,6 @@ void rc_plugin::set_program_options( options_description& cli, options_descripti
 void rc_plugin::plugin_initialize( const boost::program_options::variables_map& options )
 {
    ilog( "Initializing resource credit plugin" );
-
    my = std::make_unique< detail::rc_plugin_impl >( *this );
 
    try
@@ -1096,6 +1111,7 @@ void rc_plugin::plugin_initialize( const boost::program_options::variables_map& 
          { try { my->on_post_apply_block( note ); } FC_LOG_AND_RETHROW() }, *this, 0 );
       //my->_pre_apply_transaction_conn = db.add_pre_apply_transaction_handler( [&]( const transaction_notification& note )
       //   { try { my->on_pre_apply_transaction( note ); } FC_LOG_AND_RETHROW() }, *this, 0 );
+	  
       my->_post_apply_transaction_conn = db.add_post_apply_transaction_handler( [&]( const transaction_notification& note )
          { try { my->on_post_apply_transaction( note ); } FC_LOG_AND_RETHROW() }, *this, 0 );
       my->_pre_apply_operation_conn = db.add_pre_apply_operation_handler( [&]( const operation_notification& note )
@@ -1167,14 +1183,15 @@ void exp_rc_data::to_variant( fc::variant& v )const
 
 int64_t get_maximum_rc( const account_object& account, const rc_account_object& rc_account )
 {
-   //int64_t result = account.vesting_shares.amount.value;
-   //result = fc::signed_sat_sub( result, account.delegated_vesting_shares.amount.value );
-   //result = fc::signed_sat_add( result, account.received_vesting_shares.amount.value );
-   //result = fc::signed_sat_add( result, rc_account.max_rc_creation_adjustment.amount.value );
-   //result = fc::signed_sat_sub( result, detail::get_next_vesting_withdrawal( account ) );
-	int64_t result = account.balance.amount.value;///~~~~~CLC~~~~~
-	result = fc::signed_sat_add( result, rc_account.max_rc_creation_adjustment.amount.value );///~~~~~CLC~~~~~
-   return result;
+	return 0;
+///~~~~~CLC~~~~~{ WILL COME SOON ;-)
+//    int64_t result = account.vesting_shares.amount.value;
+//    result = fc::signed_sat_sub( result, account.delegated_vesting_shares.amount.value );
+//    result = fc::signed_sat_add( result, account.received_vesting_shares.amount.value );
+//    result = fc::signed_sat_add( result, rc_account.max_rc_creation_adjustment.amount.value );
+//    result = fc::signed_sat_sub( result, detail::get_next_vesting_withdrawal( account ) );	
+//    return result;
+///~~~~~CLC~~~~~} WILL COME SOON ;-)
 }
 
 } } } // colab::plugins::rc

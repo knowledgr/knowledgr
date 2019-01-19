@@ -28,7 +28,7 @@ void initialize_core_indexes( database& db )
    add_core_index< comment_vote_index                      >( db );
    add_core_index< witness_vote_index                      >( db );
    add_core_index< limit_order_index                       >( db );
-   add_core_index< feed_history_index                      >( db );
+//   add_core_index< feed_history_index                      >( db );
 //   add_core_index< convert_request_index                   >( db );
    add_core_index< liquidity_reward_balance_index          >( db );
    add_core_index< operation_index                         >( db );

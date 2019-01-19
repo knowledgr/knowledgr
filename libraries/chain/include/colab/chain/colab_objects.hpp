@@ -149,29 +149,29 @@ namespace colab { namespace chain {
    };
 
 
-   /**
-    *  This object gets updated once per hour, on the hour
-    */
-   class feed_history_object  : public object< feed_history_object_type, feed_history_object >
-   {
-      feed_history_object() = delete;
-
-      public:
-         template< typename Constructor, typename Allocator >
-         feed_history_object( Constructor&& c, allocator< Allocator > a )
-            :price_history( a )
-         {
-            c( *this );
-         }
-
-         id_type                                   id;
-
-         price                                     current_median_history; ///< the current median of the price history, used as the base for convert operations
-
-         using t_price_history = t_deque< price >;
-
-         t_deque< price >   price_history; ///< tracks this last week of median_feed one per hour
-   };
+//    /**
+//     *  This object gets updated once per hour, on the hour
+//     */
+//    class feed_history_object  : public object< feed_history_object_type, feed_history_object >
+//    {
+//       feed_history_object() = delete;
+// 
+//       public:
+//          template< typename Constructor, typename Allocator >
+//          feed_history_object( Constructor&& c, allocator< Allocator > a )
+//             :price_history( a )
+//          {
+//             c( *this );
+//          }
+// 
+//          id_type                                   id;
+// 
+//          price                                     current_median_history; ///< the current median of the price history, used as the base for convert operations
+// 
+//          using t_price_history = t_deque< price >;
+// 
+//          t_deque< price >   price_history; ///< tracks this last week of median_feed one per hour
+//    };
 
 
    /**
@@ -366,13 +366,13 @@ namespace colab { namespace chain {
       allocator< liquidity_reward_balance_object >
    > liquidity_reward_balance_index;
 
-   typedef multi_index_container<
-      feed_history_object,
-      indexed_by<
-         ordered_unique< tag< by_id >, member< feed_history_object, feed_history_id_type, &feed_history_object::id > >
-      >,
-      allocator< feed_history_object >
-   > feed_history_index;
+//    typedef multi_index_container<
+//       feed_history_object,
+//       indexed_by<
+//          ordered_unique< tag< by_id >, member< feed_history_object, feed_history_id_type, &feed_history_object::id > >
+//       >,
+//       allocator< feed_history_object >
+//    > feed_history_index;
 
    struct by_withdraw_route;
    struct by_destination;
@@ -508,9 +508,9 @@ FC_REFLECT( colab::chain::limit_order_object,
              (id)(created)(expiration)(seller)(orderid)(for_sale)(sell_price) )
 CHAINBASE_SET_INDEX_TYPE( colab::chain::limit_order_object, colab::chain::limit_order_index )
 
-FC_REFLECT( colab::chain::feed_history_object,
-             (id)(current_median_history)(price_history) )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::feed_history_object, colab::chain::feed_history_index )
+// FC_REFLECT( colab::chain::feed_history_object,
+//              (id)(current_median_history)(price_history) )
+// CHAINBASE_SET_INDEX_TYPE( colab::chain::feed_history_object, colab::chain::feed_history_index )
 
 // FC_REFLECT( colab::chain::convert_request_object,
 //              (id)(owner)(requestid)(amount)(conversion_date) )

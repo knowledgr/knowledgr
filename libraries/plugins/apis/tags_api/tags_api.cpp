@@ -539,11 +539,11 @@ void tags_api_impl::set_pending_payout( discussion& d )
    const auto& cidx = _db.get_index< tags::tag_index, tags::by_comment>();
    auto itr = cidx.lower_bound( d.id );
    if( itr != cidx.end() && itr->comment == d.id )  {
-      d.promoted = asset( itr->promoted_balance, SBD_SYMBOL );
+      d.promoted = asset( itr->promoted_balance, CLC_SYMBOL/*SBD_SYMBOL*/ );
    }
 
    const auto& props = _db.get_dynamic_global_properties();
-   const auto& hist  = _db.get_feed_history();
+//   const auto& hist  = _db.get_feed_history();
 
    asset pot;
    if( _db.has_hardfork( COLAB_HARDFORK_0_17__774 ) )
@@ -551,7 +551,7 @@ void tags_api_impl::set_pending_payout( discussion& d )
    else
       pot = props.total_reward_fund_colab;
 
-   if( !hist.current_median_history.is_null() ) pot = pot * hist.current_median_history;
+//   if( !hist.current_median_history.is_null() ) pot = pot * hist.current_median_history;
 
    u256 total_r2 = 0;
    if( _db.has_hardfork( COLAB_HARDFORK_0_17__774 ) )
@@ -671,7 +671,7 @@ discussion_query_result tags_api_impl::get_discussions( const discussion_query& 
       try
       {
          result.discussions.push_back( lookup_discussion( tidx_itr->comment, truncate_body ) );
-         result.discussions.back().promoted = asset(tidx_itr->promoted_balance, SBD_SYMBOL );
+         result.discussions.back().promoted = asset(tidx_itr->promoted_balance, CLC_SYMBOL/*SBD_SYMBOL*/ );
 
          if( filter( result.discussions.back() ) )
          {

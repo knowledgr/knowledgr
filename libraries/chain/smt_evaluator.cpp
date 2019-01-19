@@ -80,13 +80,13 @@ void smt_create_evaluator::do_apply( const smt_create_operation& o )
    }
    else
    {
-      const auto& fhistory = _db.get_feed_history();
-      FC_ASSERT( !fhistory.current_median_history.is_null(), "Cannot pay the fee using different asset symbol because there is no price feed." );
-
-      if( dgpo.smt_creation_fee.symbol == CLC_SYMBOL )
-         creation_fee = _db.to_colab( o.smt_creation_fee );
-      else
-         creation_fee = _db.to_sbd( o.smt_creation_fee );
+//       const auto& fhistory = _db.get_feed_history();
+//       FC_ASSERT( !fhistory.current_median_history.is_null(), "Cannot pay the fee using different asset symbol because there is no price feed." );
+// 
+//       if( dgpo.smt_creation_fee.symbol == CLC_SYMBOL )
+//          creation_fee = _db.to_colab( o.smt_creation_fee );
+//       else
+//          creation_fee = _db.to_sbd( o.smt_creation_fee );
    }
 
    FC_ASSERT( creation_fee == dgpo.smt_creation_fee,

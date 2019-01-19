@@ -34,7 +34,24 @@ struct manabar
    manabar( int64_t m, uint32_t t )
       : current_mana(m), last_update_time(t) {}
 
+   void regenerate(uint32_t now) {
+	   int64_t elapsed_seconds = int64_t(now - last_update_time);
+	   int64_t regenerated_power = (COLAB_100_PERCENT * elapsed_seconds) / COLAB_VOTING_MANA_REGENERATION_SECONDS;
+	   current_mana = std::min( current_mana + regenerated_power, int64_t(COLAB_100_PERCENT) );
+	   last_update_time = now;
+   }
+   static uint128_t calculate_mana_to_be_used(manabar voting_manabar, int64_t percent, int64_t votes_num_per_day) {
+	   uint128_t used_mana = ( uint128_t( voting_manabar.current_mana ) * percent * 60 * 60 * 24 ) / COLAB_100_PERCENT;
+	   int64_t max_vote_denom = votes_num_per_day * COLAB_VOTING_MANA_REGENERATION_SECONDS;
+	   std::cerr<<"~~~ [manabar::calculate_mana_to_be_used()] - max_vote_denom = "<<max_vote_denom<<"\n";
+	   FC_ASSERT( max_vote_denom > 0 );
+
+	   used_mana = ( used_mana + max_vote_denom - 1 ) / max_vote_denom;
+	   return used_mana;
+   }
+
 #if 1 ///~~~~~CLC~~~~~{
+
 
 //    template< bool skip_cap_regen = false >
 //    void regenerate_mana( const manabar_params& params, uint32_t now )
