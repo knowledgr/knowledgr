@@ -257,11 +257,11 @@ struct database_fixture {
    void fund( const string& account_name, const share_type& amount = 500000 );
    void fund( const string& account_name, const asset& amount );
    void transfer( const string& from, const string& to, const asset& amount );
-   void convert( const string& account_name, const asset& amount );
+//   void convert( const string& account_name, const asset& amount );
 //    void vest( const string& from, const string& to, const asset& amount );
 //    void vest( const string& from, const share_type& amount );
    void proxy( const string& account, const string& proxy );
-   void set_price_feed( const price& new_price );
+//   void set_price_feed( const price& new_price );
    void set_witness_props( const flat_map< string, vector< char > >& new_props );
    const asset& get_balance( const string& account_name )const;
    void sign( signed_transaction& trx, const fc::ecc::private_key& key );
@@ -294,9 +294,9 @@ struct t_smt_database_fixture : public T
 {
    using units = flat_map< account_name_type, uint16_t >;
 
-   using database_fixture::set_price_feed;
+//   using database_fixture::set_price_feed;
    using database_fixture::fund;
-   using database_fixture::convert;
+//   using database_fixture::convert;
 
    t_smt_database_fixture(){}
    virtual ~t_smt_database_fixture(){}

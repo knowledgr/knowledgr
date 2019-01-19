@@ -316,6 +316,9 @@
 #define COLAB_ROOT_POST_PARENT                (account_name_type())
 ///@}
 
+#define COLAB_NUM_OF_INIT_STAKING_ACCOUNTS		1000///~~~~~CLC~~~~~
+#define COLAB_LIMIT_STAKING_AMOUNT				asset( 1000000, CLC_SYMBOL )///~~~~~CLC~~~~~
+
 #ifdef COLAB_ENABLE_SMT
 
 #define SMT_MAX_VOTABLE_ASSETS 2

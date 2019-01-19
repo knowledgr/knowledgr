@@ -471,9 +471,19 @@ void account_create_evaluator::do_apply( const account_create_operation& o )
    const auto& new_account = _db.create< account_object >( [&]( account_object& acc )
    {
       initialize_account_object( acc, o.new_account_name, o.memo_key, props, false /*mined*/, o.creator, _db.get_hardfork() );
+
       #ifndef IS_LOW_MEM
          from_string( acc.json_metadata, o.json_metadata );
       #endif
+		if (props.num_of_accounts < COLAB_NUM_OF_INIT_STAKING_ACCOUNTS) {
+			auto& initminer = _db.get_account( COLAB_INIT_MINER_NAME );
+			FC_ASSET(initminer.balance >= COLAB_LIMIT_STAKING_AMOUNT, "Co-Lab has not too small CLC Token!!!");
+			acc.stake_balance += COLAB_LIMIT_STAKING_AMOUNT;
+			_db.modify( initminer, [&]( account_object& init0 )
+			{
+				init0.balance -= COLAB_LIMIT_STAKING_AMOUNT;
+			});
+		}
    });
 
    _db.create< account_authority_object >( [&]( account_authority_object& auth )
@@ -482,12 +492,16 @@ void account_create_evaluator::do_apply( const account_create_operation& o )
       auth.owner = o.owner;
       auth.active = o.active;
       auth.posting = o.posting;
-      auth.last_owner_update = fc::time_point_sec::min();
+      auth.last_owner_update = fc::time_point_sec::min();	  
    });
 
    if( !_db.has_hardfork( COLAB_HARDFORK_0_20__1762 ) && o.fee.amount > 0 )
    {
       _db.create_vesting( new_account, o.fee );
+   }
+   _db.modify( props, [&]( dynamic_global_property_object& p )
+   {
+	   p.num_of_accounts += 1;
    }
 }
 

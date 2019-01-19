@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE( comment_payout_equalize )
       // U,V,W : voters
 
       // set a ridiculously high CLC price ($1 / satoshi) to disable dust threshold
-      set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "0.001 TESTS" ) ) );
+      //set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "0.001 TESTS" ) ) );
 
       for( const auto& voter : voters )
       {
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE( comment_payout_dust )
       vest( COLAB_INIT_MINER_NAME, "alice", ASSET( "10.000 TESTS" ) );
       vest( COLAB_INIT_MINER_NAME, "bob", ASSET( "10.000 TESTS" ) );
 
-      set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
+      //set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
 
       generate_block();
       validate_database();
@@ -314,7 +314,7 @@ BOOST_AUTO_TEST_CASE( recent_claims_decay )
       ACTORS( (alice)(bob) )
       generate_block();
 
-      set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
+      //set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
       generate_block();
 
       comment_operation comment;
@@ -1864,15 +1864,15 @@ BOOST_AUTO_TEST_CASE( liquidity_rewards )
 
       ACTORS( (alice)(bob)(sam)(dave) )
       generate_block();
-      vest( COLAB_INIT_MINER_NAME, "alice", ASSET( "10.000 TESTS" ) );
-      vest( COLAB_INIT_MINER_NAME, "bob", ASSET( "10.000 TESTS" ) );
-      vest( COLAB_INIT_MINER_NAME, "sam", ASSET( "10.000 TESTS" ) );
-      vest( COLAB_INIT_MINER_NAME, "dave", ASSET( "10.000 TESTS" ) );
+//       vest( COLAB_INIT_MINER_NAME, "alice", ASSET( "10.000 TESTS" ) );
+//       vest( COLAB_INIT_MINER_NAME, "bob", ASSET( "10.000 TESTS" ) );
+//       vest( COLAB_INIT_MINER_NAME, "sam", ASSET( "10.000 TESTS" ) );
+//       vest( COLAB_INIT_MINER_NAME, "dave", ASSET( "10.000 TESTS" ) );
 
       BOOST_TEST_MESSAGE( "Rewarding Bob with TESTS" );
 
-      auto exchange_rate = price( ASSET( "1.000 TBD" ), ASSET( "1.250 TESTS" ) );
-      set_price_feed( exchange_rate );
+//       auto exchange_rate = price( ASSET( "1.000 TBD" ), ASSET( "1.250 TESTS" ) );
+//       set_price_feed( exchange_rate );
 
       signed_transaction tx;
 
@@ -1903,7 +1903,7 @@ BOOST_AUTO_TEST_CASE( liquidity_rewards )
 
       limit_order_create_operation op;
       op.owner = "alice";
-      op.amount_to_sell = asset( alice_sbd.amount.value / 20, SBD_SYMBOL ) ;
+      //op.amount_to_sell = asset( alice_sbd.amount.value / 20, SBD_SYMBOL ) ;
       op.min_to_receive = op.amount_to_sell * exchange_rate;
       op.expiration = db->head_block_time() + fc::seconds( COLAB_MAX_LIMIT_ORDER_EXPIRATION );
       op.orderid = 1;
@@ -2569,13 +2569,13 @@ BOOST_AUTO_TEST_CASE( comment_freeze )
       fund( "sam", 10000 );
       fund( "dave", 10000 );
 
-      vest( "alice", 10000 );
-      vest( "bob", 10000 );
-      vest( "sam", 10000 );
-      vest( "dave", 10000 );
+//       vest( "alice", 10000 );
+//       vest( "bob", 10000 );
+//       vest( "sam", 10000 );
+//       vest( "dave", 10000 );
 
-      auto exchange_rate = price( ASSET( "1.000 TBD" ), ASSET( "1.250 TESTS" ) );
-      set_price_feed( exchange_rate );
+//       auto exchange_rate = price( ASSET( "1.000 TBD" ), ASSET( "1.250 TESTS" ) );
+//       set_price_feed( exchange_rate );
 
       signed_transaction tx;
 
@@ -3031,7 +3031,7 @@ BOOST_AUTO_TEST_CASE( account_subsidy_witness_limits )
       ACTORS( (alice) )
       generate_block();
 
-      set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
+      //set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
 
       claim_account_operation op;
       signed_transaction tx;
