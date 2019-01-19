@@ -407,9 +407,10 @@ struct extended_dynamic_global_properties
       last_irreversible_block_num( o.last_irreversible_block_num ),
       vote_power_reserve_rate( o.vote_power_reserve_rate ),
       delegation_return_period( o.delegation_return_period ),
-      reverse_auction_seconds( o.reverse_auction_seconds )//,
+      reverse_auction_seconds( o.reverse_auction_seconds ),
 //       sbd_stop_percent( o.sbd_stop_percent ),
 //       sbd_start_percent( o.sbd_start_percent )
+		num_of_accounts(o.num_of_accounts)
    {}
 
    uint32_t          head_block_number = 0;
@@ -450,6 +451,7 @@ struct extended_dynamic_global_properties
 
 //    uint16_t          sbd_stop_percent = 0;
 //    uint16_t          sbd_start_percent = 0;
+   uint64_t			num_of_accounts = 0;
 };
 
 struct api_witness_object
@@ -550,22 +552,22 @@ struct api_witness_schedule_object
    int64_t                       min_witness_account_subsidy_decay = 0;
 };
 
-struct api_feed_history_object
-{
-   api_feed_history_object() {}
-   api_feed_history_object( const database_api::api_feed_history_object& f ) :
-      current_median_history( f.current_median_history )
-   {
-      for( auto& p : f.price_history )
-      {
-         price_history.push_back( legacy_price( p ) );
-      }
-   }
-
-   feed_history_id_type   id;
-   legacy_price           current_median_history;
-   deque< legacy_price >  price_history;
-};
+// struct api_feed_history_object
+// {
+//    api_feed_history_object() {}
+//    api_feed_history_object( const database_api::api_feed_history_object& f ) :
+//       current_median_history( f.current_median_history )
+//    {
+//       for( auto& p : f.price_history )
+//       {
+//          price_history.push_back( legacy_price( p ) );
+//       }
+//    }
+// 
+//    feed_history_id_type   id;
+//    legacy_price           current_median_history;
+//    deque< legacy_price >  price_history;
+// };
 
 struct api_reward_fund_object
 {
@@ -790,7 +792,7 @@ struct state
 
    map< string, api_witness_object >                  witnesses;
    api_witness_schedule_object                        witness_schedule;
-   legacy_price                                       feed_price;
+//   legacy_price                                       feed_price;
    string                                             error;
 };
 
@@ -976,8 +978,8 @@ DEFINE_API_ARGS( get_ops_in_block,                       vector< variant >,   ve
 DEFINE_API_ARGS( get_config,                             vector< variant >,   fc::variant_object )
 DEFINE_API_ARGS( get_dynamic_global_properties,          vector< variant >,   extended_dynamic_global_properties )
 DEFINE_API_ARGS( get_chain_properties,                   vector< variant >,   api_chain_properties )
-DEFINE_API_ARGS( get_current_median_history_price,       vector< variant >,   legacy_price )
-DEFINE_API_ARGS( get_feed_history,                       vector< variant >,   api_feed_history_object )
+//DEFINE_API_ARGS( get_current_median_history_price,       vector< variant >,   legacy_price )
+//DEFINE_API_ARGS( get_feed_history,                       vector< variant >,   api_feed_history_object )
 DEFINE_API_ARGS( get_witness_schedule,                   vector< variant >,   api_witness_schedule_object )
 DEFINE_API_ARGS( get_hardfork_version,                   vector< variant >,   hardfork_version )
 DEFINE_API_ARGS( get_next_scheduled_hardfork,            vector< variant >,   scheduled_hardfork )
@@ -1074,8 +1076,8 @@ public:
       (get_config)
       (get_dynamic_global_properties)
       (get_chain_properties)
-      (get_current_median_history_price)
-      (get_feed_history)
+//       (get_current_median_history_price)
+//       (get_feed_history)
       (get_witness_schedule)
       (get_hardfork_version)
       (get_next_scheduled_hardfork)
@@ -1171,7 +1173,7 @@ FC_REFLECT( colab::plugins::condenser_api::api_tag_object,
             (name)(total_payouts)(net_votes)(top_posts)(comments)(trending) )
 
 FC_REFLECT( colab::plugins::condenser_api::state,
-            (current_route)(props)(tag_idx)(tags)(content)(accounts)(witnesses)(discussion_idx)(witness_schedule)(feed_price)(error) )
+            (current_route)(props)(tag_idx)(tags)(content)(accounts)(witnesses)(discussion_idx)(witness_schedule)/*(feed_price)*/(error) )
 
 FC_REFLECT( colab::plugins::condenser_api::api_limit_order_object,
             (id)(created)(expiration)(seller)(orderid)(for_sale)(sell_price)(real_price)(rewarded) )
@@ -1266,11 +1268,11 @@ FC_REFLECT( colab::plugins::condenser_api::api_witness_schedule_object,
              (min_witness_account_subsidy_decay)
           )
 
-FC_REFLECT( colab::plugins::condenser_api::api_feed_history_object,
-             (id)
-             (current_median_history)
-             (price_history)
-          )
+// FC_REFLECT( colab::plugins::condenser_api::api_feed_history_object,
+//              (id)
+//              (current_median_history)
+//              (price_history)
+//           )
 
 FC_REFLECT( colab::plugins::condenser_api::api_reward_fund_object,
             (id)

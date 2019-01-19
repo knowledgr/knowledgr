@@ -131,6 +131,8 @@ namespace colab { namespace chain {
 
 //          uint16_t sbd_stop_percent = 0;
 //          uint16_t sbd_start_percent = 0;
+
+		 uint64_t num_of_accounts = 0;
 #ifdef COLAB_ENABLE_SMT
          asset smt_creation_fee = asset( 1000, SBD_SYMBOL );
 #endif
@@ -183,5 +185,6 @@ FC_REFLECT( colab::chain::dynamic_global_property_object,
 #ifdef COLAB_ENABLE_SMT
              (smt_creation_fee)
 #endif
+			 (num_of_accounts)
           )
 CHAINBASE_SET_INDEX_TYPE( colab::chain::dynamic_global_property_object, colab::chain::dynamic_global_property_index )

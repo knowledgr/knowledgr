@@ -1598,26 +1598,24 @@ void colab_vote_evaluator( const vote_operation& o, database& _db )
 
    _db.modify( voter, [&]( account_object& a )
    {
-	  int64_t elapsed_seconds = (_db.head_block_time().sec_since_epoch() - voter.voting_manabar.last_update_time);
-	  int64_t regenerated_power = (COLAB_100_PERCENT * elapsed_seconds) / COLAB_VOTING_MANA_REGENERATION_SECONDS;
-	  a.voting_manabar.current_mana = std::min( int64_t(voter.voting_manabar.current_mana) + regenerated_power, int64_t(COLAB_100_PERCENT) );
-	  a.voting_manabar.last_update_time = now.sec_since_epoch();
+	  a.voting_manabar.regenerate(now.sec_since_epoch());
    });
    FC_ASSERT( voter.voting_manabar.current_mana > 0, "Account does not have enough mana to vote." );
 
    int16_t abs_weight = abs( o.weight );
    std::cerr<<"~~~ [colab_vote_evaluator()] - abs_weight = "<<abs_weight<<"\n";
 
-   uint128_t used_mana = ( uint128_t( voter.voting_manabar.current_mana ) * abs_weight * 60 * 60 * 24 ) / COLAB_100_PERCENT;
-   std::cerr<<"~~~ [colab_vote_evaluator()] - used_mana = "<<used_mana.to_uint64()<<"\n";
+//    uint128_t used_mana = ( uint128_t( voter.voting_manabar.current_mana ) * abs_weight * 60 * 60 * 24 ) / COLAB_100_PERCENT;
+//    std::cerr<<"~~~ [colab_vote_evaluator()] - used_mana = "<<used_mana.to_uint64()<<"\n";
 
    const dynamic_global_property_object& dgpo = _db.get_dynamic_global_properties();
 
-   int64_t max_vote_denom = dgpo.vote_power_reserve_rate * COLAB_VOTING_MANA_REGENERATION_SECONDS;
-   std::cerr<<"~~~ [colab_vote_evaluator()] - max_vote_denom = "<<max_vote_denom<<"\n";
-   FC_ASSERT( max_vote_denom > 0 );
-
-   used_mana = ( used_mana + max_vote_denom - 1 ) / max_vote_denom;
+//    int64_t max_vote_denom = dgpo.vote_power_reserve_rate * COLAB_VOTING_MANA_REGENERATION_SECONDS;
+//    std::cerr<<"~~~ [colab_vote_evaluator()] - max_vote_denom = "<<max_vote_denom<<"\n";
+//    FC_ASSERT( max_vote_denom > 0 );
+// 
+//    used_mana = ( used_mana + max_vote_denom - 1 ) / max_vote_denom;
+   uint128_t used_mana = chain::util::manabar::calculate_mana_to_be_used(voter.voting_manabar, abs_weight, dgpo.vote_power_reserve_rate);
    std::cerr<<"~~~ [colab_vote_evaluator()] - used_mana = "<<used_mana.to_uint64()<<"\n";
    FC_ASSERT( voter.voting_manabar.has_mana( used_mana.to_uint64() ), "Account does not have enough mana to vote." );
 
@@ -1626,13 +1624,6 @@ void colab_vote_evaluator( const vote_operation& o, database& _db )
    std::cerr<<"~~~ [colab_vote_evaluator()] - voter_power = "<<voter_power<<"\n";
 
    int64_t abs_rshares = used_mana.to_uint64() * voter_power;// / COLAB_100_PERCENT;
-
-   std::cerr<<"~~~ [colab_vote_evaluator()] - abs_rshares = "<<abs_rshares<<"\n";
-
-#if 0/// no need here
-   abs_rshares -= COLAB_VOTE_DUST_THRESHOLD;
-   abs_rshares = std::max( int64_t(0), abs_rshares );
-#endif///
 
    std::cerr<<"~~~ [colab_vote_evaluator()] - abs_rshares = "<<abs_rshares<<"\n";
 

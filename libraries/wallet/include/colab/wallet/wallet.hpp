@@ -123,11 +123,11 @@ class wallet_api
        */
       vector< condenser_api::api_operation_object > get_ops_in_block( uint32_t block_num, bool only_virtual = true );
 
-      /** Return the current price feed history
-       *
-       * @returns Price feed history data on the blockchain
-       */
-      condenser_api::api_feed_history_object get_feed_history()const;
+//       /** Return the current price feed history
+//        *
+//        * @returns Price feed history data on the blockchain
+//        */
+//       condenser_api::api_feed_history_object get_feed_history()const;
 
       /**
        * Returns the list of witnesses producing blocks in the current round (21 Blocks)
@@ -1270,7 +1270,7 @@ FC_API( colab::wallet::wallet_api,
         (get_account)
         (get_block)
         (get_ops_in_block)
-        (get_feed_history)
+        //(get_feed_history)
         //(get_conversion_requests)
         (get_account_history)
         (get_state)

@@ -202,7 +202,7 @@ namespace colab { namespace chain {
 
          const dynamic_global_property_object&  get_dynamic_global_properties()const;
          const node_property_object&            get_node_properties()const;
-         const feed_history_object&             get_feed_history()const;
+//         const feed_history_object&             get_feed_history()const;
          const witness_schedule_object&         get_witness_schedule_object()const;
          const hardfork_property_object&        get_hardfork_property_object()const;
 
@@ -409,12 +409,12 @@ namespace colab { namespace chain {
 
          void  pay_liquidity_reward();
 
-         /**
-          * Helper method to return the current sbd value of a given amount of
-          * CLC.  Return 0 SBD if there isn't a current_median_history
-          */
-         asset to_sbd( const asset& colab )const;
-         asset to_colab( const asset& sbd )const;
+//          /**
+//           * Helper method to return the current sbd value of a given amount of
+//           * CLC.  Return 0 SBD if there isn't a current_median_history
+//           */
+//          asset to_sbd( const asset& colab )const;
+//          asset to_colab( const asset& sbd )const;
 
          time_point_sec   head_block_time()const;
          uint32_t         head_block_num()const;

@@ -557,10 +557,10 @@ const node_property_object& database::get_node_properties() const
    return _node_property_object;
 }
 
-const feed_history_object& database::get_feed_history()const
-{ try {
-   return get< feed_history_object >();
-} FC_CAPTURE_AND_RETHROW() }
+// const feed_history_object& database::get_feed_history()const
+// { try {
+//    return get< feed_history_object >();
+// } FC_CAPTURE_AND_RETHROW() }
 
 const witness_schedule_object& database::get_witness_schedule_object()const
 { try {
@@ -2402,15 +2402,15 @@ share_type database::pay_reward_funds( share_type reward )
 //    } );
 // }
 
-asset database::to_sbd( const asset& colab )const
-{
-   return util::to_sbd( get_feed_history().current_median_history, colab );
-}
-
-asset database::to_colab( const asset& sbd )const
-{
-   return util::to_colab( get_feed_history().current_median_history, sbd );
-}
+// asset database::to_sbd( const asset& colab )const
+// {
+//    return util::to_sbd( get_feed_history().current_median_history, colab );
+// }
+// 
+// asset database::to_colab( const asset& sbd )const
+// {
+//    return util::to_colab( get_feed_history().current_median_history, sbd );
+// }
 
 void database::account_recovery_processing()
 {
@@ -2770,8 +2770,8 @@ void database::init_genesis( uint64_t init_supply )
 //          p.sbd_start_percent = COLAB_SBD_START_PERCENT_HF14;
       } );
 
-      // Nothing to do
-      create< feed_history_object >( [&]( feed_history_object& o ) {});
+//       // Nothing to do
+//       create< feed_history_object >( [&]( feed_history_object& o ) {});
       for( int i = 0; i < 0x10000; i++ )
          create< block_summary_object >( [&]( block_summary_object& ) {});
       create< hardfork_property_object >( [&](hardfork_property_object& hpo )
@@ -4881,11 +4881,11 @@ void database::apply_hardfork( uint32_t hardfork )
          break;
       case COLAB_HARDFORK_0_16:
          {
-            modify( get_feed_history(), [&]( feed_history_object& fho )
-            {
-               while( fho.price_history.size() > COLAB_FEED_HISTORY_WINDOW )
-                  fho.price_history.pop_front();
-            });
+//             modify( get_feed_history(), [&]( feed_history_object& fho )
+//             {
+//                while( fho.price_history.size() > COLAB_FEED_HISTORY_WINDOW )
+//                   fho.price_history.pop_front();
+//             });
          }
          break;
       case COLAB_HARDFORK_0_17:

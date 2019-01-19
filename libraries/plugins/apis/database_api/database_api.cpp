@@ -27,8 +27,8 @@ class database_api_impl
          (get_witness_schedule)
          (get_hardfork_properties)
          (get_reward_funds)
-         (get_current_price_feed)
-         (get_feed_history)
+//          (get_current_price_feed)
+//          (get_feed_history)
          (list_witnesses)
          (find_witnesses)
          (list_witness_votes)
@@ -167,16 +167,16 @@ DEFINE_API_IMPL( database_api_impl, get_reward_funds )
 
    return result;
 }
-
-DEFINE_API_IMPL( database_api_impl, get_current_price_feed )
-{
-   return _db.get_feed_history().current_median_history;;
-}
-
-DEFINE_API_IMPL( database_api_impl, get_feed_history )
-{
-   return _db.get_feed_history();
-}
+// 
+// DEFINE_API_IMPL( database_api_impl, get_current_price_feed )
+// {
+//    return _db.get_feed_history().current_median_history;;
+// }
+// 
+// DEFINE_API_IMPL( database_api_impl, get_feed_history )
+// {
+//    return _db.get_feed_history();
+// }
 
 
 //////////////////////////////////////////////////////////////////////
@@ -1496,8 +1496,8 @@ DEFINE_READ_APIS( database_api,
    (get_witness_schedule)
    (get_hardfork_properties)
    (get_reward_funds)
-   (get_current_price_feed)
-   (get_feed_history)
+//    (get_current_price_feed)
+//    (get_feed_history)
    (list_witnesses)
    (find_witnesses)
    (list_witness_votes)
