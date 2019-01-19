@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE( account_create_apply )
    {
       BOOST_TEST_MESSAGE( "Testing: account_create_apply" );
 
-      set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
+      //set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
 
       db_plugin->debug_update( [=]( database& db )
       {
@@ -645,7 +645,7 @@ BOOST_AUTO_TEST_CASE( comment_delete_apply )
 
       generate_block();
 
-      set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
+      //set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
 
       signed_transaction tx;
       comment_operation comment;
@@ -2634,7 +2634,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create_apply )
    {
       BOOST_TEST_MESSAGE( "Testing: limit_order_create_apply" );
 
-      set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
+      //set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
 
       ACTORS( (alice)(bob) )
       fund( "alice", 1000000 );
@@ -2979,7 +2979,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create2_apply )
    {
       BOOST_TEST_MESSAGE( "Testing: limit_order_create2_apply" );
 
-      set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
+      //set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
 
       ACTORS( (alice)(bob) )
       fund( "alice", 1000000 );
@@ -6627,7 +6627,7 @@ BOOST_AUTO_TEST_CASE( comment_beneficiaries_apply )
       ACTORS( (alice)(bob)(sam)(dave) )
       generate_block();
 
-      set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
+      //set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
 
       comment_operation comment;
       vote_operation vote;

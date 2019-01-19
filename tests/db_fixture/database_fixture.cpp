@@ -444,19 +444,19 @@ void database_fixture::fund(
    FC_CAPTURE_AND_RETHROW( (account_name)(amount) )
 }
 
-void database_fixture::convert(
-   const string& account_name,
-   const asset& amount )
-{
-   try
-   {
-      if ( amount.symbol == CLC_SYMBOL )
-      {
-         db->adjust_balance( account_name, -amount );
-         db->adjust_balance( account_name, db->to_sbd( amount ) );
-         db->adjust_supply( -amount );
-         db->adjust_supply( db->to_sbd( amount ) );
-      }
+// void database_fixture::convert(
+//    const string& account_name,
+//    const asset& amount )
+// {
+//    try
+//    {
+//       if ( amount.symbol == CLC_SYMBOL )
+//       {
+//          db->adjust_balance( account_name, -amount );
+//          db->adjust_balance( account_name, db->to_sbd( amount ) );
+//          db->adjust_supply( -amount );
+//          db->adjust_supply( db->to_sbd( amount ) );
+//       }
 //       else if ( amount.symbol == SBD_SYMBOL )
 //       {
 //          db->adjust_balance( account_name, -amount );
@@ -464,8 +464,8 @@ void database_fixture::convert(
 //          db->adjust_supply( -amount );
 //          db->adjust_supply( db->to_colab( amount ) );
 //       }
-   } FC_CAPTURE_AND_RETHROW( (account_name)(amount) )
-}
+//    } FC_CAPTURE_AND_RETHROW( (account_name)(amount) )
+// }
 
 void database_fixture::transfer(
    const string& from,
@@ -665,8 +665,8 @@ asset_symbol_type t_smt_database_fixture< T >::create_smt_with_nai( const string
       fund( account_name, 10 * 1000 * 1000 );
       this->generate_block();
 
-      set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
-      convert( account_name, ASSET( "5000.000 TESTS" ) );
+//       set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
+//       convert( account_name, ASSET( "5000.000 TESTS" ) );
 
       op.symbol = asset_symbol_type::from_nai( nai, token_decimal_places );
       op.precision = op.symbol.decimals();
@@ -732,8 +732,8 @@ std::array<asset_symbol_type, 3> t_smt_database_fixture< T >::create_smt_3(const
       fund( control_account_name, 10 * 1000 * 1000 );
       this->generate_block();
 
-      set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
-      convert( control_account_name, ASSET( "5000.000 TESTS" ) );
+//       set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
+//       convert( control_account_name, ASSET( "5000.000 TESTS" ) );
 
       set_create_op( &op0, control_account_name, 0, *this->db );
       set_create_op( &op1, control_account_name, 1, *this->db );
