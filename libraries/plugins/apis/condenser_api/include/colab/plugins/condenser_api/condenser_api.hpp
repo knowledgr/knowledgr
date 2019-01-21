@@ -1233,7 +1233,7 @@ FC_REFLECT( colab::plugins::condenser_api::extended_dynamic_global_properties,
             (total_reward_fund_colab)(total_reward_shares2)/*(pending_rewarded_vesting_shares)(pending_rewarded_vesting_clc)*/
             /*(sbd_interest_rate)(sbd_print_rate)*/
             (maximum_block_size)(current_aslot)(recent_slots_filled)(participation_count)(last_irreversible_block_num)(vote_power_reserve_rate)
-            (delegation_return_period)(reverse_auction_seconds)/*(sbd_stop_percent)(sbd_start_percent)*/ )
+            (delegation_return_period)(reverse_auction_seconds)/*(sbd_stop_percent)(sbd_start_percent)*/(num_of_accounts) )
 
 FC_REFLECT( colab::plugins::condenser_api::api_witness_object,
              (id)

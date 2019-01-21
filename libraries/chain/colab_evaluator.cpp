@@ -806,6 +806,7 @@ void comment_evaluator::do_apply( const comment_operation& o )
 
    const auto& auth = _db.get_account( o.author ); /// prove it exists
 
+   FC_ASSERT( auth.stake_balance > asset(0, CLC_SYMBOL), "Voter has not any stake balance." );
    comment_id_type id;
 
    const comment_object* parent = nullptr;
@@ -1562,6 +1563,7 @@ void colab_vote_evaluator( const vote_operation& o, database& _db )
    const auto& comment = _db.get_comment( o.author, o.permlink );
    const auto& voter   = _db.get_account( o.voter );
 
+   FC_ASSERT( voter.stake_balance > asset(0, CLC_SYMBOL), "Voter has not any stake balance." );
    FC_ASSERT( voter.can_vote, "Voter has declined their voting rights." );
 
    if( o.weight > 0 ) FC_ASSERT( comment.allow_votes, "Votes are not allowed on the comment." );
@@ -1619,18 +1621,11 @@ void colab_vote_evaluator( const vote_operation& o, database& _db )
    int16_t abs_weight = abs( o.weight );
    std::cerr<<"~~~ [colab_vote_evaluator()] - abs_weight = "<<abs_weight<<"\n";
 
-//    uint128_t used_mana = ( uint128_t( voter.voting_manabar.current_mana ) * abs_weight * 60 * 60 * 24 ) / COLAB_100_PERCENT;
-//    std::cerr<<"~~~ [colab_vote_evaluator()] - used_mana = "<<used_mana.to_uint64()<<"\n";
-
    const dynamic_global_property_object& dgpo = _db.get_dynamic_global_properties();
 
-//    int64_t max_vote_denom = dgpo.vote_power_reserve_rate * COLAB_VOTING_MANA_REGENERATION_SECONDS;
-//    std::cerr<<"~~~ [colab_vote_evaluator()] - max_vote_denom = "<<max_vote_denom<<"\n";
-//    FC_ASSERT( max_vote_denom > 0 );
-// 
-//    used_mana = ( used_mana + max_vote_denom - 1 ) / max_vote_denom;
    uint128_t used_mana = chain::util::manabar::calculate_mana_to_be_used(voter.voting_manabar, abs_weight, dgpo.vote_power_reserve_rate);
    std::cerr<<"~~~ [colab_vote_evaluator()] - used_mana = "<<used_mana.to_uint64()<<"\n";
+
    FC_ASSERT( voter.voting_manabar.has_mana( used_mana.to_uint64() ), "Account does not have enough mana to vote." );
 
    uint32_t voter_power = comment_object::voter_power(voter, comment);
