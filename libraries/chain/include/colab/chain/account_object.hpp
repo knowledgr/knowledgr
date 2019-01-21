@@ -125,6 +125,7 @@ namespace colab { namespace chain {
 		 t_expertises			expertises;
 		 account_member_of		member_of = user;
 		 asset					stake_balance = asset( 0, CLC_SYMBOL );
+		 share_type				rep_power_rewards = 1;
 
 		 static uint32_t expertise_rate(const account_object& account, protocol::expertise_category _category) { 
 			 for (auto & _expertise : account.expertises) {
@@ -451,6 +452,7 @@ FC_REFLECT( colab::chain::account_object,
 			 (expertises)///~~~~~CLC~~~~~
 			 (member_of)///~~~~~CLC~~~~~
 			 (stake_balance)///~~~~~CLC~~~~~
+			 (rep_power_rewards)
           )
 
 CHAINBASE_SET_INDEX_TYPE( colab::chain::account_object, colab::chain::account_index )

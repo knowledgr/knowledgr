@@ -215,7 +215,8 @@ struct api_account_object
       post_bandwidth( a.post_bandwidth ),
       pending_claimed_accounts( a.pending_claimed_accounts ),
 	  member_of(a.member_of),///~~~~~CLC~~~~~
-	  stake_balance(a.stake_balance)///~~~~~CLC~~~~~
+	  stake_balance(a.stake_balance),///~~~~~CLC~~~~~
+	  rep_power_rewards(a.rep_power_rewards)
    {
       size_t n = a.proxied_vsf_votes.size();
       proxied_vsf_votes.reserve( n );
@@ -313,6 +314,7 @@ struct api_account_object
    vector<std::string>					expertises; ///~~~~~CLC~~~~~
    account_object::account_member_of	member_of; ///~~~~~CLC~~~~~
    asset								stake_balance; ///~~~~~CLC~~~~~
+   share_type							rep_power_rewards;///~~~~~CLC~~~~~
 };
 
 ///~~~~~CLC~~~~~{
@@ -621,6 +623,7 @@ FC_REFLECT( colab::plugins::database_api::api_account_object,
 			 (expertises)///~~~~~CLC~~~~~
 			 (member_of)///~~~~~CLC~~~~~
 			 (stake_balance)///~~~~~CLC~~~~~
+			 (rep_power_rewards)
           )
 
 ///~~~~~CLC~~~~~{
