@@ -1107,7 +1107,7 @@ asset create_vesting2( database& db, const account_object& to_account, asset liq
    try
    {
       FC_ASSERT( liquid.symbol == CLC_SYMBOL );
-	  auto rep_power_reward = ( ( liquid.amount.value * COLAB_RPOWER_REWARD_PERCENT ) / COLAB_100_PERCENT ).to_uint64();
+	  auto rep_power_reward = ( ( liquid.amount.value * COLAB_RPOWER_REWARD_PERCENT ) / COLAB_100_PERCENT );
       asset new_token = asset(liquid.amount.value - rep_power_reward, CLC_SYMBOL);
       before_token_callback( new_token );  
 	  db.adjust_balance( to_account, new_token);

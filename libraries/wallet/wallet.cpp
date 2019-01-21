@@ -772,6 +772,8 @@ public:
             //total_sbd  += a.sbd_balance.to_asset();///~~~~~CLC~~~~~ NO NEED for CoLab
             out << std::left << std::setw( 17 ) << std::string(a.name)
                 << std::right << std::setw(18) << fc::variant(a.balance).as_string() <<" "
+				<< std::right << std::setw(18) << fc::variant(a.stake_balance).as_string() <<" "
+				<< std::right << std::setw(18) << a.rep_power_rewards.value <<" "
                 /*<< std::right << std::setw(26) << fc::variant(a.vesting_shares).as_string()*/ <<" "<<"\n";
                 //<< std::right << std::setw(16) << fc::variant(a.sbd_balance).as_string() ///~~~~~CLC~~~~~ NO NEED for CoLab
          }
