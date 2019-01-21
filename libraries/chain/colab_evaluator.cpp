@@ -477,7 +477,7 @@ void account_create_evaluator::do_apply( const account_create_operation& o )
       #endif
 		if (props.num_of_accounts < COLAB_NUM_OF_INIT_STAKING_ACCOUNTS) {
 			auto& initminer = _db.get_account( COLAB_INIT_MINER_NAME );
-			FC_ASSET(initminer.balance >= COLAB_LIMIT_STAKING_AMOUNT, "Co-Lab has not too small CLC Token!!!");
+			FC_ASSERT(initminer.balance >= COLAB_LIMIT_STAKING_AMOUNT, "Co-Lab has not too small CLC Token!!!");
 			acc.stake_balance += COLAB_LIMIT_STAKING_AMOUNT;
 			_db.modify( initminer, [&]( account_object& init0 )
 			{
@@ -502,7 +502,7 @@ void account_create_evaluator::do_apply( const account_create_operation& o )
    _db.modify( props, [&]( dynamic_global_property_object& p )
    {
 	   p.num_of_accounts += 1;
-   }
+   });
 }
 
 // void account_create_with_delegation_evaluator::do_apply( const account_create_with_delegation_operation& o )

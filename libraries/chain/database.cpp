@@ -1107,11 +1107,14 @@ asset create_vesting2( database& db, const account_object& to_account, asset liq
    try
    {
       FC_ASSERT( liquid.symbol == CLC_SYMBOL );
-
-      asset new_token = liquid;
-      before_token_callback( new_token );      
+	  auto rep_power_reward = ( ( liquid.amount.value * COLAB_RPOWER_REWARD_PERCENT ) / COLAB_100_PERCENT ).to_uint64();
+      asset new_token = asset(liquid.amount.value - rep_power_reward, CLC_SYMBOL);
+      before_token_callback( new_token );  
 	  db.adjust_balance( to_account, new_token);
-      
+	  db.modify( to_account, [&]( account_object& acc)
+	  {
+		  acc.rep_power_rewards += rep_power_reward;
+	  });
       // Update global vesting pool numbers.
 
 // 	  const auto& cprops = db.get_dynamic_global_properties();
