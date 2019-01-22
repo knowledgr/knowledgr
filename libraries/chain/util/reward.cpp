@@ -55,11 +55,11 @@ uint64_t get_rshare_reward( const comment_reward_context& ctx )
    uint64_t payout = static_cast< uint64_t >( payout_u256 );
    std::cerr<<"~~~ [get_rshare_reward()] - payout = "<<payout<<"\n";
 
-#if 0///~~~~~CLC~~~~~{ NOT NEED for Colab
-   if( is_comment_payout_dust( ctx.current_clc_price, payout ) )
-      payout = 0;
-   asset max_colab = to_colab( ctx.current_clc_price, ctx.max_clc );
-#endif///~~~~~CLC~~~~~} NOT NEED for Colab
+///~~~~~CLC~~~~~{ NOT NEED for Colab
+//    if( is_comment_payout_dust( ctx.current_clc_price, payout ) )
+//       payout = 0;
+//    asset max_colab = to_colab( ctx.current_clc_price, ctx.max_clc );
+///~~~~~CLC~~~~~} NOT NEED for Colab
 
    asset max_colab = ctx.max_clc;/// asset( 100000000, CLC_SYMBOL );///~~~~~CLC~~~~~
    

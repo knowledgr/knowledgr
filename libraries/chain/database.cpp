@@ -1713,8 +1713,6 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
 		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.max_clc = "<<ctx.max_clc.amount.value<<"\n";
 		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.total_reward_shares2 = "<<(std::string)ctx.total_reward_shares2<<"\n";
 		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.total_reward_fund_colab = "<<ctx.total_reward_fund_colab.amount.value<<"\n";
-		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.current_clc_price.base = "<<ctx.current_clc_price.base.amount.value<<"\n";
-		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.current_clc_price.quote = "<<ctx.current_clc_price.quote.amount.value<<"\n";
 		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.reward_curve = "<<(int)ctx.reward_curve<<"\n";
 
 		 const share_type reward = util::get_rshare_reward( ctx );
@@ -2681,6 +2679,41 @@ void database::init_schema()
    return;*/
 }
 
+void create_admin_accounts(database& db, std::string name, std::string pub_key_str, const account_object& creator, const dynamic_global_property_object& props)
+{
+	try {
+		colab::protocol::public_key_type pub_key = colab::protocol::public_key_type(pub_key_str);
+		db.create< account_object >( [&]( account_object& a )
+		{
+			a.name = name;
+			a.memo_key = pub_key;
+			a.member_of = account_object::admin;//~~~~~CLC~~~~~
+			a.balance  = asset( 0 , CLC_SYMBOL );
+			a.voting_manabar.current_mana = COLAB_100_PERCENT;
+
+			FC_ASSERT(creator.balance >= COLAB_LIMIT_STAKING_AMOUNT, "admin account creation failed!! Co-Lab has not too small CLC Token!!!");
+
+			acc.stake_balance += COLAB_LIMIT_STAKING_AMOUNT;
+			_db.modify( creator, [&]( account_object& c ) {
+				c.balance -= COLAB_LIMIT_STAKING_AMOUNT;
+			});
+		} );
+
+		db.create< account_authority_object >( [&]( account_authority_object& auth ) {
+			auth.account = name;
+			auth.owner.add_authority( pub_key, 1 );
+			auth.owner.weight_threshold = 1;
+			auth.active  = auth.owner;
+			auth.posting = auth.active;
+		});
+
+		_db.modify( props, [&]( dynamic_global_property_object& p ) {
+			p.num_of_accounts += 1;
+		});
+
+	} FC_CAPTURE_AND_RETHROW()
+}
+
 void database::init_genesis( uint64_t init_supply )
 {
    try
@@ -2740,6 +2773,7 @@ void database::init_genesis( uint64_t init_supply )
             a.memo_key = init_public_key;
 			a.member_of = account_object::admin;//~~~~~CLC~~~~~
             a.balance  = asset( i ? 0 : init_supply, CLC_SYMBOL );
+			a.voting_manabar.current_mana = COLAB_100_PERCENT;
          } );
 
          create< account_authority_object >( [&]( account_authority_object& auth )
@@ -2769,14 +2803,19 @@ void database::init_genesis( uint64_t init_supply )
          p.virtual_supply = p.current_supply;
          p.maximum_block_size = COLAB_MAX_BLOCK_SIZE;
          p.reverse_auction_seconds = COLAB_REVERSE_AUCTION_WINDOW_SECONDS_HF6;
+
 //          p.sbd_stop_percent = COLAB_SBD_STOP_PERCENT_HF14;
 //          p.sbd_start_percent = COLAB_SBD_START_PERCENT_HF14;
+
+		 p.num_of_accounts = 4;
       } );
 
 //       // Nothing to do
 //       create< feed_history_object >( [&]( feed_history_object& o ) {});
+
       for( int i = 0; i < 0x10000; i++ )
          create< block_summary_object >( [&]( block_summary_object& ) {});
+
       create< hardfork_property_object >( [&](hardfork_property_object& hpo )
       {
          hpo.processed_hardforks.push_back( COLAB_GENESIS_TIME );
@@ -2812,6 +2851,13 @@ void database::init_genesis( uint64_t init_supply )
 #ifdef COLAB_ENABLE_SMT
       create< nai_pool_object >( [&]( nai_pool_object& npo ) {} );
 #endif
+	  const auto& creator = _db.get_account( COLAB_INIT_MINER_NAME );
+	  const auto& props = _db.get_dynamic_global_properties();
+	  create_admin_accounts(*this, COLAB_ADMIN_ACCOUNT1, COLAB_ADMIN_ACCOUNT1_PUBKEY_STR, creator, props);
+	  create_admin_accounts(*this, COLAB_ADMIN_ACCOUNT2, COLAB_ADMIN_ACCOUNT2_PUBKEY_STR, creator, props);
+	  create_admin_accounts(*this, COLAB_ADMIN_ACCOUNT3, COLAB_ADMIN_ACCOUNT3_PUBKEY_STR, creator, props);
+	  create_admin_accounts(*this, COLAB_ADMIN_ACCOUNT4, COLAB_ADMIN_ACCOUNT4_PUBKEY_STR, creator, props);
+	  create_admin_accounts(*this, COLAB_ADMIN_ACCOUNT5, COLAB_ADMIN_ACCOUNT5_PUBKEY_STR, creator, props);
    }
    FC_CAPTURE_AND_RETHROW()
 }

@@ -27,7 +27,7 @@ struct comment_reward_context
    asset      max_clc;
    uint128_t  total_reward_shares2;
    asset      total_reward_fund_colab;
-   price      current_clc_price;
+//   price      current_clc_price;
    protocol::curve_id   reward_curve = protocol::quadratic;
    uint128_t  content_constant = COLAB_CONTENT_CONSTANT_HF0;
 };
@@ -54,7 +54,7 @@ FC_REFLECT( colab::chain::util::comment_reward_context,
    (max_clc)
    (total_reward_shares2)
    (total_reward_fund_colab)
-   (current_clc_price)
+//   (current_clc_price)
    (reward_curve)
    (content_constant)
    )
