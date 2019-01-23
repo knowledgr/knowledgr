@@ -1558,6 +1558,48 @@ void account_witness_vote_evaluator::do_apply( const account_witness_vote_operat
 }
 
 ///~~~~~CLC~~~~~{
+uint128_t calculate_voter_rshare_factor(const account_object& voter, const comment_object& comment)
+{
+	const uint32_t er_multiple = 10;
+	const uint64_t stake_divider = 1000;
+	
+	// calculating stake factor ...
+	uint64_t stake_factor = voter.stake_balance.amount.value / stake_divider;
+	if (stake_factor == 0) return 0;
+	long double X = static_cast<long double>(stake_factor);
+	long double stake_exp = std::exp(X);
+	X *= stake_exp;
+	X /= (1+stake_exp);
+	stake_factor = static_cast<uint64_t>(X);
+	std::cerr<<"~~~ [calculate_voter_rshare_factor()] - stake_factor = "<<stake_factor<<"\n";
+
+	// calculating ER factor ...
+	uint64_t er_factor = 0;
+	for (auto & _category : comment.exp_categories) {
+		er_factor += account_object::expertise_rate(voter, _category);
+	}
+	er_factor = (er_factor * er_multiple * er_multiple) / comment.exp_categories.size();
+	er_factor = er_factor * er_factor * er_factor;
+	er_factor /= (er_multiple*er_multiple*er_multiple);
+
+	std::cerr<<"~~~ [calculate_voter_rshare_factor()] - voter = "<<(std::string)voter.name<<", ER = "<<er_factor<<"\n";
+
+	uint64_t rep_factor = voter.rep_power_rewards.value;
+	X = static_cast<long double>(rep_factor);
+	long double rep_exp = std::exp(X);
+
+	X *= ( rep_exp * rep_exp );
+	X /= ( (1+rep_exp) * (1+rep_exp) );
+	rep_factor = static_cast<uint64_t>(X);
+	std::cerr<<"~~~ [calculate_voter_rshare_factor()] - rep_factor = "<<rep_factor<<"\n";
+
+	uint128_t result(er_factor);
+	result *= uint128_t(stake_factor);
+	result *= uint128_t(rep_factor);
+
+	return result;
+}
+
 void colab_vote_evaluator( const vote_operation& o, database& _db )
 {
    const auto& comment = _db.get_comment( o.author, o.permlink );
@@ -1628,11 +1670,11 @@ void colab_vote_evaluator( const vote_operation& o, database& _db )
 
    FC_ASSERT( voter.voting_manabar.has_mana( used_mana.to_uint64() ), "Account does not have enough mana to vote." );
 
-   uint32_t voter_power = comment_object::voter_power(voter, comment);
+   uint128_t rshare_factor = calculate_voter_rshare_factor(voter, comment);
 
-   std::cerr<<"~~~ [colab_vote_evaluator()] - voter_power = "<<voter_power<<"\n";
+   std::cerr<<"~~~ [colab_vote_evaluator()] - rshare_factor = "<<(std::string)rshare_factor<<"\n";
 
-   int64_t abs_rshares = used_mana.to_uint64() * voter_power;// / COLAB_100_PERCENT;
+   int64_t abs_rshares = (used_mana * rshare_factor / COLAB_100_PERCENT).to_uint64() ;
 
    std::cerr<<"~~~ [colab_vote_evaluator()] - abs_rshares = "<<abs_rshares<<"\n";
 

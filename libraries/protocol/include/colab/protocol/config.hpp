@@ -316,6 +316,7 @@
 #define COLAB_ROOT_POST_PARENT                (account_name_type())
 ///@}
 
+#define COLAB_STAKE_PROCESS_DELAY				(10 * 60)
 #define COLAB_NUM_OF_INIT_STAKING_ACCOUNTS		1000///~~~~~CLC~~~~~
 #define COLAB_LIMIT_STAKING_AMOUNT				asset( 1000000, CLC_SYMBOL )///~~~~~CLC~~~~~
 #define COLAB_RPOWER_REWARD_PERCENT          (5 * COLAB_1_PERCENT)
