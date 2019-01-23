@@ -2140,7 +2140,7 @@ void database::process_pending_stakes()
 	const auto& sk_idx = get_index< stake_pending_index >().indices().get<by_account>();
 	auto itr = sk_idx.begin();
 	while (itr != sk_idx.end()) {
-		if (head_block_time() - 10 * 60 >= itr->created) {
+		if (head_block_time() - COLAB_STAKE_PROCESS_DELAY >= itr->created) {
 			const auto& account = get_account( itr->account );
 			asset abs_amount = itr->amount;
 			modify( account, [&]( account_object& a )
@@ -2693,8 +2693,8 @@ void create_admin_accounts(database& db, std::string name, std::string pub_key_s
 
 			FC_ASSERT(creator.balance >= COLAB_LIMIT_STAKING_AMOUNT, "admin account creation failed!! Co-Lab has not too small CLC Token!!!");
 
-			acc.stake_balance += COLAB_LIMIT_STAKING_AMOUNT;
-			_db.modify( creator, [&]( account_object& c ) {
+			a.stake_balance = COLAB_LIMIT_STAKING_AMOUNT;
+			db.modify( creator, [&]( account_object& c ) {
 				c.balance -= COLAB_LIMIT_STAKING_AMOUNT;
 			});
 		} );
@@ -2707,7 +2707,7 @@ void create_admin_accounts(database& db, std::string name, std::string pub_key_s
 			auth.posting = auth.active;
 		});
 
-		_db.modify( props, [&]( dynamic_global_property_object& p ) {
+		db.modify( props, [&]( dynamic_global_property_object& p ) {
 			p.num_of_accounts += 1;
 		});
 
@@ -2851,8 +2851,8 @@ void database::init_genesis( uint64_t init_supply )
 #ifdef COLAB_ENABLE_SMT
       create< nai_pool_object >( [&]( nai_pool_object& npo ) {} );
 #endif
-	  const auto& creator = _db.get_account( COLAB_INIT_MINER_NAME );
-	  const auto& props = _db.get_dynamic_global_properties();
+	  const auto& creator = get_account( COLAB_INIT_MINER_NAME );
+	  const auto& props = get_dynamic_global_properties();
 	  create_admin_accounts(*this, COLAB_ADMIN_ACCOUNT1, COLAB_ADMIN_ACCOUNT1_PUBKEY_STR, creator, props);
 	  create_admin_accounts(*this, COLAB_ADMIN_ACCOUNT2, COLAB_ADMIN_ACCOUNT2_PUBKEY_STR, creator, props);
 	  create_admin_accounts(*this, COLAB_ADMIN_ACCOUNT3, COLAB_ADMIN_ACCOUNT3_PUBKEY_STR, creator, props);

@@ -126,17 +126,6 @@ namespace colab { namespace chain {
 		 t_citations citations; //~~~~~CLC~~~~~
 		 using t_exp_categories = t_vector< protocol::expertise_category >;//~~~~~CLC~~~~~
 		 t_exp_categories exp_categories; //~~~~~CLC~~~~~
-
-		 ///~~~~~CLC~~~~~{
-		 static uint32_t voter_power(const account_object& voter, const comment_object& comment) { 
-			 uint32_t sum = 0;
-			 for (auto & _category : comment.exp_categories) {
-				 sum += account_object::expertise_rate(voter, _category);
-			 }
-			 double avg = (sum * 100.0) / (double)comment.exp_categories.size();
-			 return (uint32_t)(avg*avg);
-		 };
-		 ///~~~~~CLC~~~~~}
    };
 
    class comment_content_object : public object< comment_content_object_type, comment_content_object >
