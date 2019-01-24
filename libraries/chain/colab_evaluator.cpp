@@ -1567,10 +1567,11 @@ uint128_t calculate_voter_rshare_factor(const account_object& voter, const comme
 	uint64_t stake_factor = voter.stake_balance.amount.value / stake_divider;
 	if (stake_factor == 0) return 0;
 	long double X = static_cast<long double>(stake_factor);
+	X  /= 100.0;
 	long double stake_exp = std::exp(X);
 	X *= stake_exp;
 	X /= (1+stake_exp);
-	stake_factor = static_cast<uint64_t>(X);
+	stake_factor = static_cast<uint64_t>(X*100);
 	std::cerr<<"~~~ [calculate_voter_rshare_factor()] - stake_factor = "<<stake_factor<<"\n";
 
 	// calculating ER factor ...
@@ -1586,11 +1587,12 @@ uint128_t calculate_voter_rshare_factor(const account_object& voter, const comme
 
 	uint64_t rep_factor = voter.rep_power_rewards.value;
 	X = static_cast<long double>(rep_factor);
+	X /= 100.0;
 	long double rep_exp = std::exp(X);
-
 	X *= ( rep_exp * rep_exp );
 	X /= ( (1+rep_exp) * (1+rep_exp) );
-	rep_factor = static_cast<uint64_t>(X);
+	rep_factor = static_cast<uint64_t>(X*100);
+	if (rep_factor == 0) rep_factor = 1;
 	std::cerr<<"~~~ [calculate_voter_rshare_factor()] - rep_factor = "<<rep_factor<<"\n";
 
 	uint128_t result(er_factor);
