@@ -104,6 +104,7 @@ class database_api_impl
 database_api::database_api()
    : my( new database_api_impl() )
 {
+	std::cerr<<"~~~ [database_api::database_api()] -\n";
    JSON_RPC_REGISTER_API( COLAB_DATABASE_API_PLUGIN_NAME );
 }
 

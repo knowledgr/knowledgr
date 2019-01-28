@@ -61,6 +61,7 @@ namespace detail
 
 network_broadcast_api::network_broadcast_api() : my( new detail::network_broadcast_api_impl() )
 {
+	std::cerr<<"~~~ [network_broadcast_api::network_broadcast_api()] -\n";
    JSON_RPC_REGISTER_API( COLAB_NETWORK_BROADCAST_API_PLUGIN_NAME );
 }
 

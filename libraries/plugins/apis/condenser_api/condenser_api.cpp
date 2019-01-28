@@ -2192,6 +2192,7 @@ uint16_t api_account_object::_compute_voting_power( const database_api::api_acco
 condenser_api::condenser_api()
    : my( new detail::condenser_api_impl() )
 {
+	std::cerr<<"~~~ [condenser_api::condenser_api()] -\n";
    JSON_RPC_REGISTER_API( COLAB_CONDENSER_API_PLUGIN_NAME );
 }
 
@@ -2199,6 +2200,7 @@ condenser_api::~condenser_api() {}
 
 void condenser_api::api_startup()
 {
+	std::cerr<<"~~~ [condenser_api::api_startup()] -\n";
    auto database = appbase::app().find_plugin< database_api::database_api_plugin >();
    if( database != nullptr )
    {
