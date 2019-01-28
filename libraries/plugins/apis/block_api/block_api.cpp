@@ -30,6 +30,7 @@ class block_api_impl
 block_api::block_api()
    : my( new block_api_impl() )
 {
+	std::cerr<<"~~~ [block_api::block_api()] -\n";
    JSON_RPC_REGISTER_API( COLAB_BLOCK_API_PLUGIN_NAME );
 }
 

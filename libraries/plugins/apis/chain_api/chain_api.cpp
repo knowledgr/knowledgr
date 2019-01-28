@@ -76,6 +76,7 @@ DEFINE_API_IMPL( chain_api_impl, push_transaction )
 
 chain_api::chain_api(): my( new detail::chain_api_impl() )
 {
+	std::cerr<<"~~~ [chain_api::chain_api()] -\n";
    JSON_RPC_REGISTER_API( COLAB_CHAIN_API_PLUGIN_NAME );
 }
 
