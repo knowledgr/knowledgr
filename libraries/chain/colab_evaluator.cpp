@@ -1558,46 +1558,52 @@ void account_witness_vote_evaluator::do_apply( const account_witness_vote_operat
 }
 
 ///~~~~~CLC~~~~~{
+long double rshare_factor_transform(long double x)
+{
+	long double x2 = std::sqrt(x);
+	return ( 2 * (std::exp(x2) / (std::exp(x2) + 1)) - 1 );
+}
+
 uint128_t calculate_voter_rshare_factor(const account_object& voter, const comment_object& comment)
 {
-	const uint32_t er_multiple = 10;
+	const uint64_t max_rshare_factor = 10000000;
 	const uint64_t stake_divider = 1000;
-	
-	// calculating stake factor ...
-	uint64_t stake_factor = voter.stake_balance.amount.value / stake_divider;
-	if (stake_factor == 0) return 0;
-	long double X = static_cast<long double>(stake_factor);
-	X  /= 100.0;
-	long double stake_exp = std::exp(X);
-	X *= stake_exp;
-	X /= (1+stake_exp);
-	stake_factor = static_cast<uint64_t>(X*100);
-	std::cerr<<"~~~ [calculate_voter_rshare_factor()] - stake_factor = "<<stake_factor<<"\n";
 
 	// calculating ER factor ...
 	uint64_t er_factor = 0;
 	for (auto & _category : comment.exp_categories) {
 		er_factor += account_object::expertise_rate(voter, _category);
 	}
-	er_factor = (er_factor * er_multiple * er_multiple) / comment.exp_categories.size();
-	er_factor = er_factor * er_factor * er_factor;
-	er_factor /= (er_multiple*er_multiple*er_multiple);
+	long double ER = static_cast<long double>(er_factor) / static_cast<long double>( comment.exp_categories.size() );
 
-	std::cerr<<"~~~ [calculate_voter_rshare_factor()] - voter = "<<(std::string)voter.name<<", ER = "<<er_factor<<"\n";
+	std::cerr<<"~~~ [calculate_voter_rshare_factor()] - ER_factor = "<<ER<<"\n";
+
+	// calculating stake factor ...
+	uint64_t stake_factor = voter.stake_balance.amount.value / stake_divider;
+	if (stake_factor == 0) return 0;
+	
+	long double X = static_cast<long double>(stake_factor);
+	X = (X*ER*ER) / max_rshare_factor;
+	long double stake = rshare_factor_transform(X);
+
+	std::cerr<<"~~~ [calculate_voter_rshare_factor()] - stake_factor = "<<stake<<"\n";
 
 	uint64_t rep_factor = voter.rep_power_rewards.value;
-	X = static_cast<long double>(rep_factor);
-	X /= 100.0;
-	long double rep_exp = std::exp(X);
-	X *= ( rep_exp * rep_exp );
-	X /= ( (1+rep_exp) * (1+rep_exp) );
-	rep_factor = static_cast<uint64_t>(X*100);
 	if (rep_factor == 0) rep_factor = 1;
-	std::cerr<<"~~~ [calculate_voter_rshare_factor()] - rep_factor = "<<rep_factor<<"\n";
+	X = static_cast<long double>(rep_factor);
+	X = (X*ER*ER) / max_rshare_factor;
+	long double rep = rshare_factor_transform(X);
 
-	uint128_t result(er_factor);
-	result *= uint128_t(stake_factor);
-	result *= uint128_t(rep_factor);
+	std::cerr<<"~~~ [calculate_voter_rshare_factor()] - rep_factor = "<<rep<<"\n";
+
+	X = ( stake*COLAB_1_PERCENT*25 + rep*COLAB_1_PERCENT*75 ) / COLAB_100_PERCENT;
+	X *= max_rshare_factor;
+	std::cerr<<"~~~ [calculate_voter_rshare_factor()] - rshare_factor = "<<X<<"\n";
+	/*
+	* rshare_factor = max_rshare_factor * ( 0.75 * F(rep * ER^2) + 0.25 * F(stake * ER^2) )
+	* F(X) = 2 * exp(X)/(exp(X)+1) - 1
+	*/
+	uint128_t result(static_cast<uint64_t>(X));
 
 	return result;
 }
