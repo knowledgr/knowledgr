@@ -1566,7 +1566,8 @@ long double rshare_factor_transform(long double x)
 
 uint128_t calculate_voter_rshare_factor(const account_object& voter, const comment_object& comment)
 {
-	const uint64_t max_rshare_factor = 10000000;
+	const uint64_t MAX_RSHARE_FACTOR = 1000000000;
+	const uint64_t MIU				 = 10000000;
 	const uint64_t stake_divider = 1000;
 
 	// calculating ER factor ...
@@ -1583,7 +1584,7 @@ uint128_t calculate_voter_rshare_factor(const account_object& voter, const comme
 	if (stake_factor == 0) return 0;
 	
 	long double X = static_cast<long double>(stake_factor);
-	X = (X*ER*ER) / max_rshare_factor;
+	X = (X*ER*ER) / MIU;
 	long double stake = rshare_factor_transform(X);
 
 	std::cerr<<"~~~ [calculate_voter_rshare_factor()] - stake_factor = "<<stake<<"\n";
@@ -1591,17 +1592,21 @@ uint128_t calculate_voter_rshare_factor(const account_object& voter, const comme
 	uint64_t rep_factor = voter.rep_power_rewards.value;
 	if (rep_factor == 0) rep_factor = 1;
 	X = static_cast<long double>(rep_factor);
-	X = (X*ER*ER) / max_rshare_factor;
+	X = (X*ER*ER) / MIU;
 	long double rep = rshare_factor_transform(X);
 
 	std::cerr<<"~~~ [calculate_voter_rshare_factor()] - rep_factor = "<<rep<<"\n";
 
-	X = ( stake*COLAB_1_PERCENT*25 + rep*COLAB_1_PERCENT*75 ) / COLAB_100_PERCENT;
-	X *= max_rshare_factor;
+	X = ( stake*COLAB_1_PERCENT*25 + rep*COLAB_1_PERCENT*75 );
+	X *= static_cast<long double>(MAX_RSHARE_FACTOR);
+	X /= static_cast<long double>(COLAB_100_PERCENT);
+
 	std::cerr<<"~~~ [calculate_voter_rshare_factor()] - rshare_factor = "<<X<<"\n";
 	/*
-	* rshare_factor = max_rshare_factor * ( 0.75 * F(rep * ER^2) + 0.25 * F(stake * ER^2) )
+	* rshare_factor = MAX_RSHARE_FACTOR * ( 0.75 * F(rep * ER^2 / MIU) + 0.25 * F(stake * ER^2 / MIU) )
 	* F(X) = 2 * exp(X)/(exp(X)+1) - 1
+	* MAX_RSHARE_FACTOR = 1000000000
+	* MIU				= 10000000
 	*/
 	uint128_t result(static_cast<uint64_t>(X));
 
