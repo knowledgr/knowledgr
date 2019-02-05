@@ -1,6 +1,6 @@
-#include <colab/plugins/webserver/webserver_plugin.hpp>
+#include <knowledgr/plugins/webserver/webserver_plugin.hpp>
 
-#include <colab/plugins/chain/chain_plugin.hpp>
+#include <knowledgr/plugins/chain/chain_plugin.hpp>
 
 #include <fc/network/ip.hpp>
 #include <fc/log/logger_config.hpp>
@@ -24,7 +24,7 @@
 #include <memory>
 #include <iostream>
 
-namespace colab { namespace plugins { namespace webserver {
+namespace knowledgr { namespace plugins { namespace webserver {
 
 namespace asio = boost::asio;
 
@@ -376,4 +376,4 @@ void webserver_plugin::plugin_shutdown()
    my->stop_webserver();
 }
 
-} } } // colab::plugins::webserver
+} } } // knowledgr::plugins::webserver

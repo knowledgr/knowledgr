@@ -1,42 +1,42 @@
-add_executable( colabd main.cpp )
+add_executable( knowledgrd main.cpp )
 if( UNIX AND NOT APPLE )
   set(rt_library rt )
 endif()
 
 find_package( Gperftools QUIET )
 if( GPERFTOOLS_FOUND )
-    message( STATUS "Found gperftools; compiling colabd with TCMalloc")
+    message( STATUS "Found gperftools; compiling knowledgrd with TCMalloc")
     list( APPEND PLATFORM_SPECIFIC_LIBS tcmalloc )
 endif()
 
-if( COLAB_STATIC_BUILD )
-   target_link_libraries( colabd PRIVATE
+if( KNOWLEDGR_STATIC_BUILD )
+   target_link_libraries( knowledgrd PRIVATE
       "-static-libstdc++ -static-libgcc"
       appbase
-      colab_utilities
-      colab_plugins
+      knowledgr_utilities
+      knowledgr_plugins
       ${CMAKE_DL_LIBS}
       ${PLATFORM_SPECIFIC_LIBS}
    )
-else( COLAB_STATIC_BUILD )
-   target_link_libraries( colabd PRIVATE
+else( KNOWLEDGR_STATIC_BUILD )
+   target_link_libraries( knowledgrd PRIVATE
       appbase
-      colab_utilities
-      colab_plugins
+      knowledgr_utilities
+      knowledgr_plugins
       ${CMAKE_DL_LIBS}
       ${PLATFORM_SPECIFIC_LIBS}
    )
-endif( COLAB_STATIC_BUILD )
+endif( KNOWLEDGR_STATIC_BUILD )
 
 if( CLANG_TIDY_EXE )
    set_target_properties(
-      colabd PROPERTIES
+      knowledgrd PROPERTIES
       CXX_CLANG_TIDY "${DO_CLANG_TIDY}"
    )
 endif( CLANG_TIDY_EXE )
 
 install( TARGETS
-   colabd
+   knowledgrd
 
    RUNTIME DESTINATION bin
    LIBRARY DESTINATION lib

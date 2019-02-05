@@ -1,8 +1,8 @@
 
-#include <colab/chain/colab_objects.hpp>
+#include <knowledgr/chain/knowledgr_objects.hpp>
 
 #include <fc/uint128.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
-} } // colab::chain
+} } // knowledgr::chain

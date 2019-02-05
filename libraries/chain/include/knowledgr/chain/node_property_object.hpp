@@ -1,6 +1,6 @@
 #pragma once
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
    /**
     * @brief Contains per-node database configuration.
@@ -20,4 +20,4 @@ namespace colab { namespace chain {
 
          uint32_t skip_flags = 0;
    };
-} } // colab::chain
+} } // knowledgr::chain

@@ -1,14 +1,14 @@
 #pragma once
-#include <colab/protocol/transaction.hpp>
+#include <knowledgr/protocol/transaction.hpp>
 
-#include <colab/chain/buffer_type.hpp>
-#include <colab/chain/colab_object_types.hpp>
+#include <knowledgr/chain/buffer_type.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
 
 #include <boost/multi_index/hashed_index.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
-   using colab::protocol::signed_transaction;
+   using knowledgr::protocol::signed_transaction;
    using chainbase::t_vector;
 
    /**
@@ -49,19 +49,19 @@ namespace colab { namespace chain {
       allocator< transaction_object >
    > transaction_index;
 
-} } // colab::chain
+} } // knowledgr::chain
 
-FC_REFLECT( colab::chain::transaction_object, (id)(packed_trx)(trx_id)(expiration) )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::transaction_object, colab::chain::transaction_index )
+FC_REFLECT( knowledgr::chain::transaction_object, (id)(packed_trx)(trx_id)(expiration) )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::transaction_object, knowledgr::chain::transaction_index )
 
 namespace helpers
 {
    template <>
-   class index_statistic_provider<colab::chain::transaction_index>
+   class index_statistic_provider<knowledgr::chain::transaction_index>
    {
    public:
-      typedef colab::chain::transaction_index IndexType;
-      typedef typename colab::chain::transaction_object::t_packed_trx t_packed_trx;
+      typedef knowledgr::chain::transaction_index IndexType;
+      typedef typename knowledgr::chain::transaction_object::t_packed_trx t_packed_trx;
 
       index_statistic_info gather_statistics(const IndexType& index, bool onlyStaticInfo) const
       {

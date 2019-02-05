@@ -22,18 +22,18 @@
  * THE SOFTWARE.
  */
 
-#include <colab/utilities/tempdir.hpp>
+#include <knowledgr/utilities/tempdir.hpp>
 
 #include <cstdlib>
 
-namespace colab { namespace utilities {
+namespace knowledgr { namespace utilities {
 
 fc::path temp_directory_path()
 {
-   const char* colabit_tempdir = getenv("COLAB_TEMPDIR");
-   if( colabit_tempdir != nullptr )
-      return fc::path( colabit_tempdir );
-   return fc::temp_directory_path() / "colab-tmp";
+   const char* knowledgrit_tempdir = getenv("KNOWLEDGR_TEMPDIR");
+   if( knowledgrit_tempdir != nullptr )
+      return fc::path( knowledgrit_tempdir );
+   return fc::temp_directory_path() / "knowledgr-tmp";
 }
 
-} } // colab::utilities
+} } // knowledgr::utilities

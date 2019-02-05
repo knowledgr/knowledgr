@@ -1,14 +1,14 @@
-#include <colab/chain/database.hpp>
-#include <colab/protocol/asset_symbol.hpp>
-#include <colab/chain/smt_objects.hpp>
-#include <colab/chain/util/nai_generator.hpp>
-#include <colab/chain/util/smt_token.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/protocol/asset_symbol.hpp>
+#include <knowledgr/chain/smt_objects.hpp>
+#include <knowledgr/chain/util/nai_generator.hpp>
+#include <knowledgr/chain/util/smt_token.hpp>
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
 
 #define NAI_GENERATION_SEED_BLOCK_ID_HASH_INDEX 4
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
 /**
  * Refill the NAI pool with newly generated values
@@ -96,6 +96,6 @@ void remove_from_nai_pool( database &db, const asset_symbol_type& a )
    }
 }
 
-} } // colab::chain
+} } // knowledgr::chain
 
 #endif

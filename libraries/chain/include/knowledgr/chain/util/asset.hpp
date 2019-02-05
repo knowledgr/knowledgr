@@ -1,25 +1,25 @@
 #pragma once
 
-#include <colab/protocol/asset.hpp>
+#include <knowledgr/protocol/asset.hpp>
 
-namespace colab { namespace chain { namespace util {
+namespace knowledgr { namespace chain { namespace util {
 
-using colab::protocol::asset;
-using colab::protocol::price;
+using knowledgr::protocol::asset;
+using knowledgr::protocol::price;
 
-inline asset to_sbd( const price& p, const asset& colab )
+inline asset to_sbd( const price& p, const asset& knowledgr )
 {
-   FC_ASSERT( colab.symbol == CLC_SYMBOL );
+   FC_ASSERT( knowledgr.symbol == NLG_SYMBOL );
    if( p.is_null() )
       return asset( 0, SBD_SYMBOL );
-   return colab * p;
+   return knowledgr * p;
 }
 
-inline asset to_colab( const price& p, const asset& sbd )
+inline asset to_knowledgr( const price& p, const asset& sbd )
 {
    FC_ASSERT( sbd.symbol == SBD_SYMBOL );
    if( p.is_null() )
-      return asset( 0, CLC_SYMBOL );
+      return asset( 0, NLG_SYMBOL );
    return sbd * p;
 }
 

@@ -1,18 +1,18 @@
 
-#include <colab/chain/colab_fwd.hpp>
+#include <knowledgr/chain/knowledgr_fwd.hpp>
 
-#include <colab/chain/index.hpp>
+#include <knowledgr/chain/index.hpp>
 
-#include <colab/chain/block_summary_object.hpp>
-#include <colab/chain/history_object.hpp>
-#include <colab/chain/pending_required_action_object.hpp>
-#include <colab/chain/pending_optional_action_object.hpp>
-#include <colab/chain/smt_objects.hpp>
-#include <colab/chain/colab_objects.hpp>
-#include <colab/chain/transaction_object.hpp>
-#include <colab/chain/witness_schedule.hpp>
+#include <knowledgr/chain/block_summary_object.hpp>
+#include <knowledgr/chain/history_object.hpp>
+#include <knowledgr/chain/pending_required_action_object.hpp>
+#include <knowledgr/chain/pending_optional_action_object.hpp>
+#include <knowledgr/chain/smt_objects.hpp>
+#include <knowledgr/chain/knowledgr_objects.hpp>
+#include <knowledgr/chain/transaction_object.hpp>
+#include <knowledgr/chain/witness_schedule.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
 void initialize_core_indexes( database& db )
 {
@@ -46,8 +46,8 @@ void initialize_core_indexes( database& db )
 //   add_core_index< vesting_delegation_expiration_index     >( db );
    add_core_index< pending_required_action_index           >( db );
    add_core_index< pending_optional_action_index           >( db );
-   add_core_index< stake_pending_index			           >( db );///~~~~~CLC~~~~~
-#ifdef COLAB_ENABLE_SMT
+   add_core_index< stake_pending_index			           >( db );///~~~~~NLG~~~~~
+#ifdef KNOWLEDGR_ENABLE_SMT
    add_core_index< smt_token_index                         >( db );
    add_core_index< smt_event_token_index                   >( db );
    add_core_index< account_regular_balance_index           >( db );

@@ -1,32 +1,32 @@
 
-#include <colab/plugins/block_data_export/block_data_export_plugin.hpp>
-#include <colab/plugins/block_data_export/exportable_block_data.hpp>
+#include <knowledgr/plugins/block_data_export/block_data_export_plugin.hpp>
+#include <knowledgr/plugins/block_data_export/exportable_block_data.hpp>
 
-#include <colab/plugins/stats_export/stats_export_plugin.hpp>
+#include <knowledgr/plugins/stats_export/stats_export_plugin.hpp>
 
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/database.hpp>
-#include <colab/chain/global_property_object.hpp>
-#include <colab/chain/index.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/global_property_object.hpp>
+#include <knowledgr/chain/index.hpp>
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
-namespace colab { namespace plugins { namespace stats_export {
+namespace knowledgr { namespace plugins { namespace stats_export {
 
-using colab::chain::block_notification;
-using colab::chain::database;
-using colab::chain::dynamic_global_property_object;
+using knowledgr::chain::block_notification;
+using knowledgr::chain::database;
+using knowledgr::chain::dynamic_global_property_object;
 
-using colab::protocol::account_name_type;
-using colab::protocol::authority;
-using colab::protocol::signed_transaction;
+using knowledgr::protocol::account_name_type;
+using knowledgr::protocol::authority;
+using knowledgr::protocol::signed_transaction;
 
-using colab::plugins::block_data_export::block_data_export_plugin;
-using colab::plugins::block_data_export::exportable_block_data;
+using knowledgr::plugins::block_data_export::block_data_export_plugin;
+using knowledgr::plugins::block_data_export::exportable_block_data;
 
-using colab::plugins::chain::chain_plugin;
+using knowledgr::plugins::chain::chain_plugin;
 
 namespace detail {
 
@@ -55,10 +55,10 @@ class api_stats_export_data_object
 
 } } } }
 
-FC_REFLECT( colab::plugins::stats_export::detail::api_stats_transaction_data_object, (user)(size) )
-FC_REFLECT( colab::plugins::stats_export::detail::api_stats_export_data_object, (global_properties)(transaction_stats)(free_memory) )
+FC_REFLECT( knowledgr::plugins::stats_export::detail::api_stats_transaction_data_object, (user)(size) )
+FC_REFLECT( knowledgr::plugins::stats_export::detail::api_stats_export_data_object, (global_properties)(transaction_stats)(free_memory) )
 
-namespace colab { namespace plugins { namespace stats_export { namespace detail {
+namespace knowledgr { namespace plugins { namespace stats_export { namespace detail {
 
 class stats_export_plugin_impl
 {
@@ -98,7 +98,7 @@ account_name_type get_transaction_user( const signed_transaction& tx )
 
 void stats_export_plugin_impl::on_post_apply_block( const block_notification& note )
 {
-   std::shared_ptr< api_stats_export_data_object > stats = _export_plugin.find_export_data< api_stats_export_data_object >( COLAB_STATS_EXPORT_PLUGIN_NAME );
+   std::shared_ptr< api_stats_export_data_object > stats = _export_plugin.find_export_data< api_stats_export_data_object >( KNOWLEDGR_STATS_EXPORT_PLUGIN_NAME );
    if( !stats )
       return;
 
@@ -139,7 +139,7 @@ void stats_export_plugin::plugin_initialize( const boost::program_options::varia
       ilog( "Initializing stats_export plugin" );
       my->_post_apply_block_conn = my->_db.add_post_apply_block_handler(
          [&]( const block_notification& note ){ my->on_post_apply_block( note ); }, *this );
-      my->_export_plugin.register_export_data_factory( COLAB_STATS_EXPORT_PLUGIN_NAME,
+      my->_export_plugin.register_export_data_factory( KNOWLEDGR_STATS_EXPORT_PLUGIN_NAME,
          []() -> std::shared_ptr< exportable_block_data > { return std::make_shared< detail::api_stats_export_data_object >(); } );
    }
    FC_CAPTURE_AND_RETHROW()
@@ -152,4 +152,4 @@ void stats_export_plugin::plugin_shutdown()
    chain::util::disconnect_signal( my->_post_apply_block_conn );
 }
 
-} } } // colab::plugins::stats_export
+} } } // knowledgr::plugins::stats_export

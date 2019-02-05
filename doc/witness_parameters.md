@@ -1,20 +1,20 @@
 # Witness Parameters
 
-The role of a witness in the Colab Blockchain is verify incoming transactions, produce blocks when scheduled, and partake in the Colab governance model by voting on several parameters.
+The role of a witness in the Knowledgr Blockchain is verify incoming transactions, produce blocks when scheduled, and partake in the Knowledgr governance model by voting on several parameters.
 
-These parameters control various aspects of the operation of the blockchain that are not easily defined in code at compile time. One example is the CLC price feed that defines the conversion rate between CLC and SBD.
+These parameters control various aspects of the operation of the blockchain that are not easily defined in code at compile time. One example is the NLG price feed that defines the conversion rate between NLG and SBD.
 
 Witnesses are able to use the `witness_set_properties_operation` to change witness specific properties and vote on paramters.
 
 Unless otherwise noted, the median of the top 20 elected witnesses is used for all calculations needing the parameter.
 
-This operation was added in Colab v0.20.0 to replace the `witness_update_operation` which was not easily extendable. While it is recommended to use `witness_set_properties_operation`, `witness_update_operation` will continue to work.
+This operation was added in Knowledgr v0.20.0 to replace the `witness_update_operation` which was not easily extendable. While it is recommended to use `witness_set_properties_operation`, `witness_update_operation` will continue to work.
 
 ## Properties
 
 ### account_creation_fee
 
-This is the fee in CLC that must be paid to create an account. This field must be non-negative.
+This is the fee in NLG that must be paid to create an account. This field must be non-negative.
 
 ### account_subsidy_budget
 
@@ -53,7 +53,7 @@ The annual interest rate paid to SBD holders. SBD interest is compounded on bala
 
 ### sbd_exchange_rate
 
-The exchange rate for CLC/SDB to be used for printing SBD as rewards as well as SBD->CLC conversions.
+The exchange rate for NLG/SDB to be used for printing SBD as rewards as well as SBD->NLG conversions.
 The actual price feed is the median of medians. Every round (21 blocks) the median exchange rate is pushed to a queue and the oldest is removed. The median value of the queue is used for any calculations.
 
 ### url

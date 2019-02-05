@@ -1,9 +1,9 @@
-#include <colab/plugins/follow_api/follow_api_plugin.hpp>
-#include <colab/plugins/follow_api/follow_api.hpp>
+#include <knowledgr/plugins/follow_api/follow_api_plugin.hpp>
+#include <knowledgr/plugins/follow_api/follow_api.hpp>
 
-#include <colab/plugins/follow/follow_objects.hpp>
+#include <knowledgr/plugins/follow/follow_objects.hpp>
 
-namespace colab { namespace plugins { namespace follow {
+namespace knowledgr { namespace plugins { namespace follow {
 
 namespace detail {
 
@@ -18,7 +18,7 @@ inline void set_what( vector< follow::follow_type >& what, uint16_t bitmask )
 class follow_api_impl
 {
    public:
-      follow_api_impl() : _db( appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db() ) {}
+      follow_api_impl() : _db( appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db() ) {}
 
       DECLARE_API_IMPL(
          (get_followers)
@@ -296,7 +296,7 @@ DEFINE_API_IMPL( follow_api_impl, get_blog_authors )
 
 follow_api::follow_api(): my( new detail::follow_api_impl() )
 {
-   JSON_RPC_REGISTER_API( COLAB_FOLLOW_API_PLUGIN_NAME );
+   JSON_RPC_REGISTER_API( KNOWLEDGR_FOLLOW_API_PLUGIN_NAME );
 }
 
 follow_api::~follow_api() {}
@@ -314,4 +314,4 @@ DEFINE_READ_APIS( follow_api,
    (get_blog_authors)
 )
 
-} } } // colab::plugins::follow
+} } } // knowledgr::plugins::follow

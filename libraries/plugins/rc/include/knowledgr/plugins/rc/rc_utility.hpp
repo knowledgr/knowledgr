@@ -1,14 +1,14 @@
 #pragma once
 
-#include <colab/chain/util/rd_dynamics.hpp>
+#include <knowledgr/chain/util/rd_dynamics.hpp>
 
 #include <fc/reflect/reflect.hpp>
 
-namespace colab { namespace plugins { namespace rc {
+namespace knowledgr { namespace plugins { namespace rc {
 
-using colab::chain::util::rd_decay_params;
-using colab::chain::util::rd_dynamics_params;
-using colab::chain::util::rd_compute_pool_decay;
+using knowledgr::chain::util::rd_decay_params;
+using knowledgr::chain::util::rd_dynamics_params;
+using knowledgr::chain::util::rd_compute_pool_decay;
 
 struct rc_price_curve_params
 {
@@ -29,7 +29,7 @@ int64_t compute_rc_cost_of_resource(
    int64_t resource_count,
    int64_t rc_regen );
 
-} } } // colab::plugins::rc
+} } } // knowledgr::plugins::rc
 
-FC_REFLECT( colab::plugins::rc::rc_price_curve_params, (coeff_a)(coeff_b)(shift) )
-FC_REFLECT( colab::plugins::rc::rc_resource_params, (resource_dynamics_params)(price_curve_params) )
+FC_REFLECT( knowledgr::plugins::rc::rc_price_curve_params, (coeff_a)(coeff_b)(shift) )
+FC_REFLECT( knowledgr::plugins::rc::rc_resource_params, (resource_dynamics_params)(price_curve_params) )

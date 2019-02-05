@@ -2,10 +2,10 @@
 
 #include <fc/time.hpp>
 
-#include <colab/plugins/chain/abstract_block_producer.hpp>
-#include <colab/plugins/chain/chain_plugin.hpp>
+#include <knowledgr/plugins/chain/abstract_block_producer.hpp>
+#include <knowledgr/plugins/chain/chain_plugin.hpp>
 
-namespace colab { namespace plugins { namespace witness {
+namespace knowledgr { namespace plugins { namespace witness {
 
 class block_producer : public chain::abstract_block_producer {
 public:
@@ -39,4 +39,4 @@ private:
       chain::signed_block& pending_block);
 };
 
-} } } // colab::plugins::witness
+} } } // knowledgr::plugins::witness

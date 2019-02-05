@@ -1,4 +1,4 @@
-file(GLOB HEADERS "include/colab/test_api_plugin/*.hpp")
+file(GLOB HEADERS "include/knowledgr/test_api_plugin/*.hpp")
 add_library( test_api_plugin
              test_api_plugin.cpp
              ${HEADERS} )
@@ -13,4 +13,4 @@ install( TARGETS
    LIBRARY DESTINATION lib
    ARCHIVE DESTINATION lib
 )
-install( FILES ${HEADERS} DESTINATION "include/colab/test_api_plugin" )
+install( FILES ${HEADERS} DESTINATION "include/knowledgr/test_api_plugin" )

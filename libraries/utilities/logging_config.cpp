@@ -1,4 +1,4 @@
-#include <colab/utilities/logging_config.hpp>
+#include <knowledgr/utilities/logging_config.hpp>
 
 #include <fc/exception/exception.hpp>
 
@@ -8,7 +8,7 @@
 
 #include <vector>
 
-namespace colab { namespace utilities {
+namespace knowledgr { namespace utilities {
 
 using std::string;
 using std::vector;

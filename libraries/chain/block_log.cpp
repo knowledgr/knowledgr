@@ -1,4 +1,4 @@
-#include <colab/chain/block_log.hpp>
+#include <knowledgr/chain/block_log.hpp>
 #include <fstream>
 #include <fc/io/raw.hpp>
 
@@ -9,7 +9,7 @@
 #define LOG_READ  (std::ios::in | std::ios::binary)
 #define LOG_WRITE (std::ios::out | std::ios::binary | std::ios::app)
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
    typedef boost::interprocess::scoped_lock< boost::mutex > scoped_lock;
 
@@ -382,4 +382,4 @@ namespace colab { namespace chain {
    {
       my->use_locking = true;
    }
-} } // colab::chain
+} } // knowledgr::chain

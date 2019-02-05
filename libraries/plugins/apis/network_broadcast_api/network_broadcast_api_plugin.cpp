@@ -1,7 +1,7 @@
-#include <colab/plugins/network_broadcast_api/network_broadcast_api_plugin.hpp>
-#include <colab/plugins/network_broadcast_api/network_broadcast_api.hpp>
+#include <knowledgr/plugins/network_broadcast_api/network_broadcast_api_plugin.hpp>
+#include <knowledgr/plugins/network_broadcast_api/network_broadcast_api.hpp>
 
-namespace colab { namespace plugins { namespace network_broadcast_api {
+namespace knowledgr { namespace plugins { namespace network_broadcast_api {
 
 network_broadcast_api_plugin::network_broadcast_api_plugin() {}
 network_broadcast_api_plugin::~network_broadcast_api_plugin() {}
@@ -18,4 +18,4 @@ void network_broadcast_api_plugin::plugin_initialize( const variables_map& optio
 void network_broadcast_api_plugin::plugin_startup() {}
 void network_broadcast_api_plugin::plugin_shutdown() {}
 
-} } } // colab::plugins::test_api
+} } } // knowledgr::plugins::test_api

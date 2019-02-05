@@ -6,7 +6,7 @@
 
 #include <fc/reflect/reflect.hpp>
 
-namespace colab { namespace schema {
+namespace knowledgr { namespace schema {
 
 struct abstract_schema
 {
@@ -52,4 +52,4 @@ std::shared_ptr< abstract_schema > get_schema_for_type()
 
 void add_dependent_schemas( std::vector< std::shared_ptr< abstract_schema > >& schema_list );
 
-} } // colab::schema
+} } // knowledgr::schema

@@ -1,17 +1,17 @@
 #pragma once
-#include <colab/plugins/json_rpc/utility.hpp>
+#include <knowledgr/plugins/json_rpc/utility.hpp>
 
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/types.hpp>
 
 #include <fc/optional.hpp>
 
-namespace colab { namespace plugins { namespace chain {
+namespace knowledgr { namespace plugins { namespace chain {
 
 namespace detail { class chain_api_impl; }
 
 struct push_block_args
 {
-   colab::chain::signed_block block;
+   knowledgr::chain::signed_block block;
    bool                         currently_syncing = false;
 };
 
@@ -22,7 +22,7 @@ struct push_block_return
    optional<string>  error;
 };
 
-typedef colab::chain::signed_transaction push_transaction_args;
+typedef knowledgr::chain::signed_transaction push_transaction_args;
 
 struct push_transaction_return
 {
@@ -45,8 +45,8 @@ class chain_api
       std::unique_ptr< detail::chain_api_impl > my;
 };
 
-} } } // colab::plugins::chain
+} } } // knowledgr::plugins::chain
 
-FC_REFLECT( colab::plugins::chain::push_block_args, (block)(currently_syncing) )
-FC_REFLECT( colab::plugins::chain::push_block_return, (success)(error) )
-FC_REFLECT( colab::plugins::chain::push_transaction_return, (success)(error) )
+FC_REFLECT( knowledgr::plugins::chain::push_block_args, (block)(currently_syncing) )
+FC_REFLECT( knowledgr::plugins::chain::push_block_return, (success)(error) )
+FC_REFLECT( knowledgr::plugins::chain::push_transaction_return, (success)(error) )

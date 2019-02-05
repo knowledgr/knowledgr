@@ -23,10 +23,10 @@
  */
 #include <iomanip>
 #include <boost/algorithm/string/join.hpp>
-#include <colab/wallet/wallet.hpp>
-#include <colab/wallet/api_documentation.hpp>
+#include <knowledgr/wallet/wallet.hpp>
+#include <knowledgr/wallet/api_documentation.hpp>
 
-namespace colab { namespace wallet {
+namespace knowledgr { namespace wallet {
    namespace detail {
       namespace
       {
@@ -88,4 +88,4 @@ namespace colab { namespace wallet {
                 std::inserter(method_descriptions, method_descriptions.end()));
    }
 
-} } // end namespace colab::wallet
+} } // end namespace knowledgr::wallet

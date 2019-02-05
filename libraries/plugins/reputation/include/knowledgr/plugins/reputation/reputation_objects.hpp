@@ -1,26 +1,26 @@
 #pragma once
-#include <colab/chain/colab_object_types.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
 
 #include <boost/multi_index/composite_key.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 struct by_account;
 } }
 
-namespace colab { namespace plugins { namespace reputation {
+namespace knowledgr { namespace plugins { namespace reputation {
 
 using namespace std;
-using namespace colab::chain;
+using namespace knowledgr::chain;
 
 using chainbase::t_vector;
 
-#ifndef COLAB_REPUTATION_SPACE_ID
-#define COLAB_REPUTATION_SPACE_ID 17
+#ifndef KNOWLEDGR_REPUTATION_SPACE_ID
+#define KNOWLEDGR_REPUTATION_SPACE_ID 17
 #endif
 
 enum reputation_plugin_object_type
 {
-   reputation_object_type        = ( COLAB_REPUTATION_SPACE_ID << 8 )
+   reputation_object_type        = ( KNOWLEDGR_REPUTATION_SPACE_ID << 8 )
 };
 
 
@@ -52,8 +52,8 @@ typedef multi_index_container<
    allocator< reputation_object >
 > reputation_index;
 
-} } } // colab::plugins::reputation
+} } } // knowledgr::plugins::reputation
 
 
-FC_REFLECT( colab::plugins::reputation::reputation_object, (id)(account)(reputation) )
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::reputation::reputation_object, colab::plugins::reputation::reputation_index )
+FC_REFLECT( knowledgr::plugins::reputation::reputation_object, (id)(account)(reputation) )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::reputation::reputation_object, knowledgr::plugins::reputation::reputation_index )

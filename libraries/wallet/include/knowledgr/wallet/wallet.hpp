@@ -1,22 +1,22 @@
 #pragma once
 
-#include <colab/plugins/condenser_api/condenser_api.hpp>
+#include <knowledgr/plugins/condenser_api/condenser_api.hpp>
 
-#include <colab/wallet/remote_node_api.hpp>
+#include <knowledgr/wallet/remote_node_api.hpp>
 
-#include <colab/utilities/key_conversion.hpp>
+#include <knowledgr/utilities/key_conversion.hpp>
 
 #include <fc/macros.hpp>
 #include <fc/real128.hpp>
 #include <fc/crypto/base58.hpp>
 #include <fc/api.hpp>
 
-namespace colab { namespace wallet {
+namespace knowledgr { namespace wallet {
 
 using namespace std;
 
-using namespace colab::utilities;
-using namespace colab::protocol;
+using namespace knowledgr::utilities;
+using namespace knowledgr::protocol;
 
 typedef uint16_t transaction_handle_type;
 
@@ -83,7 +83,7 @@ class wallet_api_impl;
 class wallet_api
 {
    public:
-      wallet_api( const wallet_data& initial_data, const colab::protocol::chain_id_type& _colab_chain_id, fc::api< remote_node_api > rapi );
+      wallet_api( const wallet_data& initial_data, const knowledgr::protocol::chain_id_type& _knowledgr_chain_id, fc::api< remote_node_api > rapi );
       virtual ~wallet_api();
 
       bool copy_wallet_file( string destination_filename );
@@ -186,7 +186,7 @@ class wallet_api
        */
       condenser_api::api_account_object get_account( string account_name ) const;
 
-	  //~~~~~CLC~~~~~{
+	  //~~~~~NLG~~~~~{
 	  /** Returns information about the given account.
 	   *
 	   * @param author the name of the account to post the comment.
@@ -239,7 +239,7 @@ class wallet_api
        * @returns the public stake data stored in the blockchain
        */
       vector<condenser_api::api_stake_pending_object> find_pending_stake( string account ) const;
-	  //~~~~~CLC~~~~~}
+	  //~~~~~NLG~~~~~}
 
       /** Returns the current wallet filename.
        *
@@ -440,19 +440,19 @@ class wallet_api
        *  that is paid by the creator. The current account creation fee can be found with the
        *  'info' wallet command.
        *
-       *  These accounts are created with combination of CLC and delegated SP
+       *  These accounts are created with combination of NLG and delegated SP
        *
        *  @param creator The account creating the new account
-       *  @param clc_fee The amount of the fee to be paid with CLC
-       *  @param delegated_clc The amount of the fee to be paid with delegation
+       *  @param nlg_fee The amount of the fee to be paid with NLG
+       *  @param delegated_nlg The amount of the fee to be paid with delegation
        *  @param new_account_name The name of the new account
        *  @param json_meta JSON Metadata associated with the new account
        *  @param broadcast true if you wish to broadcast the transaction
        */
 //       condenser_api::legacy_signed_transaction create_account_delegated(
 //          string creator,
-//          condenser_api::legacy_asset clc_fee,
-//          condenser_api::legacy_asset delegated_clc,
+//          condenser_api::legacy_asset nlg_fee,
+//          condenser_api::legacy_asset delegated_nlg,
 //          string new_account_name,
 //          string json_meta,
 //          bool broadcast );
@@ -463,11 +463,11 @@ class wallet_api
        * wallet. There is a fee associated with account creation that is paid by the creator.
        * The current account creation fee can be found with the 'info' wallet command.
        *
-       * These accounts are created with combination of CLC and delegated SP
+       * These accounts are created with combination of NLG and delegated SP
        *
        * @param creator The account creating the new account
-       * @param clc_fee The amount of the fee to be paid with CLC
-       * @param delegated_clc The amount of the fee to be paid with delegation
+       * @param nlg_fee The amount of the fee to be paid with NLG
+       * @param delegated_nlg The amount of the fee to be paid with delegation
        * @param newname The name of the new account
        * @param json_meta JSON Metadata associated with the new account
        * @param owner public owner key of the new account
@@ -478,8 +478,8 @@ class wallet_api
        */
 //       condenser_api::legacy_signed_transaction create_account_with_keys_delegated(
 //          string creator,
-//          condenser_api::legacy_asset clc_fee,
-//          condenser_api::legacy_asset delegated_clc,
+//          condenser_api::legacy_asset nlg_fee,
+//          condenser_api::legacy_asset delegated_nlg,
 //          string newname,
 //          string json_meta,
 //          public_key_type owner,
@@ -508,12 +508,12 @@ class wallet_api
          public_key_type memo,
          bool broadcast )const;
 
-	  ///~~~~~CLC~~~~~{
+	  ///~~~~~NLG~~~~~{
 	  /**
-       * Stake the token from CLC balance.
+       * Stake the token from NLG balance.
        *
        * @param account The name of the requester
-       * @param amount The amount to stake. i.e. "100.000 CLC"
+       * @param amount The amount to stake. i.e. "100.000 NLG"
        * @param broadcast true if you wish to broadcast the transaction
        */
       condenser_api::legacy_signed_transaction stake(
@@ -525,7 +525,7 @@ class wallet_api
        * Untake the token from stake balance.
        *
        * @param account The name of the requester
-       * @param amount The amount to stake. i.e. "100.000 CLC"
+       * @param amount The amount to stake. i.e. "100.000 NLG"
        * @param broadcast true if you wish to broadcast the transaction
        */
       condenser_api::legacy_signed_transaction unstake(
@@ -571,7 +571,7 @@ class wallet_api
          string account,
          bool broadcast )const;
 
-	  ///~~~~~CLC~~~~~}
+	  ///~~~~~NLG~~~~~}
 
       /**
        * This method updates the key of an authority for an exisiting account.
@@ -758,11 +758,11 @@ class wallet_api
          bool broadcast = false);
 
       /**
-       * Transfer funds from one account to another. CLC and SBD can be transferred.
+       * Transfer funds from one account to another. NLG and SBD can be transferred.
        *
        * @param from The account the funds are coming from
        * @param to The account the funds are going to
-       * @param amount The funds being transferred. i.e. "100.000 CLC"
+       * @param amount The funds being transferred. i.e. "100.000 NLG"
        * @param memo A memo for the transactionm, encrypted with the to account's public memo key
        * @param broadcast true if you wish to broadcast the transaction
        */
@@ -774,13 +774,13 @@ class wallet_api
          bool broadcast = false);
 
       /**
-       * Transfer funds from one account to another using escrow. CLC and SBD can be transferred.
+       * Transfer funds from one account to another using escrow. NLG and SBD can be transferred.
        *
        * @param from The account the funds are coming from
        * @param to The account the funds are going to
        * @param agent The account acting as the agent in case of dispute
        * @param escrow_id A unique id for the escrow transfer. (from, escrow_id) must be a unique pair
-       * @param clc_amount The amount of CLC to transfer
+       * @param nlg_amount The amount of NLG to transfer
        * @param fee The fee paid to the agent
        * @param ratification_deadline The deadline for 'to' and 'agent' to approve the escrow transfer
        * @param escrow_expiration The expiration of the escrow transfer, after which either party can claim the funds
@@ -793,7 +793,7 @@ class wallet_api
          string agent,
          uint32_t escrow_id,
 //         condenser_api::legacy_asset sbd_amount,
-         condenser_api::legacy_asset clc_amount,
+         condenser_api::legacy_asset nlg_amount,
          condenser_api::legacy_asset fee,
          time_point_sec ratification_deadline,
          time_point_sec escrow_expiration,
@@ -851,7 +851,7 @@ class wallet_api
        * @param who The account authorizing the release
        * @param receiver The account that will receive funds being released
        * @param escrow_id A unique id for the escrow transfer
-       * @param clc_amount The amount of CLC that will be released
+       * @param nlg_amount The amount of NLG that will be released
        * @param broadcast true if you wish to broadcast the transaction
        */
       condenser_api::legacy_signed_transaction escrow_release(
@@ -862,18 +862,18 @@ class wallet_api
          string receiver,
          uint32_t escrow_id,
 //         condenser_api::legacy_asset sbd_amount,
-         condenser_api::legacy_asset clc_amount,
+         condenser_api::legacy_asset nlg_amount,
          bool broadcast = false
       );
 
       /**
-       * Transfer CLC into a vesting fund represented by vesting shares (VESTS). VESTS are required to vesting
+       * Transfer NLG into a vesting fund represented by vesting shares (VESTS). VESTS are required to vesting
        * for a minimum of one coin year and can be withdrawn once a week over a two year withdraw period.
-       * VESTS are protected against dilution up until 90% of CLC is vesting.
+       * VESTS are protected against dilution up until 90% of NLG is vesting.
        *
-       * @param from The account the CLC is coming from
+       * @param from The account the NLG is coming from
        * @param to The account getting the VESTS
-       * @param amount The amount of CLC to vest i.e. "100.00 CLC"
+       * @param amount The amount of NLG to vest i.e. "100.00 NLG"
        * @param broadcast true if you wish to broadcast the transaction
        */
 //       condenser_api::legacy_signed_transaction transfer_to_vesting(
@@ -923,7 +923,7 @@ class wallet_api
 //        *
 //        * @param from The account the VESTS are withdrawn from
 //        * @param vesting_shares The amount of VESTS to withdraw over the next two years. Each week (amount/104) shares are
-//        *    withdrawn and deposited back as CLC. i.e. "10.000000 VESTS"
+//        *    withdrawn and deposited back as NLG. i.e. "10.000000 VESTS"
 //        * @param broadcast true if you wish to broadcast the transaction
 //        */
 //       condenser_api::legacy_signed_transaction withdraw_vesting(
@@ -936,11 +936,11 @@ class wallet_api
 //        * based on the specified weights.
 //        *
 //        * @param from The account the VESTS are withdrawn from.
-//        * @param to   The account receiving either VESTS or CLC.
+//        * @param to   The account receiving either VESTS or NLG.
 //        * @param percent The percent of the withdraw to go to the 'to' account. This is denoted in hundreths of a percent.
 //        *    i.e. 100 is 1% and 10000 is 100%. This value must be between 1 and 100000
 //        * @param auto_vest Set to true if the from account should receive the VESTS as VESTS, or false if it should receive
-//        *    them as CLC.
+//        *    them as NLG.
 //        * @param broadcast true if you wish to broadcast the transaction.
 //        */
 //       condenser_api::legacy_signed_transaction set_withdraw_vesting_route(
@@ -951,7 +951,7 @@ class wallet_api
 //          bool broadcast = false );
 
 //       /**
-//        *  This method will convert SBD to CLC at the current_median_history price one
+//        *  This method will convert SBD to NLG at the current_median_history price one
 //        *  week from the time it is executed. This method depends upon there being a valid price feed.
 //        *
 //        *  @param from The account requesting conversion of its SBD i.e. "1.000 SBD"
@@ -964,8 +964,8 @@ class wallet_api
 //          bool broadcast = false );
 
 //       /**
-//        * A witness can public a price feed for the CLC:SBD market. The median price feed is used
-//        * to process conversion requests from SBD to CLC.
+//        * A witness can public a price feed for the NLG:SBD market. The median price feed is used
+//        * to process conversion requests from SBD to NLG.
 //        *
 //        * @param witness The witness publishing the price feed
 //        * @param exchange_rate The desired exchange rate
@@ -1000,14 +1000,14 @@ class wallet_api
        * you can fill in.  It's better than nothing.
        *
        * @param operation_type the type of operation to return, must be one of the
-       *                       operations defined in `colab/chain/operations.hpp`
+       *                       operations defined in `knowledgr/chain/operations.hpp`
        *                       (e.g., "global_parameters_update_operation")
        * @return a default-constructed operation of the given type
        */
       operation get_prototype_operation(string operation_type);
 
       /**
-       * Gets the current order book for CLC:SBD
+       * Gets the current order book for NLG:SBD
        *
        * @param limit Maximum number of orders to return for bids and asks. Max is 1000.
        */
@@ -1019,7 +1019,7 @@ class wallet_api
        *
        *  @param owner The name of the account creating the order
        *  @param order_id is a unique identifier assigned by the creator of the order, it can be reused after the order has been filled
-       *  @param amount_to_sell The amount of either SBD or CLC you wish to sell
+       *  @param amount_to_sell The amount of either SBD or NLG you wish to sell
        *  @param min_to_receive The amount of the other asset you will receive at a minimum
        *  @param fill_or_kill true if you want the order to be killed if it cannot immediately be filled
        *  @param expiration the time the order should expire if it has not been filled
@@ -1052,7 +1052,7 @@ class wallet_api
        *  @param author the name of the account authoring the comment
        *  @param permlink the accountwide unique permlink for the comment
        *  @param parent_author can be null if this is a top level comment
-       *  @param parent_permlink becomes "colab" if parent_author is "", in other words, the case this comment is root.
+       *  @param parent_permlink becomes "knowledgr" if parent_author is "", in other words, the case this comment is root.
 	   *  @param categories the array of categories by string. Follow categories are available;
 	   *			   "Logic", "Mathematics", "Astronomy and Astrophysics", "Physics", "Chemistry", "Life Sciences", "Earth and Space Sciences",
 	   *			   "Agricultural Sciences", "Medical Sciences", "Technological Sciences", "Anthropology", "Demographics", "Economic Sciences", 
@@ -1071,15 +1071,15 @@ class wallet_api
          string permlink,
          string parent_author,
          string parent_permlink,
-		 const vector<std::string>& categories, //~~~~~CLC~~~~~
-		 string type, //~~~~~CLC~~~~~
-		 const vector<citation>& citations, //~~~~~CLC~~~~~
+		 const vector<std::string>& categories, //~~~~~NLG~~~~~
+		 string type, //~~~~~NLG~~~~~
+		 const vector<citation>& citations, //~~~~~NLG~~~~~
          string title,
          string body,
          string json,
          bool broadcast );
 
-	  //~~~~~CLC~~~~~{
+	  //~~~~~NLG~~~~~{
 	  /**
        *  Post or update a review for the comment.
        *
@@ -1102,10 +1102,10 @@ class wallet_api
 		  const vector<citation>& citations, 
 		  string title, string body, int16_t weight, string json, 
 		  bool broadcast );
-	  //~~~~~CLC~~~~~}
+	  //~~~~~NLG~~~~~}
 
       /**
-       * Vote on a comment to be paid CLC
+       * Vote on a comment to be paid NLG
        *
        * @param voter The account voting
        * @param author The author of the comment to be voted on
@@ -1221,7 +1221,7 @@ class wallet_api
 
       condenser_api::legacy_signed_transaction claim_reward_balance(
          string account,
-         condenser_api::legacy_asset reward_colab,
+         condenser_api::legacy_asset reward_knowledgr,
 //          condenser_api::legacy_asset reward_sbd,
 //          condenser_api::legacy_asset reward_vests,
          bool broadcast );
@@ -1234,20 +1234,20 @@ struct plain_keys {
 
 } }
 
-FC_REFLECT( colab::wallet::wallet_data,
+FC_REFLECT( knowledgr::wallet::wallet_data,
             (cipher_keys)
             (ws_server)
             (ws_user)
             (ws_password)
           )
 
-FC_REFLECT( colab::wallet::brain_key_info, (brain_priv_key)(wif_priv_key) (pub_key))
+FC_REFLECT( knowledgr::wallet::brain_key_info, (brain_priv_key)(wif_priv_key) (pub_key))
 
-FC_REFLECT( colab::wallet::plain_keys, (checksum)(keys) )
+FC_REFLECT( knowledgr::wallet::plain_keys, (checksum)(keys) )
 
-FC_REFLECT_ENUM( colab::wallet::authority_type, (owner)(active)(posting) )
+FC_REFLECT_ENUM( knowledgr::wallet::authority_type, (owner)(active)(posting) )
 
-FC_API( colab::wallet::wallet_api,
+FC_API( knowledgr::wallet::wallet_api,
         /// wallet api
         (help)(gethelp)
         (about)(is_new)(is_locked)(lock)(unlock)(set_password)
@@ -1275,27 +1275,27 @@ FC_API( colab::wallet::wallet_api,
         (get_account_history)
         (get_state)
         (get_withdraw_routes)
-		(get_dynamic_global_properties)//~~~~~CLC~~~~~
-		(get_witness_schedule)//~~~~~CLC~~~~~
-		(get_comment)//~~~~~CLC~~~~~
-		(get_votes)//~~~~~CLC~~~~~
-		(list_parent_series)//~~~~~CLC~~~~~
-		(list_comment_replies)//~~~~~CLC~~~~~
-		(list_comments)//~~~~~CLC~~~~~
-		(get_comment_count)//~~~~~CLC~~~~~
-		(list_pending_stakes)///~~~~~CLC~~~~~
-		(find_pending_stake)///~~~~~CLC~~~~~
+		(get_dynamic_global_properties)//~~~~~NLG~~~~~
+		(get_witness_schedule)//~~~~~NLG~~~~~
+		(get_comment)//~~~~~NLG~~~~~
+		(get_votes)//~~~~~NLG~~~~~
+		(list_parent_series)//~~~~~NLG~~~~~
+		(list_comment_replies)//~~~~~NLG~~~~~
+		(list_comments)//~~~~~NLG~~~~~
+		(get_comment_count)//~~~~~NLG~~~~~
+		(list_pending_stakes)///~~~~~NLG~~~~~
+		(find_pending_stake)///~~~~~NLG~~~~~
 
         /// transaction api
         (create_account)
         (create_account_with_keys)
         //(create_account_delegated)
         //(create_account_with_keys_delegated)
-		(update_account_admin)///~~~~~CLC~~~~~
-		(update_account_expertise)///~~~~~CLC~~~~~
-		(stake)///~~~~~CLC~~~~~
-		(unstake)///~~~~~CLC~~~~~
-		(process_pending_stake)///~~~~~CLC~~~~~
+		(update_account_admin)///~~~~~NLG~~~~~
+		(update_account_expertise)///~~~~~NLG~~~~~
+		(stake)///~~~~~NLG~~~~~
+		(unstake)///~~~~~NLG~~~~~
+		(process_pending_stake)///~~~~~NLG~~~~~
         (update_account)
         (update_account_auth_key)
         (update_account_auth_account)
@@ -1322,7 +1322,7 @@ FC_API( colab::wallet::wallet_api,
         (create_order)
         (cancel_order)
         (post_comment)
-		(post_review)///~~~~~CLC~~~~~
+		(post_review)///~~~~~NLG~~~~~
         (vote)
         (set_transaction_expiration)
         (request_account_recovery)
@@ -1346,4 +1346,4 @@ FC_API( colab::wallet::wallet_api,
         (get_transaction)
       )
 
-FC_REFLECT( colab::wallet::memo_data, (from)(to)(nonce)(check)(encrypted) )
+FC_REFLECT( knowledgr::wallet::memo_data, (from)(to)(nonce)(check)(encrypted) )

@@ -1,15 +1,15 @@
 
-#include <colab/chain/colab_evaluator.hpp>
-#include <colab/chain/database.hpp>
-#include <colab/chain/colab_objects.hpp>
-#include <colab/chain/smt_objects.hpp>
-#include <colab/chain/util/reward.hpp>
-#include <colab/chain/util/smt_token.hpp>
+#include <knowledgr/chain/knowledgr_evaluator.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/knowledgr_objects.hpp>
+#include <knowledgr/chain/smt_objects.hpp>
+#include <knowledgr/chain/util/reward.hpp>
+#include <knowledgr/chain/util/smt_token.hpp>
 
-#include <colab/protocol/smt_operations.hpp>
+#include <knowledgr/protocol/smt_operations.hpp>
 
-#ifdef COLAB_ENABLE_SMT
-namespace colab { namespace chain {
+#ifdef KNOWLEDGR_ENABLE_SMT
+namespace knowledgr { namespace chain {
 
 namespace {
 
@@ -66,7 +66,7 @@ const smt_token_object& common_pre_setup_evaluation(
 
 void smt_create_evaluator::do_apply( const smt_create_operation& o )
 {
-   FC_ASSERT( _db.has_hardfork( COLAB_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", COLAB_SMT_HARDFORK) );
+   FC_ASSERT( _db.has_hardfork( KNOWLEDGR_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", KNOWLEDGR_SMT_HARDFORK) );
    const dynamic_global_property_object& dgpo = _db.get_dynamic_global_properties();
 
    FC_ASSERT( util::find_smt_token( _db, o.symbol, true ) == nullptr, "SMT ${nai} has already been created.", ("nai", o.symbol.to_nai() ) );
@@ -83,8 +83,8 @@ void smt_create_evaluator::do_apply( const smt_create_operation& o )
 //       const auto& fhistory = _db.get_feed_history();
 //       FC_ASSERT( !fhistory.current_median_history.is_null(), "Cannot pay the fee using different asset symbol because there is no price feed." );
 // 
-//       if( dgpo.smt_creation_fee.symbol == CLC_SYMBOL )
-//          creation_fee = _db.to_colab( o.smt_creation_fee );
+//       if( dgpo.smt_creation_fee.symbol == NLG_SYMBOL )
+//          creation_fee = _db.to_knowledgr( o.smt_creation_fee );
 //       else
 //          creation_fee = _db.to_sbd( o.smt_creation_fee );
    }
@@ -96,7 +96,7 @@ void smt_create_evaluator::do_apply( const smt_create_operation& o )
       "Account does not have sufficient funds for specified fee of ${of}", ("of", o.smt_creation_fee) );
 
    _db.adjust_balance( o.control_account , -o.smt_creation_fee );
-   _db.adjust_balance( COLAB_NULL_ACCOUNT,  o.smt_creation_fee );
+   _db.adjust_balance( KNOWLEDGR_NULL_ACCOUNT,  o.smt_creation_fee );
 
    // Create SMT object common to both liquid and vesting variants of SMT.
    _db.create< smt_token_object >( [&]( smt_token_object& token )
@@ -132,7 +132,7 @@ struct smt_setup_evaluator_visitor
 
 void smt_setup_evaluator::do_apply( const smt_setup_operation& o )
 {
-   FC_ASSERT( _db.has_hardfork( COLAB_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", COLAB_SMT_HARDFORK) );
+   FC_ASSERT( _db.has_hardfork( KNOWLEDGR_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", KNOWLEDGR_SMT_HARDFORK) );
 #pragma message ("TODO: Adjust assertion below and add/modify negative tests appropriately.")
    const auto* _token = _db.find< smt_token_object, by_symbol >( o.symbol );
    FC_ASSERT( _token, "SMT ${ac} not elevated yet.",("ac", o.control_account) );
@@ -183,7 +183,7 @@ void smt_setup_evaluator::do_apply( const smt_setup_operation& o )
 
 void smt_cap_reveal_evaluator::do_apply( const smt_cap_reveal_operation& o )
 {
-   FC_ASSERT( _db.has_hardfork( COLAB_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", COLAB_SMT_HARDFORK) );
+   FC_ASSERT( _db.has_hardfork( KNOWLEDGR_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", KNOWLEDGR_SMT_HARDFORK) );
 
    const smt_token_object& smt = get_controlled_smt( _db, o.control_account, o.symbol );
    // Check whether it's not too early to reveal a cap.
@@ -193,40 +193,40 @@ void smt_cap_reveal_evaluator::do_apply( const smt_cap_reveal_operation& o )
 
    // As there's no information in cap reveal operation about which cap it reveals,
    // we'll check both, unless they are already revealed.
-   FC_ASSERT( smt.colab_units_min_cap < 0 || smt.colab_units_hard_cap < 0, "Both min cap and max hard cap have already been revealed" );
+   FC_ASSERT( smt.knowledgr_units_min_cap < 0 || smt.knowledgr_units_hard_cap < 0, "Both min cap and max hard cap have already been revealed" );
 
-   if( smt.colab_units_min_cap < 0 )
+   if( smt.knowledgr_units_min_cap < 0 )
       try
       {
-         o.cap.validate( smt.capped_generation_policy.min_colab_units_commitment );
+         o.cap.validate( smt.capped_generation_policy.min_knowledgr_units_commitment );
          _db.modify( smt, [&]( smt_token_object& smt_object )
          {
-            smt_object.colab_units_min_cap = o.cap.amount;
+            smt_object.knowledgr_units_min_cap = o.cap.amount;
          });
          return;
       }
       catch( const fc::exception& e )
       {
-         if( smt.colab_units_hard_cap >= 0 )
+         if( smt.knowledgr_units_hard_cap >= 0 )
             throw;
       }
 
-   o.cap.validate( smt.capped_generation_policy.hard_cap_colab_units_commitment );
+   o.cap.validate( smt.capped_generation_policy.hard_cap_knowledgr_units_commitment );
    _db.modify( smt, [&]( smt_token_object& smt_object )
    {
-      smt_object.colab_units_hard_cap = o.cap.amount;
+      smt_object.knowledgr_units_hard_cap = o.cap.amount;
    });
 }
 
 void smt_refund_evaluator::do_apply( const smt_refund_operation& o )
 {
-   FC_ASSERT( _db.has_hardfork( COLAB_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", COLAB_SMT_HARDFORK) );
+   FC_ASSERT( _db.has_hardfork( KNOWLEDGR_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", KNOWLEDGR_SMT_HARDFORK) );
    // TODO: Check whether some impostor tries to hijack SMT operation.
 }
 
 void smt_setup_emissions_evaluator::do_apply( const smt_setup_emissions_operation& o )
 {
-   FC_ASSERT( _db.has_hardfork( COLAB_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", COLAB_SMT_HARDFORK) );
+   FC_ASSERT( _db.has_hardfork( KNOWLEDGR_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", KNOWLEDGR_SMT_HARDFORK) );
 
    const smt_token_object& smt = common_pre_setup_evaluation(_db, o.symbol, o.control_account);
 
@@ -251,7 +251,7 @@ void smt_setup_emissions_evaluator::do_apply( const smt_setup_emissions_operatio
 
 void smt_set_setup_parameters_evaluator::do_apply( const smt_set_setup_parameters_operation& o )
 {
-   FC_ASSERT( _db.has_hardfork( COLAB_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", COLAB_SMT_HARDFORK) );
+   FC_ASSERT( _db.has_hardfork( KNOWLEDGR_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", KNOWLEDGR_SMT_HARDFORK) );
 
    const smt_token_object& smt_token = common_pre_setup_evaluation(_db, o.symbol, o.control_account);
    
@@ -306,7 +306,7 @@ struct smt_set_runtime_parameters_evaluator_visitor
 
 void smt_set_runtime_parameters_evaluator::do_apply( const smt_set_runtime_parameters_operation& o )
 {
-   FC_ASSERT( _db.has_hardfork( COLAB_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", COLAB_SMT_HARDFORK) );
+   FC_ASSERT( _db.has_hardfork( KNOWLEDGR_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", KNOWLEDGR_SMT_HARDFORK) );
 
    const smt_token_object& _token = common_pre_setup_evaluation(_db, o.symbol, o.control_account);
 

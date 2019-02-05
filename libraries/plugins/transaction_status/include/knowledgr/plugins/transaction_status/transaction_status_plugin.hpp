@@ -1,11 +1,11 @@
 #pragma once
-#include <colab/plugins/chain/chain_plugin.hpp>
+#include <knowledgr/plugins/chain/chain_plugin.hpp>
 
 #include <appbase/application.hpp>
 
-namespace colab { namespace plugins { namespace transaction_status {
+namespace knowledgr { namespace plugins { namespace transaction_status {
 
-#define COLAB_TRANSACTION_STATUS_PLUGIN_NAME "transaction_status"
+#define KNOWLEDGR_TRANSACTION_STATUS_PLUGIN_NAME "transaction_status"
 
 namespace detail { class transaction_status_impl; }
 
@@ -15,9 +15,9 @@ class transaction_status_plugin : public appbase::plugin< transaction_status_plu
       transaction_status_plugin();
       virtual ~transaction_status_plugin();
 
-      APPBASE_PLUGIN_REQUIRES( (colab::plugins::chain::chain_plugin) )
+      APPBASE_PLUGIN_REQUIRES( (knowledgr::plugins::chain::chain_plugin) )
 
-      static const std::string& name() { static std::string name = COLAB_TRANSACTION_STATUS_PLUGIN_NAME; return name; }
+      static const std::string& name() { static std::string name = KNOWLEDGR_TRANSACTION_STATUS_PLUGIN_NAME; return name; }
 
       virtual void set_program_options( boost::program_options::options_description& cli, boost::program_options::options_description& cfg ) override;
       virtual void plugin_initialize( const boost::program_options::variables_map& options ) override;
@@ -35,4 +35,4 @@ class transaction_status_plugin : public appbase::plugin< transaction_status_plu
       std::unique_ptr< detail::transaction_status_impl > my;
 };
 
-} } } // colab::plugins::transaction_status
+} } } // knowledgr::plugins::transaction_status

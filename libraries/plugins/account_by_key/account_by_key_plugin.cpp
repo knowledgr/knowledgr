@@ -1,14 +1,14 @@
 
-#include <colab/chain/colab_fwd.hpp>
+#include <knowledgr/chain/knowledgr_fwd.hpp>
 
-#include <colab/plugins/account_by_key/account_by_key_plugin.hpp>
-#include <colab/plugins/account_by_key/account_by_key_objects.hpp>
+#include <knowledgr/plugins/account_by_key/account_by_key_plugin.hpp>
+#include <knowledgr/plugins/account_by_key/account_by_key_objects.hpp>
 
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/database.hpp>
-#include <colab/chain/index.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/index.hpp>
 
-namespace colab { namespace plugins { namespace account_by_key {
+namespace knowledgr { namespace plugins { namespace account_by_key {
 
 namespace detail {
 
@@ -16,7 +16,7 @@ class account_by_key_plugin_impl
 {
    public:
       account_by_key_plugin_impl( account_by_key_plugin& _plugin ) :
-         _db( appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db() ),
+         _db( appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db() ),
          _self( _plugin ) {}
 
       void on_pre_apply_operation( const operation_notification& note );
@@ -60,7 +60,7 @@ struct pre_operation_visitor
       if( acct_itr ) _plugin.cache_auths( *acct_itr );
    }
 
-   //~~~~~CLC~~~~~{
+   //~~~~~NLG~~~~~{
 	void operator()( const account_expertise_update_operation& op )const
    {
       _plugin.clear_cache();
@@ -74,7 +74,7 @@ struct pre_operation_visitor
 		auto acct_itr = _plugin._db.find< account_authority_object, by_account >( op.account );
 		if( acct_itr ) _plugin.cache_auths( *acct_itr );
 	}
-	//~~~~~CLC~~~~~}
+	//~~~~~NLG~~~~~}
 
    void operator()( const recover_account_operation& op )const
    {
@@ -134,7 +134,7 @@ struct post_operation_visitor
       if( acct_itr ) _plugin.update_key_lookup( *acct_itr );
    }
 
-   //~~~~~CLC~~~~~{
+   //~~~~~NLG~~~~~{
    void operator()( const account_expertise_update_operation& op )const
    {
 	   auto acct_itr = _plugin._db.find< account_authority_object, by_account >( op.account );
@@ -146,7 +146,7 @@ struct post_operation_visitor
 	   auto acct_itr = _plugin._db.find< account_authority_object, by_account >( op.account );
 	   if( acct_itr ) _plugin.update_key_lookup( *acct_itr );
    }
-   //~~~~~CLC~~~~~}
+   //~~~~~NLG~~~~~}
 
    void operator()( const recover_account_operation& op )const
    {
@@ -171,7 +171,7 @@ struct post_operation_visitor
 
    void operator()( const hardfork_operation& op )const
    {
-      if( op.hardfork_id == COLAB_HARDFORK_0_9 )
+      if( op.hardfork_id == KNOWLEDGR_HARDFORK_0_9 )
       {
          auto& db = _plugin._db;
 
@@ -183,7 +183,7 @@ struct post_operation_visitor
 
             db.create< key_lookup_object >( [&]( key_lookup_object& o )
             {
-               o.key = public_key_type( "CLB7sw22HqsXbz7D2CmJfmMwt9rimtk518dRzsR1f8Cgw52dQR1pR" );
+               o.key = public_key_type( "KWR7sw22HqsXbz7D2CmJfmMwt9rimtk518dRzsR1f8Cgw52dQR1pR" );
                o.account = account->name;
             });
          }
@@ -279,7 +279,7 @@ void account_by_key_plugin::plugin_initialize( const boost::program_options::var
    try
    {
       ilog( "Initializing account_by_key plugin" );
-      chain::database& db = appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db();
+      chain::database& db = appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db();
 
       my->_pre_apply_operation_conn = db.add_pre_apply_operation_handler( [&]( const operation_notification& note ){ my->on_pre_apply_operation( note ); }, *this, 0 );
       my->_post_apply_operation_conn = db.add_post_apply_operation_handler( [&]( const operation_notification& note ){ my->on_post_apply_operation( note ); }, *this, 0 );
@@ -299,4 +299,4 @@ void account_by_key_plugin::plugin_shutdown()
    chain::util::disconnect_signal( my->_post_apply_operation_conn );
 }
 
-} } } // colab::plugins::account_by_key
+} } } // knowledgr::plugins::account_by_key

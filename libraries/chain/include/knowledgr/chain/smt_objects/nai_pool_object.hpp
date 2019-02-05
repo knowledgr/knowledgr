@@ -1,11 +1,11 @@
 #pragma once
 
-#include <colab/chain/colab_object_types.hpp>
-#include <colab/protocol/asset_symbol.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
+#include <knowledgr/protocol/asset_symbol.hpp>
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
    class nai_pool_object : public object< nai_pool_object_type, nai_pool_object >
    {
@@ -43,10 +43,10 @@ namespace colab { namespace chain {
       allocator< nai_pool_object >
    > nai_pool_index;
 
-} } // namespace colab::chain
+} } // namespace knowledgr::chain
 
-FC_REFLECT( colab::chain::nai_pool_object, (id)(num_available_nais)(nais) )
+FC_REFLECT( knowledgr::chain::nai_pool_object, (id)(num_available_nais)(nais) )
 
-CHAINBASE_SET_INDEX_TYPE( colab::chain::nai_pool_object, colab::chain::nai_pool_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::nai_pool_object, knowledgr::chain::nai_pool_index )
 
 #endif

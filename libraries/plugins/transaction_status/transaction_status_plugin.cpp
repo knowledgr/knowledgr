@@ -1,11 +1,11 @@
 
-#include <colab/chain/colab_fwd.hpp>
+#include <knowledgr/chain/knowledgr_fwd.hpp>
 
-#include <colab/plugins/transaction_status/transaction_status_plugin.hpp>
-#include <colab/plugins/transaction_status/transaction_status_objects.hpp>
-#include <colab/chain/database.hpp>
-#include <colab/chain/index.hpp>
-#include <colab/protocol/config.hpp>
+#include <knowledgr/plugins/transaction_status/transaction_status_plugin.hpp>
+#include <knowledgr/plugins/transaction_status/transaction_status_objects.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/index.hpp>
+#include <knowledgr/protocol/config.hpp>
 
 #include <fc/io/json.hpp>
 
@@ -37,14 +37,14 @@
  *      see `plugin_initialize`
  */
 
-namespace colab { namespace plugins { namespace transaction_status {
+namespace knowledgr { namespace plugins { namespace transaction_status {
 
 namespace detail {
 
 class transaction_status_impl
 {
 public:
-   transaction_status_impl() : _db( appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db() ) {}
+   transaction_status_impl() : _db( appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db() ) {}
    virtual ~transaction_status_impl() {}
 
    void on_post_apply_transaction( const transaction_notification& note );
@@ -282,10 +282,10 @@ void transaction_status_plugin::plugin_initialize( const boost::program_options:
 
       // We need to begin tracking 1 hour of blocks prior to the user provided track after block
       // A value of 0 indicates we should start tracking immediately
-      my->actual_track_after_block = std::max< int64_t >( 0, int64_t( my->nominal_track_after_block ) - int64_t( COLAB_MAX_TIME_UNTIL_EXPIRATION / COLAB_BLOCK_INTERVAL ) );
+      my->actual_track_after_block = std::max< int64_t >( 0, int64_t( my->nominal_track_after_block ) - int64_t( KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION / KNOWLEDGR_BLOCK_INTERVAL ) );
 
       // We need to track 1 hour of blocks in addition to the depth the user would like us to track
-      my->actual_block_depth = my->nominal_block_depth + ( COLAB_MAX_TIME_UNTIL_EXPIRATION / COLAB_BLOCK_INTERVAL );
+      my->actual_block_depth = my->nominal_block_depth + ( KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION / KNOWLEDGR_BLOCK_INTERVAL );
 
       dlog( "transaction status initializing" );
       dlog( "  -> nominal block depth: ${block_depth}", ("block_depth", my->nominal_block_depth) );
@@ -354,4 +354,4 @@ void transaction_status_plugin::rebuild_state()
 
 #endif
 
-} } } // colab::plugins::transaction_status
+} } } // knowledgr::plugins::transaction_status

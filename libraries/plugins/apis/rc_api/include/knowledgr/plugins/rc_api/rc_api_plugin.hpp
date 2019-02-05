@@ -1,13 +1,13 @@
 #pragma once
-#include <colab/plugins/rc/rc_plugin.hpp>
-#include <colab/plugins/json_rpc/json_rpc_plugin.hpp>
+#include <knowledgr/plugins/rc/rc_plugin.hpp>
+#include <knowledgr/plugins/json_rpc/json_rpc_plugin.hpp>
 
 #include <appbase/application.hpp>
 
-#define COLAB_RC_API_PLUGIN_NAME "rc_api"
+#define KNOWLEDGR_RC_API_PLUGIN_NAME "rc_api"
 
 
-namespace colab { namespace plugins { namespace rc {
+namespace knowledgr { namespace plugins { namespace rc {
 
 using namespace appbase;
 
@@ -15,14 +15,14 @@ class rc_api_plugin : public appbase::plugin< rc_api_plugin >
 {
 public:
    APPBASE_PLUGIN_REQUIRES(
-      (colab::plugins::rc::rc_plugin)
-      (colab::plugins::json_rpc::json_rpc_plugin)
+      (knowledgr::plugins::rc::rc_plugin)
+      (knowledgr::plugins::json_rpc::json_rpc_plugin)
    )
 
    rc_api_plugin();
    virtual ~rc_api_plugin();
 
-   static const std::string& name() { static std::string name = COLAB_RC_API_PLUGIN_NAME; return name; }
+   static const std::string& name() { static std::string name = KNOWLEDGR_RC_API_PLUGIN_NAME; return name; }
 
    virtual void set_program_options( options_description& cli, options_description& cfg ) override;
 
@@ -33,4 +33,4 @@ public:
    std::shared_ptr< class rc_api > api;
 };
 
-} } } // colab::plugins::rc
+} } } // knowledgr::plugins::rc

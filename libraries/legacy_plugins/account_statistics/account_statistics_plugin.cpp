@@ -1,11 +1,11 @@
-#include <colab/account_statistics/account_statistics_api.hpp>
+#include <knowledgr/account_statistics/account_statistics_api.hpp>
 
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/comment_object.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/comment_object.hpp>
 
-#include <colab/chain/database.hpp>
+#include <knowledgr/chain/database.hpp>
 
-namespace colab { namespace account_statistics {
+namespace knowledgr { namespace account_statistics {
 
 namespace detail
 {
@@ -105,6 +105,6 @@ const flat_set< std::string >& account_statistics_plugin::get_tracked_accounts()
    return _my->_tracked_accounts;
 }
 
-} } // colab::account_statistics
+} } // knowledgr::account_statistics
 
-COLAB_DEFINE_PLUGIN( account_statistics, colab::account_statistics::account_statistics_plugin );
+KNOWLEDGR_DEFINE_PLUGIN( account_statistics, knowledgr::account_statistics::account_statistics_plugin );

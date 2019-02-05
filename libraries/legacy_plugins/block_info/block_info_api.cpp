@@ -1,31 +1,31 @@
 
-#include <colab/app/api_context.hpp>
-#include <colab/app/application.hpp>
+#include <knowledgr/app/api_context.hpp>
+#include <knowledgr/app/application.hpp>
 
-#include <colab/plugins/block_info/block_info_api.hpp>
-#include <colab/plugins/block_info/block_info_plugin.hpp>
+#include <knowledgr/plugins/block_info/block_info_api.hpp>
+#include <knowledgr/plugins/block_info/block_info_plugin.hpp>
 
-namespace colab { namespace plugin { namespace block_info {
+namespace knowledgr { namespace plugin { namespace block_info {
 
 namespace detail {
 
 class block_info_api_impl
 {
    public:
-      block_info_api_impl( colab::app::application& _app );
+      block_info_api_impl( knowledgr::app::application& _app );
 
-      std::shared_ptr< colab::plugin::block_info::block_info_plugin > get_plugin();
+      std::shared_ptr< knowledgr::plugin::block_info::block_info_plugin > get_plugin();
 
       void get_block_info( const get_block_info_args& args, std::vector< block_info >& result );
       void get_blocks_with_info( const get_block_info_args& args, std::vector< block_with_info >& result );
 
-      colab::app::application& app;
+      knowledgr::app::application& app;
 };
 
-block_info_api_impl::block_info_api_impl( colab::app::application& _app ) : app( _app )
+block_info_api_impl::block_info_api_impl( knowledgr::app::application& _app ) : app( _app )
 {}
 
-std::shared_ptr< colab::plugin::block_info::block_info_plugin > block_info_api_impl::get_plugin()
+std::shared_ptr< knowledgr::plugin::block_info::block_info_plugin > block_info_api_impl::get_plugin()
 {
    return app.get_plugin< block_info_plugin >( "block_info" );
 }
@@ -66,7 +66,7 @@ void block_info_api_impl::get_blocks_with_info( const get_block_info_args& args,
 
 } // detail
 
-block_info_api::block_info_api( const colab::app::api_context& ctx )
+block_info_api::block_info_api( const knowledgr::app::api_context& ctx )
 {
    my = std::make_shared< detail::block_info_api_impl >(ctx.app);
 }
@@ -87,4 +87,4 @@ std::vector< block_with_info > block_info_api::get_blocks_with_info( get_block_i
 
 void block_info_api::on_api_startup() { }
 
-} } } // colab::plugin::block_info
+} } } // knowledgr::plugin::block_info

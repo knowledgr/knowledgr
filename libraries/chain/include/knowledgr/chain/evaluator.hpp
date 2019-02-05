@@ -1,12 +1,12 @@
 #pragma once
-#include <colab/protocol/exceptions.hpp>
-#include <colab/protocol/operations.hpp>
+#include <knowledgr/protocol/exceptions.hpp>
+#include <knowledgr/protocol/operations.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
 class database;
 
-template< typename OperationType=colab::protocol::operation >
+template< typename OperationType=knowledgr::protocol::operation >
 class evaluator
 {
    public:
@@ -17,7 +17,7 @@ class evaluator
       virtual std::string get_name( const OperationType& op ) = 0;
 };
 
-template< typename EvaluatorType, typename OperationType=colab::protocol::operation >
+template< typename EvaluatorType, typename OperationType=knowledgr::protocol::operation >
 class evaluator_impl : public evaluator<OperationType>
 {
    public:
@@ -53,27 +53,27 @@ class evaluator_impl : public evaluator<OperationType>
 
 } }
 
-#define COLAB_DEFINE_EVALUATOR( X ) \
-class X ## _evaluator : public colab::chain::evaluator_impl< X ## _evaluator > \
+#define KNOWLEDGR_DEFINE_EVALUATOR( X ) \
+class X ## _evaluator : public knowledgr::chain::evaluator_impl< X ## _evaluator > \
 {                                                                           \
    public:                                                                  \
       typedef X ## _operation operation_type;                               \
                                                                             \
       X ## _evaluator( database& db )                                       \
-         : colab::chain::evaluator_impl< X ## _evaluator >( db )          \
+         : knowledgr::chain::evaluator_impl< X ## _evaluator >( db )          \
       {}                                                                    \
                                                                             \
       void do_apply( const X ## _operation& o );                            \
 };
 
-#define COLAB_DEFINE_PLUGIN_EVALUATOR( PLUGIN, OPERATION, X )               \
-class X ## _evaluator : public colab::chain::evaluator_impl< X ## _evaluator, OPERATION > \
+#define KNOWLEDGR_DEFINE_PLUGIN_EVALUATOR( PLUGIN, OPERATION, X )               \
+class X ## _evaluator : public knowledgr::chain::evaluator_impl< X ## _evaluator, OPERATION > \
 {                                                                           \
    public:                                                                  \
       typedef X ## _operation operation_type;                               \
                                                                             \
-      X ## _evaluator( colab::chain::database& db, PLUGIN* plugin )       \
-         : colab::chain::evaluator_impl< X ## _evaluator, OPERATION >( db ), \
+      X ## _evaluator( knowledgr::chain::database& db, PLUGIN* plugin )       \
+         : knowledgr::chain::evaluator_impl< X ## _evaluator, OPERATION >( db ), \
            _plugin( plugin )                                                \
       {}                                                                    \
                                                                             \

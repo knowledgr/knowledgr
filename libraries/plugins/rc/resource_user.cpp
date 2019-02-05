@@ -1,11 +1,11 @@
 
-#include <colab/plugins/rc/resource_user.hpp>
+#include <knowledgr/plugins/rc/resource_user.hpp>
 
-#include <colab/protocol/transaction.hpp>
+#include <knowledgr/protocol/transaction.hpp>
 
-namespace colab { namespace plugins { namespace rc {
+namespace knowledgr { namespace plugins { namespace rc {
 
-using namespace colab::protocol;
+using namespace knowledgr::protocol;
 
 account_name_type get_resource_user( const signed_transaction& tx )
 {
@@ -27,4 +27,4 @@ account_name_type get_resource_user( const signed_transaction& tx )
    return account_name_type();
 }
 
-} } } // colab::plugins::rc
+} } } // knowledgr::plugins::rc

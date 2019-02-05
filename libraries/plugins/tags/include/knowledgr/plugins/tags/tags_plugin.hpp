@@ -1,15 +1,15 @@
 #pragma once
 
-#include <colab/plugins/chain/chain_plugin.hpp>
+#include <knowledgr/plugins/chain/chain_plugin.hpp>
 
-#include <colab/chain/comment_object.hpp>
+#include <knowledgr/chain/comment_object.hpp>
 
 #include <boost/multi_index/composite_key.hpp>
 
 
-namespace colab { namespace plugins { namespace tags {
+namespace knowledgr { namespace plugins { namespace tags {
 
-using namespace colab::chain;
+using namespace knowledgr::chain;
 using namespace boost::multi_index;
 
 using namespace appbase;
@@ -28,11 +28,11 @@ using chainbase::allocator;
 // various template automagic depends on them being known at compile
 // time.
 //
-#ifndef COLAB_TAG_SPACE_ID
-#define COLAB_TAG_SPACE_ID 5
+#ifndef KNOWLEDGR_TAG_SPACE_ID
+#define KNOWLEDGR_TAG_SPACE_ID 5
 #endif
 
-#define COLAB_TAGS_PLUGIN_NAME "tags"
+#define KNOWLEDGR_TAGS_PLUGIN_NAME "tags"
 
 typedef protocol::fixed_string< 32 > tag_name_type;
 
@@ -42,10 +42,10 @@ typedef protocol::fixed_string< 32 > tag_name_type;
 // to define as they see fit.
 enum
 {
-   tag_object_type              = ( COLAB_TAG_SPACE_ID << 8 ),
-   tag_stats_object_type        = ( COLAB_TAG_SPACE_ID << 8 ) + 1,
-   peer_stats_object_type       = ( COLAB_TAG_SPACE_ID << 8 ) + 2,
-   author_tag_stats_object_type = ( COLAB_TAG_SPACE_ID << 8 ) + 3
+   tag_object_type              = ( KNOWLEDGR_TAG_SPACE_ID << 8 ),
+   tag_stats_object_type        = ( KNOWLEDGR_TAG_SPACE_ID << 8 ) + 1,
+   peer_stats_object_type       = ( KNOWLEDGR_TAG_SPACE_ID << 8 ) + 2,
+   author_tag_stats_object_type = ( KNOWLEDGR_TAG_SPACE_ID << 8 ) + 3
 };
 
 namespace detail { class tags_plugin_impl; }
@@ -345,9 +345,9 @@ class tags_plugin : public plugin< tags_plugin >
       tags_plugin();
       virtual ~tags_plugin();
 
-      APPBASE_PLUGIN_REQUIRES( (colab::plugins::chain::chain_plugin) )
+      APPBASE_PLUGIN_REQUIRES( (knowledgr::plugins::chain::chain_plugin) )
 
-      static const std::string& name() { static std::string name = COLAB_TAGS_PLUGIN_NAME; return name; }
+      static const std::string& name() { static std::string name = KNOWLEDGR_TAGS_PLUGIN_NAME; return name; }
 
       virtual void set_program_options(
          options_description& cli,
@@ -382,17 +382,17 @@ class tag_api : public std::enable_shared_from_this<tag_api> {
 */
 
 
-} } } //colab::plugins::tags
+} } } //knowledgr::plugins::tags
 
-FC_REFLECT( colab::plugins::tags::tag_object,
+FC_REFLECT( knowledgr::plugins::tags::tag_object,
    (id)(tag)(created)(active)(cashout)(net_rshares)(net_votes)(hot)(trending)(promoted_balance)(children)(author)(parent)(comment) )
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::tags::tag_object, colab::plugins::tags::tag_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::tags::tag_object, knowledgr::plugins::tags::tag_index )
 
-FC_REFLECT( colab::plugins::tags::tag_stats_object,
+FC_REFLECT( knowledgr::plugins::tags::tag_stats_object,
    (id)(tag)(total_payout)(net_votes)(top_posts)(comments)(total_trending) );
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::tags::tag_stats_object, colab::plugins::tags::tag_stats_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::tags::tag_stats_object, knowledgr::plugins::tags::tag_stats_index )
 
-FC_REFLECT( colab::plugins::tags::comment_metadata, (tags) );
+FC_REFLECT( knowledgr::plugins::tags::comment_metadata, (tags) );
 
-FC_REFLECT( colab::plugins::tags::author_tag_stats_object, (id)(author)(tag)(total_posts)(total_rewards) )
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::tags::author_tag_stats_object, colab::plugins::tags::author_tag_stats_index )
+FC_REFLECT( knowledgr::plugins::tags::author_tag_stats_object, (id)(author)(tag)(total_posts)(total_rewards) )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::tags::author_tag_stats_object, knowledgr::plugins::tags::author_tag_stats_index )

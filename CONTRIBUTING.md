@@ -1,6 +1,6 @@
 # Please Read
 
-Please read these instructions before submitting issues to the Colab GitHub repository. The issue tracker is for bugs and specific implementation discussion **only**. It should not be used for other purposes, as described below.
+Please read these instructions before submitting issues to the Knowledgr GitHub repository. The issue tracker is for bugs and specific implementation discussion **only**. It should not be used for other purposes, as described below.
 
 ## Bug Reports
 
@@ -8,7 +8,7 @@ If there is an existing feature that is not working correctly, or a glitch in th
 
 ## Enhancement Suggestions
 
-Do **not** use the issue tracker to suggest enhancements or improvements to the platform. The best place for these discussions is on Colabit.com. If there is a well vetted idea that has the support of the community that you feel should be considered by the development team, please email it to [sneak@colabit.com](mailto:sneak@colabit.com) for review.
+Do **not** use the issue tracker to suggest enhancements or improvements to the platform. The best place for these discussions is on Knowledgrit.com. If there is a well vetted idea that has the support of the community that you feel should be considered by the development team, please email it to [sneak@knowledgrit.com](mailto:sneak@knowledgrit.com) for review.
 
 ## Implementation Discussion
 
@@ -22,9 +22,9 @@ This is not the place to make suggestions for product improvement (please see th
 
 Please do a keyword search to see if there is already an existing issue before opening a new one.
 
-## Colabit.com vs. Colab Blockchain
+## Knowledgrit.com vs. Knowledgr Blockchain
 
-This issue tracker is only intended to track issues for the Colab blockchain. If the issue is with the Colabit.com website, please open an issue in the [Colabit.com Repository](https://github.com/norestlabs/colabit.com/).
+This issue tracker is only intended to track issues for the Knowledgr blockchain. If the issue is with the Knowledgrit.com website, please open an issue in the [Knowledgrit.com Repository](https://github.com/norestlabs/knowledgrit.com/).
 
 ## Pull Requests
 

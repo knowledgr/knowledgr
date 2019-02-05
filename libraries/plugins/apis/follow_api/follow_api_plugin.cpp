@@ -1,8 +1,8 @@
-#include <colab/plugins/follow_api/follow_api_plugin.hpp>
-#include <colab/plugins/follow_api/follow_api.hpp>
+#include <knowledgr/plugins/follow_api/follow_api_plugin.hpp>
+#include <knowledgr/plugins/follow_api/follow_api.hpp>
 
 
-namespace colab { namespace plugins { namespace follow {
+namespace knowledgr { namespace plugins { namespace follow {
 
 follow_api_plugin::follow_api_plugin() {}
 follow_api_plugin::~follow_api_plugin() {}
@@ -17,4 +17,4 @@ void follow_api_plugin::plugin_initialize( const variables_map& options )
 void follow_api_plugin::plugin_startup() {}
 void follow_api_plugin::plugin_shutdown() {}
 
-} } } // colab::plugins::follow
+} } } // knowledgr::plugins::follow

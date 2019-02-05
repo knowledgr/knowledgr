@@ -1,5 +1,5 @@
 #pragma once
-#include <colab/protocol/block.hpp>
+#include <knowledgr/protocol/block.hpp>
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/member.hpp>
@@ -8,12 +8,12 @@
 #include <boost/multi_index/mem_fun.hpp>
 
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
    using boost::multi_index_container;
    using namespace boost::multi_index;
 
-   using colab::protocol::signed_block;
-   using colab::protocol::block_id_type;
+   using knowledgr::protocol::signed_block;
+   using knowledgr::protocol::block_id_type;
 
    struct fork_item
    {
@@ -107,4 +107,4 @@ namespace colab { namespace chain {
          shared_ptr<fork_item>    _head;
    };
 
-} } // colab::chain
+} } // knowledgr::chain

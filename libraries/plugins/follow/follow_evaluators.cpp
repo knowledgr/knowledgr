@@ -1,12 +1,12 @@
-#include <colab/plugins/follow/follow_plugin.hpp>
-#include <colab/plugins/follow/follow_operations.hpp>
-#include <colab/plugins/follow/follow_objects.hpp>
-#include <colab/plugins/follow/inc_performance.hpp>
+#include <knowledgr/plugins/follow/follow_plugin.hpp>
+#include <knowledgr/plugins/follow/follow_operations.hpp>
+#include <knowledgr/plugins/follow/follow_objects.hpp>
+#include <knowledgr/plugins/follow/inc_performance.hpp>
 
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/comment_object.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/comment_object.hpp>
 
-namespace colab { namespace plugins { namespace follow {
+namespace knowledgr { namespace plugins { namespace follow {
 
 void follow_evaluator::do_apply( const follow_operation& o )
 {
@@ -216,4 +216,4 @@ void reblog_evaluator::do_apply( const reblog_operation& o )
    FC_CAPTURE_AND_RETHROW( (o) )
 }
 
-} } } // colab::follow
+} } } // knowledgr::follow

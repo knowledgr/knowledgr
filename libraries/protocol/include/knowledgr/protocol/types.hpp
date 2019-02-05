@@ -1,9 +1,9 @@
 #pragma once
-#include <colab/protocol/types_fwd.hpp>
-#include <colab/protocol/config.hpp>
+#include <knowledgr/protocol/types_fwd.hpp>
+#include <knowledgr/protocol/config.hpp>
 
-#include <colab/protocol/asset_symbol.hpp>
-#include <colab/protocol/fixed_string.hpp>
+#include <knowledgr/protocol/asset_symbol.hpp>
+#include <knowledgr/protocol/fixed_string.hpp>
 
 #include <fc/container/flat_fwd.hpp>
 #include <fc/io/varint.hpp>
@@ -29,7 +29,7 @@
 #include <deque>
 #include <cstdint>
 
-namespace colab {
+namespace knowledgr {
 
    using                                    fc::uint128_t;
    typedef boost::multiprecision::uint256_t u256;
@@ -104,7 +104,7 @@ namespace colab {
             friend bool operator != ( const public_key_type& p1, const public_key_type& p2);
       };
 
-      #define COLAB_INIT_PUBLIC_KEY (colab::protocol::public_key_type(COLAB_INIT_PUBLIC_KEY_STR))
+      #define KNOWLEDGR_INIT_PUBLIC_KEY (knowledgr::protocol::public_key_type(KNOWLEDGR_INIT_PUBLIC_KEY_STR))
 
       struct extended_public_key_type
       {
@@ -152,25 +152,25 @@ namespace colab {
 
       chain_id_type generate_chain_id( const std::string& chain_id_name );
 
-} }  // colab::protocol
+} }  // knowledgr::protocol
 
 namespace fc
 {
-    void to_variant( const colab::protocol::public_key_type& var,  fc::variant& vo );
-    void from_variant( const fc::variant& var,  colab::protocol::public_key_type& vo );
-    void to_variant( const colab::protocol::extended_public_key_type& var, fc::variant& vo );
-    void from_variant( const fc::variant& var, colab::protocol::extended_public_key_type& vo );
-    void to_variant( const colab::protocol::extended_private_key_type& var, fc::variant& vo );
-    void from_variant( const fc::variant& var, colab::protocol::extended_private_key_type& vo );
+    void to_variant( const knowledgr::protocol::public_key_type& var,  fc::variant& vo );
+    void from_variant( const fc::variant& var,  knowledgr::protocol::public_key_type& vo );
+    void to_variant( const knowledgr::protocol::extended_public_key_type& var, fc::variant& vo );
+    void from_variant( const fc::variant& var, knowledgr::protocol::extended_public_key_type& vo );
+    void to_variant( const knowledgr::protocol::extended_private_key_type& var, fc::variant& vo );
+    void from_variant( const fc::variant& var, knowledgr::protocol::extended_private_key_type& vo );
 }
 
-FC_REFLECT( colab::protocol::public_key_type, (key_data) )
-FC_REFLECT( colab::protocol::public_key_type::binary_key, (data)(check) )
-FC_REFLECT( colab::protocol::extended_public_key_type, (key_data) )
-FC_REFLECT( colab::protocol::extended_public_key_type::binary_key, (check)(data) )
-FC_REFLECT( colab::protocol::extended_private_key_type, (key_data) )
-FC_REFLECT( colab::protocol::extended_private_key_type::binary_key, (check)(data) )
+FC_REFLECT( knowledgr::protocol::public_key_type, (key_data) )
+FC_REFLECT( knowledgr::protocol::public_key_type::binary_key, (data)(check) )
+FC_REFLECT( knowledgr::protocol::extended_public_key_type, (key_data) )
+FC_REFLECT( knowledgr::protocol::extended_public_key_type::binary_key, (check)(data) )
+FC_REFLECT( knowledgr::protocol::extended_private_key_type, (key_data) )
+FC_REFLECT( knowledgr::protocol::extended_private_key_type::binary_key, (check)(data) )
 
-FC_REFLECT_TYPENAME( colab::protocol::share_type )
+FC_REFLECT_TYPENAME( knowledgr::protocol::share_type )
 
-FC_REFLECT( colab::void_t, )
+FC_REFLECT( knowledgr::void_t, )

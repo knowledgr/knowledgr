@@ -11,4 +11,4 @@ dependencies:
 
 test:
     override:
-        - time docker build --rm=false -t colabitinc/colab-test -f Dockerfile.test .
+        - time docker build --rm=false -t knowledgritinc/knowledgr-test -f Dockerfile.test .

@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-namespace colab { namespace schema { namespace detail {
+namespace knowledgr { namespace schema { namespace detail {
 
 struct get_deps_member_visitor
 {
@@ -61,16 +61,16 @@ struct get_str_schema_enum_member_visitor
    mutable std::vector< std::pair< std::string, int64_t > > _members;
 };
 
-#define COLAB_DECLARE_SCHEMA_CLASS( is_reflected, is_enum )  \
+#define KNOWLEDGR_DECLARE_SCHEMA_CLASS( is_reflected, is_enum )  \
 template< typename ObjectType >                                 \
 struct schema_impl< ObjectType, is_reflected, is_enum >         \
    : public abstract_schema                                     \
 {                                                               \
-COLAB_SCHEMA_TEMPLATE_CLASS_BODY( schema_impl )              \
+KNOWLEDGR_SCHEMA_TEMPLATE_CLASS_BODY( schema_impl )              \
 };
 
 // Templated version of macro includes some method definitions
-#define COLAB_SCHEMA_TEMPLATE_CLASS_BODY( CLASSNAME )        \
+#define KNOWLEDGR_SCHEMA_TEMPLATE_CLASS_BODY( CLASSNAME )        \
    CLASSNAME( int64_t id, const std::string& name ) : _id(id), _name(name) {} \
    virtual ~CLASSNAME() {}                                      \
                                                                 \
@@ -89,7 +89,7 @@ COLAB_SCHEMA_TEMPLATE_CLASS_BODY( schema_impl )              \
 
 // Non-template version puts method definitions in separate macro
 //    to avoid linker errors
-#define COLAB_SCHEMA_CLASS_BODY( CLASSNAME )                 \
+#define KNOWLEDGR_SCHEMA_CLASS_BODY( CLASSNAME )                 \
    CLASSNAME( int64_t id, const std::string& name );            \
    virtual ~CLASSNAME();                                        \
                                                                 \
@@ -105,7 +105,7 @@ COLAB_SCHEMA_TEMPLATE_CLASS_BODY( schema_impl )              \
    std::string _name;
 
 // Non-template classes have to call this macro in a .cpp file
-#define COLAB_SCHEMA_DEFINE_CLASS_METHODS( CLASSNAME )       \
+#define KNOWLEDGR_SCHEMA_DEFINE_CLASS_METHODS( CLASSNAME )       \
    CLASSNAME::CLASSNAME( int64_t id, const std::string& name )  \
       : _id(id), _name(name) {}                                 \
    CLASSNAME::~CLASSNAME() {}                                   \
@@ -114,9 +114,9 @@ COLAB_SCHEMA_TEMPLATE_CLASS_BODY( schema_impl )              \
    int64_t CLASSNAME::get_id()                                  \
    { return _id; }
 
-COLAB_DECLARE_SCHEMA_CLASS( false, false )
-COLAB_DECLARE_SCHEMA_CLASS(  true, false )
-COLAB_DECLARE_SCHEMA_CLASS(  true,  true )
+KNOWLEDGR_DECLARE_SCHEMA_CLASS( false, false )
+KNOWLEDGR_DECLARE_SCHEMA_CLASS(  true, false )
+KNOWLEDGR_DECLARE_SCHEMA_CLASS(  true,  true )
 
 template< typename ObjectType >
 void schema_impl< ObjectType, false, false >::get_deps( std::vector< std::shared_ptr< abstract_schema > >& deps )

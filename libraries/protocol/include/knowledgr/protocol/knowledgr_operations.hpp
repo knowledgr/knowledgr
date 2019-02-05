@@ -1,17 +1,17 @@
 #pragma once
-#include <colab/protocol/base.hpp>
-#include <colab/protocol/block_header.hpp>
-#include <colab/protocol/asset.hpp>
-#include <colab/protocol/validation.hpp>
-#include <colab/protocol/legacy_asset.hpp>
+#include <knowledgr/protocol/base.hpp>
+#include <knowledgr/protocol/block_header.hpp>
+#include <knowledgr/protocol/asset.hpp>
+#include <knowledgr/protocol/validation.hpp>
+#include <knowledgr/protocol/legacy_asset.hpp>
 
 #include <fc/crypto/equihash.hpp>
-#include <colab/protocol/expertise.hpp>
+#include <knowledgr/protocol/expertise.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
    void validate_auth_size( const authority& a );
-   ///~~~~~CLC~~~~~{
+   ///~~~~~NLG~~~~~{
    struct account_expertise_update_operation : public base_operation
    {
 	   account_name_type             admin;
@@ -49,7 +49,7 @@ namespace colab { namespace protocol {
 	   void validate()const;
 	   void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(admin); }
    };
-   ///~~~~~CLC~~~~~}
+   ///~~~~~NLG~~~~~}
 
    struct account_create_operation : public base_operation
    {
@@ -106,7 +106,7 @@ namespace colab { namespace protocol {
    struct citation {
 	   account_name_type author;
 	   string permlink;
-   };//~~~~~CLC~~~~~
+   };//~~~~~NLG~~~~~
 
    struct comment_operation : public base_operation
    {
@@ -119,9 +119,9 @@ namespace colab { namespace protocol {
       string            title;
       string            body;
       string            json_metadata;
-	  uint32_t			type;//~~~~~CLC~~~~~   0-observation, 1-question, 2-hypothesis, 3-review, 4-none
-	  vector<citation>	citations;//~~~~~CLC~~~~~
-	  vector< protocol::expertise_category > categories;//~~~~~CLC~~~~~
+	  uint32_t			type;//~~~~~NLG~~~~~   0-observation, 1-question, 2-hypothesis, 3-review, 4-none
+	  vector<citation>	citations;//~~~~~NLG~~~~~
+	  vector< protocol::expertise_category > categories;//~~~~~NLG~~~~~
 
       void validate()const;
       void get_required_posting_authorities( flat_set<account_name_type>& a )const{ a.insert(author); }
@@ -146,7 +146,7 @@ namespace colab { namespace protocol {
       void validate()const;
    };
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
    struct votable_asset_info_v1
    {
       votable_asset_info_v1() = default;
@@ -161,7 +161,7 @@ namespace colab { namespace protocol {
 
    /** Allows to store all SMT tokens being allowed to use during voting process.
     *  Maps asset symbol (SMT) to the vote info.
-    *  @see SMT spec for details: https://github.com/colabit/smt-whitepaper/blob/master/smt-manual/manual.md
+    *  @see SMT spec for details: https://github.com/knowledgrit/smt-whitepaper/blob/master/smt-manual/manual.md
     */
    struct allowed_vote_assets
    {
@@ -209,19 +209,19 @@ namespace colab { namespace protocol {
       void validate() const
       {
          FC_ASSERT(votable_assets.size() <= SMT_MAX_VOTABLE_ASSETS, "Too much votable assets specified");
-         FC_ASSERT(is_allowed(CLC_SYMBOL) == false,
-            "CLC can not be explicitly specified as one of allowed_vote_assets");
+         FC_ASSERT(is_allowed(NLG_SYMBOL) == false,
+            "NLG can not be explicitly specified as one of allowed_vote_assets");
       }
 
       flat_map< asset_symbol_type, votable_asset_info > votable_assets;
    };
-#endif /// COLAB_ENABLE_SMT
+#endif /// KNOWLEDGR_ENABLE_SMT
 
    typedef static_variant<
             comment_payout_beneficiaries
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
             ,allowed_vote_assets
-#endif /// COLAB_ENABLE_SMT
+#endif /// KNOWLEDGR_ENABLE_SMT
            > comment_options_extension;
 
    typedef flat_set< comment_options_extension > comment_options_extensions_type;
@@ -231,7 +231,7 @@ namespace colab { namespace protocol {
     *  operation allows authors to update properties associated with their post.
     *
     *  The max_accepted_payout may be decreased, but never increased.
-    *  The percent_colab_dollars may be decreased, but never increased
+    *  The percent_knowledgr_dollars may be decreased, but never increased
     *
     */
    struct comment_options_operation : public base_operation
@@ -239,8 +239,8 @@ namespace colab { namespace protocol {
       account_name_type author;
       string            permlink;
 
-      asset             max_accepted_payout    = asset( 100000000/*1000000000*/, CLC_SYMBOL );       /// CLC value of the maximum payout this post will receive
-      uint16_t          percent_colab_dollars  = COLAB_100_PERCENT; /// the percent of Colab Dollars to key, unkept amounts will be received as Colab Power
+      asset             max_accepted_payout    = asset( 100000000/*1000000000*/, NLG_SYMBOL );       /// NLG value of the maximum payout this post will receive
+      uint16_t          percent_knowledgr_dollars  = KNOWLEDGR_100_PERCENT; /// the percent of Knowledgr Dollars to key, unkept amounts will be received as Knowledgr Power
       bool              allow_votes            = true;      /// allows a post to receive votes;
       bool              allow_curation_rewards = true; /// allows voters to recieve curation rewards. Rewards return to reward fund.
       comment_options_extensions_type extensions;
@@ -302,7 +302,7 @@ namespace colab { namespace protocol {
    /**
     * @ingroup operations
     *
-    * @brief Transfers CLC from one account to another.
+    * @brief Transfers NLG from one account to another.
     */
    struct transfer_operation : public base_operation
    {
@@ -347,7 +347,7 @@ namespace colab { namespace protocol {
       uint32_t          escrow_id = 30;
 
 //      asset             sbd_amount = asset( 0, SBD_SYMBOL );
-      asset             clc_amount = asset( 0, CLC_SYMBOL );
+      asset             nlg_amount = asset( 0, NLG_SYMBOL );
       asset             fee;
 
       time_point_sec    ratification_deadline;
@@ -419,7 +419,7 @@ namespace colab { namespace protocol {
 
       uint32_t          escrow_id = 30;
 //      asset             sbd_amount = asset( 0, SBD_SYMBOL ); ///< the amount of sbd to release
-      asset             clc_amount = asset( 0, CLC_SYMBOL ); ///< the amount of colab to release
+      asset             nlg_amount = asset( 0, NLG_SYMBOL ); ///< the amount of knowledgr to release
 
       void validate()const;
       void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(who); }
@@ -427,7 +427,7 @@ namespace colab { namespace protocol {
 
 
    /**
-    *  This operation converts liquid token (CLC or liquid SMT) into VFS (Vesting Fund Shares,
+    *  This operation converts liquid token (NLG or liquid SMT) into VFS (Vesting Fund Shares,
     *  VESTS or vesting SMT) at the current exchange rate. With this operation it is possible to
     *  give another account vesting shares so that faucets can pre-fund new accounts with vesting shares.
     */
@@ -435,7 +435,7 @@ namespace colab { namespace protocol {
 //    {
 //       account_name_type from;
 //       account_name_type to;      ///< if null, then same as from
-//       asset             amount;  ///< must be CLC or liquid variant of SMT
+//       asset             amount;  ///< must be NLG or liquid variant of SMT
 // 
 //       void validate()const;
 //       void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(from); }
@@ -468,7 +468,7 @@ namespace colab { namespace protocol {
     * request for the funds to be transferred directly to another account's
     * balance rather than the withdrawing account. In addition, those funds
     * can be immediately vested again, circumventing the conversion from
-    * vests to colab and back, guaranteeing they maintain their value.
+    * vests to knowledgr and back, guaranteeing they maintain their value.
     */
 //    struct set_withdraw_vesting_route_operation : public base_operation
 //    {
@@ -490,19 +490,19 @@ namespace colab { namespace protocol {
    struct legacy_chain_properties
    {
       /**
-       *  This fee, paid in CLC, is converted into VESTING SHARES for the new account. Accounts
+       *  This fee, paid in NLG, is converted into VESTING SHARES for the new account. Accounts
        *  without vesting shares cannot earn usage rations and therefore are powerless. This minimum
        *  fee requires all accounts to have some kind of commitment to the network that includes the
        *  ability to vote and make transactions.
        */
-      legacy_colab_asset account_creation_fee = legacy_colab_asset::from_amount( COLAB_MIN_ACCOUNT_CREATION_FEE );
+      legacy_knowledgr_asset account_creation_fee = legacy_knowledgr_asset::from_amount( KNOWLEDGR_MIN_ACCOUNT_CREATION_FEE );
 
       /**
        *  This witnesses vote for the maximum_block_size which is used by the network
        *  to tune rate limiting and capacity
        */
-      uint32_t          maximum_block_size = COLAB_MIN_BLOCK_SIZE_LIMIT * 2;
-//      uint16_t          sbd_interest_rate  = COLAB_DEFAULT_SBD_INTEREST_RATE;
+      uint32_t          maximum_block_size = KNOWLEDGR_MIN_BLOCK_SIZE_LIMIT * 2;
+//      uint16_t          sbd_interest_rate  = KNOWLEDGR_DEFAULT_SBD_INTEREST_RATE;
 
       template< bool force_canon >
       void validate()const
@@ -511,10 +511,10 @@ namespace colab { namespace protocol {
          {
             FC_ASSERT( account_creation_fee.symbol.is_canon() );
          }
-         FC_ASSERT( account_creation_fee.amount >= COLAB_MIN_ACCOUNT_CREATION_FEE);
-         FC_ASSERT( maximum_block_size >= COLAB_MIN_BLOCK_SIZE_LIMIT);
+         FC_ASSERT( account_creation_fee.amount >= KNOWLEDGR_MIN_ACCOUNT_CREATION_FEE);
+         FC_ASSERT( maximum_block_size >= KNOWLEDGR_MIN_BLOCK_SIZE_LIMIT);
 //          FC_ASSERT( sbd_interest_rate >= 0 );
-//          FC_ASSERT( sbd_interest_rate <= COLAB_100_PERCENT );
+//          FC_ASSERT( sbd_interest_rate <= KNOWLEDGR_100_PERCENT );
       }
    };
 
@@ -563,7 +563,7 @@ namespace colab { namespace protocol {
             a.push_back( authority( 1, signing_key, 1 ) );
          }
          else
-            a.push_back( authority( 1, COLAB_NULL_ACCOUNT, 1 ) ); // The null account auth is impossible to satisfy
+            a.push_back( authority( 1, KNOWLEDGR_NULL_ACCOUNT, 1 ) ); // The null account auth is impossible to satisfy
       }
    };
 
@@ -646,7 +646,7 @@ namespace colab { namespace protocol {
 
 //    /**
 //     *  Feeds can only be published by the top N witnesses which are included in every round and are
-//     *  used to define the exchange rate between colab and the dollar.
+//     *  used to define the exchange rate between knowledgr and the dollar.
 //     */
 //    struct feed_publish_operation : public base_operation
 //    {
@@ -659,8 +659,8 @@ namespace colab { namespace protocol {
 
 
    /**
-    *  This operation instructs the blockchain to start a conversion between CLC and SBD,
-    *  The funds are deposited after COLAB_CONVERSION_DELAY
+    *  This operation instructs the blockchain to start a conversion between NLG and SBD,
+    *  The funds are deposited after KNOWLEDGR_CONVERSION_DELAY
     */
 //    struct convert_operation : public base_operation
 //    {
@@ -822,14 +822,14 @@ namespace colab { namespace protocol {
    /**
     * This operation is used to report a miner who signs two blocks
     * at the same time. To be valid, the violation must be reported within
-    * COLAB_MAX_WITNESSES blocks of the head block (1 round) and the
+    * KNOWLEDGR_MAX_WITNESSES blocks of the head block (1 round) and the
     * producer must be in the ACTIVE witness set.
     *
     * Users not in the ACTIVE witness set should not have to worry about their
     * key getting compromised and being used to produced multiple blocks so
-    * the attacker can report it and steel their vesting colab.
+    * the attacker can report it and steel their vesting knowledgr.
     *
-    * The result of the operation is to transfer the full VESTING CLC balance
+    * The result of the operation is to transfer the full VESTING NLG balance
     * of the block producer to the reporter.
     */
    struct report_over_production_operation : public base_operation
@@ -1052,13 +1052,13 @@ namespace colab { namespace protocol {
    struct claim_reward_balance_operation : public base_operation
    {
       account_name_type account;
-      asset             reward_colab;
+      asset             reward_knowledgr;
 
       void get_required_posting_authorities( flat_set< account_name_type >& a )const{ a.insert( account ); }
       void validate() const;
    };
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
    /** Differs with original operation with extensions field and a container of tokens that will
     *  be rewarded to an account. See discussion in issue #1859
     */
@@ -1095,57 +1095,57 @@ namespace colab { namespace protocol {
 //       void get_required_active_authorities( flat_set< account_name_type >& a ) const { a.insert( delegator ); }
 //       void validate() const;
 //    };
-} } // colab::protocol
+} } // knowledgr::protocol
 
 
-FC_REFLECT( colab::protocol::transfer_to_savings_operation, (from)(to)(amount)(memo) )
-FC_REFLECT( colab::protocol::transfer_from_savings_operation, (from)(request_id)(to)(amount)(memo) )
-FC_REFLECT( colab::protocol::cancel_transfer_from_savings_operation, (from)(request_id) )
+FC_REFLECT( knowledgr::protocol::transfer_to_savings_operation, (from)(to)(amount)(memo) )
+FC_REFLECT( knowledgr::protocol::transfer_from_savings_operation, (from)(request_id)(to)(amount)(memo) )
+FC_REFLECT( knowledgr::protocol::cancel_transfer_from_savings_operation, (from)(request_id) )
 
-FC_REFLECT( colab::protocol::reset_account_operation, (reset_account)(account_to_reset)(new_owner_authority) )
-FC_REFLECT( colab::protocol::set_reset_account_operation, (account)(current_reset_account)(reset_account) )
+FC_REFLECT( knowledgr::protocol::reset_account_operation, (reset_account)(account_to_reset)(new_owner_authority) )
+FC_REFLECT( knowledgr::protocol::set_reset_account_operation, (account)(current_reset_account)(reset_account) )
 
 
-FC_REFLECT( colab::protocol::report_over_production_operation, (reporter)(first_block)(second_block) )
-//FC_REFLECT( colab::protocol::convert_operation, (owner)(requestid)(amount) )
-//FC_REFLECT( colab::protocol::feed_publish_operation, (publisher)(exchange_rate) )
-FC_REFLECT( colab::protocol::pow, (worker)(input)(signature)(work) )
-FC_REFLECT( colab::protocol::pow2, (input)(pow_summary) )
-FC_REFLECT( colab::protocol::pow2_input, (worker_account)(prev_block)(nonce) )
-FC_REFLECT( colab::protocol::equihash_pow, (input)(proof)(prev_block)(pow_summary) )
-FC_REFLECT( colab::protocol::legacy_chain_properties,
+FC_REFLECT( knowledgr::protocol::report_over_production_operation, (reporter)(first_block)(second_block) )
+//FC_REFLECT( knowledgr::protocol::convert_operation, (owner)(requestid)(amount) )
+//FC_REFLECT( knowledgr::protocol::feed_publish_operation, (publisher)(exchange_rate) )
+FC_REFLECT( knowledgr::protocol::pow, (worker)(input)(signature)(work) )
+FC_REFLECT( knowledgr::protocol::pow2, (input)(pow_summary) )
+FC_REFLECT( knowledgr::protocol::pow2_input, (worker_account)(prev_block)(nonce) )
+FC_REFLECT( knowledgr::protocol::equihash_pow, (input)(proof)(prev_block)(pow_summary) )
+FC_REFLECT( knowledgr::protocol::legacy_chain_properties,
             (account_creation_fee)
             (maximum_block_size)
 //            (sbd_interest_rate)
           )
 
-FC_REFLECT_TYPENAME( colab::protocol::pow2_work )
-FC_REFLECT( colab::protocol::pow_operation, (worker_account)(block_id)(nonce)(work)(props) )
-FC_REFLECT( colab::protocol::pow2_operation, (work)(new_owner_key)(props) )
+FC_REFLECT_TYPENAME( knowledgr::protocol::pow2_work )
+FC_REFLECT( knowledgr::protocol::pow_operation, (worker_account)(block_id)(nonce)(work)(props) )
+FC_REFLECT( knowledgr::protocol::pow2_operation, (work)(new_owner_key)(props) )
 
-FC_REFLECT( colab::protocol::citation, (author)(permlink) ) ///~~~~~CLC~~~~~
+FC_REFLECT( knowledgr::protocol::citation, (author)(permlink) ) ///~~~~~NLG~~~~~
 
-///~~~~~CLC~~~~~{
-FC_REFLECT( colab::protocol::account_expertise_update_operation,
+///~~~~~NLG~~~~~{
+FC_REFLECT( knowledgr::protocol::account_expertise_update_operation,
             (admin)
             (account)
             (expertises) )
 
-FC_REFLECT( colab::protocol::account_admin_update_operation,
+FC_REFLECT( knowledgr::protocol::account_admin_update_operation,
             (admin)
             (account) )
 
-FC_REFLECT( colab::protocol::stake_request_operation,
+FC_REFLECT( knowledgr::protocol::stake_request_operation,
             (account)
             (amount) 
 			(type) )
 
-FC_REFLECT( colab::protocol::stake_process_operation,
+FC_REFLECT( knowledgr::protocol::stake_process_operation,
 			(admin)
 			(account) )
-///~~~~~CLC~~~~~}
+///~~~~~NLG~~~~~}
 
-FC_REFLECT( colab::protocol::account_create_operation,
+FC_REFLECT( knowledgr::protocol::account_create_operation,
             (fee)
             (creator)
             (new_account_name)
@@ -1155,7 +1155,7 @@ FC_REFLECT( colab::protocol::account_create_operation,
             (memo_key)
             (json_metadata) )
 
-// FC_REFLECT( colab::protocol::account_create_with_delegation_operation,
+// FC_REFLECT( knowledgr::protocol::account_create_with_delegation_operation,
 //             (fee)
 //             (delegation)
 //             (creator)
@@ -1167,7 +1167,7 @@ FC_REFLECT( colab::protocol::account_create_operation,
 //             (json_metadata)
 //             (extensions) )
 
-FC_REFLECT( colab::protocol::account_update_operation,
+FC_REFLECT( knowledgr::protocol::account_update_operation,
             (account)
             (owner)
             (active)
@@ -1175,51 +1175,51 @@ FC_REFLECT( colab::protocol::account_update_operation,
             (memo_key)
             (json_metadata) )
 
-FC_REFLECT( colab::protocol::transfer_operation, (from)(to)(amount)(memo) )
-//FC_REFLECT( colab::protocol::transfer_to_vesting_operation, (from)(to)(amount) )
-//FC_REFLECT( colab::protocol::withdraw_vesting_operation, (account)(vesting_shares) )
-//FC_REFLECT( colab::protocol::set_withdraw_vesting_route_operation, (from_account)(to_account)(percent)(auto_vest) )
-FC_REFLECT( colab::protocol::witness_update_operation, (owner)(url)(block_signing_key)(props)(fee) )
-FC_REFLECT( colab::protocol::witness_set_properties_operation, (owner)(props)(extensions) )
-FC_REFLECT( colab::protocol::account_witness_vote_operation, (account)(witness)(approve) )
-FC_REFLECT( colab::protocol::account_witness_proxy_operation, (account)(proxy) )
-FC_REFLECT( colab::protocol::comment_operation, (parent_author)(parent_permlink)(author)(permlink)(title)(body)(json_metadata)
-			(type)(citations) //~~~~~CLC~~~~~
-			(categories) //~~~~~CLC~~~~~
+FC_REFLECT( knowledgr::protocol::transfer_operation, (from)(to)(amount)(memo) )
+//FC_REFLECT( knowledgr::protocol::transfer_to_vesting_operation, (from)(to)(amount) )
+//FC_REFLECT( knowledgr::protocol::withdraw_vesting_operation, (account)(vesting_shares) )
+//FC_REFLECT( knowledgr::protocol::set_withdraw_vesting_route_operation, (from_account)(to_account)(percent)(auto_vest) )
+FC_REFLECT( knowledgr::protocol::witness_update_operation, (owner)(url)(block_signing_key)(props)(fee) )
+FC_REFLECT( knowledgr::protocol::witness_set_properties_operation, (owner)(props)(extensions) )
+FC_REFLECT( knowledgr::protocol::account_witness_vote_operation, (account)(witness)(approve) )
+FC_REFLECT( knowledgr::protocol::account_witness_proxy_operation, (account)(proxy) )
+FC_REFLECT( knowledgr::protocol::comment_operation, (parent_author)(parent_permlink)(author)(permlink)(title)(body)(json_metadata)
+			(type)(citations) //~~~~~NLG~~~~~
+			(categories) //~~~~~NLG~~~~~
 			)
-FC_REFLECT( colab::protocol::vote_operation, (voter)(author)(permlink)(weight) )
-FC_REFLECT( colab::protocol::custom_operation, (required_auths)(id)(data) )
-FC_REFLECT( colab::protocol::custom_json_operation, (required_auths)(required_posting_auths)(id)(json) )
-FC_REFLECT( colab::protocol::custom_binary_operation, (required_owner_auths)(required_active_auths)(required_posting_auths)(required_auths)(id)(data) )
-FC_REFLECT( colab::protocol::limit_order_create_operation, (owner)(orderid)(amount_to_sell)(min_to_receive)(fill_or_kill)(expiration) )
-FC_REFLECT( colab::protocol::limit_order_create2_operation, (owner)(orderid)(amount_to_sell)(exchange_rate)(fill_or_kill)(expiration) )
-FC_REFLECT( colab::protocol::limit_order_cancel_operation, (owner)(orderid) )
+FC_REFLECT( knowledgr::protocol::vote_operation, (voter)(author)(permlink)(weight) )
+FC_REFLECT( knowledgr::protocol::custom_operation, (required_auths)(id)(data) )
+FC_REFLECT( knowledgr::protocol::custom_json_operation, (required_auths)(required_posting_auths)(id)(json) )
+FC_REFLECT( knowledgr::protocol::custom_binary_operation, (required_owner_auths)(required_active_auths)(required_posting_auths)(required_auths)(id)(data) )
+FC_REFLECT( knowledgr::protocol::limit_order_create_operation, (owner)(orderid)(amount_to_sell)(min_to_receive)(fill_or_kill)(expiration) )
+FC_REFLECT( knowledgr::protocol::limit_order_create2_operation, (owner)(orderid)(amount_to_sell)(exchange_rate)(fill_or_kill)(expiration) )
+FC_REFLECT( knowledgr::protocol::limit_order_cancel_operation, (owner)(orderid) )
 
-FC_REFLECT( colab::protocol::delete_comment_operation, (author)(permlink) );
+FC_REFLECT( knowledgr::protocol::delete_comment_operation, (author)(permlink) );
 
-FC_REFLECT( colab::protocol::beneficiary_route_type, (account)(weight) )
-FC_REFLECT( colab::protocol::comment_payout_beneficiaries, (beneficiaries) )
+FC_REFLECT( knowledgr::protocol::beneficiary_route_type, (account)(weight) )
+FC_REFLECT( knowledgr::protocol::comment_payout_beneficiaries, (beneficiaries) )
 
-#ifdef COLAB_ENABLE_SMT
-FC_REFLECT( colab::protocol::votable_asset_info_v1, (max_accepted_payout)(allow_curation_rewards) )
-FC_REFLECT( colab::protocol::allowed_vote_assets, (votable_assets) )
+#ifdef KNOWLEDGR_ENABLE_SMT
+FC_REFLECT( knowledgr::protocol::votable_asset_info_v1, (max_accepted_payout)(allow_curation_rewards) )
+FC_REFLECT( knowledgr::protocol::allowed_vote_assets, (votable_assets) )
 #endif
 
-FC_REFLECT_TYPENAME( colab::protocol::comment_options_extension )
-FC_REFLECT( colab::protocol::comment_options_operation, (author)(permlink)(max_accepted_payout)(percent_colab_dollars)(allow_votes)(allow_curation_rewards)(extensions) )
+FC_REFLECT_TYPENAME( knowledgr::protocol::comment_options_extension )
+FC_REFLECT( knowledgr::protocol::comment_options_operation, (author)(permlink)(max_accepted_payout)(percent_knowledgr_dollars)(allow_votes)(allow_curation_rewards)(extensions) )
 
-FC_REFLECT( colab::protocol::escrow_transfer_operation, (from)(to)/*(sbd_amount)*/(clc_amount)(escrow_id)(agent)(fee)(json_meta)(ratification_deadline)(escrow_expiration) );
-FC_REFLECT( colab::protocol::escrow_approve_operation, (from)(to)(agent)(who)(escrow_id)(approve) );
-FC_REFLECT( colab::protocol::escrow_dispute_operation, (from)(to)(agent)(who)(escrow_id) );
-FC_REFLECT( colab::protocol::escrow_release_operation, (from)(to)(agent)(who)(receiver)(escrow_id)/*(sbd_amount)*/(clc_amount) );
-FC_REFLECT( colab::protocol::claim_account_operation, (creator)(fee)(extensions) );
-FC_REFLECT( colab::protocol::create_claimed_account_operation, (creator)(new_account_name)(owner)(active)(posting)(memo_key)(json_metadata)(extensions) );
-FC_REFLECT( colab::protocol::request_account_recovery_operation, (recovery_account)(account_to_recover)(new_owner_authority)(extensions) );
-FC_REFLECT( colab::protocol::recover_account_operation, (account_to_recover)(new_owner_authority)(recent_owner_authority)(extensions) );
-FC_REFLECT( colab::protocol::change_recovery_account_operation, (account_to_recover)(new_recovery_account)(extensions) );
-FC_REFLECT( colab::protocol::decline_voting_rights_operation, (account)(decline) );
-FC_REFLECT( colab::protocol::claim_reward_balance_operation, (account)(reward_colab)/*(reward_sbd)(reward_vests)*/ )
-#ifdef COLAB_ENABLE_SMT
-FC_REFLECT( colab::protocol::claim_reward_balance2_operation, (account)(extensions)(reward_tokens) )
+FC_REFLECT( knowledgr::protocol::escrow_transfer_operation, (from)(to)/*(sbd_amount)*/(nlg_amount)(escrow_id)(agent)(fee)(json_meta)(ratification_deadline)(escrow_expiration) );
+FC_REFLECT( knowledgr::protocol::escrow_approve_operation, (from)(to)(agent)(who)(escrow_id)(approve) );
+FC_REFLECT( knowledgr::protocol::escrow_dispute_operation, (from)(to)(agent)(who)(escrow_id) );
+FC_REFLECT( knowledgr::protocol::escrow_release_operation, (from)(to)(agent)(who)(receiver)(escrow_id)/*(sbd_amount)*/(nlg_amount) );
+FC_REFLECT( knowledgr::protocol::claim_account_operation, (creator)(fee)(extensions) );
+FC_REFLECT( knowledgr::protocol::create_claimed_account_operation, (creator)(new_account_name)(owner)(active)(posting)(memo_key)(json_metadata)(extensions) );
+FC_REFLECT( knowledgr::protocol::request_account_recovery_operation, (recovery_account)(account_to_recover)(new_owner_authority)(extensions) );
+FC_REFLECT( knowledgr::protocol::recover_account_operation, (account_to_recover)(new_owner_authority)(recent_owner_authority)(extensions) );
+FC_REFLECT( knowledgr::protocol::change_recovery_account_operation, (account_to_recover)(new_recovery_account)(extensions) );
+FC_REFLECT( knowledgr::protocol::decline_voting_rights_operation, (account)(decline) );
+FC_REFLECT( knowledgr::protocol::claim_reward_balance_operation, (account)(reward_knowledgr)/*(reward_sbd)(reward_vests)*/ )
+#ifdef KNOWLEDGR_ENABLE_SMT
+FC_REFLECT( knowledgr::protocol::claim_reward_balance2_operation, (account)(extensions)(reward_tokens) )
 #endif
-//FC_REFLECT( colab::protocol::delegate_vesting_shares_operation, (delegator)(delegatee)(vesting_shares) );
+//FC_REFLECT( knowledgr::protocol::delegate_vesting_shares_operation, (delegator)(delegatee)(vesting_shares) );

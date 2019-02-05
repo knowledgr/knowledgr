@@ -1,18 +1,18 @@
 #pragma once
-#include <colab/plugins/chain/chain_plugin.hpp>
+#include <knowledgr/plugins/chain/chain_plugin.hpp>
 
-#include <colab/chain/generic_custom_operation_interpreter.hpp>
-
-
-#define COLAB_REPUTATION_PLUGIN_NAME "reputation"
+#include <knowledgr/chain/generic_custom_operation_interpreter.hpp>
 
 
-namespace colab { namespace plugins{ namespace reputation {
+#define KNOWLEDGR_REPUTATION_PLUGIN_NAME "reputation"
+
+
+namespace knowledgr { namespace plugins{ namespace reputation {
 
 namespace detail { class reputation_plugin_impl; }
 
 using namespace appbase;
-using colab::chain::generic_custom_operation_interpreter;
+using knowledgr::chain::generic_custom_operation_interpreter;
 
 class reputation_plugin : public appbase::plugin< reputation_plugin >
 {
@@ -20,9 +20,9 @@ class reputation_plugin : public appbase::plugin< reputation_plugin >
       reputation_plugin();
       virtual ~reputation_plugin();
 
-      APPBASE_PLUGIN_REQUIRES( (colab::plugins::chain::chain_plugin) )
+      APPBASE_PLUGIN_REQUIRES( (knowledgr::plugins::chain::chain_plugin) )
 
-      static const std::string& name() { static std::string name = COLAB_REPUTATION_PLUGIN_NAME; return name; }
+      static const std::string& name() { static std::string name = KNOWLEDGR_REPUTATION_PLUGIN_NAME; return name; }
 
       virtual void set_program_options(
          options_description& cli,
@@ -35,4 +35,4 @@ class reputation_plugin : public appbase::plugin< reputation_plugin >
       std::unique_ptr< detail::reputation_plugin_impl > my;
 };
 
-} } } //colab::reputation
+} } } //knowledgr::reputation

@@ -8,26 +8,26 @@
 #include <fc/reflect/reflect.hpp>
 #include <fc/variant.hpp>
 
-#include <colab/utilities/key_conversion.hpp>
+#include <knowledgr/utilities/key_conversion.hpp>
 
-#include <colab/protocol/transaction.hpp>
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/transaction.hpp>
+#include <knowledgr/protocol/types.hpp>
 
 #define CHAIN_ID_PARAM "--chain-id"
 
 struct tx_signing_request
 {
-   colab::protocol::transaction     tx;
+   knowledgr::protocol::transaction     tx;
    std::string                      wif;
 };
 
 struct tx_signing_result
 {
-   colab::protocol::transaction     tx;
+   knowledgr::protocol::transaction     tx;
    fc::sha256                       digest;
    fc::sha256                       sig_digest;
-   colab::protocol::public_key_type key;
-   colab::protocol::signature_type  sig;
+   knowledgr::protocol::public_key_type key;
+   knowledgr::protocol::signature_type  sig;
 };
 
 struct error_result
@@ -43,7 +43,7 @@ int main(int argc, char** argv, char** envp)
 {
    fc::sha256 chainId;
 
-   chainId = COLAB_CHAIN_ID;
+   chainId = KNOWLEDGR_CHAIN_ID;
 
    const size_t chainIdLen = strlen(CHAIN_ID_PARAM);
 
@@ -120,12 +120,12 @@ int main(int argc, char** argv, char** envp)
          sres.digest = sreq.tx.digest();
          sres.sig_digest = sreq.tx.sig_digest(chainId);
 
-         auto priv_key = colab::utilities::wif_to_key( sreq.wif );
+         auto priv_key = knowledgr::utilities::wif_to_key( sreq.wif );
 
          if(priv_key)
          {
             sres.sig = priv_key->sign_compact( sres.sig_digest );
-            sres.key = colab::protocol::public_key_type( priv_key->get_public_key() );
+            sres.key = knowledgr::protocol::public_key_type( priv_key->get_public_key() );
             std::string sres_str = fc::json::to_string( sres );
             std::cout << "{\"result\":" << sres_str << "}" << std::endl;
          }

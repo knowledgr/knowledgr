@@ -1,11 +1,11 @@
-file(GLOB HEADERS "include/colab/delayed_node/*.hpp")
+file(GLOB HEADERS "include/knowledgr/delayed_node/*.hpp")
 
-add_library( colab_delayed_node
+add_library( knowledgr_delayed_node
              delayed_node_plugin.cpp
            )
 
-target_link_libraries( colab_delayed_node colab_chain colab_protocol colab_app )
-target_include_directories( colab_delayed_node
+target_link_libraries( knowledgr_delayed_node knowledgr_chain knowledgr_protocol knowledgr_app )
+target_include_directories( knowledgr_delayed_node
                             PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
 if(MSVC)
@@ -13,7 +13,7 @@ if(MSVC)
 endif(MSVC)
 
 install( TARGETS
-   colab_delayed_node
+   knowledgr_delayed_node
 
    RUNTIME DESTINATION bin
    LIBRARY DESTINATION lib

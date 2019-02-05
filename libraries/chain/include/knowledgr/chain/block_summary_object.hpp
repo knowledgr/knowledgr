@@ -1,9 +1,9 @@
 #pragma once
-#include <colab/chain/colab_object_types.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
-   using colab::protocol::block_id_type;
+   using knowledgr::protocol::block_id_type;
 
    /**
     *  @brief tracks minimal information about past blocks to implement TaPOS
@@ -38,7 +38,7 @@ namespace colab { namespace chain {
       allocator< block_summary_object >
    > block_summary_index;
 
-} } // colab::chain
+} } // knowledgr::chain
 
-FC_REFLECT( colab::chain::block_summary_object, (id)(block_id) )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::block_summary_object, colab::chain::block_summary_index )
+FC_REFLECT( knowledgr::chain::block_summary_object, (id)(block_id) )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::block_summary_object, knowledgr::chain::block_summary_index )

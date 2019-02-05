@@ -1,13 +1,13 @@
 #pragma once
-#include <colab/plugins/reputation/reputation_plugin.hpp>
-#include <colab/plugins/json_rpc/json_rpc_plugin.hpp>
+#include <knowledgr/plugins/reputation/reputation_plugin.hpp>
+#include <knowledgr/plugins/json_rpc/json_rpc_plugin.hpp>
 
 #include <appbase/application.hpp>
 
-#define COLAB_REPUTATION_API_PLUGIN_NAME "reputation_api"
+#define KNOWLEDGR_REPUTATION_API_PLUGIN_NAME "reputation_api"
 
 
-namespace colab { namespace plugins { namespace reputation {
+namespace knowledgr { namespace plugins { namespace reputation {
 
 using namespace appbase;
 
@@ -15,14 +15,14 @@ class reputation_api_plugin : public appbase::plugin< reputation_api_plugin >
 {
 public:
    APPBASE_PLUGIN_REQUIRES(
-      (colab::plugins::reputation::reputation_plugin)
-      (colab::plugins::json_rpc::json_rpc_plugin)
+      (knowledgr::plugins::reputation::reputation_plugin)
+      (knowledgr::plugins::json_rpc::json_rpc_plugin)
    )
 
    reputation_api_plugin();
    virtual ~reputation_api_plugin();
 
-   static const std::string& name() { static std::string name = COLAB_REPUTATION_API_PLUGIN_NAME; return name; }
+   static const std::string& name() { static std::string name = KNOWLEDGR_REPUTATION_API_PLUGIN_NAME; return name; }
 
    virtual void set_program_options( options_description& cli, options_description& cfg ) override;
 
@@ -33,4 +33,4 @@ public:
    std::shared_ptr< class reputation_api > api;
 };
 
-} } } // colab::plugins::reputation
+} } } // knowledgr::plugins::reputation

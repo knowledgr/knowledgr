@@ -1,9 +1,9 @@
 #pragma once
 
-#include <colab/protocol/authority.hpp>
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/authority.hpp>
+#include <knowledgr/protocol/types.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
 typedef std::function<authority(const string&)> authority_getter;
 
@@ -32,7 +32,7 @@ struct sign_state
 
       flat_map<public_key_type,bool>   provided_signatures;
       flat_set<string>                 approved_by;
-      uint32_t                         max_recursion = COLAB_MAX_SIG_CHECK_DEPTH;
+      uint32_t                         max_recursion = KNOWLEDGR_MAX_SIG_CHECK_DEPTH;
       uint32_t                         max_membership = ~0;
       uint32_t                         max_account_auths = ~0;
 
@@ -40,4 +40,4 @@ struct sign_state
          bool check_authority_impl( const authority& au, uint32_t depth, uint32_t* account_auth_count );
 };
 
-} } // colab::protocol
+} } // knowledgr::protocol

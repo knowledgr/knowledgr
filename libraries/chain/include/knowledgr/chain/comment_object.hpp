@@ -1,21 +1,21 @@
 #pragma once
 
-#include <colab/protocol/authority.hpp>
-#include <colab/protocol/colab_operations.hpp>
+#include <knowledgr/protocol/authority.hpp>
+#include <knowledgr/protocol/knowledgr_operations.hpp>
 
-#include <colab/chain/colab_object_types.hpp>
-#include <colab/chain/witness_objects.hpp>
-#include <colab/chain/account_object.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
+#include <knowledgr/chain/witness_objects.hpp>
+#include <knowledgr/chain/account_object.hpp>
 
 #include <boost/multi_index/composite_key.hpp>
 
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
    using protocol::beneficiary_route_type;
    using chainbase::t_vector;
    using chainbase::t_pair;
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
    using protocol::votable_asset_info;
 #endif
 
@@ -53,11 +53,11 @@ namespace colab { namespace chain {
          template< typename Constructor, typename Allocator >
          comment_object( Constructor&& c, allocator< Allocator > a )
             :category( a ), parent_permlink( a ), permlink( a ), beneficiaries( a )
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
             , allowed_vote_assets( a )
 #endif
-			, citations( a ) //~~~~~CLC~~~~~
-			, exp_categories( a ) //~~~~~CLC~~~~~
+			, citations( a ) //~~~~~NLG~~~~~
+			, exp_categories( a ) //~~~~~NLG~~~~~
          {
             c( *this );
          }
@@ -68,7 +68,7 @@ namespace colab { namespace chain {
 			 hypothesis,
 			 review,
 			 none
-		 };//~~~~~CLC~~~~~
+		 };//~~~~~NLG~~~~~
          id_type           id;
 
          shared_string     category;
@@ -99,9 +99,9 @@ namespace colab { namespace chain {
          uint16_t          reward_weight = 0;
 
          /** tracks the total payout this comment has received over time, measured in SBD */
-         asset             total_payout_value = asset(0, CLC_SYMBOL); ///~~~~~CLC~~~~~
-         asset             curator_payout_value = asset(0, CLC_SYMBOL); ///~~~~~CLC~~~~~
-         asset             beneficiary_payout_value = asset( 0, CLC_SYMBOL ); ///~~~~~CLC~~~~~
+         asset             total_payout_value = asset(0, NLG_SYMBOL); ///~~~~~NLG~~~~~
+         asset             curator_payout_value = asset(0, NLG_SYMBOL); ///~~~~~NLG~~~~~
+         asset             beneficiary_payout_value = asset( 0, NLG_SYMBOL ); ///~~~~~NLG~~~~~
 
          share_type        author_rewards = 0;
 
@@ -109,23 +109,23 @@ namespace colab { namespace chain {
 
          id_type           root_comment;
 
-         asset             max_accepted_payout = asset( 100000000/*1000000000*/, CLC_SYMBOL );  ///~~~~~CLC~~~~~      /// CLC value of the maximum payout this post will receive
-         uint16_t          percent_colab_dollars = COLAB_100_PERCENT;  ///~~~~~CLC~~~~~ WILL BE IGNORED In Future. /// the percent of Colab Dollars to key, unkept amounts will be received as Colab Power
+         asset             max_accepted_payout = asset( 100000000/*1000000000*/, NLG_SYMBOL );  ///~~~~~NLG~~~~~      /// NLG value of the maximum payout this post will receive
+         uint16_t          percent_knowledgr_dollars = KNOWLEDGR_100_PERCENT;  ///~~~~~NLG~~~~~ WILL BE IGNORED In Future. /// the percent of Knowledgr Dollars to key, unkept amounts will be received as Knowledgr Power
          bool              allow_replies = true;      /// allows a post to disable replies.
          bool              allow_votes   = true;      /// allows a post to receive votes;
          bool              allow_curation_rewards = true;
 
          using t_beneficiaries = t_vector< beneficiary_route_type >;
          t_beneficiaries   beneficiaries;
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
          using t_votable_assets = t_vector< t_pair< asset_symbol_type, votable_asset_info > >;
          t_votable_assets  allowed_vote_assets;
 #endif
-		 comment_type		type = none; //~~~~~CLC~~~~~
-		 using t_citations = t_vector< id_type >;//~~~~~CLC~~~~~
-		 t_citations citations; //~~~~~CLC~~~~~
-		 using t_exp_categories = t_vector< protocol::expertise_category >;//~~~~~CLC~~~~~
-		 t_exp_categories exp_categories; //~~~~~CLC~~~~~
+		 comment_type		type = none; //~~~~~NLG~~~~~
+		 using t_citations = t_vector< id_type >;//~~~~~NLG~~~~~
+		 t_citations citations; //~~~~~NLG~~~~~
+		 using t_exp_categories = t_vector< protocol::expertise_category >;//~~~~~NLG~~~~~
+		 t_exp_categories exp_categories; //~~~~~NLG~~~~~
    };
 
    class comment_content_object : public object< comment_content_object_type, comment_content_object >
@@ -273,11 +273,11 @@ namespace colab { namespace chain {
       allocator< comment_content_object >
    > comment_content_index;
 
-} } // colab::chain
+} } // knowledgr::chain
 
-FC_REFLECT_ENUM( colab::chain::comment_object::comment_type, (observation)(question)(hypothesis)(review)(none) )//~~~~~CLC~~~~~
-#ifdef COLAB_ENABLE_SMT
-FC_REFLECT( colab::chain::comment_object,
+FC_REFLECT_ENUM( knowledgr::chain::comment_object::comment_type, (observation)(question)(hypothesis)(review)(none) )//~~~~~NLG~~~~~
+#ifdef KNOWLEDGR_ENABLE_SMT
+FC_REFLECT( knowledgr::chain::comment_object,
              (id)(author)(permlink)
              (category)(parent_author)(parent_permlink)
              (last_update)(created)(active)(last_payout)
@@ -285,12 +285,12 @@ FC_REFLECT( colab::chain::comment_object,
              (net_rshares)(abs_rshares)(vote_rshares)
              (children_abs_rshares)(cashout_time)(max_cashout_time)
              (total_vote_weight)(reward_weight)(total_payout_value)(curator_payout_value)(beneficiary_payout_value)(author_rewards)(net_votes)(root_comment)
-             (max_accepted_payout)(percent_colab_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
+             (max_accepted_payout)(percent_knowledgr_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)(allowed_vote_assets)
-			 (type)(citations)(exp_categories)//~~~~~CLC~~~~~
+			 (type)(citations)(exp_categories)//~~~~~NLG~~~~~
           )
 #else
-FC_REFLECT( colab::chain::comment_object,
+FC_REFLECT( knowledgr::chain::comment_object,
              (id)(author)(permlink)
              (category)(parent_author)(parent_permlink)
              (last_update)(created)(active)(last_payout)
@@ -298,34 +298,34 @@ FC_REFLECT( colab::chain::comment_object,
              (net_rshares)(abs_rshares)(vote_rshares)
              (children_abs_rshares)(cashout_time)(max_cashout_time)
              (total_vote_weight)(reward_weight)(total_payout_value)(curator_payout_value)(beneficiary_payout_value)(author_rewards)(net_votes)(root_comment)
-             (max_accepted_payout)(percent_colab_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
+             (max_accepted_payout)(percent_knowledgr_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)
-			 (type)(citations)(exp_categories)//~~~~~CLC~~~~~
+			 (type)(citations)(exp_categories)//~~~~~NLG~~~~~
           )
 #endif
-CHAINBASE_SET_INDEX_TYPE( colab::chain::comment_object, colab::chain::comment_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::comment_object, knowledgr::chain::comment_index )
 
-FC_REFLECT( colab::chain::comment_content_object,
+FC_REFLECT( knowledgr::chain::comment_content_object,
             (id)(comment)(title)(body)(json_metadata) )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::comment_content_object, colab::chain::comment_content_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::comment_content_object, knowledgr::chain::comment_content_index )
 
-FC_REFLECT( colab::chain::comment_vote_object,
+FC_REFLECT( knowledgr::chain::comment_vote_object,
              (id)(voter)(comment)(weight)(rshares)(vote_percent)(last_update)(num_changes)
           )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::comment_vote_object, colab::chain::comment_vote_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::comment_vote_object, knowledgr::chain::comment_vote_index )
 
 namespace helpers
 {
-   using colab::chain::shared_string;
+   using knowledgr::chain::shared_string;
    
    template <>
-   class index_statistic_provider<colab::chain::comment_index>
+   class index_statistic_provider<knowledgr::chain::comment_index>
    {
    public:
-      typedef colab::chain::comment_index IndexType;
-      typedef typename colab::chain::comment_object::t_beneficiaries t_beneficiaries;
-#ifdef COLAB_ENABLE_SMT
-      typedef typename colab::chain::comment_object::t_votable_assets t_votable_assets;
+      typedef knowledgr::chain::comment_index IndexType;
+      typedef typename knowledgr::chain::comment_object::t_beneficiaries t_beneficiaries;
+#ifdef KNOWLEDGR_ENABLE_SMT
+      typedef typename knowledgr::chain::comment_object::t_votable_assets t_votable_assets;
 #endif
       index_statistic_info gather_statistics(const IndexType& index, bool onlyStaticInfo) const
       {
@@ -340,7 +340,7 @@ namespace helpers
                info._item_additional_allocation += o.parent_permlink.capacity()*sizeof(shared_string::value_type);
                info._item_additional_allocation += o.permlink.capacity()*sizeof(shared_string::value_type);
                info._item_additional_allocation += o.beneficiaries.capacity()*sizeof(t_beneficiaries::value_type);
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
                info._item_additional_allocation += o.allowed_vote_assets.capacity()*sizeof(t_votable_assets::value_type);
 #endif
             }
@@ -351,10 +351,10 @@ namespace helpers
    };
 
    template <>
-   class index_statistic_provider<colab::chain::comment_content_index>
+   class index_statistic_provider<knowledgr::chain::comment_content_index>
    {
    public:
-      typedef colab::chain::comment_content_index IndexType;
+      typedef knowledgr::chain::comment_content_index IndexType;
 
       index_statistic_info gather_statistics(const IndexType& index, bool onlyStaticInfo) const
       {

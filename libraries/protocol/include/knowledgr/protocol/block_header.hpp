@@ -1,9 +1,9 @@
 #pragma once
-#include <colab/protocol/base.hpp>
-#include <colab/protocol/required_automated_actions.hpp>
-#include <colab/protocol/optional_automated_actions.hpp>
+#include <knowledgr/protocol/base.hpp>
+#include <knowledgr/protocol/required_automated_actions.hpp>
+#include <knowledgr/protocol/optional_automated_actions.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
    typedef vector< required_automated_action > required_automated_actions;
    typedef vector< optional_automated_action > optional_automated_actions;
@@ -42,9 +42,9 @@ namespace colab { namespace protocol {
    };
 
 
-} } // colab::protocol
+} } // knowledgr::protocol
 
-FC_REFLECT_TYPENAME( colab::protocol::block_header_extensions )
+FC_REFLECT_TYPENAME( knowledgr::protocol::block_header_extensions )
 
-FC_REFLECT( colab::protocol::block_header, (previous)(timestamp)(witness)(transaction_merkle_root)(extensions) )
-FC_REFLECT_DERIVED( colab::protocol::signed_block_header, (colab::protocol::block_header), (witness_signature) )
+FC_REFLECT( knowledgr::protocol::block_header, (previous)(timestamp)(witness)(transaction_merkle_root)(extensions) )
+FC_REFLECT_DERIVED( knowledgr::protocol::signed_block_header, (knowledgr::protocol::block_header), (witness_signature) )

@@ -23,7 +23,7 @@
  */
 #pragma once
 
-namespace colab { namespace utilities {
+namespace knowledgr { namespace utilities {
 
 template<size_t BlockSize=16, char PaddingChar=' '>
 class padding_ostream : public fc::buffered_ostream {
@@ -54,5 +54,5 @@ private:
    size_t bytes_out = 0;
 };
 
-} } //colab::utilities
+} } //knowledgr::utilities
 

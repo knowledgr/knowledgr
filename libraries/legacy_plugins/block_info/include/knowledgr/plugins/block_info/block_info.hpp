@@ -1,9 +1,9 @@
 
 #pragma once
 
-#include <colab/chain/colab_object_types.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
 
-namespace colab { namespace plugin { namespace block_info {
+namespace knowledgr { namespace plugin { namespace block_info {
 
 struct block_info
 {
@@ -22,7 +22,7 @@ struct block_with_info
 
 } } }
 
-FC_REFLECT( colab::plugin::block_info::block_info,
+FC_REFLECT( knowledgr::plugin::block_info::block_info,
    (block_id)
    (block_size)
    (aslot)
@@ -30,7 +30,7 @@ FC_REFLECT( colab::plugin::block_info::block_info,
    (num_pow_witnesses)
    )
 
-FC_REFLECT( colab::plugin::block_info::block_with_info,
+FC_REFLECT( knowledgr::plugin::block_info::block_with_info,
    (block)
    (info)
    )

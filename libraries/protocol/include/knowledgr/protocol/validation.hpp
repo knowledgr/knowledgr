@@ -1,13 +1,13 @@
 
 #pragma once
 
-#include <colab/protocol/base.hpp>
-#include <colab/protocol/block_header.hpp>
-#include <colab/protocol/asset.hpp>
+#include <knowledgr/protocol/base.hpp>
+#include <knowledgr/protocol/block_header.hpp>
+#include <knowledgr/protocol/asset.hpp>
 
 #include <fc/utf8.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
 inline bool is_asset_type( asset asset, asset_symbol_type symbol )
 {
@@ -21,7 +21,7 @@ inline void validate_account_name( const string& name )
 
 inline void validate_permlink( const string& permlink )
 {
-   FC_ASSERT( permlink.size() < COLAB_MAX_PERMLINK_LENGTH, "permlink is too long" );
+   FC_ASSERT( permlink.size() < KNOWLEDGR_MAX_PERMLINK_LENGTH, "permlink is too long" );
    FC_ASSERT( fc::is_utf8( permlink ), "permlink not formatted in UTF8" );
 }
 

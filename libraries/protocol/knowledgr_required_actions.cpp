@@ -1,7 +1,7 @@
-#include <colab/protocol/validation.hpp>
-#include <colab/protocol/colab_required_actions.hpp>
+#include <knowledgr/protocol/validation.hpp>
+#include <knowledgr/protocol/knowledgr_required_actions.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
 void example_required_action::validate()const
 {
@@ -13,4 +13,4 @@ bool operator==( const example_required_action& lhs, const example_required_acti
    return lhs.account == rhs.account;
 }
 
-} } //colab::protocol
+} } //knowledgr::protocol

@@ -1,13 +1,13 @@
 #pragma once
-#include <colab/protocol/authority.hpp>
+#include <knowledgr/protocol/authority.hpp>
 #include <chainbase/chainbase.hpp>
 #include <boost/interprocess/managed_mapped_file.hpp>
 
-namespace colab { namespace chain {
-   using colab::protocol::authority;
-   using colab::protocol::public_key_type;
-   using colab::protocol::account_name_type;
-   using colab::protocol::weight_type;
+namespace knowledgr { namespace chain {
+   using knowledgr::protocol::authority;
+   using knowledgr::protocol::public_key_type;
+   using knowledgr::protocol::account_name_type;
+   using knowledgr::protocol::weight_type;
 
    using chainbase::t_flat_map;
    using chainbase::t_allocator_pair;
@@ -98,7 +98,7 @@ namespace colab { namespace chain {
    bool operator == ( const authority& a, const shared_authority& b );
    bool operator == ( const shared_authority& a, const authority& b );
 
-} } //colab::chain
+} } //knowledgr::chain
 
-FC_REFLECT_TYPENAME( colab::chain::shared_authority::account_authority_map)
-FC_REFLECT( colab::chain::shared_authority, (weight_threshold)(account_auths)(key_auths) )
+FC_REFLECT_TYPENAME( knowledgr::chain::shared_authority::account_authority_map)
+FC_REFLECT( knowledgr::chain::shared_authority, (weight_threshold)(account_auths)(key_auths) )

@@ -2,13 +2,13 @@
 #define BOOST_THREAD_PROVIDES_EXECUTORS
 #define BOOST_THREAD_PROVIDES_FUTURE
 
-#include <colab/plugins/block_data_export/block_data_export_plugin.hpp>
-#include <colab/plugins/block_data_export/exportable_block_data.hpp>
+#include <knowledgr/plugins/block_data_export/block_data_export_plugin.hpp>
+#include <knowledgr/plugins/block_data_export/exportable_block_data.hpp>
 
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/database.hpp>
-#include <colab/chain/global_property_object.hpp>
-#include <colab/chain/index.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/global_property_object.hpp>
+#include <knowledgr/chain/index.hpp>
 
 #include <boost/thread/future.hpp>
 #include <boost/thread/sync_bounded_queue.hpp>
@@ -18,12 +18,12 @@
 #include <queue>
 #include <sstream>
 
-namespace colab { namespace plugins { namespace block_data_export {
+namespace knowledgr { namespace plugins { namespace block_data_export {
 
-using colab::chain::block_notification;
-using colab::chain::database;
+using knowledgr::chain::block_notification;
+using knowledgr::chain::database;
 
-using colab::protocol::block_id_type;
+using knowledgr::protocol::block_id_type;
 
 namespace detail {
 
@@ -44,9 +44,9 @@ struct api_export_data_object
 
 } } } }
 
-FC_REFLECT( colab::plugins::block_data_export::detail::api_export_data_object, (block_id)(previous)(export_data) )
+FC_REFLECT( knowledgr::plugins::block_data_export::detail::api_export_data_object, (block_id)(previous)(export_data) )
 
-namespace colab { namespace plugins { namespace block_data_export { namespace detail {
+namespace knowledgr { namespace plugins { namespace block_data_export { namespace detail {
 
 struct work_item
 {
@@ -59,7 +59,7 @@ class block_data_export_plugin_impl
 {
    public:
       block_data_export_plugin_impl( block_data_export_plugin& _plugin ) :
-         _db( appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db() ),
+         _db( appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db() ),
          _self( _plugin ),
          _data_queue( _max_queue_size ),
          _output_queue( _max_queue_size ) {}
@@ -304,4 +304,4 @@ void block_data_export_plugin::plugin_shutdown()
 exportable_block_data::exportable_block_data() {}
 exportable_block_data::~exportable_block_data() {}
 
-} } } // colab::plugins::block_data_export
+} } } // knowledgr::plugins::block_data_export

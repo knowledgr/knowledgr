@@ -1,12 +1,12 @@
-#include <colab/protocol/config.hpp>
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/config.hpp>
+#include <knowledgr/protocol/types.hpp>
 
 #include <fc/crypto/base58.hpp>
 #include <fc/crypto/ripemd160.hpp>
 #include <fc/exception/exception.hpp>
 #include <fc/io/raw.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
     public_key_type::public_key_type():key_data(){};
 
@@ -20,7 +20,7 @@ namespace colab { namespace protocol {
     {
       // TODO:  Refactor syntactic checks into static is_valid()
       //        to make public_key_type API more similar to address API
-       std::string prefix( COLAB_ADDRESS_PREFIX );
+       std::string prefix( KNOWLEDGR_ADDRESS_PREFIX );
 
        const size_t prefix_len = prefix.size();
        FC_ASSERT( base58str.size() > prefix_len );
@@ -48,7 +48,7 @@ namespace colab { namespace protocol {
        k.data = key_data;
        k.check = fc::ripemd160::hash( k.data.data, k.data.size() )._hash[0];
        auto data = fc::raw::pack_to_vector( k );
-       return COLAB_ADDRESS_PREFIX + fc::to_base58( data.data(), data.size() );
+       return KNOWLEDGR_ADDRESS_PREFIX + fc::to_base58( data.data(), data.size() );
     }
 
     bool operator == ( const public_key_type& p1, const fc::ecc::public_key& p2)
@@ -80,7 +80,7 @@ namespace colab { namespace protocol {
 
     extended_public_key_type::extended_public_key_type( const std::string& base58str )
     {
-       std::string prefix( COLAB_ADDRESS_PREFIX );
+       std::string prefix( KNOWLEDGR_ADDRESS_PREFIX );
 
        const size_t prefix_len = prefix.size();
        FC_ASSERT( base58str.size() > prefix_len );
@@ -102,7 +102,7 @@ namespace colab { namespace protocol {
        k.data = key_data;
        k.check = fc::ripemd160::hash( k.data.data, k.data.size() )._hash[0];
        auto data = fc::raw::pack_to_vector( k );
-       return COLAB_ADDRESS_PREFIX + fc::to_base58( data.data(), data.size() );
+       return KNOWLEDGR_ADDRESS_PREFIX + fc::to_base58( data.data(), data.size() );
     }
 
     bool operator == ( const extended_public_key_type& p1, const fc::ecc::extended_public_key& p2)
@@ -134,7 +134,7 @@ namespace colab { namespace protocol {
 
     extended_private_key_type::extended_private_key_type( const std::string& base58str )
     {
-       std::string prefix( COLAB_ADDRESS_PREFIX );
+       std::string prefix( KNOWLEDGR_ADDRESS_PREFIX );
 
        const size_t prefix_len = prefix.size();
        FC_ASSERT( base58str.size() > prefix_len );
@@ -156,7 +156,7 @@ namespace colab { namespace protocol {
        k.data = key_data;
        k.check = fc::ripemd160::hash( k.data.data, k.data.size() )._hash[0];
        auto data = fc::raw::pack_to_vector( k );
-       return COLAB_ADDRESS_PREFIX + fc::to_base58( data.data(), data.size() );
+       return KNOWLEDGR_ADDRESS_PREFIX + fc::to_base58( data.data(), data.size() );
     }
 
     bool operator == ( const extended_private_key_type& p1, const fc::ecc::extended_public_key& p2)
@@ -182,38 +182,38 @@ namespace colab { namespace protocol {
          return fc::sha256();
    }
 
-} } // colab::protocol
+} } // knowledgr::protocol
 
 namespace fc
 {
     using namespace std;
-    void to_variant( const colab::protocol::public_key_type& var,  fc::variant& vo )
+    void to_variant( const knowledgr::protocol::public_key_type& var,  fc::variant& vo )
     {
         vo = std::string( var );
     }
 
-    void from_variant( const fc::variant& var,  colab::protocol::public_key_type& vo )
+    void from_variant( const fc::variant& var,  knowledgr::protocol::public_key_type& vo )
     {
-        vo = colab::protocol::public_key_type( var.as_string() );
+        vo = knowledgr::protocol::public_key_type( var.as_string() );
     }
 
-    void to_variant( const colab::protocol::extended_public_key_type& var, fc::variant& vo )
+    void to_variant( const knowledgr::protocol::extended_public_key_type& var, fc::variant& vo )
     {
        vo = std::string( var );
     }
 
-    void from_variant( const fc::variant& var, colab::protocol::extended_public_key_type& vo )
+    void from_variant( const fc::variant& var, knowledgr::protocol::extended_public_key_type& vo )
     {
-       vo = colab::protocol::extended_public_key_type( var.as_string() );
+       vo = knowledgr::protocol::extended_public_key_type( var.as_string() );
     }
 
-    void to_variant( const colab::protocol::extended_private_key_type& var, fc::variant& vo )
+    void to_variant( const knowledgr::protocol::extended_private_key_type& var, fc::variant& vo )
     {
        vo = std::string( var );
     }
 
-    void from_variant( const fc::variant& var, colab::protocol::extended_private_key_type& vo )
+    void from_variant( const fc::variant& var, knowledgr::protocol::extended_private_key_type& vo )
     {
-       vo = colab::protocol::extended_private_key_type( var.as_string() );
+       vo = knowledgr::protocol::extended_private_key_type( var.as_string() );
     }
 } // fc

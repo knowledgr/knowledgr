@@ -1,17 +1,17 @@
 
-#include <colab/chain/colab_fwd.hpp>
+#include <knowledgr/chain/knowledgr_fwd.hpp>
 
-#include <colab/plugins/account_history_rocksdb/account_history_rocksdb_plugin.hpp>
+#include <knowledgr/plugins/account_history_rocksdb/account_history_rocksdb_plugin.hpp>
 
-#include <colab/chain/database.hpp>
-#include <colab/chain/history_object.hpp>
-#include <colab/chain/index.hpp>
-#include <colab/chain/util/impacted.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/history_object.hpp>
+#include <knowledgr/chain/index.hpp>
+#include <knowledgr/chain/util/impacted.hpp>
 
-#include <colab/plugins/chain/chain_plugin.hpp>
+#include <knowledgr/plugins/chain/chain_plugin.hpp>
 
-#include <colab/utilities/benchmark_dumper.hpp>
-#include <colab/utilities/plugin_utilities.hpp>
+#include <knowledgr/utilities/benchmark_dumper.hpp>
+#include <knowledgr/utilities/plugin_utilities.hpp>
 
 #include <appbase/application.hpp>
 
@@ -31,7 +31,7 @@
 
 namespace bpo = boost::program_options;
 
-#define COLAB_NAMESPACE_PREFIX "colab::protocol::"
+#define KNOWLEDGR_NAMESPACE_PREFIX "knowledgr::protocol::"
 #define OPEN_FILE_LIMIT 750
 
 #define DIAGNOSTIC(s)
@@ -56,19 +56,19 @@ namespace bpo = boost::program_options;
 #define STORE_MAJOR_VERSION          1
 #define STORE_MINOR_VERSION          0
 
-namespace colab { namespace plugins { namespace account_history_rocksdb {
+namespace knowledgr { namespace plugins { namespace account_history_rocksdb {
 
-using colab::protocol::account_name_type;
-using colab::protocol::block_id_type;
-using colab::protocol::operation;
-using colab::protocol::signed_block;
-using colab::protocol::signed_block_header;
-using colab::protocol::signed_transaction;
+using knowledgr::protocol::account_name_type;
+using knowledgr::protocol::block_id_type;
+using knowledgr::protocol::operation;
+using knowledgr::protocol::signed_block;
+using knowledgr::protocol::signed_block_header;
+using knowledgr::protocol::signed_transaction;
 
-using colab::chain::operation_notification;
-using colab::chain::transaction_id_type;
+using knowledgr::chain::operation_notification;
+using knowledgr::chain::transaction_id_type;
 
-using colab::utilities::benchmark_dumper;
+using knowledgr::utilities::benchmark_dumper;
 
 using ::rocksdb::DB;
 using ::rocksdb::DBOptions;
@@ -361,18 +361,18 @@ class account_history_rocksdb_plugin::impl final
 public:
    impl( account_history_rocksdb_plugin& self, const bpo::variables_map& options, const bfs::path& storagePath) :
       _self(self),
-      _mainDb(appbase::app().get_plugin<colab::plugins::chain::chain_plugin>().db()),
+      _mainDb(appbase::app().get_plugin<knowledgr::plugins::chain::chain_plugin>().db()),
       _storagePath(storagePath),
       _writeBuffer(_storage, _columnHandles)
       {
       collectOptions(options);
 
-      _mainDb.add_pre_reindex_handler([&]( const colab::chain::reindex_notification& note ) -> void
+      _mainDb.add_pre_reindex_handler([&]( const knowledgr::chain::reindex_notification& note ) -> void
          {
             on_pre_reindex( note );
          }, _self, 0);
 
-      _mainDb.add_post_reindex_handler([&]( const colab::chain::reindex_notification& note ) -> void
+      _mainDb.add_post_reindex_handler([&]( const knowledgr::chain::reindex_notification& note ) -> void
          {
             on_post_reindex( note );
          }, _self, 0);
@@ -447,8 +447,8 @@ public:
    }
 
    void printReport(uint32_t blockNo, const char* detailText) const;
-   void on_pre_reindex( const colab::chain::reindex_notification& note );
-   void on_post_reindex( const colab::chain::reindex_notification& note );
+   void on_pre_reindex( const knowledgr::chain::reindex_notification& note );
+   void on_post_reindex( const knowledgr::chain::reindex_notification& note );
 
    /// Allows to start immediate data import (outside replay process).
    void importData(unsigned int blockLimit);
@@ -708,7 +708,7 @@ void account_history_rocksdb_plugin::impl::collectOptions(const boost::program_o
     fc::mutable_variant_object state_opts;
 
    typedef std::pair< account_name_type, account_name_type > pairstring;
-   COLAB_LOAD_VALUE_SET(options, "account-history-rocksdb-track-account-range", _tracked_accounts, pairstring);
+   KNOWLEDGR_LOAD_VALUE_SET(options, "account-history-rocksdb-track-account-range", _tracked_accounts, pairstring);
 
    state_opts[ "account-history-rocksdb-track-account-range" ] = _tracked_accounts;
 
@@ -793,7 +793,7 @@ inline bool account_history_rocksdb_plugin::impl::isTrackedAccount(const account
 std::vector<account_name_type> account_history_rocksdb_plugin::impl::getImpactedAccounts(const operation& op) const
 {
    flat_set<account_name_type> impacted;
-   colab::app::operation_get_impacted_accounts(op, impacted);
+   knowledgr::app::operation_get_impacted_accounts(op, impacted);
    std::vector<account_name_type> retVal;
 
    if(impacted.empty())
@@ -841,7 +841,7 @@ void account_history_rocksdb_plugin::impl::storeOpFilteringParameters(const std:
          for(const string& op : ops)
          {
             if( op.empty() == false )
-               storage->insert( COLAB_NAMESPACE_PREFIX + op );
+               storage->insert( KNOWLEDGR_NAMESPACE_PREFIX + op );
          }
       }
    }
@@ -1211,7 +1211,7 @@ void account_history_rocksdb_plugin::impl::prunePotentiallyTooOldItems(account_h
    }
 }
 
-void account_history_rocksdb_plugin::impl::on_pre_reindex(const colab::chain::reindex_notification& note)
+void account_history_rocksdb_plugin::impl::on_pre_reindex(const knowledgr::chain::reindex_notification& note)
 {
    ilog("Received onReindexStart request, attempting to clean database storage.");
 
@@ -1236,7 +1236,7 @@ void account_history_rocksdb_plugin::impl::on_pre_reindex(const colab::chain::re
    ilog("onReindexStart request completed successfully.");
 }
 
-void account_history_rocksdb_plugin::impl::on_post_reindex(const colab::chain::reindex_notification& note)
+void account_history_rocksdb_plugin::impl::on_post_reindex(const knowledgr::chain::reindex_notification& note)
 {
    ilog("Reindex completed up to block: ${b}. Setting back write limit to non-massive level.",
       ("b", note.last_block_number));
@@ -1516,5 +1516,5 @@ uint32_t account_history_rocksdb_plugin::enum_operations_from_block_range(uint32
 
 } } }
 
-FC_REFLECT( colab::plugins::account_history_rocksdb::account_history_info,
+FC_REFLECT( knowledgr::plugins::account_history_rocksdb::account_history_info,
    (id)(oldestEntryId)(newestEntryId)(oldestEntryTimestamp) )

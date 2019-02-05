@@ -1,6 +1,6 @@
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/types.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
 inline static const map< uint32_t, checksum_type >& get_shared_db_merkle()
 {
@@ -19,4 +19,4 @@ inline static const map< uint32_t, checksum_type >& get_shared_db_merkle()
    return shared_db_merkle;
 }
 
-} } //colab::chain
+} } //knowledgr::chain

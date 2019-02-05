@@ -1,8 +1,8 @@
 
-#include <colab/chain/util/reward.hpp>
-#include <colab/chain/util/uint256.hpp>
+#include <knowledgr/chain/util/reward.hpp>
+#include <knowledgr/chain/util/uint256.hpp>
 
-namespace colab { namespace chain { namespace util {
+namespace knowledgr { namespace chain { namespace util {
 
 uint8_t find_msb( const uint128_t& u )
 {
@@ -42,28 +42,28 @@ uint64_t get_rshare_reward( const comment_reward_context& ctx )
    FC_ASSERT( ctx.rshares > 0 );
    FC_ASSERT( ctx.total_reward_shares2 > 0 );
 
-   u256 rf(ctx.total_reward_fund_colab.amount.value);
+   u256 rf(ctx.total_reward_fund_knowledgr.amount.value);
    u256 total_claims = to256( ctx.total_reward_shares2 );
 
    //idump( (ctx) );
 
    u256 claim = to256( evaluate_reward_curve( ctx.rshares.value, ctx.reward_curve, ctx.content_constant ) );
-   claim = ( claim * ctx.reward_weight ) / COLAB_100_PERCENT;
+   claim = ( claim * ctx.reward_weight ) / KNOWLEDGR_100_PERCENT;
 
    u256 payout_u256 = ( rf * claim ) / total_claims;
    FC_ASSERT( payout_u256 <= u256( uint64_t( std::numeric_limits<int64_t>::max() ) ) );
    uint64_t payout = static_cast< uint64_t >( payout_u256 );
    std::cerr<<"~~~ [get_rshare_reward()] - payout = "<<payout<<"\n";
 
-///~~~~~CLC~~~~~{ NOT NEED for Colab
-//    if( is_comment_payout_dust( ctx.current_clc_price, payout ) )
+///~~~~~NLG~~~~~{ NOT NEED for Knowledgr
+//    if( is_comment_payout_dust( ctx.current_nlg_price, payout ) )
 //       payout = 0;
-//    asset max_colab = to_colab( ctx.current_clc_price, ctx.max_clc );
-///~~~~~CLC~~~~~} NOT NEED for Colab
+//    asset max_knowledgr = to_knowledgr( ctx.current_nlg_price, ctx.max_nlg );
+///~~~~~NLG~~~~~} NOT NEED for Knowledgr
 
-   asset max_colab = ctx.max_clc;/// asset( 100000000, CLC_SYMBOL );///~~~~~CLC~~~~~
+   asset max_knowledgr = ctx.max_nlg;/// asset( 100000000, NLG_SYMBOL );///~~~~~NLG~~~~~
    
-   payout = std::min( payout, uint64_t( max_colab.amount.value ) );
+   payout = std::min( payout, uint64_t( max_knowledgr.amount.value ) );
 
    return payout;
    } FC_CAPTURE_AND_RETHROW( (ctx) )
@@ -98,4 +98,4 @@ uint128_t evaluate_reward_curve( const uint128_t& rshares, const protocol::curve
    return result;
 }
 
-} } } // colab::chain::util
+} } } // knowledgr::chain::util

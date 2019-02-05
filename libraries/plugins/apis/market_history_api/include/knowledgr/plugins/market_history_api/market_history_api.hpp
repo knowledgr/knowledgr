@@ -1,19 +1,19 @@
 #pragma once
-#include <colab/plugins/json_rpc/utility.hpp>
-#include <colab/plugins/market_history/market_history_plugin.hpp>
+#include <knowledgr/plugins/json_rpc/utility.hpp>
+#include <knowledgr/plugins/market_history/market_history_plugin.hpp>
 
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/types.hpp>
 
 #include <fc/optional.hpp>
 #include <fc/variant.hpp>
 #include <fc/vector.hpp>
 
 
-namespace colab { namespace plugins { namespace market_history {
+namespace knowledgr { namespace plugins { namespace market_history {
 
 
-using colab::chain::share_type;
-using colab::chain::asset;
+using knowledgr::chain::share_type;
+using knowledgr::chain::asset;
 using fc::time_point_sec;
 using json_rpc::void_type;
 
@@ -26,7 +26,7 @@ struct get_ticker_return
    double      lowest_ask = 0;
    double      highest_bid = 0;
    double      percent_change = 0;
-   asset       clc_volume = asset( 0 , CLC_SYMBOL );
+   asset       nlg_volume = asset( 0 , NLG_SYMBOL );
    asset       sbd_volume = asset( 0, SBD_SYMBOL );
 };
 
@@ -34,7 +34,7 @@ typedef void_type get_volume_args;
 
 struct get_volume_return
 {
-   asset       clc_volume = asset( 0, CLC_SYMBOL );
+   asset       nlg_volume = asset( 0, NLG_SYMBOL );
    asset       sbd_volume = asset( 0, SBD_SYMBOL );
 };
 
@@ -42,7 +42,7 @@ struct order
 {
    price          order_price;
    double         real_price;
-   share_type     colab;
+   share_type     knowledgr;
    share_type     sbd;
    time_point_sec created;
 };
@@ -127,40 +127,40 @@ class market_history_api
       std::unique_ptr< detail::market_history_api_impl > my;
 };
 
-} } } // colab::plugins::market_history
+} } } // knowledgr::plugins::market_history
 
-FC_REFLECT( colab::plugins::market_history::get_ticker_return,
-            (latest)(lowest_ask)(highest_bid)(percent_change)(clc_volume)(sbd_volume) )
+FC_REFLECT( knowledgr::plugins::market_history::get_ticker_return,
+            (latest)(lowest_ask)(highest_bid)(percent_change)(nlg_volume)(sbd_volume) )
 
-FC_REFLECT( colab::plugins::market_history::get_volume_return,
-            (clc_volume)(sbd_volume) )
+FC_REFLECT( knowledgr::plugins::market_history::get_volume_return,
+            (nlg_volume)(sbd_volume) )
 
-FC_REFLECT( colab::plugins::market_history::order,
-            (order_price)(real_price)(colab)(sbd)(created) )
+FC_REFLECT( knowledgr::plugins::market_history::order,
+            (order_price)(real_price)(knowledgr)(sbd)(created) )
 
-FC_REFLECT( colab::plugins::market_history::get_order_book_args,
+FC_REFLECT( knowledgr::plugins::market_history::get_order_book_args,
             (limit) )
 
-FC_REFLECT( colab::plugins::market_history::get_order_book_return,
+FC_REFLECT( knowledgr::plugins::market_history::get_order_book_return,
             (bids)(asks) )
 
-FC_REFLECT( colab::plugins::market_history::market_trade,
+FC_REFLECT( knowledgr::plugins::market_history::market_trade,
             (date)(current_pays)(open_pays) )
 
-FC_REFLECT( colab::plugins::market_history::get_trade_history_args,
+FC_REFLECT( knowledgr::plugins::market_history::get_trade_history_args,
             (start)(end)(limit) )
 
-FC_REFLECT( colab::plugins::market_history::get_trade_history_return,
+FC_REFLECT( knowledgr::plugins::market_history::get_trade_history_return,
             (trades) )
 
-FC_REFLECT( colab::plugins::market_history::get_recent_trades_args,
+FC_REFLECT( knowledgr::plugins::market_history::get_recent_trades_args,
             (limit) )
 
-FC_REFLECT( colab::plugins::market_history::get_market_history_args,
+FC_REFLECT( knowledgr::plugins::market_history::get_market_history_args,
             (bucket_seconds)(start)(end) )
 
-FC_REFLECT( colab::plugins::market_history::get_market_history_return,
+FC_REFLECT( knowledgr::plugins::market_history::get_market_history_return,
             (buckets) )
 
-FC_REFLECT( colab::plugins::market_history::get_market_history_buckets_return,
+FC_REFLECT( knowledgr::plugins::market_history::get_market_history_buckets_return,
             (bucket_sizes) )

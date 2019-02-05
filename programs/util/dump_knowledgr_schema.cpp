@@ -1,12 +1,12 @@
-#include <colab/protocol/types_fwd.hpp>
+#include <knowledgr/protocol/types_fwd.hpp>
 
-#include <colab/schema/schema.hpp>
-#include <colab/schema/schema_impl.hpp>
-#include <colab/schema/schema_types.hpp>
+#include <knowledgr/schema/schema.hpp>
+#include <knowledgr/schema/schema_impl.hpp>
+#include <knowledgr/schema/schema_types.hpp>
 
-#include <colab/chain/schema_types/oid.hpp>
-#include <colab/protocol/schema_types/account_name_type.hpp>
-#include <colab/protocol/schema_types/asset_symbol_type.hpp>
+#include <knowledgr/chain/schema_types/oid.hpp>
+#include <knowledgr/protocol/schema_types/account_name_type.hpp>
+#include <knowledgr/protocol/schema_types/asset_symbol_type.hpp>
 
 #include <iostream>
 #include <map>
@@ -14,12 +14,12 @@
 #include <string>
 #include <vector>
 
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/colab_objects.hpp>
-#include <colab/chain/database.hpp>
-#include <colab/chain/index.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/knowledgr_objects.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/index.hpp>
 
-using colab::schema::abstract_schema;
+using knowledgr::schema::abstract_schema;
 
 struct schema_info
 {
@@ -63,19 +63,19 @@ void add_to_schema_map(
       add_to_schema_map( m, ds, follow_deps );
 }
 
-struct colab_schema
+struct knowledgr_schema
 {
    std::map< std::string, schema_info >     schema_map;
    std::vector< std::string >               chain_object_types;
 };
 
 FC_REFLECT( schema_info, (deps)(schema) )
-FC_REFLECT( colab_schema, (schema_map)(chain_object_types) )
+FC_REFLECT( knowledgr_schema, (schema_map)(chain_object_types) )
 
 int main( int argc, char** argv, char** envp )
 {
-   colab::chain::database db;
-   colab::chain::database::open_args db_args;
+   knowledgr::chain::database db;
+   knowledgr::chain::database::open_args db_args;
 
    db_args.data_dir = "tempdata";
    db_args.shared_mem_dir = "tempdata/blockchain";
@@ -85,11 +85,11 @@ int main( int argc, char** argv, char** envp )
 
    db.open( db_args );
 
-   colab_schema ss;
+   knowledgr_schema ss;
 
    std::vector< std::string > chain_objects;
-   db.for_each_index_extension< colab::chain::index_info >(
-      [&]( std::shared_ptr< colab::chain::index_info > info )
+   db.for_each_index_extension< knowledgr::chain::index_info >(
+      [&]( std::shared_ptr< knowledgr::chain::index_info > info )
       {
          std::string name;
          info->get_schema()->get_name( name );

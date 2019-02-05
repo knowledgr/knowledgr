@@ -1,12 +1,12 @@
 
 #pragma once
 
-#include <colab/schema/abstract_schema.hpp>
-#include <colab/schema/schema_impl.hpp>
+#include <knowledgr/schema/abstract_schema.hpp>
+#include <knowledgr/schema/schema_impl.hpp>
 
 #include <utility>
 
-namespace colab { namespace schema { namespace detail {
+namespace knowledgr { namespace schema { namespace detail {
 
 //////////////////////////////////////////////
 // pair                                     //
@@ -16,7 +16,7 @@ template< typename K, typename V >
 struct schema_pair_impl
    : public abstract_schema
 {
-   COLAB_SCHEMA_TEMPLATE_CLASS_BODY( schema_pair_impl )
+   KNOWLEDGR_SCHEMA_TEMPLATE_CLASS_BODY( schema_pair_impl )
 };
 
 template< typename K, typename V >

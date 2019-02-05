@@ -1,7 +1,7 @@
 
-#include <colab/chain/compound.hpp>
-#include <colab/protocol/asset.hpp>
-#include <colab/protocol/types.hpp>
+#include <knowledgr/chain/compound.hpp>
+#include <knowledgr/protocol/asset.hpp>
+#include <knowledgr/protocol/types.hpp>
 
 #include <fc/io/json.hpp>
 #include <fc/variant_object.hpp>
@@ -21,18 +21,18 @@
 #define VPOW_OFF        9
 #define REWARD_TYPES   10
 
-using colab::protocol::asset;
-using colab::protocol::share_type;
-using colab::protocol::calc_percent_reward_per_block;
-using colab::protocol::calc_percent_reward_per_round;
-using colab::protocol::calc_percent_reward_per_hour;
+using knowledgr::protocol::asset;
+using knowledgr::protocol::share_type;
+using knowledgr::protocol::calc_percent_reward_per_block;
+using knowledgr::protocol::calc_percent_reward_per_round;
+using knowledgr::protocol::calc_percent_reward_per_hour;
 
 /*
 Explanation of output
 
 {"rvec":["929159090641","8360617424769","929159090641","8360617424769","197985103985","1780051544865","195077031513","1755693283617","179687790278","1615357001502"],"b":68585000,"s":"24303404786580"}
 
-rvec shows total number of CLC satoshis created since genesis for:
+rvec shows total number of NLG satoshis created since genesis for:
 
 - Curation rewards
 - Vesting rewards balancing curation rewards
@@ -51,11 +51,11 @@ s is total supply
 
 Some possible sources of inaccuracy, the direction and estimated relative sizes of these effects:
 
-- Missed blocks not modeled (lowers CLC supply, small)
-- Miner queue length very approximately modeled (assumed to go to 100 during the first blocks and then stay there) (may lower or raise CLC supply, very small)
-- Creation / destruction of CLC used to back SBD not modeled (moves CLC supply in direction opposite to changes in dollar value of 1 CLC, large)
-- Interest paid to SBD not modeled (raises CLC supply, medium)
-- Lost / forgotten private keys / wallets and deliberate burning of CLC not modeled (lowers CLC supply, unknown but likely small)
+- Missed blocks not modeled (lowers NLG supply, small)
+- Miner queue length very approximately modeled (assumed to go to 100 during the first blocks and then stay there) (may lower or raise NLG supply, very small)
+- Creation / destruction of NLG used to back SBD not modeled (moves NLG supply in direction opposite to changes in dollar value of 1 NLG, large)
+- Interest paid to SBD not modeled (raises NLG supply, medium)
+- Lost / forgotten private keys / wallets and deliberate burning of NLG not modeled (lowers NLG supply, unknown but likely small)
 - Possible bugs or mismatches with implementation (unknown)
 
 */
@@ -66,9 +66,9 @@ int main( int argc, char** argv, char** envp )
    std::vector< share_type > reward_total;
 
 /*
-#define COLAB_GENESIS_TIME                    (fc::time_point_sec(1458835200))
-#define COLAB_MINING_TIME                     (fc::time_point_sec(1458838800))
-#define COLAB_FIRST_CASHOUT_TIME              (fc::time_point_sec(1467590400))  /// July 4th
+#define KNOWLEDGR_GENESIS_TIME                    (fc::time_point_sec(1458835200))
+#define KNOWLEDGR_MINING_TIME                     (fc::time_point_sec(1458838800))
+#define KNOWLEDGR_FIRST_CASHOUT_TIME              (fc::time_point_sec(1467590400))  /// July 4th
 */
 
    uint32_t liquidity_begin_block = (1467590400 - 1458835200) / 3;
@@ -82,18 +82,18 @@ int main( int argc, char** argv, char** envp )
 
    auto block_inflation_model = [&]( uint32_t block_num, share_type& current_supply )
    {
-      uint32_t vesting_factor = (block_num < COLAB_START_VESTING_BLOCK) ? 0 : 9;
+      uint32_t vesting_factor = (block_num < KNOWLEDGR_START_VESTING_BLOCK) ? 0 : 9;
 
-      share_type curate_reward   = calc_percent_reward_per_block< COLAB_CURATE_APR_PERCENT >( current_supply );
-      reward_delta[ CURATE_OFF ] = std::max( curate_reward, COLAB_MIN_CURATE_REWARD.amount );
+      share_type curate_reward   = calc_percent_reward_per_block< KNOWLEDGR_CURATE_APR_PERCENT >( current_supply );
+      reward_delta[ CURATE_OFF ] = std::max( curate_reward, KNOWLEDGR_MIN_CURATE_REWARD.amount );
       reward_delta[ VCURATE_OFF ] = reward_delta[ CURATE_OFF ] * vesting_factor;
 
-      share_type content_reward  = calc_percent_reward_per_block< COLAB_CONTENT_APR_PERCENT >( current_supply );
-      reward_delta[ CONTENT_OFF ] = std::max( content_reward, COLAB_MIN_CONTENT_REWARD.amount );
+      share_type content_reward  = calc_percent_reward_per_block< KNOWLEDGR_CONTENT_APR_PERCENT >( current_supply );
+      reward_delta[ CONTENT_OFF ] = std::max( content_reward, KNOWLEDGR_MIN_CONTENT_REWARD.amount );
       reward_delta[ VCONTENT_OFF ] = reward_delta[ CONTENT_OFF ] * vesting_factor;
 
-      share_type producer_reward = calc_percent_reward_per_block< COLAB_PRODUCER_APR_PERCENT >( current_supply );
-      reward_delta[ PRODUCER_OFF ] = std::max( producer_reward, COLAB_MIN_PRODUCER_REWARD.amount );
+      share_type producer_reward = calc_percent_reward_per_block< KNOWLEDGR_PRODUCER_APR_PERCENT >( current_supply );
+      reward_delta[ PRODUCER_OFF ] = std::max( producer_reward, KNOWLEDGR_MIN_PRODUCER_REWARD.amount );
       reward_delta[ VPRODUCER_OFF ] = reward_delta[ PRODUCER_OFF ] * vesting_factor;
 
       current_supply += reward_delta[CURATE_OFF] + reward_delta[VCURATE_OFF] + reward_delta[CONTENT_OFF] + reward_delta[VCONTENT_OFF] + reward_delta[PRODUCER_OFF] + reward_delta[VPRODUCER_OFF];
@@ -103,15 +103,15 @@ int main( int argc, char** argv, char** envp )
       share_type liquidity_reward = 0;
       share_type pow_reward = 0;
 
-      if( (block_num % COLAB_MAX_WITNESSES) == 0 )
+      if( (block_num % KNOWLEDGR_MAX_WITNESSES) == 0 )
          ++pow_deficit;
 
       if( pow_deficit > 0 )
       {
-         pow_reward = calc_percent_reward_per_round< COLAB_POW_APR_PERCENT >( current_supply );
-         pow_reward = std::max( pow_reward, COLAB_MIN_POW_REWARD.amount );
-         if( block_num < COLAB_START_MINER_VOTING_BLOCK )
-            pow_reward *= COLAB_MAX_WITNESSES;
+         pow_reward = calc_percent_reward_per_round< KNOWLEDGR_POW_APR_PERCENT >( current_supply );
+         pow_reward = std::max( pow_reward, KNOWLEDGR_MIN_POW_REWARD.amount );
+         if( block_num < KNOWLEDGR_START_MINER_VOTING_BLOCK )
+            pow_reward *= KNOWLEDGR_MAX_WITNESSES;
          --pow_deficit;
       }
       reward_delta[ POW_OFF ] = pow_reward;
@@ -119,10 +119,10 @@ int main( int argc, char** argv, char** envp )
 
       current_supply += reward_delta[ POW_OFF ] + reward_delta[ VPOW_OFF ];
 
-      if( (block_num > liquidity_begin_block) && ((block_num % COLAB_LIQUIDITY_REWARD_BLOCKS) == 0) )
+      if( (block_num > liquidity_begin_block) && ((block_num % KNOWLEDGR_LIQUIDITY_REWARD_BLOCKS) == 0) )
       {
-         liquidity_reward = calc_percent_reward_per_hour< COLAB_LIQUIDITY_APR_PERCENT >( current_supply );
-         liquidity_reward = std::max( liquidity_reward, COLAB_MIN_LIQUIDITY_REWARD.amount );
+         liquidity_reward = calc_percent_reward_per_hour< KNOWLEDGR_LIQUIDITY_APR_PERCENT >( current_supply );
+         liquidity_reward = std::max( liquidity_reward, KNOWLEDGR_MIN_LIQUIDITY_REWARD.amount );
       }
       reward_delta[ LIQUIDITY_OFF ] = liquidity_reward;
       reward_delta[ VLIQUIDITY_OFF ] = reward_delta[ LIQUIDITY_OFF ] * vesting_factor;
@@ -138,7 +138,7 @@ int main( int argc, char** argv, char** envp )
 
    share_type current_supply = 0;
 
-   for( uint32_t b=1; b<10*COLAB_BLOCKS_PER_YEAR; b++ )
+   for( uint32_t b=1; b<10*KNOWLEDGR_BLOCKS_PER_YEAR; b++ )
    {
       block_inflation_model( b, current_supply );
       if( b%1000 == 0 )

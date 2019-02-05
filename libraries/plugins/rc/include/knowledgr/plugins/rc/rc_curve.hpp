@@ -1,12 +1,12 @@
 
 #pragma once
-#include <colab/plugins/rc/rc_utility.hpp>
+#include <knowledgr/plugins/rc/rc_utility.hpp>
 
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/types.hpp>
 
 #include <fc/time.hpp>
 
-namespace colab { namespace plugins { namespace rc {
+namespace knowledgr { namespace plugins { namespace rc {
 
 struct rc_curve_gen_params
 {
@@ -26,9 +26,9 @@ void generate_rc_curve_params(
    const rc_curve_gen_params& curve_gen_params
    );
 
-} } } // colab::plugins::rc
+} } } // knowledgr::plugins::rc
 
-FC_REFLECT( colab::plugins::rc::rc_curve_gen_params,
+FC_REFLECT( knowledgr::plugins::rc::rc_curve_gen_params,
    (inelasticity_threshold_num)
    (inelasticity_threshold_denom)
    (a_point_num)

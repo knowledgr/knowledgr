@@ -1,8 +1,8 @@
 
-#include <colab/chain/util/advanced_benchmark_dumper.hpp>
+#include <knowledgr/chain/util/advanced_benchmark_dumper.hpp>
 #include <chrono>
 
-namespace colab { namespace chain { namespace util {
+namespace knowledgr { namespace chain { namespace util {
 
    uint32_t advanced_benchmark_dumper::cnt = 0;
    std::string advanced_benchmark_dumper::virtual_operation_name = "virtual_operation";
@@ -79,4 +79,4 @@ namespace colab { namespace chain { namespace util {
       dump_impl( rinfo, "r_" + file_name );
    }
 
-} } } // colab::chain::util
+} } } // knowledgr::chain::util

@@ -1,15 +1,15 @@
 #pragma once
 
-#include <colab/protocol/types.hpp>
-#include <colab/chain/colab_object_types.hpp>
-#include <colab/chain/database.hpp>
+#include <knowledgr/protocol/types.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
+#include <knowledgr/chain/database.hpp>
 
-namespace colab { namespace plugins{ namespace follow {
+namespace knowledgr { namespace plugins{ namespace follow {
 
-using namespace colab::chain;
-using colab::chain::database;
+using namespace knowledgr::chain;
+using knowledgr::chain::database;
  
-using colab::protocol::account_name_type;
+using knowledgr::protocol::account_name_type;
 
 class performance_impl;
 
@@ -133,4 +133,4 @@ class performance
       }
 };
 
-} } } //colab::follow
+} } } //knowledgr::follow

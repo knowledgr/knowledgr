@@ -1,13 +1,13 @@
 #pragma once
-#include <colab/plugins/block_api/block_api_objects.hpp>
+#include <knowledgr/plugins/block_api/block_api_objects.hpp>
 
-#include <colab/protocol/types.hpp>
-#include <colab/protocol/transaction.hpp>
-#include <colab/protocol/block_header.hpp>
+#include <knowledgr/protocol/types.hpp>
+#include <knowledgr/protocol/transaction.hpp>
+#include <knowledgr/protocol/block_header.hpp>
 
-#include <colab/plugins/json_rpc/utility.hpp>
+#include <knowledgr/plugins/json_rpc/utility.hpp>
 
-namespace colab { namespace plugins { namespace block_api {
+namespace knowledgr { namespace plugins { namespace block_api {
 
 /* get_block_header */
 
@@ -32,17 +32,17 @@ struct get_block_return
    optional< api_signed_block_object > block;
 };
 
-} } } // colab::block_api
+} } } // knowledgr::block_api
 
-FC_REFLECT( colab::plugins::block_api::get_block_header_args,
+FC_REFLECT( knowledgr::plugins::block_api::get_block_header_args,
    (block_num) )
 
-FC_REFLECT( colab::plugins::block_api::get_block_header_return,
+FC_REFLECT( knowledgr::plugins::block_api::get_block_header_return,
    (header) )
 
-FC_REFLECT( colab::plugins::block_api::get_block_args,
+FC_REFLECT( knowledgr::plugins::block_api::get_block_args,
    (block_num) )
 
-FC_REFLECT( colab::plugins::block_api::get_block_return,
+FC_REFLECT( knowledgr::plugins::block_api::get_block_return,
    (block) )
 

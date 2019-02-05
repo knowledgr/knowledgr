@@ -1,11 +1,11 @@
 
 
-#include <colab/plugins/auth_util/auth_util_api.hpp>
-#include <colab/plugins/auth_util/auth_util_plugin.hpp>
+#include <knowledgr/plugins/auth_util/auth_util_api.hpp>
+#include <knowledgr/plugins/auth_util/auth_util_plugin.hpp>
 
 #include <string>
 
-namespace colab { namespace plugin { namespace auth_util {
+namespace knowledgr { namespace plugin { namespace auth_util {
 
 auth_util_plugin::auth_util_plugin( application* app ) : plugin( app ) {}
 auth_util_plugin::~auth_util_plugin() {}
@@ -28,6 +28,6 @@ void auth_util_plugin::plugin_shutdown()
 {
 }
 
-} } } // colab::plugin::auth_util
+} } } // knowledgr::plugin::auth_util
 
-COLAB_DEFINE_PLUGIN( auth_util, colab::plugin::auth_util::auth_util_plugin )
+KNOWLEDGR_DEFINE_PLUGIN( auth_util, knowledgr::plugin::auth_util::auth_util_plugin )

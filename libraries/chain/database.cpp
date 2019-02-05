@@ -1,30 +1,30 @@
-﻿#include <colab/protocol/colab_operations.hpp>
+﻿#include <knowledgr/protocol/knowledgr_operations.hpp>
 
-#include <colab/chain/block_summary_object.hpp>
-#include <colab/chain/compound.hpp>
-#include <colab/chain/custom_operation_interpreter.hpp>
-#include <colab/chain/database.hpp>
-#include <colab/chain/database_exceptions.hpp>
-#include <colab/chain/db_with.hpp>
-#include <colab/chain/evaluator_registry.hpp>
-#include <colab/chain/global_property_object.hpp>
-#include <colab/chain/history_object.hpp>
-#include <colab/chain/pending_required_action_object.hpp>
-#include <colab/chain/pending_optional_action_object.hpp>
-#include <colab/chain/smt_objects.hpp>
-#include <colab/chain/colab_evaluator.hpp>
-#include <colab/chain/colab_objects.hpp>
-#include <colab/chain/transaction_object.hpp>
-#include <colab/chain/shared_db_merkle.hpp>
-#include <colab/chain/witness_schedule.hpp>
+#include <knowledgr/chain/block_summary_object.hpp>
+#include <knowledgr/chain/compound.hpp>
+#include <knowledgr/chain/custom_operation_interpreter.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/database_exceptions.hpp>
+#include <knowledgr/chain/db_with.hpp>
+#include <knowledgr/chain/evaluator_registry.hpp>
+#include <knowledgr/chain/global_property_object.hpp>
+#include <knowledgr/chain/history_object.hpp>
+#include <knowledgr/chain/pending_required_action_object.hpp>
+#include <knowledgr/chain/pending_optional_action_object.hpp>
+#include <knowledgr/chain/smt_objects.hpp>
+#include <knowledgr/chain/knowledgr_evaluator.hpp>
+#include <knowledgr/chain/knowledgr_objects.hpp>
+#include <knowledgr/chain/transaction_object.hpp>
+#include <knowledgr/chain/shared_db_merkle.hpp>
+#include <knowledgr/chain/witness_schedule.hpp>
 
-#include <colab/chain/util/asset.hpp>
-#include <colab/chain/util/reward.hpp>
-#include <colab/chain/util/uint256.hpp>
-#include <colab/chain/util/reward.hpp>
-#include <colab/chain/util/manabar.hpp>
-#include <colab/chain/util/rd_setup.hpp>
-#include <colab/chain/util/nai_generator.hpp>
+#include <knowledgr/chain/util/asset.hpp>
+#include <knowledgr/chain/util/reward.hpp>
+#include <knowledgr/chain/util/uint256.hpp>
+#include <knowledgr/chain/util/reward.hpp>
+#include <knowledgr/chain/util/manabar.hpp>
+#include <knowledgr/chain/util/rd_setup.hpp>
+#include <knowledgr/chain/util/nai_generator.hpp>
 
 #include <fc/smart_ref_impl.hpp>
 #include <fc/uint128.hpp>
@@ -40,7 +40,7 @@
 #include <fstream>
 #include <functional>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
 struct object_schema_repr
 {
@@ -64,19 +64,19 @@ struct db_schema
 
 } }
 
-FC_REFLECT( colab::chain::object_schema_repr, (space_type)(type) )
-FC_REFLECT( colab::chain::operation_schema_repr, (id)(type) )
-FC_REFLECT( colab::chain::db_schema, (types)(object_types)(operation_type)(custom_operation_types) )
+FC_REFLECT( knowledgr::chain::object_schema_repr, (space_type)(type) )
+FC_REFLECT( knowledgr::chain::operation_schema_repr, (id)(type) )
+FC_REFLECT( knowledgr::chain::db_schema, (types)(object_types)(operation_type)(custom_operation_types) )
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
 using boost::container::flat_set;
 
 struct reward_fund_context
 {
    uint128_t   recent_claims = 0;
-   asset       reward_balance = asset( 0, CLC_SYMBOL );
-   share_type  colab_awarded = 0;
+   asset       reward_balance = asset( 0, NLG_SYMBOL );
+   share_type  knowledgr_awarded = 0;
 };
 
 class database_impl
@@ -177,12 +177,12 @@ uint32_t database::reindex( const open_args& args )
    reindex_notification note;
 
    BOOST_SCOPE_EXIT(this_,&note) {
-      COLAB_TRY_NOTIFY(this_->_post_reindex_signal, note);
+      KNOWLEDGR_TRY_NOTIFY(this_->_post_reindex_signal, note);
    } BOOST_SCOPE_EXIT_END
 
    try
    {
-      COLAB_TRY_NOTIFY(_pre_reindex_signal, note);
+      KNOWLEDGR_TRY_NOTIFY(_pre_reindex_signal, note);
 
       ilog( "Reindexing Blockchain" );
       wipe( args.data_dir, args.shared_mem_dir, false );
@@ -190,7 +190,7 @@ uint32_t database::reindex( const open_args& args )
       _fork_db.reset();    // override effect of _fork_db.start_block() call in open()
 
       auto start = fc::time_point::now();
-      COLAB_ASSERT( _block_log.head(), block_log_exception, "No blocks in block log. Cannot reindex an empty chain." );
+      KNOWLEDGR_ASSERT( _block_log.head(), block_log_exception, "No blocks in block log. Cannot reindex an empty chain." );
 
       ilog( "Replaying blocks..." );
 
@@ -400,14 +400,14 @@ std::vector< block_id_type > database::get_block_ids_on_fork( block_id_type head
 
 chain_id_type database::get_chain_id() const
 {
-   return colab_chain_id;
+   return knowledgr_chain_id;
 }
 
 void database::set_chain_id( const chain_id_type& chain_id )
 {
-   colab_chain_id = chain_id;
+   knowledgr_chain_id = chain_id;
 
-   idump( (colab_chain_id) );
+   idump( (knowledgr_chain_id) );
 }
 
 void database::foreach_block(std::function<bool(const signed_block_header&, const signed_block&)> processor) const
@@ -523,7 +523,7 @@ const escrow_object* database::find_escrow( const account_name_type& name, uint3
 
 const limit_order_object& database::get_limit_order( const account_name_type& name, uint32_t orderid )const
 { try {
-   if( !has_hardfork( COLAB_HARDFORK_0_6__127 ) )
+   if( !has_hardfork( KNOWLEDGR_HARDFORK_0_6__127 ) )
       orderid = orderid & 0x0000FFFF;
 
    return get< limit_order_object, by_account >( boost::make_tuple( name, orderid ) );
@@ -531,7 +531,7 @@ const limit_order_object& database::get_limit_order( const account_name_type& na
 
 const limit_order_object* database::find_limit_order( const account_name_type& name, uint32_t orderid )const
 {
-   if( !has_hardfork( COLAB_HARDFORK_0_6__127 ) )
+   if( !has_hardfork( KNOWLEDGR_HARDFORK_0_6__127 ) )
       orderid = orderid & 0x0000FFFF;
 
    return find< limit_order_object, by_account >( boost::make_tuple( name, orderid ) );
@@ -574,7 +574,7 @@ const hardfork_property_object& database::get_hardfork_property_object()const
 
 const time_point_sec database::calculate_discussion_payout_time( const comment_object& comment )const
 {
-   if( has_hardfork( COLAB_HARDFORK_0_17__769 ) || comment.parent_author == COLAB_ROOT_POST_PARENT )
+   if( has_hardfork( KNOWLEDGR_HARDFORK_0_17__769 ) || comment.parent_author == KNOWLEDGR_ROOT_POST_PARENT )
       return comment.cashout_time;
    else
       return get< comment_object >( comment.root_comment ).cashout_time;
@@ -582,7 +582,7 @@ const time_point_sec database::calculate_discussion_payout_time( const comment_o
 
 const reward_fund_object& database::get_reward_fund( const comment_object& c ) const
 {
-   return get< reward_fund_object, by_name >( COLAB_POST_REWARD_FUND_NAME );
+   return get< reward_fund_object, by_name >( KNOWLEDGR_POST_REWARD_FUND_NAME );
 }
 
 // asset database::get_effective_vesting_shares( const account_object& account, asset_symbol_type vested_symbol )const
@@ -590,7 +590,7 @@ const reward_fund_object& database::get_reward_fund( const comment_object& c ) c
 //    if( vested_symbol == VESTS_SYMBOL )
 //       return account.vesting_shares - account.delegated_vesting_shares + account.received_vesting_shares;
 // 
-// #ifdef COLAB_ENABLE_SMT
+// #ifdef KNOWLEDGR_ENABLE_SMT
 //    FC_ASSERT( vested_symbol.space() == asset_symbol_type::smt_nai_space );
 //    FC_ASSERT( vested_symbol.is_vesting() );
 // 
@@ -609,7 +609,7 @@ const reward_fund_object& database::get_reward_fund( const comment_object& c ) c
 uint32_t database::witness_participation_rate()const
 {
    const dynamic_global_property_object& dpo = get_dynamic_global_properties();
-   return uint64_t(COLAB_100_PERCENT) * dpo.recent_slots_filled.popcount() / 128;
+   return uint64_t(KNOWLEDGR_100_PERCENT) * dpo.recent_slots_filled.popcount() / 128;
 }
 
 void database::add_checkpoints( const flat_map< uint32_t, block_id_type >& checkpts )
@@ -853,7 +853,7 @@ void database::pop_block()
 
       /// save the head block so we can recover its transactions
       optional<signed_block> head_block = fetch_block_by_id( head_id );
-      COLAB_ASSERT( head_block.valid(), pop_empty_chain, "there are no blocks to pop" );
+      KNOWLEDGR_ASSERT( head_block.valid(), pop_empty_chain, "there are no blocks to pop" );
 
       _fork_db.pop_block();
       undo();
@@ -904,7 +904,7 @@ void database::post_push_virtual_operation( const operation& op )
 
 void database::notify_pre_apply_operation( const operation_notification& note )
 {
-   COLAB_TRY_NOTIFY( _pre_apply_operation_signal, note )
+   KNOWLEDGR_TRY_NOTIFY( _pre_apply_operation_signal, note )
 }
 
 struct action_validate_visitor
@@ -960,52 +960,52 @@ void database::push_optional_action( const optional_automated_action& a )
 
 void database::notify_pre_apply_required_action( const required_action_notification& note )
 {
-   COLAB_TRY_NOTIFY( _pre_apply_required_action_signal, note );
+   KNOWLEDGR_TRY_NOTIFY( _pre_apply_required_action_signal, note );
 }
 
 void database::notify_post_apply_required_action( const required_action_notification& note )
 {
-   COLAB_TRY_NOTIFY( _post_apply_required_action_signal, note );
+   KNOWLEDGR_TRY_NOTIFY( _post_apply_required_action_signal, note );
 }
 
 void database::notify_pre_apply_optional_action( const optional_action_notification& note )
 {
-   COLAB_TRY_NOTIFY( _pre_apply_optional_action_signal, note );
+   KNOWLEDGR_TRY_NOTIFY( _pre_apply_optional_action_signal, note );
 }
 
 void database::notify_post_apply_optional_action( const optional_action_notification& note )
 {
-   COLAB_TRY_NOTIFY( _post_apply_optional_action_signal, note );
+   KNOWLEDGR_TRY_NOTIFY( _post_apply_optional_action_signal, note );
 }
 
 void database::notify_post_apply_operation( const operation_notification& note )
 {
-   COLAB_TRY_NOTIFY( _post_apply_operation_signal, note )
+   KNOWLEDGR_TRY_NOTIFY( _post_apply_operation_signal, note )
 }
 
 void database::notify_pre_apply_block( const block_notification& note )
 {
-   COLAB_TRY_NOTIFY( _pre_apply_block_signal, note )
+   KNOWLEDGR_TRY_NOTIFY( _pre_apply_block_signal, note )
 }
 
 void database::notify_irreversible_block( uint32_t block_num )
 {
-   COLAB_TRY_NOTIFY( _on_irreversible_block, block_num )
+   KNOWLEDGR_TRY_NOTIFY( _on_irreversible_block, block_num )
 }
 
 void database::notify_post_apply_block( const block_notification& note )
 {
-   COLAB_TRY_NOTIFY( _post_apply_block_signal, note )
+   KNOWLEDGR_TRY_NOTIFY( _post_apply_block_signal, note )
 }
 
 void database::notify_pre_apply_transaction( const transaction_notification& note )
 {
-   COLAB_TRY_NOTIFY( _pre_apply_transaction_signal, note )
+   KNOWLEDGR_TRY_NOTIFY( _pre_apply_transaction_signal, note )
 }
 
 void database::notify_post_apply_transaction( const transaction_notification& note )
 {
-   COLAB_TRY_NOTIFY( _post_apply_transaction_signal, note )
+   KNOWLEDGR_TRY_NOTIFY( _post_apply_transaction_signal, note )
 }
 
 account_name_type database::get_scheduled_witness( uint32_t slot_num )const
@@ -1021,7 +1021,7 @@ fc::time_point_sec database::get_slot_time(uint32_t slot_num)const
    if( slot_num == 0 )
       return fc::time_point_sec();
 
-   auto interval = COLAB_BLOCK_INTERVAL;
+   auto interval = KNOWLEDGR_BLOCK_INTERVAL;
    const dynamic_global_property_object& dpo = get_dynamic_global_properties();
 
    if( head_block_num() == 0 )
@@ -1046,20 +1046,20 @@ uint32_t database::get_slot_at_time(fc::time_point_sec when)const
    fc::time_point_sec first_slot_time = get_slot_time( 1 );
    if( when < first_slot_time )
       return 0;
-   return (when - first_slot_time).to_seconds() / COLAB_BLOCK_INTERVAL + 1;
+   return (when - first_slot_time).to_seconds() / KNOWLEDGR_BLOCK_INTERVAL + 1;
 }
 
 // /**
-//  *  Converts CLC into sbd and adds it to to_account while reducing the CLC supply
-//  *  by CLC and increasing the sbd supply by the specified amount.
+//  *  Converts NLG into sbd and adds it to to_account while reducing the NLG supply
+//  *  by NLG and increasing the sbd supply by the specified amount.
 //  */
-// std::pair< asset, asset > database::create_sbd( const account_object& to_account, asset colab, bool to_reward_balance )
+// std::pair< asset, asset > database::create_sbd( const account_object& to_account, asset knowledgr, bool to_reward_balance )
 // {
-//    std::pair< asset, asset > assets( asset( 0, SBD_SYMBOL ), asset( 0, CLC_SYMBOL ) );
+//    std::pair< asset, asset > assets( asset( 0, SBD_SYMBOL ), asset( 0, NLG_SYMBOL ) );
 // 
 //    try
 //    {
-//       if( colab.amount == 0 )
+//       if( knowledgr.amount == 0 )
 //          return assets;
 // 
 //       const auto& median_price = get_feed_history().current_median_history;
@@ -1067,34 +1067,34 @@ uint32_t database::get_slot_at_time(fc::time_point_sec when)const
 // 
 //       if( !median_price.is_null() )
 //       {
-//          auto to_sbd = ( gpo.sbd_print_rate * colab.amount ) / COLAB_100_PERCENT;
-//          auto to_colab = colab.amount - to_sbd;
+//          auto to_sbd = ( gpo.sbd_print_rate * knowledgr.amount ) / KNOWLEDGR_100_PERCENT;
+//          auto to_knowledgr = knowledgr.amount - to_sbd;
 // 
-//          auto sbd = asset( to_sbd, CLC_SYMBOL ) * median_price;
+//          auto sbd = asset( to_sbd, NLG_SYMBOL ) * median_price;
 // 
 //          if( to_reward_balance )
 //          {
 //             adjust_reward_balance( to_account, sbd );
-//             adjust_reward_balance( to_account, asset( to_colab, CLC_SYMBOL ) );
+//             adjust_reward_balance( to_account, asset( to_knowledgr, NLG_SYMBOL ) );
 //          }
 //          else
 //          {
 //             adjust_balance( to_account, sbd );
-//             adjust_balance( to_account, asset( to_colab, CLC_SYMBOL ) );
+//             adjust_balance( to_account, asset( to_knowledgr, NLG_SYMBOL ) );
 //          }
 // 
-//          adjust_supply( asset( -to_sbd, CLC_SYMBOL ) );
+//          adjust_supply( asset( -to_sbd, NLG_SYMBOL ) );
 //          adjust_supply( sbd );
 //          assets.first = sbd;
-//          assets.second = asset( to_colab, CLC_SYMBOL );
+//          assets.second = asset( to_knowledgr, NLG_SYMBOL );
 //       }
 //       else
 //       {
-//          adjust_balance( to_account, colab );
-//          assets.second = colab;
+//          adjust_balance( to_account, knowledgr );
+//          assets.second = knowledgr;
 //       }
 //    }
-//    FC_CAPTURE_LOG_AND_RETHROW( (to_account.name)(colab) )
+//    FC_CAPTURE_LOG_AND_RETHROW( (to_account.name)(knowledgr) )
 // 
 //    return assets;
 // }
@@ -1106,9 +1106,9 @@ asset create_vesting2( database& db, const account_object& to_account, asset liq
 {
    try
    {
-      FC_ASSERT( liquid.symbol == CLC_SYMBOL );
-	  auto rep_power_reward = ( ( liquid.amount.value * COLAB_RPOWER_REWARD_PERCENT ) / COLAB_100_PERCENT );
-      asset new_token = asset(liquid.amount.value - rep_power_reward, CLC_SYMBOL);
+      FC_ASSERT( liquid.symbol == NLG_SYMBOL );
+	  auto rep_power_reward = ( ( liquid.amount.value * KNOWLEDGR_RPOWER_REWARD_PERCENT ) / KNOWLEDGR_100_PERCENT );
+      asset new_token = asset(liquid.amount.value - rep_power_reward, NLG_SYMBOL);
       before_token_callback( new_token );  
 	  db.adjust_balance( to_account, new_token);
 	  db.modify( to_account, [&]( account_object& acc)
@@ -1120,7 +1120,7 @@ asset create_vesting2( database& db, const account_object& to_account, asset liq
 // 	  const auto& cprops = db.get_dynamic_global_properties();
 //       db.modify( cprops, [&]( dynamic_global_property_object& props )
 //       {
-// 		  props.total_vesting_fund_clc += new_token;
+// 		  props.total_vesting_fund_nlg += new_token;
 // 		  props.total_vesting_shares += new_token;
 //       } );
       // Update witness voting numbers.
@@ -1134,7 +1134,7 @@ asset create_vesting2( database& db, const account_object& to_account, asset liq
 
 /**
  * @param to_account - the account to receive the new vesting shares
- * @param liquid     - CLC or liquid SMT to be converted to vesting shares
+ * @param liquid     - NLG or liquid SMT to be converted to vesting shares
  */
 asset database::create_vesting( const account_object& to_account, asset liquid, bool to_reward_balance )
 {
@@ -1159,27 +1159,27 @@ uint32_t database::get_pow_summary_target()const
    if( dgp.num_pow_witnesses >= 1004 )
       return 0;
 
-   if( has_hardfork( COLAB_HARDFORK_0_16__551 ) )
+   if( has_hardfork( KNOWLEDGR_HARDFORK_0_16__551 ) )
       return (0xFE00 - 0x0040 * dgp.num_pow_witnesses ) << 0x10;
    else
       return (0xFC00 - 0x0040 * dgp.num_pow_witnesses) << 0x10;
 }
 
 void database::adjust_proxied_witness_votes( const account_object& a,
-                                   const std::array< share_type, COLAB_MAX_PROXY_RECURSION_DEPTH+1 >& delta,
+                                   const std::array< share_type, KNOWLEDGR_MAX_PROXY_RECURSION_DEPTH+1 >& delta,
                                    int depth )
 {
-   if( a.proxy != COLAB_PROXY_TO_SELF_ACCOUNT )
+   if( a.proxy != KNOWLEDGR_PROXY_TO_SELF_ACCOUNT )
    {
       /// nested proxies are not supported, vote will not propagate
-      if( depth >= COLAB_MAX_PROXY_RECURSION_DEPTH )
+      if( depth >= KNOWLEDGR_MAX_PROXY_RECURSION_DEPTH )
          return;
 
       const auto& proxy = get_account( a.proxy );
 
       modify( proxy, [&]( account_object& a )
       {
-         for( int i = COLAB_MAX_PROXY_RECURSION_DEPTH - depth - 1; i >= 0; --i )
+         for( int i = KNOWLEDGR_MAX_PROXY_RECURSION_DEPTH - depth - 1; i >= 0; --i )
          {
             a.proxied_vsf_votes[i+depth] += delta[i];
          }
@@ -1190,7 +1190,7 @@ void database::adjust_proxied_witness_votes( const account_object& a,
    else
    {
       share_type total_delta = 0;
-      for( int i = COLAB_MAX_PROXY_RECURSION_DEPTH - depth; i >= 0; --i )
+      for( int i = KNOWLEDGR_MAX_PROXY_RECURSION_DEPTH - depth; i >= 0; --i )
          total_delta += delta[i];
       adjust_witness_votes( a, total_delta );
    }
@@ -1198,10 +1198,10 @@ void database::adjust_proxied_witness_votes( const account_object& a,
 
 void database::adjust_proxied_witness_votes( const account_object& a, share_type delta, int depth )
 {
-   if( a.proxy != COLAB_PROXY_TO_SELF_ACCOUNT )
+   if( a.proxy != KNOWLEDGR_PROXY_TO_SELF_ACCOUNT )
    {
       /// nested proxies are not supported, vote will not propagate
-      if( depth >= COLAB_MAX_PROXY_RECURSION_DEPTH )
+      if( depth >= KNOWLEDGR_MAX_PROXY_RECURSION_DEPTH )
          return;
 
       const auto& proxy = get_account( a.proxy );
@@ -1242,13 +1242,13 @@ void database::adjust_witness_vote( const witness_object& witness, share_type de
       w.votes += delta;
 //      FC_ASSERT( w.votes <= get_dynamic_global_properties().total_vesting_shares.amount, "", ("w.votes", w.votes)("props",get_dynamic_global_properties().total_vesting_shares) );
 
-      if( has_hardfork( COLAB_HARDFORK_0_2 ) )
-         w.virtual_scheduled_time = w.virtual_last_update + (COLAB_VIRTUAL_SCHEDULE_LAP_LENGTH2 - w.virtual_position)/(w.votes.value+1);
+      if( has_hardfork( KNOWLEDGR_HARDFORK_0_2 ) )
+         w.virtual_scheduled_time = w.virtual_last_update + (KNOWLEDGR_VIRTUAL_SCHEDULE_LAP_LENGTH2 - w.virtual_position)/(w.votes.value+1);
       else
-         w.virtual_scheduled_time = w.virtual_last_update + (COLAB_VIRTUAL_SCHEDULE_LAP_LENGTH - w.virtual_position)/(w.votes.value+1);
+         w.virtual_scheduled_time = w.virtual_last_update + (KNOWLEDGR_VIRTUAL_SCHEDULE_LAP_LENGTH - w.virtual_position)/(w.votes.value+1);
 
       /** witnesses with a low number of votes could overflow the time field and end up with a scheduled time in the past */
-      if( has_hardfork( COLAB_HARDFORK_0_4 ) )
+      if( has_hardfork( KNOWLEDGR_HARDFORK_0_4 ) )
       {
          if( w.virtual_scheduled_time < wso.current_virtual_time )
             w.virtual_scheduled_time = fc::uint128::max_value();
@@ -1267,7 +1267,7 @@ void database::clear_witness_votes( const account_object& a )
       remove(current);
    }
 
-   if( has_hardfork( COLAB_HARDFORK_0_6__104 ) )
+   if( has_hardfork( KNOWLEDGR_HARDFORK_0_6__104 ) )
       modify( a, [&](account_object& acc )
       {
          acc.witnesses_voted_for = 0;
@@ -1276,25 +1276,25 @@ void database::clear_witness_votes( const account_object& a )
 
 void database::clear_null_account_balance()
 {
-   if( !has_hardfork( COLAB_HARDFORK_0_14__327 ) ) return;
+   if( !has_hardfork( KNOWLEDGR_HARDFORK_0_14__327 ) ) return;
 
-   const auto& null_account = get_account( COLAB_NULL_ACCOUNT );
-   asset total_colab( 0, CLC_SYMBOL );
-//   asset total_sbd( 0, SBD_SYMBOL );///~~~~~CLC~~~~~ NO NEED
+   const auto& null_account = get_account( KNOWLEDGR_NULL_ACCOUNT );
+   asset total_knowledgr( 0, NLG_SYMBOL );
+//   asset total_sbd( 0, SBD_SYMBOL );///~~~~~NLG~~~~~ NO NEED
 //   asset total_vests( 0, VESTS_SYMBOL );
 
-//   asset vesting_shares_colab_value = asset( 0, CLC_SYMBOL );
+//   asset vesting_shares_knowledgr_value = asset( 0, NLG_SYMBOL );
 
    if( null_account.balance.amount > 0 )
    {
-      total_colab += null_account.balance;
+      total_knowledgr += null_account.balance;
    }
 
    if( null_account.savings_balance.amount > 0 )
    {
-      total_colab += null_account.savings_balance;
+      total_knowledgr += null_account.savings_balance;
    }
-///~~~~~CLC~~~~~{ NO NEED for CoLab
+///~~~~~NLG~~~~~{ NO NEED for Knowledgr
 //    if( null_account.sbd_balance.amount > 0 )
 //    {
 //       total_sbd += null_account.sbd_balance;
@@ -1303,21 +1303,21 @@ void database::clear_null_account_balance()
 //    {
 //       total_sbd += null_account.savings_sbd_balance;
 //    }
-///~~~~~CLC~~~~~} NO NEED for CoLab
+///~~~~~NLG~~~~~} NO NEED for Knowledgr
 
 //    if( null_account.vesting_shares.amount > 0 )
 //    {
 //       const auto& gpo = get_dynamic_global_properties();
-//      vesting_shares_colab_value = null_account.vesting_shares * gpo.get_vesting_share_price();
-//      total_colab += vesting_shares_colab_value;
+//      vesting_shares_knowledgr_value = null_account.vesting_shares * gpo.get_vesting_share_price();
+//      total_knowledgr += vesting_shares_knowledgr_value;
 //      total_vests += null_account.vesting_shares;
 //   }
 
-   if( null_account.reward_clc_balance.amount > 0 )
+   if( null_account.reward_nlg_balance.amount > 0 )
    {
-      total_colab += null_account.reward_clc_balance;
+      total_knowledgr += null_account.reward_nlg_balance;
    }
-///~~~~~CLC~~~~~{ NO NEED for CoLab
+///~~~~~NLG~~~~~{ NO NEED for Knowledgr
 //    if( null_account.reward_sbd_balance.amount > 0 )
 //    {
 //       total_sbd += null_account.reward_sbd_balance;
@@ -1325,24 +1325,24 @@ void database::clear_null_account_balance()
 
 //    if( null_account.reward_vesting_balance.amount > 0 )
 //    {
-//       total_colab += null_account.reward_vesting_clc;
+//       total_knowledgr += null_account.reward_vesting_nlg;
 //       total_vests += null_account.reward_vesting_balance;
 //    }
-///~~~~~CLC~~~~~} NO NEED for CoLab
+///~~~~~NLG~~~~~} NO NEED for Knowledgr
 
-   if( (total_colab.amount.value == 0)/* && (total_sbd.amount.value == 0) && (total_vests.amount.value == 0)*/ )
+   if( (total_knowledgr.amount.value == 0)/* && (total_sbd.amount.value == 0) && (total_vests.amount.value == 0)*/ )
       return;
 
    operation vop_op = clear_null_account_balance_operation();
    clear_null_account_balance_operation& vop = vop_op.get< clear_null_account_balance_operation >();
-   if( total_colab.amount.value > 0 )
-      vop.total_cleared.push_back( total_colab );
+   if( total_knowledgr.amount.value > 0 )
+      vop.total_cleared.push_back( total_knowledgr );
 //    if( total_vests.amount.value > 0 )
 //       vop.total_cleared.push_back( total_vests );
-///~~~~~CLC~~~~~{ NO NEED for CoLab
+///~~~~~NLG~~~~~{ NO NEED for Knowledgr
 //    if( total_sbd.amount.value > 0 )
 //       vop.total_cleared.push_back( total_sbd );
-///~~~~~CLC~~~~~} NO NEED for CoLab
+///~~~~~NLG~~~~~} NO NEED for Knowledgr
    pre_push_virtual_operation( vop_op );
 
    /////////////////////////////////////////////////////////////////////////////////////
@@ -1357,7 +1357,7 @@ void database::clear_null_account_balance()
       adjust_savings_balance( null_account, -null_account.savings_balance );
    }
 
-///~~~~~CLC~~~~~{ NO NEED for CoLab
+///~~~~~NLG~~~~~{ NO NEED for Knowledgr
 //    if( null_account.sbd_balance.amount > 0 )
 //    {
 //       adjust_balance( null_account, -null_account.sbd_balance );
@@ -1367,7 +1367,7 @@ void database::clear_null_account_balance()
 //    {
 //       adjust_savings_balance( null_account, -null_account.savings_sbd_balance );
 //    }
-///~~~~~CLC~~~~~} NO NEED for CoLab
+///~~~~~NLG~~~~~} NO NEED for Knowledgr
 
 //    if( null_account.vesting_shares.amount > 0 )
 //    {
@@ -1376,7 +1376,7 @@ void database::clear_null_account_balance()
 //       modify( gpo, [&]( dynamic_global_property_object& g )
 //       {
 //          g.total_vesting_shares -= null_account.vesting_shares;
-//          g.total_vesting_fund_clc -= vesting_shares_colab_value;
+//          g.total_vesting_fund_nlg -= vesting_shares_knowledgr_value;
 //       });
 // 
 //       modify( null_account, [&]( account_object& a )
@@ -1385,12 +1385,12 @@ void database::clear_null_account_balance()
 //       });
 //    }
 
-   if( null_account.reward_clc_balance.amount > 0 )
+   if( null_account.reward_nlg_balance.amount > 0 )
    {
-      adjust_reward_balance( null_account, -null_account.reward_clc_balance );
+      adjust_reward_balance( null_account, -null_account.reward_nlg_balance );
    }
 
-///~~~~~CLC~~~~~{ NO NEED for CoLab
+///~~~~~NLG~~~~~{ NO NEED for Knowledgr
 //    if( null_account.reward_sbd_balance.amount > 0 )
 //    {
 //       adjust_reward_balance( null_account, -null_account.reward_sbd_balance );
@@ -1403,21 +1403,21 @@ void database::clear_null_account_balance()
 //       modify( gpo, [&]( dynamic_global_property_object& g )
 //       {
 //          g.pending_rewarded_vesting_shares -= null_account.reward_vesting_balance;
-//          g.pending_rewarded_vesting_clc -= null_account.reward_vesting_clc;
+//          g.pending_rewarded_vesting_nlg -= null_account.reward_vesting_nlg;
 //       });
 // 
 //       modify( null_account, [&]( account_object& a )
 //       {
-//          a.reward_vesting_clc.amount = 0;
+//          a.reward_vesting_nlg.amount = 0;
 //          a.reward_vesting_balance.amount = 0;
 //       });
 //    }
-///~~~~~CLC~~~~~} NO NEED for CoLab
+///~~~~~NLG~~~~~} NO NEED for Knowledgr
 
    //////////////////////////////////////////////////////////////
 
-   if( total_colab.amount > 0 )
-      adjust_supply( -total_colab );
+   if( total_knowledgr.amount > 0 )
+      adjust_supply( -total_knowledgr );
 
 //    if( total_sbd.amount > 0 )
 //       adjust_supply( -total_sbd );
@@ -1443,7 +1443,7 @@ void database::adjust_rshares2( const comment_object& c, fc::uint128_t old_rshar
 
 void database::update_owner_authority( const account_object& account, const authority& owner_authority )
 {
-   if( head_block_num() >= COLAB_OWNER_AUTH_HISTORY_TRACKING_START_BLOCK_NUM )
+   if( head_block_num() >= KNOWLEDGR_OWNER_AUTH_HISTORY_TRACKING_START_BLOCK_NUM )
    {
       create< owner_authority_history_object >( [&]( owner_authority_history_object& hist )
       {
@@ -1485,18 +1485,18 @@ void database::update_owner_authority( const account_object& account, const auth
 //       else
 //          to_withdraw = std::min( from_account.vesting_shares.amount, from_account.vesting_withdraw_rate.amount ).value;
 // 
-//       share_type vests_deposited_as_colab = 0;
+//       share_type vests_deposited_as_knowledgr = 0;
 //       share_type vests_deposited_as_vests = 0;
-//       asset total_colab_converted = asset( 0, CLC_SYMBOL );
+//       asset total_knowledgr_converted = asset( 0, NLG_SYMBOL );
 // 
-//       // Do two passes, the first for vests, the second for colab. Try to maintain as much accuracy for vests as possible.
+//       // Do two passes, the first for vests, the second for knowledgr. Try to maintain as much accuracy for vests as possible.
 //       for( auto itr = didx.upper_bound( boost::make_tuple( from_account.name, account_name_type() ) );
 //            itr != didx.end() && itr->from_account == from_account.name;
 //            ++itr )
 //       {
 //          if( itr->auto_vest )
 //          {
-//             share_type to_deposit = ( ( fc::uint128_t ( to_withdraw.value ) * itr->percent ) / COLAB_100_PERCENT ).to_uint64();
+//             share_type to_deposit = ( ( fc::uint128_t ( to_withdraw.value ) * itr->percent ) / KNOWLEDGR_100_PERCENT ).to_uint64();
 //             vests_deposited_as_vests += to_deposit;
 // 
 //             if( to_deposit > 0 )
@@ -1527,25 +1527,25 @@ void database::update_owner_authority( const account_object& account, const auth
 //          {
 //             const auto& to_account = get< account_object, by_name >( itr->to_account );
 // 
-//             share_type to_deposit = ( ( fc::uint128_t ( to_withdraw.value ) * itr->percent ) / COLAB_100_PERCENT ).to_uint64();
-//             vests_deposited_as_colab += to_deposit;
-//             auto converted_colab = asset( to_deposit, VESTS_SYMBOL ) * cprops.get_vesting_share_price();
-//             total_colab_converted += converted_colab;
+//             share_type to_deposit = ( ( fc::uint128_t ( to_withdraw.value ) * itr->percent ) / KNOWLEDGR_100_PERCENT ).to_uint64();
+//             vests_deposited_as_knowledgr += to_deposit;
+//             auto converted_knowledgr = asset( to_deposit, VESTS_SYMBOL ) * cprops.get_vesting_share_price();
+//             total_knowledgr_converted += converted_knowledgr;
 // 
 //             if( to_deposit > 0 )
 //             {
-//                operation vop = fill_vesting_withdraw_operation( from_account.name, to_account.name, asset( to_deposit, VESTS_SYMBOL), converted_colab );
+//                operation vop = fill_vesting_withdraw_operation( from_account.name, to_account.name, asset( to_deposit, VESTS_SYMBOL), converted_knowledgr );
 // 
 //                pre_push_virtual_operation( vop );
 // 
 //                modify( to_account, [&]( account_object& a )
 //                {
-//                   a.balance += converted_colab;
+//                   a.balance += converted_knowledgr;
 //                });
 // 
 //                modify( cprops, [&]( dynamic_global_property_object& o )
 //                {
-//                   o.total_vesting_fund_clc -= converted_colab;
+//                   o.total_vesting_fund_nlg -= converted_knowledgr;
 //                   o.total_vesting_shares.amount -= to_deposit;
 //                });
 // 
@@ -1554,17 +1554,17 @@ void database::update_owner_authority( const account_object& account, const auth
 //          }
 //       }
 // 
-//       share_type to_convert = to_withdraw - vests_deposited_as_colab - vests_deposited_as_vests;
+//       share_type to_convert = to_withdraw - vests_deposited_as_knowledgr - vests_deposited_as_vests;
 //       FC_ASSERT( to_convert >= 0, "Deposited more vests than were supposed to be withdrawn" );
 // 
-//       auto converted_colab = asset( to_convert, VESTS_SYMBOL ) * cprops.get_vesting_share_price();
-//       operation vop = fill_vesting_withdraw_operation( from_account.name, from_account.name, asset( to_convert, VESTS_SYMBOL ), converted_colab );
+//       auto converted_knowledgr = asset( to_convert, VESTS_SYMBOL ) * cprops.get_vesting_share_price();
+//       operation vop = fill_vesting_withdraw_operation( from_account.name, from_account.name, asset( to_convert, VESTS_SYMBOL ), converted_knowledgr );
 //       pre_push_virtual_operation( vop );
 // 
 //       modify( from_account, [&]( account_object& a )
 //       {
 //          a.vesting_shares.amount -= to_withdraw;
-//          a.balance += converted_colab;
+//          a.balance += converted_knowledgr;
 //          a.withdrawn += to_withdraw;
 // 
 //          if( a.withdrawn >= a.to_withdraw || a.vesting_shares.amount == 0 )
@@ -1574,13 +1574,13 @@ void database::update_owner_authority( const account_object& account, const auth
 //          }
 //          else
 //          {
-//             a.next_vesting_withdrawal += fc::seconds( COLAB_VESTING_WITHDRAW_INTERVAL_SECONDS );
+//             a.next_vesting_withdrawal += fc::seconds( KNOWLEDGR_VESTING_WITHDRAW_INTERVAL_SECONDS );
 //          }
 //       });
 // 
 //       modify( cprops, [&]( dynamic_global_property_object& o )
 //       {
-//          o.total_vesting_fund_clc -= converted_colab;
+//          o.total_vesting_fund_nlg -= converted_knowledgr;
 //          o.total_vesting_shares.amount -= to_convert;
 //       });
 // 
@@ -1592,7 +1592,7 @@ void database::update_owner_authority( const account_object& account, const auth
 // }
 
 void database::adjust_total_payout( const comment_object& cur, const asset& sbd_created, const asset& curator_sbd_value, const asset& beneficiary_value )
-{///~~~~~CLC~~~~~ HERE, TOO ~~~:)
+{///~~~~~NLG~~~~~ HERE, TOO ~~~:)
    modify( cur, [&]( comment_object& c )
    {
       // input assets should be in sbd
@@ -1654,9 +1654,9 @@ share_type database::pay_curators( const comment_object& c, share_type& max_rewa
                unclaimed_rewards -= claim;
 			   const auto& voter = get( item->voter );
 			   std::cerr<<"~~~ [database::pay_curators()] -- claim = "<<claim<<"\n";
-               operation vop = curation_reward_operation( voter.name, asset(0, CLC_SYMBOL), c.author, to_string( c.permlink ) );///~~~~~CLC~~~~~ changed by 'CLC_SYMBOL' instead of 'VESTS_SYMBOL'
-               create_vesting2( *this, voter, asset( claim, CLC_SYMBOL ), 
-				   false/*has_hardfork( COLAB_HARDFORK_0_17__659 )*/, ///~~~ WILL REMOVE this param in short days...
+               operation vop = curation_reward_operation( voter.name, asset(0, NLG_SYMBOL), c.author, to_string( c.permlink ) );///~~~~~NLG~~~~~ changed by 'NLG_SYMBOL' instead of 'VESTS_SYMBOL'
+               create_vesting2( *this, voter, asset( claim, NLG_SYMBOL ), 
+				   false/*has_hardfork( KNOWLEDGR_HARDFORK_0_17__659 )*/, ///~~~ WILL REMOVE this param in short days...
                   [&]( const asset& reward )
                   {
 					  std::cerr<<"~~~ [database::pay_curators()] - voter = "<<(std::string)voter.name<<", reward = "<<reward.amount.value<<"\n";
@@ -1684,7 +1684,7 @@ void fill_comment_reward_context_local_state( util::comment_reward_context& ctx,
 {
    ctx.rshares = comment.net_rshares;
    ctx.reward_weight = comment.reward_weight;
-   ctx.max_clc = comment.max_accepted_payout;
+   ctx.max_nlg = comment.max_accepted_payout;
 }
 
 share_type database::cashout_comment_helper( util::comment_reward_context& ctx, const comment_object& comment, bool forward_curation_remainder )
@@ -1701,7 +1701,7 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
       {
          fill_comment_reward_context_local_state( ctx, comment );
 
-         if( has_hardfork( COLAB_HARDFORK_0_17__774 ) )
+         if( has_hardfork( KNOWLEDGR_HARDFORK_0_17__774 ) )
          {
             const auto rf = get_reward_fund( comment );
             ctx.reward_curve = rf.author_reward_curve;
@@ -1710,9 +1710,9 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
 		 
 		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.rshares = "<<ctx.rshares.value<<"\n";
 		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.reward_weight = "<<ctx.reward_weight<<"\n";
-		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.max_clc = "<<ctx.max_clc.amount.value<<"\n";
+		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.max_nlg = "<<ctx.max_nlg.amount.value<<"\n";
 		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.total_reward_shares2 = "<<(std::string)ctx.total_reward_shares2<<"\n";
-		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.total_reward_fund_colab = "<<ctx.total_reward_fund_colab.amount.value<<"\n";
+		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.total_reward_fund_knowledgr = "<<ctx.total_reward_fund_knowledgr.amount.value<<"\n";
 		 std::cerr<<"~~~ [database::cashout_comment_helper()] - ctx.reward_curve = "<<(int)ctx.reward_curve<<"\n";
 
 		 const share_type reward = util::get_rshare_reward( ctx );
@@ -1722,7 +1722,7 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
 
          if( reward_tokens > 0 )
          {
-            share_type curation_tokens = ( ( reward_tokens * get_curation_rewards_percent( comment ) ) / COLAB_100_PERCENT ).to_uint64();
+            share_type curation_tokens = ( ( reward_tokens * get_curation_rewards_percent( comment ) ) / KNOWLEDGR_100_PERCENT ).to_uint64();
 			share_type author_tokens = reward_tokens.to_uint64() - curation_tokens;
 			std::cerr<<"~~~ [database::cashout_comment_helper()] - curation_tokens = "<<curation_tokens.value<<"\n";
 			std::cerr<<"~~~ [database::cashout_comment_helper()] - author_tokens = "<<author_tokens.value<<"\n";
@@ -1737,10 +1737,10 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
 
             for( auto& b : comment.beneficiaries )
             {
-               auto benefactor_tokens = ( author_tokens * b.weight ) / COLAB_100_PERCENT;
-               auto vop = comment_benefactor_reward_operation( b.account, comment.author, to_string(comment.permlink), asset( 0, CLC_SYMBOL ) );
+               auto benefactor_tokens = ( author_tokens * b.weight ) / KNOWLEDGR_100_PERCENT;
+               auto vop = comment_benefactor_reward_operation( b.account, comment.author, to_string(comment.permlink), asset( 0, NLG_SYMBOL ) );
 
-               create_vesting2( *this, get_account( b.account ), asset( benefactor_tokens, CLC_SYMBOL ), false/*has_hardfork( COLAB_HARDFORK_0_17__659 )*/,
+               create_vesting2( *this, get_account( b.account ), asset( benefactor_tokens, NLG_SYMBOL ), false/*has_hardfork( KNOWLEDGR_HARDFORK_0_17__659 )*/,
                [&]( const asset& reward )
                {
                   vop.payout = reward;
@@ -1754,19 +1754,19 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
             author_tokens -= total_beneficiary;
 			
             const auto& author = get_account( comment.author );
-            operation vop = author_reward_operation( comment.author, to_string( comment.permlink ), asset( 0, CLC_SYMBOL ) );
+            operation vop = author_reward_operation( comment.author, to_string( comment.permlink ), asset( 0, NLG_SYMBOL ) );
 
-            create_vesting2( *this, author, asset( author_tokens, CLC_SYMBOL ), false,
+            create_vesting2( *this, author, asset( author_tokens, NLG_SYMBOL ), false,
                [&]( const asset& payout )
                {
                   vop.get< author_reward_operation >().payout = payout;
                   pre_push_virtual_operation( vop );
                } );
 
-            adjust_total_payout( comment, asset( author_tokens, CLC_SYMBOL ), asset( curation_tokens, CLC_SYMBOL ), asset( total_beneficiary, CLC_SYMBOL ) );
+            adjust_total_payout( comment, asset( author_tokens, NLG_SYMBOL ), asset( curation_tokens, NLG_SYMBOL ), asset( total_beneficiary, NLG_SYMBOL ) );
 
             post_push_virtual_operation( vop );
-            vop = comment_reward_operation( comment.author, to_string( comment.permlink ), asset( claimed_reward, CLC_SYMBOL ) );
+            vop = comment_reward_operation( comment.author, to_string( comment.permlink ), asset( claimed_reward, NLG_SYMBOL ) );
             pre_push_virtual_operation( vop );
             post_push_virtual_operation( vop );
 
@@ -1784,7 +1784,7 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
 
          }
 
-         if( !has_hardfork( COLAB_HARDFORK_0_17__774 ) )
+         if( !has_hardfork( KNOWLEDGR_HARDFORK_0_17__774 ) )
             adjust_rshares2( comment, util::evaluate_reward_curve( comment.net_rshares.value ), 0 );
       }
 
@@ -1802,14 +1802,14 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
          c.total_vote_weight = 0;
          c.max_cashout_time = fc::time_point_sec::maximum();
 
-         if( has_hardfork( COLAB_HARDFORK_0_17__769 ) )
+         if( has_hardfork( KNOWLEDGR_HARDFORK_0_17__769 ) )
          {
             c.cashout_time = fc::time_point_sec::maximum();
          }
-         else if( c.parent_author == COLAB_ROOT_POST_PARENT )
+         else if( c.parent_author == KNOWLEDGR_ROOT_POST_PARENT )
          {
-            if( has_hardfork( COLAB_HARDFORK_0_12__177 ) && c.last_payout == fc::time_point_sec::min() )
-               c.cashout_time = head_block_time() + COLAB_SECOND_CASHOUT_WINDOW;
+            if( has_hardfork( KNOWLEDGR_HARDFORK_0_12__177 ) && c.last_payout == fc::time_point_sec::min() )
+               c.cashout_time = head_block_time() + KNOWLEDGR_SECOND_CASHOUT_WINDOW;
             else
                c.cashout_time = fc::time_point_sec::maximum();
          }
@@ -1825,7 +1825,7 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
       {
          const auto& cur_vote = *vote_itr;
          ++vote_itr;
-         if( !has_hardfork( COLAB_HARDFORK_0_12__177 ) || calculate_discussion_payout_time( comment ) != fc::time_point_sec::maximum() )
+         if( !has_hardfork( KNOWLEDGR_HARDFORK_0_12__177 ) || calculate_discussion_payout_time( comment ) != fc::time_point_sec::maximum() )
          {
             modify( cur_vote, [&]( comment_vote_object& cvo )
             {
@@ -1850,16 +1850,16 @@ void database::process_comment_cashout()
    /// and people have had a week to start posting.  The first cashout will be the biggest because it
    /// will represent 2+ months of rewards.
 
-	std::cerr<<"~~~ [database::process_comment_cashout()] -\n";///~~~~~CLC~~~~~
-   if( !has_hardfork( COLAB_FIRST_CASHOUT_TIME ) )
+	std::cerr<<"~~~ [database::process_comment_cashout()] -\n";///~~~~~NLG~~~~~
+   if( !has_hardfork( KNOWLEDGR_FIRST_CASHOUT_TIME ) )
       return;
    std::cerr<<"~~~ [database::process_comment_cashout()] --\n";
    const auto& gpo = get_dynamic_global_properties();
    util::comment_reward_context ctx;
-   ///ctx.current_clc_price = get_feed_history().current_median_history;
+   ///ctx.current_nlg_price = get_feed_history().current_median_history;
    
    vector< reward_fund_context > funds;
-   vector< share_type > colab_awarded;
+   vector< share_type > knowledgr_awarded;
    const auto& reward_idx = get_index< reward_fund_index, by_id >();
 
    // Decay recent rshares of each fund
@@ -1867,27 +1867,27 @@ void database::process_comment_cashout()
    {
       // Add all reward funds to the local cache and decay their recent rshares
 
-	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->id = "<<(size_t)itr->id._id<<"\n";///~~~~~CLC~~~~~
-	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->name = "<<(std::string)itr->name<<"\n";///~~~~~CLC~~~~~
-	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->reward_balance = "<<(int64_t)itr->reward_balance.amount.value<<"\n";///~~~~~CLC~~~~~
-	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~CLC~~~~~
-	   std::cerr<<"~~~ [database::process_comment_cashout()] - reward_fund_object->percent_curation_rewards = "<<itr->percent_curation_rewards<<"\n";///~~~~~CLC~~~~~
-	   std::cerr<<"~~~ [database::process_comment_cashout()] - reward_fund_object->percent_content_rewards = "<<itr->percent_content_rewards<<"\n";///~~~~~CLC~~~~~
-	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~CLC~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->id = "<<(size_t)itr->id._id<<"\n";///~~~~~NLG~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->name = "<<(std::string)itr->name<<"\n";///~~~~~NLG~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->reward_balance = "<<(int64_t)itr->reward_balance.amount.value<<"\n";///~~~~~NLG~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~NLG~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] - reward_fund_object->percent_curation_rewards = "<<itr->percent_curation_rewards<<"\n";///~~~~~NLG~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] - reward_fund_object->percent_content_rewards = "<<itr->percent_content_rewards<<"\n";///~~~~~NLG~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~NLG~~~~~
 
       modify( *itr, [&]( reward_fund_object& rfo )
       {
          fc::microseconds decay_time;
 
-         if( has_hardfork( COLAB_HARDFORK_0_19__1051 ) )
-            decay_time = COLAB_RECENT_RSHARES_DECAY_TIME_HF19;
+         if( has_hardfork( KNOWLEDGR_HARDFORK_0_19__1051 ) )
+            decay_time = KNOWLEDGR_RECENT_RSHARES_DECAY_TIME_HF19;
          else
-            decay_time = COLAB_RECENT_RSHARES_DECAY_TIME_HF17;
+            decay_time = KNOWLEDGR_RECENT_RSHARES_DECAY_TIME_HF17;
 
          rfo.recent_claims -= ( rfo.recent_claims * ( head_block_time() - rfo.last_update ).to_seconds() ) / decay_time.to_seconds();
          rfo.last_update = head_block_time();
       });
-	  std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~CLC~~~~~
+	  std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~NLG~~~~~
 
       reward_fund_context rf_ctx;
       rf_ctx.recent_claims = itr->recent_claims;
@@ -1904,26 +1904,26 @@ void database::process_comment_cashout()
 
    auto current = cidx.begin();
    //  add all rshares about to be cashed out to the reward funds. This ensures equal satoshi per rshare payment
-   if( has_hardfork( COLAB_HARDFORK_0_17__771 ) )
+   if( has_hardfork( KNOWLEDGR_HARDFORK_0_17__771 ) )
    {
       while( current != cidx.end() && current->cashout_time <= head_block_time() )
 	  {
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->author = "<<(std::string)current->author<<"\n";///~~~~~CLC~~~~~
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->permlink = "<<to_string(current->permlink)<<"\n";///~~~~~CLC~~~~~
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->net_rshares = "<<(int64_t)current->net_rshares.value<<"\n";///~~~~~CLC~~~~~
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->abs_rshares = "<<(int64_t)current->abs_rshares.value<<"\n";///~~~~~CLC~~~~~
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->vote_rshares = "<<(int64_t)current->vote_rshares.value<<"\n";///~~~~~CLC~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->author = "<<(std::string)current->author<<"\n";///~~~~~NLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->permlink = "<<to_string(current->permlink)<<"\n";///~~~~~NLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->net_rshares = "<<(int64_t)current->net_rshares.value<<"\n";///~~~~~NLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->abs_rshares = "<<(int64_t)current->abs_rshares.value<<"\n";///~~~~~NLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->vote_rshares = "<<(int64_t)current->vote_rshares.value<<"\n";///~~~~~NLG~~~~~
 
          if( current->net_rshares > 0 )
          {
             const auto& rf = get_reward_fund( *current );
 
-			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->id = "<<(size_t)rf.id._id<<"\n";///~~~~~CLC~~~~~
-			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->name = "<<(std::string)rf.name<<"\n";///~~~~~CLC~~~~~
-			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->reward_balance = "<<(int64_t)rf.reward_balance.amount.value<<"\n";///~~~~~CLC~~~~~
-			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->percent_curation_rewards = "<<rf.percent_curation_rewards<<"\n";///~~~~~CLC~~~~~
-			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->percent_content_rewards = "<<rf.percent_content_rewards<<"\n";///~~~~~CLC~~~~~
-			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->recent_claims = "<<(std::string)rf.recent_claims<<"\n";///~~~~~CLC~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->id = "<<(size_t)rf.id._id<<"\n";///~~~~~NLG~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->name = "<<(std::string)rf.name<<"\n";///~~~~~NLG~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->reward_balance = "<<(int64_t)rf.reward_balance.amount.value<<"\n";///~~~~~NLG~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->percent_curation_rewards = "<<rf.percent_curation_rewards<<"\n";///~~~~~NLG~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->percent_content_rewards = "<<rf.percent_content_rewards<<"\n";///~~~~~NLG~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->recent_claims = "<<(std::string)rf.recent_claims<<"\n";///~~~~~NLG~~~~~
 
             funds[ rf.id._id ].recent_claims += util::evaluate_reward_curve( current->net_rshares.value, rf.author_reward_curve, rf.content_constant );
          }
@@ -1949,29 +1949,29 @@ void database::process_comment_cashout()
     */
    while( current != cidx.end() && current->cashout_time <= head_block_time() )
    {
-      if( has_hardfork( COLAB_HARDFORK_0_17__771 ) )
+      if( has_hardfork( KNOWLEDGR_HARDFORK_0_17__771 ) )
 	  {
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->author = "<<(std::string)current->author<<"\n";///~~~~~CLC~~~~~
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->permlink = "<<to_string(current->permlink)<<"\n";///~~~~~CLC~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->author = "<<(std::string)current->author<<"\n";///~~~~~NLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->permlink = "<<to_string(current->permlink)<<"\n";///~~~~~NLG~~~~~
          auto fund_id = get_reward_fund( *current ).id._id;
          ctx.total_reward_shares2 = funds[ fund_id ].recent_claims;
-         ctx.total_reward_fund_colab = funds[ fund_id ].reward_balance;
+         ctx.total_reward_fund_knowledgr = funds[ fund_id ].reward_balance;
 
-         bool forward_curation_remainder = !has_hardfork( COLAB_HARDFORK_0_20__1877 );
+         bool forward_curation_remainder = !has_hardfork( KNOWLEDGR_HARDFORK_0_20__1877 );
 
-         funds[ fund_id ].colab_awarded += cashout_comment_helper( ctx, *current, forward_curation_remainder );
+         funds[ fund_id ].knowledgr_awarded += cashout_comment_helper( ctx, *current, forward_curation_remainder );
       }
       else
 	  {
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - --------------- -\n";///~~~~~CLC~~~~~
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->author = "<<(std::string)current->author<<"\n";///~~~~~CLC~~~~~
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->permlink = "<<to_string(current->permlink)<<"\n";///~~~~~CLC~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - --------------- -\n";///~~~~~NLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->author = "<<(std::string)current->author<<"\n";///~~~~~NLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->permlink = "<<to_string(current->permlink)<<"\n";///~~~~~NLG~~~~~
          auto itr = com_by_root.lower_bound( current->root_comment );
          while( itr != com_by_root.end() && itr->root_comment == current->root_comment )
          {
             const auto& comment = *itr; ++itr;
             ctx.total_reward_shares2 = gpo.total_reward_shares2;
-            ctx.total_reward_fund_colab = gpo.total_reward_fund_colab;
+            ctx.total_reward_fund_knowledgr = gpo.total_reward_fund_knowledgr;
 
             auto reward = cashout_comment_helper( ctx, comment );
 
@@ -1979,7 +1979,7 @@ void database::process_comment_cashout()
             {
                modify( get_dynamic_global_properties(), [&]( dynamic_global_property_object& p )
                {
-                  p.total_reward_fund_colab.amount -= reward;
+                  p.total_reward_fund_knowledgr.amount -= reward;
                });
             }
          }
@@ -1996,14 +1996,14 @@ void database::process_comment_cashout()
          modify( get< reward_fund_object, by_id >( reward_fund_id_type( i ) ), [&]( reward_fund_object& rfo )
          {
             rfo.recent_claims = funds[ i ].recent_claims;
-            rfo.reward_balance -= asset( funds[ i ].colab_awarded, CLC_SYMBOL );
+            rfo.reward_balance -= asset( funds[ i ].knowledgr_awarded, NLG_SYMBOL );
          });
       }
    }
 }
 
 /**
- *  Overall the network has an inflation rate of 102% of virtual colab per year
+ *  Overall the network has an inflation rate of 102% of virtual knowledgr per year
  *  90% of inflation is directed to vesting shares
  *  10% of inflation is directed to subjective proof of work voting
  *  1% of inflation is directed to liquidity providers
@@ -2017,35 +2017,35 @@ void database::process_funds()
    const auto& props = get_dynamic_global_properties();
    const auto& wso = get_witness_schedule_object();
    std::cerr<<"~~~ [database::process_funds()] --\n";
-   if( has_hardfork( COLAB_HARDFORK_0_16__551) )
-   {///~~~~~CLC~~~~~ All is going with this case...
+   if( has_hardfork( KNOWLEDGR_HARDFORK_0_16__551) )
+   {///~~~~~NLG~~~~~ All is going with this case...
       /**
        * At block 7,000,000 have a 9.5% instantaneous inflation rate, decreasing to 0.95% at a rate of 0.01%
        * every 250k blocks. This narrowing will take approximately 20.5 years and will complete on block 220,750,000
        */
-      int64_t start_inflation_rate = int64_t( COLAB_INFLATION_RATE_START_PERCENT );
-      int64_t inflation_rate_adjustment = int64_t( head_block_num() / COLAB_INFLATION_NARROWING_PERIOD );
-      int64_t inflation_rate_floor = int64_t( COLAB_INFLATION_RATE_STOP_PERCENT );
+      int64_t start_inflation_rate = int64_t( KNOWLEDGR_INFLATION_RATE_START_PERCENT );
+      int64_t inflation_rate_adjustment = int64_t( head_block_num() / KNOWLEDGR_INFLATION_NARROWING_PERIOD );
+      int64_t inflation_rate_floor = int64_t( KNOWLEDGR_INFLATION_RATE_STOP_PERCENT );
 
       // below subtraction cannot underflow int64_t because inflation_rate_adjustment is <2^32
       int64_t current_inflation_rate = std::max( start_inflation_rate - inflation_rate_adjustment, inflation_rate_floor );
 
-      auto new_colab = ( props.virtual_supply.amount * current_inflation_rate ) / ( int64_t( COLAB_100_PERCENT ) * int64_t( COLAB_BLOCKS_PER_YEAR ) );
-      auto content_reward = ( new_colab * COLAB_CONTENT_REWARD_PERCENT ) / COLAB_100_PERCENT;
-      if( has_hardfork( COLAB_HARDFORK_0_17__774 ) ) {
+      auto new_knowledgr = ( props.virtual_supply.amount * current_inflation_rate ) / ( int64_t( KNOWLEDGR_100_PERCENT ) * int64_t( KNOWLEDGR_BLOCKS_PER_YEAR ) );
+      auto content_reward = ( new_knowledgr * KNOWLEDGR_CONTENT_REWARD_PERCENT ) / KNOWLEDGR_100_PERCENT;
+      if( has_hardfork( KNOWLEDGR_HARDFORK_0_17__774 ) ) {
 		  std::cerr<<"~~~ [database::process_funds()] --> content_reward = "<<content_reward.value<<"\n";
 		  content_reward = pay_reward_funds( content_reward ); /// 75% to content creator
 	  }
-      auto vesting_reward = ( new_colab * COLAB_VESTING_FUND_PERCENT ) / COLAB_100_PERCENT; /// 15% to vesting fund
-      auto witness_reward = new_colab - content_reward - vesting_reward; /// Remaining 10% to witness pay
+      auto vesting_reward = ( new_knowledgr * KNOWLEDGR_VESTING_FUND_PERCENT ) / KNOWLEDGR_100_PERCENT; /// 15% to vesting fund
+      auto witness_reward = new_knowledgr - content_reward - vesting_reward; /// Remaining 10% to witness pay
 
-	  std::cerr<<"~~~ [database::process_funds()] -- new_colab = "<<new_colab.value<<"\n";
+	  std::cerr<<"~~~ [database::process_funds()] -- new_knowledgr = "<<new_knowledgr.value<<"\n";
 	  std::cerr<<"~~~ [database::process_funds()] -- content_reward = "<<content_reward.value<<"\n";
 	  std::cerr<<"~~~ [database::process_funds()] -- vesting_reward = "<<vesting_reward.value<<"\n";
 	  std::cerr<<"~~~ [database::process_funds()] -- witness_reward = "<<witness_reward.value<<"\n";
 
       const auto& cwit = get_witness( props.current_witness );
-      witness_reward *= COLAB_MAX_WITNESSES;
+      witness_reward *= KNOWLEDGR_MAX_WITNESSES;
 
       if( cwit.schedule == witness_object::timeshare )
          witness_reward *= wso.timeshare_weight;
@@ -2058,27 +2058,27 @@ void database::process_funds()
 
       witness_reward /= wso.witness_pay_normalization_factor;
 
-      new_colab = content_reward + vesting_reward + witness_reward;
+      new_knowledgr = content_reward + vesting_reward + witness_reward;
 
       modify( props, [&]( dynamic_global_property_object& p )
       {
-//         p.total_vesting_fund_clc += asset( vesting_reward, CLC_SYMBOL );
-         if( !has_hardfork( COLAB_HARDFORK_0_17__774 ) )
-            p.total_reward_fund_colab  += asset( content_reward, CLC_SYMBOL );
-         p.current_supply           += asset( new_colab, CLC_SYMBOL );
-         p.virtual_supply           += asset( new_colab, CLC_SYMBOL );
+//         p.total_vesting_fund_nlg += asset( vesting_reward, NLG_SYMBOL );
+         if( !has_hardfork( KNOWLEDGR_HARDFORK_0_17__774 ) )
+            p.total_reward_fund_knowledgr  += asset( content_reward, NLG_SYMBOL );
+         p.current_supply           += asset( new_knowledgr, NLG_SYMBOL );
+         p.virtual_supply           += asset( new_knowledgr, NLG_SYMBOL );
       });
 
-      operation vop = producer_reward_operation( cwit.owner, asset( 0, CLC_SYMBOL ) );
-      create_vesting2( *this, get_account( cwit.owner ), asset( witness_reward, CLC_SYMBOL ), false,
+      operation vop = producer_reward_operation( cwit.owner, asset( 0, NLG_SYMBOL ) );
+      create_vesting2( *this, get_account( cwit.owner ), asset( witness_reward, NLG_SYMBOL ), false,
          [&]( const asset& tokens )
          {
-            vop.get< producer_reward_operation >().clc_tokens = tokens;
+            vop.get< producer_reward_operation >().nlg_tokens = tokens;
             pre_push_virtual_operation( vop );
          } );
       post_push_virtual_operation( vop );
 
-	  std::cerr<<"~~~ [database::process_funds()] -- new_colab = "<<new_colab.value<<"\n";
+	  std::cerr<<"~~~ [database::process_funds()] -- new_knowledgr = "<<new_knowledgr.value<<"\n";
 	  std::cerr<<"~~~ [database::process_funds()] -- content_reward = "<<content_reward.value<<"\n";
 	  std::cerr<<"~~~ [database::process_funds()] -- vesting_reward = "<<vesting_reward.value<<"\n";
 	  std::cerr<<"~~~ [database::process_funds()] -- witness_reward = "<<witness_reward.value<<"\n";
@@ -2096,7 +2096,7 @@ void database::process_funds()
 	  std::cerr<<"~~~ [database::process_funds()] - vesting_reward = "<<vesting_reward.amount.value<<" "<<vesting_reward.symbol.to_string()<<"\n";
       content_reward = content_reward + curate_reward;
 
-      if( props.head_block_number < COLAB_START_VESTING_BLOCK )
+      if( props.head_block_number < KNOWLEDGR_START_VESTING_BLOCK )
          vesting_reward.amount = 0;
       else
          vesting_reward.amount.value *= 9;
@@ -2105,8 +2105,8 @@ void database::process_funds()
 	  std::cerr<<"~~~ [database::process_funds()] - vesting_reward = "<<vesting_reward.amount.value<<" "<<vesting_reward.symbol.to_string()<<"\n";
       modify( props, [&]( dynamic_global_property_object& p )
       {
-//          p.total_vesting_fund_clc += vesting_reward;
-          p.total_reward_fund_colab  += content_reward;
+//          p.total_vesting_fund_nlg += vesting_reward;
+          p.total_reward_fund_knowledgr  += content_reward;
           p.current_supply += content_reward + witness_pay + vesting_reward;
           p.virtual_supply += content_reward + witness_pay + vesting_reward;
       } );
@@ -2134,13 +2134,13 @@ void database::process_savings_withdraws()
   }
 }
 
-///~~~~~CLC~~~~~{
+///~~~~~NLG~~~~~{
 void database::process_pending_stakes()
 {
 	const auto& sk_idx = get_index< stake_pending_index >().indices().get<by_account>();
 	auto itr = sk_idx.begin();
 	while (itr != sk_idx.end()) {
-		if (head_block_time() - COLAB_STAKE_PROCESS_DELAY >= itr->created) {
+		if (head_block_time() - KNOWLEDGR_STAKE_PROCESS_DELAY >= itr->created) {
 			const auto& account = get_account( itr->account );
 			asset abs_amount = itr->amount;
 			modify( account, [&]( account_object& a )
@@ -2159,7 +2159,7 @@ void database::process_pending_stakes()
 		}
 	}
 }
-///~~~~~CLC~~~~~}
+///~~~~~NLG~~~~~}
 
 void database::process_subsidized_accounts()
 {
@@ -2183,10 +2183,10 @@ void database::process_subsidized_accounts()
    }
 }
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
 
 template< typename T, bool ALLOW_REMOVE >
-void process_smt_objects_internal( database* db, colab::chain::smt_phase phase )
+void process_smt_objects_internal( database* db, knowledgr::chain::smt_phase phase )
 {
    FC_ASSERT( db != nullptr );
    const auto& idx = db->get_index< smt_event_token_index >().indices().get< T >();
@@ -2219,48 +2219,48 @@ void database::process_smt_objects()
 
 asset database::get_liquidity_reward()const
 {
-   if( has_hardfork( COLAB_HARDFORK_0_12__178 ) )
-      return asset( 0, CLC_SYMBOL );
+   if( has_hardfork( KNOWLEDGR_HARDFORK_0_12__178 ) )
+      return asset( 0, NLG_SYMBOL );
 
    const auto& props = get_dynamic_global_properties();
-   static_assert( COLAB_LIQUIDITY_REWARD_PERIOD_SEC == 60*60, "this code assumes a 1 hour time interval" );
-   asset percent( protocol::calc_percent_reward_per_hour< COLAB_LIQUIDITY_APR_PERCENT >( props.virtual_supply.amount ), CLC_SYMBOL );
-   return std::max( percent, COLAB_MIN_LIQUIDITY_REWARD );
+   static_assert( KNOWLEDGR_LIQUIDITY_REWARD_PERIOD_SEC == 60*60, "this code assumes a 1 hour time interval" );
+   asset percent( protocol::calc_percent_reward_per_hour< KNOWLEDGR_LIQUIDITY_APR_PERCENT >( props.virtual_supply.amount ), NLG_SYMBOL );
+   return std::max( percent, KNOWLEDGR_MIN_LIQUIDITY_REWARD );
 }
 
 asset database::get_content_reward()const
 {
    const auto& props = get_dynamic_global_properties();
-   static_assert( COLAB_BLOCK_INTERVAL == 3, "this code assumes a 3-second time interval" );
-   asset percent( protocol::calc_percent_reward_per_block< COLAB_CONTENT_APR_PERCENT >( props.virtual_supply.amount ), CLC_SYMBOL );
-   return std::max( percent, COLAB_MIN_CONTENT_REWARD );
+   static_assert( KNOWLEDGR_BLOCK_INTERVAL == 3, "this code assumes a 3-second time interval" );
+   asset percent( protocol::calc_percent_reward_per_block< KNOWLEDGR_CONTENT_APR_PERCENT >( props.virtual_supply.amount ), NLG_SYMBOL );
+   return std::max( percent, KNOWLEDGR_MIN_CONTENT_REWARD );
 }
 
 asset database::get_curation_reward()const
 {
    const auto& props = get_dynamic_global_properties();
-   static_assert( COLAB_BLOCK_INTERVAL == 3, "this code assumes a 3-second time interval" );
-   asset percent( protocol::calc_percent_reward_per_block< COLAB_CURATE_APR_PERCENT >( props.virtual_supply.amount ), CLC_SYMBOL);
-   return std::max( percent, COLAB_MIN_CURATE_REWARD );
+   static_assert( KNOWLEDGR_BLOCK_INTERVAL == 3, "this code assumes a 3-second time interval" );
+   asset percent( protocol::calc_percent_reward_per_block< KNOWLEDGR_CURATE_APR_PERCENT >( props.virtual_supply.amount ), NLG_SYMBOL);
+   return std::max( percent, KNOWLEDGR_MIN_CURATE_REWARD );
 }
 
 asset database::get_producer_reward()
 {
    const auto& props = get_dynamic_global_properties();
-   static_assert( COLAB_BLOCK_INTERVAL == 3, "this code assumes a 3-second time interval" );
-   asset percent( protocol::calc_percent_reward_per_block< COLAB_PRODUCER_APR_PERCENT >( props.virtual_supply.amount ), CLC_SYMBOL);
-   auto pay = std::max( percent, COLAB_MIN_PRODUCER_REWARD );
+   static_assert( KNOWLEDGR_BLOCK_INTERVAL == 3, "this code assumes a 3-second time interval" );
+   asset percent( protocol::calc_percent_reward_per_block< KNOWLEDGR_PRODUCER_APR_PERCENT >( props.virtual_supply.amount ), NLG_SYMBOL);
+   auto pay = std::max( percent, KNOWLEDGR_MIN_PRODUCER_REWARD );
    const auto& witness_account = get_account( props.current_witness );
 
    /// pay witness in vesting shares
-   if( props.head_block_number >= COLAB_START_MINER_VOTING_BLOCK/* || (witness_account.vesting_shares.amount.value == 0)*/ )
+   if( props.head_block_number >= KNOWLEDGR_START_MINER_VOTING_BLOCK/* || (witness_account.vesting_shares.amount.value == 0)*/ )
    {
       // const auto& witness_obj = get_witness( props.current_witness );
-      operation vop = producer_reward_operation( witness_account.name, asset( 0, CLC_SYMBOL ) );
+      operation vop = producer_reward_operation( witness_account.name, asset( 0, NLG_SYMBOL ) );
       create_vesting2( *this, witness_account, pay, false,
          [&]( const asset& tokens )
          {
-            vop.get< producer_reward_operation >().clc_tokens = tokens;
+            vop.get< producer_reward_operation >().nlg_tokens = tokens;
             pre_push_virtual_operation( vop );
          } );
       post_push_virtual_operation( vop );
@@ -2281,15 +2281,15 @@ asset database::get_pow_reward()const
    const auto& props = get_dynamic_global_properties();
 
 #ifndef IS_TEST_NET
-   /// 0 block rewards until at least COLAB_MAX_WITNESSES have produced a POW
-   if( props.num_pow_witnesses < COLAB_MAX_WITNESSES && props.head_block_number < COLAB_START_VESTING_BLOCK )
-      return asset( 0, CLC_SYMBOL );
+   /// 0 block rewards until at least KNOWLEDGR_MAX_WITNESSES have produced a POW
+   if( props.num_pow_witnesses < KNOWLEDGR_MAX_WITNESSES && props.head_block_number < KNOWLEDGR_START_VESTING_BLOCK )
+      return asset( 0, NLG_SYMBOL );
 #endif
 
-   static_assert( COLAB_BLOCK_INTERVAL == 3, "this code assumes a 3-second time interval" );
-   static_assert( COLAB_MAX_WITNESSES == 21, "this code assumes 21 per round" );
-   asset percent( calc_percent_reward_per_round< COLAB_POW_APR_PERCENT >( props.virtual_supply.amount ), CLC_SYMBOL);
-   return std::max( percent, COLAB_MIN_POW_REWARD );
+   static_assert( KNOWLEDGR_BLOCK_INTERVAL == 3, "this code assumes a 3-second time interval" );
+   static_assert( KNOWLEDGR_MAX_WITNESSES == 21, "this code assumes 21 per round" );
+   asset percent( calc_percent_reward_per_round< KNOWLEDGR_POW_APR_PERCENT >( props.virtual_supply.amount ), NLG_SYMBOL);
+   return std::max( percent, KNOWLEDGR_MIN_POW_REWARD );
 }
 
 
@@ -2300,7 +2300,7 @@ void database::pay_liquidity_reward()
       return;
 #endif
 
-   if( (head_block_num() % COLAB_LIQUIDITY_REWARD_BLOCKS) == 0 )
+   if( (head_block_num() % KNOWLEDGR_LIQUIDITY_REWARD_BLOCKS) == 0 )
    {
       auto reward = get_liquidity_reward();
 
@@ -2315,7 +2315,7 @@ void database::pay_liquidity_reward()
          adjust_balance( get(itr->owner), reward );
          modify( *itr, [&]( liquidity_reward_balance_object& obj )
          {
-            obj.clc_volume = 0;
+            obj.nlg_volume = 0;
             obj.sbd_volume   = 0;
             obj.last_update  = head_block_time();
             obj.weight = 0;
@@ -2328,12 +2328,12 @@ void database::pay_liquidity_reward()
 
 uint16_t database::get_curation_rewards_percent( const comment_object& c ) const
 {
-   if( has_hardfork( COLAB_HARDFORK_0_17__774 ) )
+   if( has_hardfork( KNOWLEDGR_HARDFORK_0_17__774 ) )
       return get_reward_fund( c ).percent_curation_rewards;
-   else if( has_hardfork( COLAB_HARDFORK_0_8__116 ) )
-      return COLAB_1_PERCENT * 25;
+   else if( has_hardfork( KNOWLEDGR_HARDFORK_0_8__116 ) )
+      return KNOWLEDGR_1_PERCENT * 25;
    else
-      return COLAB_1_PERCENT * 50;
+      return KNOWLEDGR_1_PERCENT * 50;
 }
 
 share_type database::pay_reward_funds( share_type reward )
@@ -2344,16 +2344,16 @@ share_type database::pay_reward_funds( share_type reward )
    for( auto itr = reward_idx.begin(); itr != reward_idx.end(); ++itr )
    {
       // reward is a per block reward and the percents are 16-bit. This should never overflow
-      auto r = ( reward * itr->percent_content_rewards ) / COLAB_100_PERCENT;
+      auto r = ( reward * itr->percent_content_rewards ) / KNOWLEDGR_100_PERCENT;
 
       modify( *itr, [&]( reward_fund_object& rfo )
       {
-         rfo.reward_balance += asset( r, CLC_SYMBOL );
+         rfo.reward_balance += asset( r, NLG_SYMBOL );
       });
 
       used_rewards += r;
 
-      // Sanity check to ensure we aren't printing more CLC than has been allocated through inflation
+      // Sanity check to ensure we aren't printing more NLG than has been allocated through inflation
       FC_ASSERT( used_rewards <= reward );
    }
 
@@ -2362,7 +2362,7 @@ share_type database::pay_reward_funds( share_type reward )
 
 // /**
 //  *  Iterates over all conversion requests with a conversion date before
-//  *  the head block time and then converts them to/from colab/sbd at the
+//  *  the head block time and then converts them to/from knowledgr/sbd at the
 //  *  current median price feed history price times the premium
 //  */
 // void database::process_conversions()
@@ -2376,7 +2376,7 @@ share_type database::pay_reward_funds( share_type reward )
 //       return;
 // 
 //    asset net_sbd( 0, SBD_SYMBOL );
-//    asset net_colab( 0, CLC_SYMBOL );
+//    asset net_knowledgr( 0, NLG_SYMBOL );
 // 
 //    while( itr != request_by_date.end() && itr->conversion_date <= now )
 //    {
@@ -2385,7 +2385,7 @@ share_type database::pay_reward_funds( share_type reward )
 //       adjust_balance( itr->owner, amount_to_issue );
 // 
 //       net_sbd   += itr->amount;
-//       net_colab += amount_to_issue;
+//       net_knowledgr += amount_to_issue;
 // 
 //       push_virtual_operation( fill_convert_request_operation ( itr->owner, itr->requestid, itr->amount, amount_to_issue ) );
 // 
@@ -2396,21 +2396,21 @@ share_type database::pay_reward_funds( share_type reward )
 //    const auto& props = get_dynamic_global_properties();
 //    modify( props, [&]( dynamic_global_property_object& p )
 //    {
-//        p.current_supply += net_colab;
+//        p.current_supply += net_knowledgr;
 //        p.current_sbd_supply -= net_sbd;
-//        p.virtual_supply += net_colab;
+//        p.virtual_supply += net_knowledgr;
 //        p.virtual_supply -= net_sbd * get_feed_history().current_median_history;
 //    } );
 // }
 
-// asset database::to_sbd( const asset& colab )const
+// asset database::to_sbd( const asset& knowledgr )const
 // {
-//    return util::to_sbd( get_feed_history().current_median_history, colab );
+//    return util::to_sbd( get_feed_history().current_median_history, knowledgr );
 // }
 // 
-// asset database::to_colab( const asset& sbd )const
+// asset database::to_knowledgr( const asset& sbd )const
 // {
-//    return util::to_colab( get_feed_history().current_median_history, sbd );
+//    return util::to_knowledgr( get_feed_history().current_median_history, sbd );
 // }
 
 void database::account_recovery_processing()
@@ -2429,7 +2429,7 @@ void database::account_recovery_processing()
    const auto& hist_idx = get_index< owner_authority_history_index >().indices(); //by id
    auto hist = hist_idx.begin();
 
-   while( hist != hist_idx.end() && time_point_sec( hist->last_valid_time + COLAB_OWNER_AUTH_RECOVERY_PERIOD ) < head_block_time() )
+   while( hist != hist_idx.end() && time_point_sec( hist->last_valid_time + KNOWLEDGR_OWNER_AUTH_RECOVERY_PERIOD ) < head_block_time() )
    {
       remove( *hist );
       hist = hist_idx.begin();
@@ -2461,10 +2461,10 @@ void database::expire_escrow_ratification()
       const auto& old_escrow = *escrow_itr;
       ++escrow_itr;
 
-      adjust_balance( old_escrow.from, old_escrow.clc_balance );
-#if 0///~~~~~CLC~~~~~{ NO NEED for CoLab
+      adjust_balance( old_escrow.from, old_escrow.nlg_balance );
+#if 0///~~~~~NLG~~~~~{ NO NEED for Knowledgr
       adjust_balance( old_escrow.from, old_escrow.sbd_balance );
-#endif///~~~~~CLC~~~~~{ NO NEED for CoLab
+#endif///~~~~~NLG~~~~~{ NO NEED for Knowledgr
       adjust_balance( old_escrow.from, old_escrow.pending_fee );
 
       remove( old_escrow );
@@ -2481,9 +2481,9 @@ void database::process_decline_voting_rights()
       const auto& account = get< account_object, by_name >( itr->account );
 
       /// remove all current votes
-      std::array<share_type, COLAB_MAX_PROXY_RECURSION_DEPTH+1> delta;
+      std::array<share_type, KNOWLEDGR_MAX_PROXY_RECURSION_DEPTH+1> delta;
       delta[0] = -account.balance/*vesting_shares*/.amount;
-      for( int i = 0; i < COLAB_MAX_PROXY_RECURSION_DEPTH; ++i )
+      for( int i = 0; i < KNOWLEDGR_MAX_PROXY_RECURSION_DEPTH; ++i )
          delta[i+1] = -account.proxied_vsf_votes[i];
       adjust_proxied_witness_votes( account, delta );
 
@@ -2492,7 +2492,7 @@ void database::process_decline_voting_rights()
       modify( account, [&]( account_object& a )
       {
          a.can_vote = false;
-         a.proxy = COLAB_PROXY_TO_SELF_ACCOUNT;
+         a.proxy = KNOWLEDGR_PROXY_TO_SELF_ACCOUNT;
       });
 
       remove( *itr );
@@ -2536,10 +2536,10 @@ void database::initialize_evaluators()
 //   _my->_evaluator_registry.register_evaluator< withdraw_vesting_evaluator               >();
 //   _my->_evaluator_registry.register_evaluator< set_withdraw_vesting_route_evaluator     >();
    _my->_evaluator_registry.register_evaluator< account_create_evaluator                 >();
-   _my->_evaluator_registry.register_evaluator< account_admin_update_evaluator			>();///~~~~~CLC~~~~~
-   _my->_evaluator_registry.register_evaluator< account_expertise_update_evaluator      >();///~~~~~CLC~~~~~
-   _my->_evaluator_registry.register_evaluator< stake_request_evaluator					>();///~~~~~CLC~~~~~
-   _my->_evaluator_registry.register_evaluator< stake_process_evaluator					>();///~~~~~CLC~~~~~
+   _my->_evaluator_registry.register_evaluator< account_admin_update_evaluator			>();///~~~~~NLG~~~~~
+   _my->_evaluator_registry.register_evaluator< account_expertise_update_evaluator      >();///~~~~~NLG~~~~~
+   _my->_evaluator_registry.register_evaluator< stake_request_evaluator					>();///~~~~~NLG~~~~~
+   _my->_evaluator_registry.register_evaluator< stake_process_evaluator					>();///~~~~~NLG~~~~~
    _my->_evaluator_registry.register_evaluator< account_update_evaluator                 >();
    _my->_evaluator_registry.register_evaluator< witness_update_evaluator                 >();
    _my->_evaluator_registry.register_evaluator< account_witness_vote_evaluator           >();
@@ -2571,14 +2571,14 @@ void database::initialize_evaluators()
    _my->_evaluator_registry.register_evaluator< reset_account_evaluator                  >();
    _my->_evaluator_registry.register_evaluator< set_reset_account_evaluator              >();
    _my->_evaluator_registry.register_evaluator< claim_reward_balance_evaluator           >();
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
    _my->_evaluator_registry.register_evaluator< claim_reward_balance2_evaluator          >();
 #endif
 //   _my->_evaluator_registry.register_evaluator< account_create_with_delegation_evaluator >();
 //   _my->_evaluator_registry.register_evaluator< delegate_vesting_shares_evaluator        >();
    _my->_evaluator_registry.register_evaluator< witness_set_properties_evaluator         >();
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
    _my->_evaluator_registry.register_evaluator< smt_setup_evaluator                      >();
    _my->_evaluator_registry.register_evaluator< smt_cap_reveal_evaluator                 >();
    _my->_evaluator_registry.register_evaluator< smt_refund_evaluator                     >();
@@ -2682,20 +2682,20 @@ void database::init_schema()
 void create_admin_accounts(database& db, std::string name, std::string pub_key_str, const account_object& creator, const dynamic_global_property_object& props)
 {
 	try {
-		colab::protocol::public_key_type pub_key = colab::protocol::public_key_type(pub_key_str);
+		knowledgr::protocol::public_key_type pub_key = knowledgr::protocol::public_key_type(pub_key_str);
 		db.create< account_object >( [&]( account_object& a )
 		{
 			a.name = name;
 			a.memo_key = pub_key;
-			a.member_of = account_object::admin;//~~~~~CLC~~~~~
-			a.balance  = asset( 0 , CLC_SYMBOL );
-			a.voting_manabar.current_mana = COLAB_100_PERCENT;
+			a.member_of = account_object::admin;//~~~~~NLG~~~~~
+			a.balance  = asset( 0 , NLG_SYMBOL );
+			a.voting_manabar.current_mana = KNOWLEDGR_100_PERCENT;
 
-			FC_ASSERT(creator.balance >= COLAB_LIMIT_STAKING_AMOUNT, "admin account creation failed!! Co-Lab has not too small CLC Token!!!");
+			FC_ASSERT(creator.balance >= KNOWLEDGR_LIMIT_STAKING_AMOUNT, "admin account creation failed!! Co-Lab has not too small NLG Token!!!");
 
-			a.stake_balance = COLAB_LIMIT_STAKING_AMOUNT;
+			a.stake_balance = KNOWLEDGR_LIMIT_STAKING_AMOUNT;
 			db.modify( creator, [&]( account_object& c ) {
-				c.balance -= COLAB_LIMIT_STAKING_AMOUNT;
+				c.balance -= KNOWLEDGR_LIMIT_STAKING_AMOUNT;
 			});
 		} );
 
@@ -2730,55 +2730,55 @@ void database::init_genesis( uint64_t init_supply )
       } inhibitor(*this);
 
       // Create blockchain accounts
-      public_key_type      init_public_key(COLAB_INIT_PUBLIC_KEY);
+      public_key_type      init_public_key(KNOWLEDGR_INIT_PUBLIC_KEY);
 
       create< account_object >( [&]( account_object& a )
       {
-         a.name = COLAB_MINER_ACCOUNT;
+         a.name = KNOWLEDGR_MINER_ACCOUNT;
       } );
       create< account_authority_object >( [&]( account_authority_object& auth )
       {
-         auth.account = COLAB_MINER_ACCOUNT;
+         auth.account = KNOWLEDGR_MINER_ACCOUNT;
          auth.owner.weight_threshold = 1;
          auth.active.weight_threshold = 1;
       });
 
       create< account_object >( [&]( account_object& a )
       {
-         a.name = COLAB_NULL_ACCOUNT;
+         a.name = KNOWLEDGR_NULL_ACCOUNT;
       } );
       create< account_authority_object >( [&]( account_authority_object& auth )
       {
-         auth.account = COLAB_NULL_ACCOUNT;
+         auth.account = KNOWLEDGR_NULL_ACCOUNT;
          auth.owner.weight_threshold = 1;
          auth.active.weight_threshold = 1;
       });
 
       create< account_object >( [&]( account_object& a )
       {
-         a.name = COLAB_TEMP_ACCOUNT;
+         a.name = KNOWLEDGR_TEMP_ACCOUNT;
       } );
       create< account_authority_object >( [&]( account_authority_object& auth )
       {
-         auth.account = COLAB_TEMP_ACCOUNT;
+         auth.account = KNOWLEDGR_TEMP_ACCOUNT;
          auth.owner.weight_threshold = 0;
          auth.active.weight_threshold = 0;
       });
 
-      for( int i = 0; i < COLAB_NUM_INIT_MINERS; ++i )
+      for( int i = 0; i < KNOWLEDGR_NUM_INIT_MINERS; ++i )
       {
          create< account_object >( [&]( account_object& a )
          {
-            a.name = COLAB_INIT_MINER_NAME + ( i ? fc::to_string( i ) : std::string() );
+            a.name = KNOWLEDGR_INIT_MINER_NAME + ( i ? fc::to_string( i ) : std::string() );
             a.memo_key = init_public_key;
-			a.member_of = account_object::admin;//~~~~~CLC~~~~~
-            a.balance  = asset( i ? 0 : init_supply, CLC_SYMBOL );
-			a.voting_manabar.current_mana = COLAB_100_PERCENT;
+			a.member_of = account_object::admin;//~~~~~NLG~~~~~
+            a.balance  = asset( i ? 0 : init_supply, NLG_SYMBOL );
+			a.voting_manabar.current_mana = KNOWLEDGR_100_PERCENT;
          } );
 
          create< account_authority_object >( [&]( account_authority_object& auth )
          {
-            auth.account = COLAB_INIT_MINER_NAME + ( i ? fc::to_string( i ) : std::string() );
+            auth.account = KNOWLEDGR_INIT_MINER_NAME + ( i ? fc::to_string( i ) : std::string() );
             auth.owner.add_authority( init_public_key, 1 );
             auth.owner.weight_threshold = 1;
             auth.active  = auth.owner;
@@ -2787,7 +2787,7 @@ void database::init_genesis( uint64_t init_supply )
 
          create< witness_object >( [&]( witness_object& w )
          {
-            w.owner        = COLAB_INIT_MINER_NAME + ( i ? fc::to_string(i) : std::string() );
+            w.owner        = KNOWLEDGR_INIT_MINER_NAME + ( i ? fc::to_string(i) : std::string() );
             w.signing_key  = init_public_key;
             w.schedule = witness_object::miner;
          } );
@@ -2795,17 +2795,17 @@ void database::init_genesis( uint64_t init_supply )
 
       create< dynamic_global_property_object >( [&]( dynamic_global_property_object& p )
       {
-         p.current_witness = COLAB_INIT_MINER_NAME;
-         p.time = COLAB_GENESIS_TIME;
+         p.current_witness = KNOWLEDGR_INIT_MINER_NAME;
+         p.time = KNOWLEDGR_GENESIS_TIME;
          p.recent_slots_filled = fc::uint128::max_value();
          p.participation_count = 128;
-         p.current_supply = asset( init_supply, CLC_SYMBOL );
+         p.current_supply = asset( init_supply, NLG_SYMBOL );
          p.virtual_supply = p.current_supply;
-         p.maximum_block_size = COLAB_MAX_BLOCK_SIZE;
-         p.reverse_auction_seconds = COLAB_REVERSE_AUCTION_WINDOW_SECONDS_HF6;
+         p.maximum_block_size = KNOWLEDGR_MAX_BLOCK_SIZE;
+         p.reverse_auction_seconds = KNOWLEDGR_REVERSE_AUCTION_WINDOW_SECONDS_HF6;
 
-//          p.sbd_stop_percent = COLAB_SBD_STOP_PERCENT_HF14;
-//          p.sbd_start_percent = COLAB_SBD_START_PERCENT_HF14;
+//          p.sbd_stop_percent = KNOWLEDGR_SBD_STOP_PERCENT_HF14;
+//          p.sbd_start_percent = KNOWLEDGR_SBD_START_PERCENT_HF14;
 
 		 p.num_of_accounts = 4;
       } );
@@ -2818,27 +2818,27 @@ void database::init_genesis( uint64_t init_supply )
 
       create< hardfork_property_object >( [&](hardfork_property_object& hpo )
       {
-         hpo.processed_hardforks.push_back( COLAB_GENESIS_TIME );
+         hpo.processed_hardforks.push_back( KNOWLEDGR_GENESIS_TIME );
       } );
 
       // Create witness scheduler
       create< witness_schedule_object >( [&]( witness_schedule_object& wso )
       {
          FC_TODO( "Copied from witness_schedule.cpp, do we want to abstract this to a separate function?" );
-         wso.current_shuffled_witnesses[0] = COLAB_INIT_MINER_NAME;
+         wso.current_shuffled_witnesses[0] = KNOWLEDGR_INIT_MINER_NAME;
          util::rd_system_params account_subsidy_system_params;
-         account_subsidy_system_params.resource_unit = COLAB_ACCOUNT_SUBSIDY_PRECISION;
-         account_subsidy_system_params.decay_per_time_unit_denom_shift = COLAB_RD_DECAY_DENOM_SHIFT;
+         account_subsidy_system_params.resource_unit = KNOWLEDGR_ACCOUNT_SUBSIDY_PRECISION;
+         account_subsidy_system_params.decay_per_time_unit_denom_shift = KNOWLEDGR_RD_DECAY_DENOM_SHIFT;
          util::rd_user_params account_subsidy_user_params;
          account_subsidy_user_params.budget_per_time_unit = wso.median_props.account_subsidy_budget;
          account_subsidy_user_params.decay_per_time_unit = wso.median_props.account_subsidy_decay;
 
          util::rd_user_params account_subsidy_per_witness_user_params;
          int64_t w_budget = wso.median_props.account_subsidy_budget;
-         w_budget = (w_budget * COLAB_WITNESS_SUBSIDY_BUDGET_PERCENT) / COLAB_100_PERCENT;
+         w_budget = (w_budget * KNOWLEDGR_WITNESS_SUBSIDY_BUDGET_PERCENT) / KNOWLEDGR_100_PERCENT;
          w_budget = std::min( w_budget, int64_t(std::numeric_limits<int32_t>::max()) );
          uint64_t w_decay = wso.median_props.account_subsidy_decay;
-         w_decay = (w_decay * COLAB_WITNESS_SUBSIDY_DECAY_PERCENT) / COLAB_100_PERCENT;
+         w_decay = (w_decay * KNOWLEDGR_WITNESS_SUBSIDY_DECAY_PERCENT) / KNOWLEDGR_100_PERCENT;
          w_decay = std::min( w_decay, uint64_t(std::numeric_limits<uint32_t>::max()) );
 
          account_subsidy_per_witness_user_params.budget_per_time_unit = int32_t(w_budget);
@@ -2848,16 +2848,16 @@ void database::init_genesis( uint64_t init_supply )
          util::rd_setup_dynamics_params( account_subsidy_per_witness_user_params, account_subsidy_system_params, wso.account_subsidy_witness_rd );
       } );
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
       create< nai_pool_object >( [&]( nai_pool_object& npo ) {} );
 #endif
-	  const auto& creator = get_account( COLAB_INIT_MINER_NAME );
+	  const auto& creator = get_account( KNOWLEDGR_INIT_MINER_NAME );
 	  const auto& props = get_dynamic_global_properties();
-	  create_admin_accounts(*this, COLAB_ADMIN_ACCOUNT1, COLAB_ADMIN_ACCOUNT1_PUBKEY_STR, creator, props);
-	  create_admin_accounts(*this, COLAB_ADMIN_ACCOUNT2, COLAB_ADMIN_ACCOUNT2_PUBKEY_STR, creator, props);
-	  create_admin_accounts(*this, COLAB_ADMIN_ACCOUNT3, COLAB_ADMIN_ACCOUNT3_PUBKEY_STR, creator, props);
-	  create_admin_accounts(*this, COLAB_ADMIN_ACCOUNT4, COLAB_ADMIN_ACCOUNT4_PUBKEY_STR, creator, props);
-	  create_admin_accounts(*this, COLAB_ADMIN_ACCOUNT5, COLAB_ADMIN_ACCOUNT5_PUBKEY_STR, creator, props);
+	  create_admin_accounts(*this, KNOWLEDGR_ADMIN_ACCOUNT1, KNOWLEDGR_ADMIN_ACCOUNT1_PUBKEY_STR, creator, props);
+	  create_admin_accounts(*this, KNOWLEDGR_ADMIN_ACCOUNT2, KNOWLEDGR_ADMIN_ACCOUNT2_PUBKEY_STR, creator, props);
+	  create_admin_accounts(*this, KNOWLEDGR_ADMIN_ACCOUNT3, KNOWLEDGR_ADMIN_ACCOUNT3_PUBKEY_STR, creator, props);
+	  create_admin_accounts(*this, KNOWLEDGR_ADMIN_ACCOUNT4, KNOWLEDGR_ADMIN_ACCOUNT4_PUBKEY_STR, creator, props);
+	  create_admin_accounts(*this, KNOWLEDGR_ADMIN_ACCOUNT5, KNOWLEDGR_ADMIN_ACCOUNT5_PUBKEY_STR, creator, props);
    }
    FC_CAPTURE_AND_RETHROW()
 }
@@ -2879,7 +2879,7 @@ void database::notify_changed_objects()
    {
       /*vector< chainbase::generic_id > ids;
       get_changed_ids( ids );
-      COLAB_TRY_NOTIFY( changed_objects, ids )*/
+      KNOWLEDGR_TRY_NOTIFY( changed_objects, ids )*/
       /*
       if( _undo_db.enabled() )
       {
@@ -2894,7 +2894,7 @@ void database::notify_changed_objects()
             changed_ids.push_back( item.first );
             removed.emplace_back( item.second.get() );
          }
-         COLAB_TRY_NOTIFY( changed_objects, changed_ids )
+         KNOWLEDGR_TRY_NOTIFY( changed_objects, changed_ids )
       }
       */
    }
@@ -2965,9 +2965,9 @@ void database::check_free_memory( bool force_print, uint32_t current_block_num )
    uint64_t free_mem = get_free_memory();
    uint64_t max_mem = get_max_memory();
 
-   if( BOOST_UNLIKELY( _shared_file_full_threshold != 0 && _shared_file_scale_rate != 0 && free_mem < ( ( uint128_t( COLAB_100_PERCENT - _shared_file_full_threshold ) * max_mem ) / COLAB_100_PERCENT ).to_uint64() ) )
+   if( BOOST_UNLIKELY( _shared_file_full_threshold != 0 && _shared_file_scale_rate != 0 && free_mem < ( ( uint128_t( KNOWLEDGR_100_PERCENT - _shared_file_full_threshold ) * max_mem ) / KNOWLEDGR_100_PERCENT ).to_uint64() ) )
    {
-      uint64_t new_max = ( uint128_t( max_mem * _shared_file_scale_rate ) / COLAB_100_PERCENT ).to_uint64() + max_mem;
+      uint64_t new_max = ( uint128_t( max_mem * _shared_file_scale_rate ) / KNOWLEDGR_100_PERCENT ).to_uint64() + max_mem;
 
       wlog( "Memory is almost full, increasing to ${mem}M", ("mem", new_max / (1024*1024)) );
 
@@ -3025,7 +3025,7 @@ void database::_apply_block( const signed_block& next_block )
       // This allows the test net to launch with past hardforks and apply the next harfork when running
 
       uint32_t n;
-      for( n=0; n<COLAB_NUM_HARDFORKS; n++ )
+      for( n=0; n<KNOWLEDGR_NUM_HARDFORKS; n++ )
       {
          if( _hardfork_times[n+1] > next_block.timestamp )
             break;
@@ -3078,15 +3078,15 @@ void database::_apply_block( const signed_block& next_block )
 
    const auto& gprops = get_dynamic_global_properties();
    auto block_size = fc::raw::pack_size( next_block );
-   if( has_hardfork( COLAB_HARDFORK_0_12 ) )
+   if( has_hardfork( KNOWLEDGR_HARDFORK_0_12 ) )
    {
       FC_ASSERT( block_size <= gprops.maximum_block_size, "Block Size is too Big", ("next_block_num",next_block_num)("block_size", block_size)("max",gprops.maximum_block_size) );
    }
 
-   if( block_size < COLAB_MIN_BLOCK_SIZE )
+   if( block_size < KNOWLEDGR_MIN_BLOCK_SIZE )
    {
       elog( "Block size is too small",
-         ("next_block_num",next_block_num)("block_size", block_size)("min",COLAB_MIN_BLOCK_SIZE)
+         ("next_block_num",next_block_num)("block_size", block_size)("min",KNOWLEDGR_MIN_BLOCK_SIZE)
       );
    }
 
@@ -3101,7 +3101,7 @@ void database::_apply_block( const signed_block& next_block )
    /// parse witness version reporting
    process_header_extensions( next_block, req_actions, opt_actions );
 
-   if( has_hardfork( COLAB_HARDFORK_0_5__54 ) ) // Cannot remove after hardfork
+   if( has_hardfork( KNOWLEDGR_HARDFORK_0_5__54 ) ) // Cannot remove after hardfork
    {
       const auto& witness = get_witness( next_block.witness );
       const auto& hardfork_state = get_hardfork_property_object();
@@ -3138,14 +3138,14 @@ void database::_apply_block( const signed_block& next_block )
 //   clear_expired_delegations();
    update_witness_schedule(*this);
 
-#if 0///~~~~~CLC~~~~~{NO NEED for CoLab
+#if 0///~~~~~NLG~~~~~{NO NEED for Knowledgr
 //   update_median_feed();
-#endif///~~~~~CLC~~~~~}
+#endif///~~~~~NLG~~~~~}
    update_virtual_supply();
 
    clear_null_account_balance();
    process_funds();///
-//   process_conversions();/// WILL NOT NEED for CoLab
+//   process_conversions();/// WILL NOT NEED for Knowledgr
    process_comment_cashout();
 //   process_vesting_withdrawals();
    process_savings_withdraws();
@@ -3153,7 +3153,7 @@ void database::_apply_block( const signed_block& next_block )
    pay_liquidity_reward();
    update_virtual_supply();
 
-   process_pending_stakes();///~~~~~CLC~~~~~
+   process_pending_stakes();///~~~~~NLG~~~~~
 
    account_recovery_processing();
    expire_escrow_ratification();
@@ -3228,13 +3228,13 @@ struct process_header_visitor
 
    void operator()( const required_automated_actions& req_actions ) const
    {
-      FC_ASSERT( _db.has_hardfork( COLAB_SMT_HARDFORK ), "Automated actions are not enabled until SMT hardfork." );
+      FC_ASSERT( _db.has_hardfork( KNOWLEDGR_SMT_HARDFORK ), "Automated actions are not enabled until SMT hardfork." );
       std::copy( req_actions.begin(), req_actions.end(), std::back_inserter( _req_actions ) );
    }
 
    void operator()( const optional_automated_actions& opt_actions ) const
    {
-      FC_ASSERT( _db.has_hardfork( COLAB_SMT_HARDFORK ), "Automated actions are not enabled until SMT hardfork." );
+      FC_ASSERT( _db.has_hardfork( KNOWLEDGR_SMT_HARDFORK ), "Automated actions are not enabled until SMT hardfork." );
       std::copy( opt_actions.begin(), opt_actions.end(), std::back_inserter( _opt_actions ) );
    }
 };
@@ -3249,7 +3249,7 @@ void database::process_header_extensions( const signed_block& next_block, requir
 
 // void database::update_median_feed() {
 // try {
-//    if( (head_block_num() % COLAB_FEED_INTERVAL_BLOCKS) != 0 )
+//    if( (head_block_num() % KNOWLEDGR_FEED_INTERVAL_BLOCKS) != 0 )
 //       return;
 // 
 //    auto now = head_block_time();
@@ -3258,22 +3258,22 @@ void database::process_header_extensions( const signed_block& next_block, requir
 //    for( int i = 0; i < wso.num_scheduled_witnesses; i++ )
 //    {
 //       const auto& wit = get_witness( wso.current_shuffled_witnesses[i] );
-//       if( has_hardfork( COLAB_HARDFORK_0_19__822 ) )
+//       if( has_hardfork( KNOWLEDGR_HARDFORK_0_19__822 ) )
 //       {
-//          if( now < wit.last_sbd_exchange_update + COLAB_MAX_FEED_AGE_SECONDS
+//          if( now < wit.last_sbd_exchange_update + KNOWLEDGR_MAX_FEED_AGE_SECONDS
 //             && !wit.sbd_exchange_rate.is_null() )
 //          {
 //             feeds.push_back( wit.sbd_exchange_rate );
 //          }
 //       }
-//       else if( wit.last_sbd_exchange_update < now + COLAB_MAX_FEED_AGE_SECONDS &&
+//       else if( wit.last_sbd_exchange_update < now + KNOWLEDGR_MAX_FEED_AGE_SECONDS &&
 //           !wit.sbd_exchange_rate.is_null() )
 //       {
 //          feeds.push_back( wit.sbd_exchange_rate );
 //       }
 //    }
 // 
-//    if( feeds.size() >= COLAB_MIN_FEEDS )
+//    if( feeds.size() >= KNOWLEDGR_MIN_FEEDS )
 //    {
 //       std::sort( feeds.begin(), feeds.end() );
 //       auto median_feed = feeds[feeds.size()/2];
@@ -3281,11 +3281,11 @@ void database::process_header_extensions( const signed_block& next_block, requir
 //       modify( get_feed_history(), [&]( feed_history_object& fho )
 //       {
 //          fho.price_history.push_back( median_feed );
-//          size_t colab_feed_history_window = COLAB_FEED_HISTORY_WINDOW_PRE_HF_16;
-//          if( has_hardfork( COLAB_HARDFORK_0_16__551) )
-//             colab_feed_history_window = COLAB_FEED_HISTORY_WINDOW;
+//          size_t knowledgr_feed_history_window = KNOWLEDGR_FEED_HISTORY_WINDOW_PRE_HF_16;
+//          if( has_hardfork( KNOWLEDGR_HARDFORK_0_16__551) )
+//             knowledgr_feed_history_window = KNOWLEDGR_FEED_HISTORY_WINDOW;
 // 
-//          if( fho.price_history.size() > colab_feed_history_window )
+//          if( fho.price_history.size() > knowledgr_feed_history_window )
 //             fho.price_history.pop_front();
 // 
 //          if( fho.price_history.size() )
@@ -3304,13 +3304,13 @@ void database::process_header_extensions( const signed_block& next_block, requir
 //             if( skip_price_feed_limit_check )
 //                return;
 // #endif
-//             if( has_hardfork( COLAB_HARDFORK_0_14__230 ) )
+//             if( has_hardfork( KNOWLEDGR_HARDFORK_0_14__230 ) )
 //             {
 //                // This block limits the effective median price to force SBD to remain at or
-//                // below 10% of the combined market cap of CLC and SBD.
+//                // below 10% of the combined market cap of NLG and SBD.
 //                //
-//                // For example, if we have 500 CLC and 100 SBD, the price is limited to
-//                // 900 SBD / 500 CLC which works out to be $1.80.  At this price, 500 Colab
+//                // For example, if we have 500 NLG and 100 SBD, the price is limited to
+//                // 900 SBD / 500 NLG which works out to be $1.80.  At this price, 500 Knowledgr
 //                // would be valued at 500 * $1.80 = $900.  100 SBD is by definition always $100,
 //                // so the combined market cap is $900 + $100 = $1000.
 // 
@@ -3357,10 +3357,10 @@ void database::_apply_transaction(const signed_transaction& trx)
 
       try
       {
-         trx.verify_authority( chain_id, get_active, get_owner, get_posting, COLAB_MAX_SIG_CHECK_DEPTH,
-            has_hardfork( COLAB_HARDFORK_0_20 ) || is_producing() ? COLAB_MAX_AUTHORITY_MEMBERSHIP : 0,
-            has_hardfork( COLAB_HARDFORK_0_20 ) || is_producing() ? COLAB_MAX_SIG_CHECK_ACCOUNTS : 0,
-            has_hardfork( COLAB_HARDFORK_0_20__1944 ) ? fc::ecc::bip_0062 : fc::ecc::fc_canonical );
+         trx.verify_authority( chain_id, get_active, get_owner, get_posting, KNOWLEDGR_MAX_SIG_CHECK_DEPTH,
+            has_hardfork( KNOWLEDGR_HARDFORK_0_20 ) || is_producing() ? KNOWLEDGR_MAX_AUTHORITY_MEMBERSHIP : 0,
+            has_hardfork( KNOWLEDGR_HARDFORK_0_20 ) || is_producing() ? KNOWLEDGR_MAX_SIG_CHECK_ACCOUNTS : 0,
+            has_hardfork( KNOWLEDGR_HARDFORK_0_20__1944 ) ? fc::ecc::bip_0062 : fc::ecc::fc_canonical );
       }
       catch( protocol::tx_missing_active_auth& e )
       {
@@ -3377,18 +3377,18 @@ void database::_apply_transaction(const signed_transaction& trx)
       {
          const auto& tapos_block_summary = get< block_summary_object >( trx.ref_block_num );
          //Verify TaPoS block summary has correct ID prefix, and that this block's time is not past the expiration
-         COLAB_ASSERT( trx.ref_block_prefix == tapos_block_summary.block_id._hash[1], transaction_tapos_exception,
+         KNOWLEDGR_ASSERT( trx.ref_block_prefix == tapos_block_summary.block_id._hash[1], transaction_tapos_exception,
                     "", ("trx.ref_block_prefix", trx.ref_block_prefix)
                     ("tapos_block_summary",tapos_block_summary.block_id._hash[1]));
       }
 
       fc::time_point_sec now = head_block_time();
 
-      COLAB_ASSERT( trx.expiration <= now + fc::seconds(COLAB_MAX_TIME_UNTIL_EXPIRATION), transaction_expiration_exception,
-                  "", ("trx.expiration",trx.expiration)("now",now)("max_til_exp",COLAB_MAX_TIME_UNTIL_EXPIRATION));
-      if( has_hardfork( COLAB_HARDFORK_0_9 ) ) // Simple solution to pending trx bug when now == trx.expiration
-         COLAB_ASSERT( now < trx.expiration, transaction_expiration_exception, "", ("now",now)("trx.exp",trx.expiration) );
-      COLAB_ASSERT( now <= trx.expiration, transaction_expiration_exception, "", ("now",now)("trx.exp",trx.expiration) );
+      KNOWLEDGR_ASSERT( trx.expiration <= now + fc::seconds(KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION), transaction_expiration_exception,
+                  "", ("trx.expiration",trx.expiration)("now",now)("max_til_exp",KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION));
+      if( has_hardfork( KNOWLEDGR_HARDFORK_0_9 ) ) // Simple solution to pending trx bug when now == trx.expiration
+         KNOWLEDGR_ASSERT( now < trx.expiration, transaction_expiration_exception, "", ("now",now)("trx.exp",trx.expiration) );
+      KNOWLEDGR_ASSERT( now <= trx.expiration, transaction_expiration_exception, "", ("now",now)("trx.exp",trx.expiration) );
    }
 
    //Insert transaction into unique transactions database.
@@ -3467,7 +3467,7 @@ void database::process_required_actions( const required_automated_actions& actio
          {
             total_actions_size += fc::raw::pack_size( pending_itr->action );
             const auto& gpo = get_dynamic_global_properties();
-            uint64_t required_actions_partition_size = ( gpo.maximum_block_size * gpo.required_actions_partition_percent ) / COLAB_100_PERCENT;
+            uint64_t required_actions_partition_size = ( gpo.maximum_block_size * gpo.required_actions_partition_percent ) / KNOWLEDGR_100_PERCENT;
             FC_ASSERT( total_actions_size > required_actions_partition_size,
                "Expected action was not included in block. total_actions_size: ${as}, required_actions_partition_action: ${rs}, pending_action: ${pa}",
                ("as", total_actions_size)
@@ -3719,7 +3719,7 @@ const witness_object& database::validate_block_header( uint32_t skip, const sign
 
    if( !(skip&skip_witness_signature) )
       FC_ASSERT( next_block.validate_signee( witness.signing_key,
-         has_hardfork( COLAB_HARDFORK_0_20__1944 ) ? fc::ecc::bip_0062 : fc::ecc::fc_canonical ) );
+         has_hardfork( KNOWLEDGR_HARDFORK_0_20__1944 ) ? fc::ecc::bip_0062 : fc::ecc::fc_canonical ) );
 
    if( !(skip&skip_witness_schedule_check) )
    {
@@ -3764,9 +3764,9 @@ void database::update_global_dynamic_data( const signed_block& b )
                w.total_missed++;
 FC_TODO( "#ifndef not needed after HF 20 is live" );
 #ifndef IS_TEST_NET
-               if( has_hardfork( COLAB_HARDFORK_0_14__278 ) && !has_hardfork( COLAB_HARDFORK_0_20__SP190 ) )
+               if( has_hardfork( KNOWLEDGR_HARDFORK_0_14__278 ) && !has_hardfork( KNOWLEDGR_HARDFORK_0_20__SP190 ) )
                {
-                  if( head_block_num() - w.last_confirmed_block_num  > COLAB_BLOCKS_PER_DAY )
+                  if( head_block_num() - w.last_confirmed_block_num  > KNOWLEDGR_BLOCKS_PER_DAY )
                   {
                      w.signing_key = public_key_type();
                      push_virtual_operation( shutdown_witness_operation( w.owner ) );
@@ -3799,11 +3799,11 @@ FC_TODO( "#ifndef not needed after HF 20 is live" );
 
    if( !(get_node_properties().skip_flags & skip_undo_history_check) )
    {
-      COLAB_ASSERT( _dgp.head_block_number - _dgp.last_irreversible_block_num  < COLAB_MAX_UNDO_HISTORY, undo_database_exception,
+      KNOWLEDGR_ASSERT( _dgp.head_block_number - _dgp.last_irreversible_block_num  < KNOWLEDGR_MAX_UNDO_HISTORY, undo_database_exception,
                  "The database does not have enough undo history to support a blockchain with so many missed blocks. "
                  "Please add a checkpoint if you would like to continue applying blocks beyond this point.",
                  ("last_irreversible_block_num",_dgp.last_irreversible_block_num)("head", _dgp.head_block_number)
-                 ("max_undo",COLAB_MAX_UNDO_HISTORY) );
+                 ("max_undo",KNOWLEDGR_MAX_UNDO_HISTORY) );
    }
 } FC_CAPTURE_AND_RETHROW() }
 
@@ -3812,21 +3812,21 @@ void database::update_virtual_supply()
    modify( get_dynamic_global_properties(), [&]( dynamic_global_property_object& dgp )
    {
       dgp.virtual_supply = dgp.current_supply;
-         //+ ( get_feed_history().current_median_history.is_null() ? asset( 0, CLC_SYMBOL ) : dgp.current_sbd_supply * get_feed_history().current_median_history );
+         //+ ( get_feed_history().current_median_history.is_null() ? asset( 0, NLG_SYMBOL ) : dgp.current_sbd_supply * get_feed_history().current_median_history );
 
 //       auto median_price = get_feed_history().current_median_history;
 // 
-//       if( !median_price.is_null() && has_hardfork( COLAB_HARDFORK_0_14__230 ) )
+//       if( !median_price.is_null() && has_hardfork( KNOWLEDGR_HARDFORK_0_14__230 ) )
 //       {
-//          auto percent_sbd = uint16_t( ( ( fc::uint128_t( ( dgp.current_sbd_supply * get_feed_history().current_median_history ).amount.value ) * COLAB_100_PERCENT )
+//          auto percent_sbd = uint16_t( ( ( fc::uint128_t( ( dgp.current_sbd_supply * get_feed_history().current_median_history ).amount.value ) * KNOWLEDGR_100_PERCENT )
 //             / dgp.virtual_supply.amount.value ).to_uint64() );
 // 
 //          if( percent_sbd <= dgp.sbd_start_percent )
-//             dgp.sbd_print_rate = COLAB_100_PERCENT;
+//             dgp.sbd_print_rate = KNOWLEDGR_100_PERCENT;
 //          else if( percent_sbd >= dgp.sbd_stop_percent )
 //             dgp.sbd_print_rate = 0;
 //          else
-//             dgp.sbd_print_rate = ( ( dgp.sbd_stop_percent - percent_sbd ) * COLAB_100_PERCENT ) / ( dgp.sbd_stop_percent - dgp.sbd_start_percent );
+//             dgp.sbd_print_rate = ( ( dgp.sbd_stop_percent - percent_sbd ) * KNOWLEDGR_100_PERCENT ) / ( dgp.sbd_stop_percent - dgp.sbd_start_percent );
 //       }
    });
 } FC_CAPTURE_AND_RETHROW() }
@@ -3852,12 +3852,12 @@ void database::update_last_irreversible_block()
     * Prior to voting taking over, we must be more conservative...
     *
     */
-   if( head_block_num() < COLAB_START_MINER_VOTING_BLOCK )
+   if( head_block_num() < KNOWLEDGR_START_MINER_VOTING_BLOCK )
    {
       modify( dpo, [&]( dynamic_global_property_object& _dpo )
       {
-         if ( head_block_num() > COLAB_MAX_WITNESSES )
-            _dpo.last_irreversible_block_num = head_block_num() - COLAB_MAX_WITNESSES;
+         if ( head_block_num() > KNOWLEDGR_MAX_WITNESSES )
+            _dpo.last_irreversible_block_num = head_block_num() - KNOWLEDGR_MAX_WITNESSES;
       } );
    }
    else
@@ -3869,13 +3869,13 @@ void database::update_last_irreversible_block()
       for( int i = 0; i < wso.num_scheduled_witnesses; i++ )
          wit_objs.push_back( &get_witness( wso.current_shuffled_witnesses[i] ) );
 
-      static_assert( COLAB_IRREVERSIBLE_THRESHOLD > 0, "irreversible threshold must be nonzero" );
+      static_assert( KNOWLEDGR_IRREVERSIBLE_THRESHOLD > 0, "irreversible threshold must be nonzero" );
 
       // 1 1 1 2 2 2 2 2 2 2 -> 2     .7*10 = 7
       // 1 1 1 1 1 1 1 2 2 2 -> 1
       // 3 3 3 3 3 3 3 3 3 3 -> 3
 
-      size_t offset = ((COLAB_100_PERCENT - COLAB_IRREVERSIBLE_THRESHOLD) * wit_objs.size() / COLAB_100_PERCENT);
+      size_t offset = ((KNOWLEDGR_100_PERCENT - KNOWLEDGR_IRREVERSIBLE_THRESHOLD) * wit_objs.size() / KNOWLEDGR_100_PERCENT);
 
       std::nth_element( wit_objs.begin(), wit_objs.begin() + offset, wit_objs.end(),
          []( const witness_object* a, const witness_object* b )
@@ -3980,24 +3980,24 @@ bool database::apply_order( const limit_order_object& new_order_object )
 
 int database::match( const limit_order_object& new_order, const limit_order_object& old_order, const price& match_price )
 {
-   bool has_hf_20__1815 = has_hardfork( COLAB_HARDFORK_0_20__1815 );
+   bool has_hf_20__1815 = has_hardfork( KNOWLEDGR_HARDFORK_0_20__1815 );
 
 #pragma message( "TODO:  Remove if(), do assert unconditionally after HF20 occurs" )
    if( has_hf_20__1815 )
    {
-      COLAB_ASSERT( new_order.sell_price.quote.symbol == old_order.sell_price.base.symbol,
+      KNOWLEDGR_ASSERT( new_order.sell_price.quote.symbol == old_order.sell_price.base.symbol,
          order_match_exception, "error matching orders: ${new_order} ${old_order} ${match_price}",
          ("new_order", new_order)("old_order", old_order)("match_price", match_price) );
-      COLAB_ASSERT( new_order.sell_price.base.symbol  == old_order.sell_price.quote.symbol,
+      KNOWLEDGR_ASSERT( new_order.sell_price.base.symbol  == old_order.sell_price.quote.symbol,
          order_match_exception, "error matching orders: ${new_order} ${old_order} ${match_price}",
          ("new_order", new_order)("old_order", old_order)("match_price", match_price) );
-      COLAB_ASSERT( new_order.for_sale > 0 && old_order.for_sale > 0,
+      KNOWLEDGR_ASSERT( new_order.for_sale > 0 && old_order.for_sale > 0,
          order_match_exception, "error matching orders: ${new_order} ${old_order} ${match_price}",
          ("new_order", new_order)("old_order", old_order)("match_price", match_price) );
-      COLAB_ASSERT( match_price.quote.symbol == new_order.sell_price.base.symbol,
+      KNOWLEDGR_ASSERT( match_price.quote.symbol == new_order.sell_price.base.symbol,
          order_match_exception, "error matching orders: ${new_order} ${old_order} ${match_price}",
          ("new_order", new_order)("old_order", old_order)("match_price", match_price) );
-      COLAB_ASSERT( match_price.base.symbol == old_order.sell_price.base.symbol,
+      KNOWLEDGR_ASSERT( match_price.base.symbol == old_order.sell_price.base.symbol,
          order_match_exception, "error matching orders: ${new_order} ${old_order} ${match_price}",
          ("new_order", new_order)("old_order", old_order)("match_price", match_price) );
    }
@@ -4028,18 +4028,18 @@ int database::match( const limit_order_object& new_order, const limit_order_obje
 #pragma message( "TODO:  Remove if(), do assert unconditionally after HF20 occurs" )
    if( has_hf_20__1815 )
    {
-      COLAB_ASSERT( new_order_pays == new_order.amount_for_sale() ||
+      KNOWLEDGR_ASSERT( new_order_pays == new_order.amount_for_sale() ||
                     old_order_pays == old_order.amount_for_sale(),
          order_match_exception, "error matching orders: ${new_order} ${old_order} ${match_price}",
          ("new_order", new_order)("old_order", old_order)("match_price", match_price) );
    }
 
    auto age = head_block_time() - old_order.created;
-   if( !has_hardfork( COLAB_HARDFORK_0_12__178 ) &&
-       ( (age >= COLAB_MIN_LIQUIDITY_REWARD_PERIOD_SEC && !has_hardfork( COLAB_HARDFORK_0_10__149)) ||
-       (age >= COLAB_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10 && has_hardfork( COLAB_HARDFORK_0_10__149) ) ) )
+   if( !has_hardfork( KNOWLEDGR_HARDFORK_0_12__178 ) &&
+       ( (age >= KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC && !has_hardfork( KNOWLEDGR_HARDFORK_0_10__149)) ||
+       (age >= KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10 && has_hardfork( KNOWLEDGR_HARDFORK_0_10__149) ) ) )
    {
-      if( old_order_receives.symbol == CLC_SYMBOL )
+      if( old_order_receives.symbol == NLG_SYMBOL )
       {
          adjust_liquidity_reward( get_account( old_order.seller ), old_order_receives, false );
          adjust_liquidity_reward( get_account( new_order.seller ), -old_order_receives, false );
@@ -4060,7 +4060,7 @@ int database::match( const limit_order_object& new_order, const limit_order_obje
 #pragma message( "TODO:  Remove if(), do assert unconditionally after HF20 occurs" )
    if( has_hf_20__1815 )
    {
-      COLAB_ASSERT( result != 0,
+      KNOWLEDGR_ASSERT( result != 0,
          order_match_exception, "error matching orders: ${new_order} ${old_order} ${match_price}",
          ("new_order", new_order)("old_order", old_order)("match_price", match_price) );
    }
@@ -4076,19 +4076,19 @@ void database::adjust_liquidity_reward( const account_object& owner, const asset
    {
       modify<liquidity_reward_balance_object>( *itr, [&]( liquidity_reward_balance_object& r )
       {
-         if( head_block_time() - r.last_update >= COLAB_LIQUIDITY_TIMEOUT_SEC )
+         if( head_block_time() - r.last_update >= KNOWLEDGR_LIQUIDITY_TIMEOUT_SEC )
          {
             r.sbd_volume = 0;
-            r.clc_volume = 0;
+            r.nlg_volume = 0;
             r.weight = 0;
          }
 
          if( is_sdb )
             r.sbd_volume += volume.amount.value;
          else
-            r.clc_volume += volume.amount.value;
+            r.nlg_volume += volume.amount.value;
 
-         r.update_weight( has_hardfork( COLAB_HARDFORK_0_10__141 ) );
+         r.update_weight( has_hardfork( KNOWLEDGR_HARDFORK_0_10__141 ) );
          r.last_update = head_block_time();
       } );
    }
@@ -4100,9 +4100,9 @@ void database::adjust_liquidity_reward( const account_object& owner, const asset
          if( is_sdb )
             r.sbd_volume = volume.amount.value;
          else
-            r.clc_volume = volume.amount.value;
+            r.nlg_volume = volume.amount.value;
 
-         r.update_weight( has_hardfork( COLAB_HARDFORK_0_9__141 ) );
+         r.update_weight( has_hardfork( KNOWLEDGR_HARDFORK_0_9__141 ) );
          r.last_update = head_block_time();
       } );
    }
@@ -4113,10 +4113,10 @@ bool database::fill_order( const limit_order_object& order, const asset& pays, c
 {
    try
    {
-      COLAB_ASSERT( order.amount_for_sale().symbol == pays.symbol,
+      KNOWLEDGR_ASSERT( order.amount_for_sale().symbol == pays.symbol,
          order_fill_exception, "error filling orders: ${order} ${pays} ${receives}",
          ("order", order)("pays", pays)("receives", receives) );
-      COLAB_ASSERT( pays.symbol != receives.symbol,
+      KNOWLEDGR_ASSERT( pays.symbol != receives.symbol,
          order_fill_exception, "error filling orders: ${order} ${pays} ${receives}",
          ("order", order)("pays", pays)("receives", receives) );
 
@@ -4130,9 +4130,9 @@ bool database::fill_order( const limit_order_object& order, const asset& pays, c
       else
       {
 #pragma message( "TODO:  Remove if(), do assert unconditionally after HF20 occurs" )
-         if( has_hardfork( COLAB_HARDFORK_0_20__1815 ) )
+         if( has_hardfork( KNOWLEDGR_HARDFORK_0_20__1815 ) )
          {
-            COLAB_ASSERT( pays < order.amount_for_sale(),
+            KNOWLEDGR_ASSERT( pays < order.amount_for_sale(),
               order_fill_exception, "error filling orders: ${order} ${pays} ${receives}",
               ("order", order)("pays", pays)("receives", receives) );
          }
@@ -4199,9 +4199,9 @@ void database::clear_expired_orders()
 // 
 //       modify( get_account( itr->delegator ), [&]( account_object& a )
 //       {
-//          if( has_hardfork( COLAB_HARDFORK_0_20__2539 ) )
+//          if( has_hardfork( KNOWLEDGR_HARDFORK_0_20__2539 ) )
 //          {
-//             util::manabar_params params( util::get_effective_vesting_shares( a ), COLAB_VOTING_MANA_REGENERATION_SECONDS );
+//             util::manabar_params params( util::get_effective_vesting_shares( a ), KNOWLEDGR_VOTING_MANA_REGENERATION_SECONDS );
 // FC_TODO( "Set skip_cap_regen=true without breaking consensus" );
 //             a.voting_manabar.regenerate_mana( params, head_block_time() );
 //             a.voting_manabar.use_mana( -itr->vesting_shares.amount.value );
@@ -4216,7 +4216,7 @@ void database::clear_expired_orders()
 //       itr = delegations_by_exp.begin();
 //    }
 // }
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
 template< typename smt_balance_object_type, class balance_operator_type >
 void database::adjust_smt_balance( const account_name_type& name, const asset& delta, bool check_account,
    balance_operator_type balance_operator )
@@ -4274,27 +4274,27 @@ void database::modify_balance( const account_object& a, const asset& delta, bool
    {
       switch( delta.symbol.asset_num )
       {
-         case COLAB_ASSET_NUM_CLC:
+         case KNOWLEDGR_ASSET_NUM_NLG:
             acnt.balance += delta;
             if( check_balance )
             {
-               FC_ASSERT( acnt.balance.amount.value >= 0, "Insufficient CLC funds" );
+               FC_ASSERT( acnt.balance.amount.value >= 0, "Insufficient NLG funds" );
             }
             break;
 
-///~~~~~CLC~~~~~{ NO NEED for CoLab
-//          case COLAB_ASSET_NUM_SBD:
+///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+//          case KNOWLEDGR_ASSET_NUM_SBD:
 //             if( a.sbd_seconds_last_update != head_block_time() )
 //             {
 //                acnt.sbd_seconds += fc::uint128_t(a.sbd_balance.amount.value) * (head_block_time() - a.sbd_seconds_last_update).to_seconds();
 //                acnt.sbd_seconds_last_update = head_block_time();
 // 
 //                if( acnt.sbd_seconds > 0 &&
-//                    (acnt.sbd_seconds_last_update - acnt.sbd_last_interest_payment).to_seconds() > COLAB_SBD_INTEREST_COMPOUND_INTERVAL_SEC )
+//                    (acnt.sbd_seconds_last_update - acnt.sbd_last_interest_payment).to_seconds() > KNOWLEDGR_SBD_INTEREST_COMPOUND_INTERVAL_SEC )
 //                {
-//                   auto interest = acnt.sbd_seconds / COLAB_SECONDS_PER_YEAR;
+//                   auto interest = acnt.sbd_seconds / KNOWLEDGR_SECONDS_PER_YEAR;
 //                   interest *= get_dynamic_global_properties().sbd_interest_rate;
-//                   interest /= COLAB_100_PERCENT;
+//                   interest /= KNOWLEDGR_100_PERCENT;
 //                   asset interest_paid(interest.to_uint64(), SBD_SYMBOL);
 //                   acnt.sbd_balance += interest_paid;
 //                   acnt.sbd_seconds = 0;
@@ -4316,14 +4316,14 @@ void database::modify_balance( const account_object& a, const asset& delta, bool
 //                FC_ASSERT( acnt.sbd_balance.amount.value >= 0, "Insufficient SBD funds" );
 //             }
 //             break;
-//          case COLAB_ASSET_NUM_VESTS:
+//          case KNOWLEDGR_ASSET_NUM_VESTS:
 //             acnt.vesting_shares += delta;
 //             if( check_balance )
 //             {
 //                FC_ASSERT( acnt.vesting_shares.amount.value >= 0, "Insufficient VESTS funds" );
 //             }
 //             break;
-///~~~~~CLC~~~~~} NO NEED for CoLab
+///~~~~~NLG~~~~~} NO NEED for Knowledgr
          default:
             FC_ASSERT( false, "invalid symbol" );
       }
@@ -4336,31 +4336,31 @@ void database::modify_reward_balance( const account_object& a, const asset& valu
    {
       switch( value_delta.symbol.asset_num )
       {
-         case COLAB_ASSET_NUM_CLC:
+         case KNOWLEDGR_ASSET_NUM_NLG:
             if( share_delta.amount.value == 0 )
             {
-               acnt.reward_clc_balance += value_delta;
+               acnt.reward_nlg_balance += value_delta;
                if( check_balance )
                {
-                  FC_ASSERT( acnt.reward_clc_balance.amount.value >= 0, "Insufficient reward CLC funds" );
+                  FC_ASSERT( acnt.reward_nlg_balance.amount.value >= 0, "Insufficient reward NLG funds" );
                }
             }
-///~~~~~CLC~~~~~{ NO NEED for CoLab
+///~~~~~NLG~~~~~{ NO NEED for Knowledgr
 //             else
 //             {
-//                acnt.reward_vesting_clc += value_delta;
+//                acnt.reward_vesting_nlg += value_delta;
 //                acnt.reward_vesting_balance += share_delta;
 //                if( check_balance )
 //                {
 //                   FC_ASSERT( acnt.reward_vesting_balance.amount.value >= 0, "Insufficient reward VESTS funds" );
 //                }
 //             }
-///~~~~~CLC~~~~~} NO NEED for CoLab
+///~~~~~NLG~~~~~} NO NEED for Knowledgr
 
             break;
 
-///~~~~~CLC~~~~~{ NO NEED for CoLab
-//          case COLAB_ASSET_NUM_SBD:
+///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+//          case KNOWLEDGR_ASSET_NUM_SBD:
 //             FC_ASSERT( share_delta.amount.value == 0 );
 //             acnt.reward_sbd_balance += value_delta;
 //             if( check_balance )
@@ -4368,14 +4368,14 @@ void database::modify_reward_balance( const account_object& a, const asset& valu
 //                FC_ASSERT( acnt.reward_sbd_balance.amount.value >= 0, "Insufficient reward SBD funds" );
 //             }
 //             break;
-///~~~~~CLC~~~~~} NO NEED for CoLab
+///~~~~~NLG~~~~~} NO NEED for Knowledgr
          default:
             FC_ASSERT( false, "invalid symbol" );
       }
    });
 }
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
 struct smt_regular_balance_operator
 {
    smt_regular_balance_operator( const asset& delta ) : delta(delta), is_vesting(delta.symbol.is_vesting()) {}
@@ -4432,9 +4432,9 @@ struct smt_reward_balance_operator
 
 void database::adjust_balance( const account_object& a, const asset& delta )
 {
-   bool check_balance = has_hardfork( COLAB_HARDFORK_0_20__1811 );
+   bool check_balance = has_hardfork( KNOWLEDGR_HARDFORK_0_20__1811 );
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
    // No account object modification for SMT balance, hence separate handling here.
    // Note that SMT related code, being post-20-hf needs no hf-guard to do balance checks.
    if( delta.symbol.space() == asset_symbol_type::smt_nai_space )
@@ -4449,9 +4449,9 @@ void database::adjust_balance( const account_object& a, const asset& delta )
 
 void database::adjust_balance( const account_name_type& name, const asset& delta )
 {
-   bool check_balance = has_hardfork( COLAB_HARDFORK_0_20__1811 );
+   bool check_balance = has_hardfork( KNOWLEDGR_HARDFORK_0_20__1811 );
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
    // No account object modification for SMT balance, hence separate handling here.
    // Note that SMT related code, being post-20-hf needs no hf-guard to do balance checks.
    if( delta.symbol.space() == asset_symbol_type::smt_nai_space )
@@ -4467,32 +4467,32 @@ void database::adjust_balance( const account_name_type& name, const asset& delta
 
 void database::adjust_savings_balance( const account_object& a, const asset& delta )
 {
-   bool check_balance = has_hardfork( COLAB_HARDFORK_0_20__1811 );
+   bool check_balance = has_hardfork( KNOWLEDGR_HARDFORK_0_20__1811 );
 
    modify( a, [&]( account_object& acnt )
    {
       switch( delta.symbol.asset_num )
       {
-         case COLAB_ASSET_NUM_CLC:
+         case KNOWLEDGR_ASSET_NUM_NLG:
             acnt.savings_balance += delta;
             if( check_balance )
             {
-               FC_ASSERT( acnt.savings_balance.amount.value >= 0, "Insufficient savings CLC funds" );
+               FC_ASSERT( acnt.savings_balance.amount.value >= 0, "Insufficient savings NLG funds" );
             }
 			break;
-///~~~~~CLC~~~~~{ NO NEED for CoLab
-//          case COLAB_ASSET_NUM_SBD:
+///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+//          case KNOWLEDGR_ASSET_NUM_SBD:
 //             if( a.savings_sbd_seconds_last_update != head_block_time() )
 //             {
 //                acnt.savings_sbd_seconds += fc::uint128_t(a.savings_sbd_balance.amount.value) * (head_block_time() - a.savings_sbd_seconds_last_update).to_seconds();
 //                acnt.savings_sbd_seconds_last_update = head_block_time();
 // 
 //                if( acnt.savings_sbd_seconds > 0 &&
-//                    (acnt.savings_sbd_seconds_last_update - acnt.savings_sbd_last_interest_payment).to_seconds() > COLAB_SBD_INTEREST_COMPOUND_INTERVAL_SEC )
+//                    (acnt.savings_sbd_seconds_last_update - acnt.savings_sbd_last_interest_payment).to_seconds() > KNOWLEDGR_SBD_INTEREST_COMPOUND_INTERVAL_SEC )
 //                {
-//                   auto interest = acnt.savings_sbd_seconds / COLAB_SECONDS_PER_YEAR;
+//                   auto interest = acnt.savings_sbd_seconds / KNOWLEDGR_SECONDS_PER_YEAR;
 //                   interest *= get_dynamic_global_properties().sbd_interest_rate;
-//                   interest /= COLAB_100_PERCENT;
+//                   interest /= KNOWLEDGR_100_PERCENT;
 //                   asset interest_paid(interest.to_uint64(), SBD_SYMBOL);
 //                   acnt.savings_sbd_balance += interest_paid;
 //                   acnt.savings_sbd_seconds = 0;
@@ -4514,7 +4514,7 @@ void database::adjust_savings_balance( const account_object& a, const asset& del
 //                FC_ASSERT( acnt.savings_sbd_balance.amount.value >= 0, "Insufficient savings SBD funds" );
 //             }
 //             break;
-///~~~~~CLC~~~~~} NO NEED for CoLab
+///~~~~~NLG~~~~~} NO NEED for Knowledgr
          default:
             FC_ASSERT( !"invalid symbol" );
       }
@@ -4524,10 +4524,10 @@ void database::adjust_savings_balance( const account_object& a, const asset& del
 void database::adjust_reward_balance( const account_object& a, const asset& value_delta,
                                       const asset& share_delta /*= asset(0,VESTS_SYMBOL)*/ )
 {
-   bool check_balance = has_hardfork( COLAB_HARDFORK_0_20__1811 );
+   bool check_balance = has_hardfork( KNOWLEDGR_HARDFORK_0_20__1811 );
    FC_ASSERT( value_delta.symbol.is_vesting() == false && share_delta.symbol.is_vesting() );
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
    // No account object modification for SMT balance, hence separate handling here.
    // Note that SMT related code, being post-20-hf needs no hf-guard to do balance checks.
    if( value_delta.symbol.space() == asset_symbol_type::smt_nai_space )
@@ -4544,10 +4544,10 @@ void database::adjust_reward_balance( const account_object& a, const asset& valu
 void database::adjust_reward_balance( const account_name_type& name, const asset& value_delta,
                                       const asset& share_delta /*= asset(0,VESTS_SYMBOL)*/ )
 {
-   bool check_balance = has_hardfork( COLAB_HARDFORK_0_20__1811 );
+   bool check_balance = has_hardfork( KNOWLEDGR_HARDFORK_0_20__1811 );
    FC_ASSERT( value_delta.symbol.is_vesting() == false && share_delta.symbol.is_vesting() );
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
    // No account object modification for SMT balance, hence separate handling here.
    // Note that SMT related code, being post-20-hf needs no hf-guard to do balance checks.
    if( value_delta.symbol.space() == asset_symbol_type::smt_nai_space )
@@ -4564,7 +4564,7 @@ void database::adjust_reward_balance( const account_name_type& name, const asset
 
 void database::adjust_supply( const asset& delta, bool adjust_vesting )
 {
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
    if( delta.symbol.space() == asset_symbol_type::smt_nai_space )
    {
       const auto& smt = get< smt_token_object, by_symbol >( delta.symbol );
@@ -4578,29 +4578,29 @@ void database::adjust_supply( const asset& delta, bool adjust_vesting )
    }
 #endif
 
-   bool check_supply = has_hardfork( COLAB_HARDFORK_0_20__1811 );
+   bool check_supply = has_hardfork( KNOWLEDGR_HARDFORK_0_20__1811 );
 
    const auto& props = get_dynamic_global_properties();
-   if( props.head_block_number < COLAB_BLOCKS_PER_DAY*7 )
+   if( props.head_block_number < KNOWLEDGR_BLOCKS_PER_DAY*7 )
       adjust_vesting = false;
 
    modify( props, [&]( dynamic_global_property_object& props )
    {
       switch( delta.symbol.asset_num )
       {
-         case COLAB_ASSET_NUM_CLC:
+         case KNOWLEDGR_ASSET_NUM_NLG:
          {
-            asset new_vesting( (adjust_vesting && delta.amount > 0) ? delta.amount * 9 : 0, CLC_SYMBOL );
+            asset new_vesting( (adjust_vesting && delta.amount > 0) ? delta.amount * 9 : 0, NLG_SYMBOL );
             props.current_supply += delta + new_vesting;
             props.virtual_supply += delta + new_vesting;
-//            props.total_vesting_fund_clc += new_vesting;
+//            props.total_vesting_fund_nlg += new_vesting;
             if( check_supply )
             {
                FC_ASSERT( props.current_supply.amount.value >= 0 );
             }
             break;
          }
-//          case COLAB_ASSET_NUM_SBD:
+//          case KNOWLEDGR_ASSET_NUM_SBD:
 //             props.current_sbd_supply += delta;
 //             props.virtual_supply = props.current_sbd_supply * get_feed_history().current_median_history + props.current_supply;
 //             if( check_supply )
@@ -4619,16 +4619,16 @@ asset database::get_balance( const account_object& a, asset_symbol_type symbol )
 {
    switch( symbol.asset_num )
    {
-      case COLAB_ASSET_NUM_CLC:
+      case KNOWLEDGR_ASSET_NUM_NLG:
          return a.balance;
 	  default:
 		  FC_ASSERT( false, "invalid symbol" );
-///~~~~~CLC~~~~~{ NO NEED for CoLab
-//       case COLAB_ASSET_NUM_SBD:
+///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+//       case KNOWLEDGR_ASSET_NUM_SBD:
 //          return a.sbd_balance;
 //       default:
 //       {
-// #ifdef COLAB_ENABLE_SMT
+// #ifdef KNOWLEDGR_ENABLE_SMT
 //          FC_ASSERT( symbol.space() == asset_symbol_type::smt_nai_space, "invalid symbol" );
 //          const account_regular_balance_object* arbo =
 //             find< account_regular_balance_object, by_owner_liquid_symbol >(
@@ -4645,7 +4645,7 @@ asset database::get_balance( const account_object& a, asset_symbol_type symbol )
 //       FC_ASSERT( false, "invalid symbol" );
 // #endif
 //       }
-///~~~~~CLC~~~~~} NO NEED for CoLab
+///~~~~~NLG~~~~~} NO NEED for Knowledgr
    }
 }
 
@@ -4653,12 +4653,12 @@ asset database::get_savings_balance( const account_object& a, asset_symbol_type 
 {
    switch( symbol.asset_num )
    {
-      case COLAB_ASSET_NUM_CLC:
+      case KNOWLEDGR_ASSET_NUM_NLG:
          return a.savings_balance;
-///~~~~~CLC~~~~~{ NO NEED for CoLab
-//       case COLAB_ASSET_NUM_SBD:
+///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+//       case KNOWLEDGR_ASSET_NUM_SBD:
 //          return a.savings_sbd_balance;
-///~~~~~CLC~~~~~} NO NEED for CoLab
+///~~~~~NLG~~~~~} NO NEED for Knowledgr
       default: // Note no savings balance for SMT per comments in issue 1682.
          FC_ASSERT( !"invalid symbol" );
    }
@@ -4672,85 +4672,85 @@ void database::generate_required_actions()
 void database::generate_optional_actions()
 {
    static const generate_optional_actions_notification note;
-   COLAB_TRY_NOTIFY( _generate_optional_actions_signal, note );
+   KNOWLEDGR_TRY_NOTIFY( _generate_optional_actions_signal, note );
 }
 
 void database::init_hardforks()
 {
-   _hardfork_times[ 0 ] = fc::time_point_sec( COLAB_GENESIS_TIME );
+   _hardfork_times[ 0 ] = fc::time_point_sec( KNOWLEDGR_GENESIS_TIME );
    _hardfork_versions[ 0 ] = hardfork_version( 0, 0 );
-   FC_ASSERT( COLAB_HARDFORK_0_1 == 1, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_1 ] = fc::time_point_sec( COLAB_HARDFORK_0_1_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_1 ] = COLAB_HARDFORK_0_1_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_2 == 2, "Invlaid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_2 ] = fc::time_point_sec( COLAB_HARDFORK_0_2_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_2 ] = COLAB_HARDFORK_0_2_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_3 == 3, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_3 ] = fc::time_point_sec( COLAB_HARDFORK_0_3_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_3 ] = COLAB_HARDFORK_0_3_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_4 == 4, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_4 ] = fc::time_point_sec( COLAB_HARDFORK_0_4_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_4 ] = COLAB_HARDFORK_0_4_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_5 == 5, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_5 ] = fc::time_point_sec( COLAB_HARDFORK_0_5_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_5 ] = COLAB_HARDFORK_0_5_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_6 == 6, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_6 ] = fc::time_point_sec( COLAB_HARDFORK_0_6_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_6 ] = COLAB_HARDFORK_0_6_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_7 == 7, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_7 ] = fc::time_point_sec( COLAB_HARDFORK_0_7_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_7 ] = COLAB_HARDFORK_0_7_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_8 == 8, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_8 ] = fc::time_point_sec( COLAB_HARDFORK_0_8_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_8 ] = COLAB_HARDFORK_0_8_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_9 == 9, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_9 ] = fc::time_point_sec( COLAB_HARDFORK_0_9_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_9 ] = COLAB_HARDFORK_0_9_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_10 == 10, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_10 ] = fc::time_point_sec( COLAB_HARDFORK_0_10_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_10 ] = COLAB_HARDFORK_0_10_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_11 == 11, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_11 ] = fc::time_point_sec( COLAB_HARDFORK_0_11_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_11 ] = COLAB_HARDFORK_0_11_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_12 == 12, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_12 ] = fc::time_point_sec( COLAB_HARDFORK_0_12_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_12 ] = COLAB_HARDFORK_0_12_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_13 == 13, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_13 ] = fc::time_point_sec( COLAB_HARDFORK_0_13_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_13 ] = COLAB_HARDFORK_0_13_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_14 == 14, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_14 ] = fc::time_point_sec( COLAB_HARDFORK_0_14_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_14 ] = COLAB_HARDFORK_0_14_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_15 == 15, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_15 ] = fc::time_point_sec( COLAB_HARDFORK_0_15_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_15 ] = COLAB_HARDFORK_0_15_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_16 == 16, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_16 ] = fc::time_point_sec( COLAB_HARDFORK_0_16_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_16 ] = COLAB_HARDFORK_0_16_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_17 == 17, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_17 ] = fc::time_point_sec( COLAB_HARDFORK_0_17_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_17 ] = COLAB_HARDFORK_0_17_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_18 == 18, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_18 ] = fc::time_point_sec( COLAB_HARDFORK_0_18_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_18 ] = COLAB_HARDFORK_0_18_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_19 == 19, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_19 ] = fc::time_point_sec( COLAB_HARDFORK_0_19_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_19 ] = COLAB_HARDFORK_0_19_VERSION;
-   FC_ASSERT( COLAB_HARDFORK_0_20 == 20, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_20 ] = fc::time_point_sec( COLAB_HARDFORK_0_20_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_20 ] = COLAB_HARDFORK_0_20_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_1 == 1, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_1 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_1_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_1 ] = KNOWLEDGR_HARDFORK_0_1_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_2 == 2, "Invlaid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_2 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_2_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_2 ] = KNOWLEDGR_HARDFORK_0_2_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_3 == 3, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_3 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_3_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_3 ] = KNOWLEDGR_HARDFORK_0_3_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_4 == 4, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_4 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_4_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_4 ] = KNOWLEDGR_HARDFORK_0_4_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_5 == 5, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_5 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_5_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_5 ] = KNOWLEDGR_HARDFORK_0_5_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_6 == 6, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_6 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_6_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_6 ] = KNOWLEDGR_HARDFORK_0_6_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_7 == 7, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_7 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_7_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_7 ] = KNOWLEDGR_HARDFORK_0_7_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_8 == 8, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_8 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_8_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_8 ] = KNOWLEDGR_HARDFORK_0_8_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_9 == 9, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_9 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_9_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_9 ] = KNOWLEDGR_HARDFORK_0_9_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_10 == 10, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_10 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_10_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_10 ] = KNOWLEDGR_HARDFORK_0_10_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_11 == 11, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_11 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_11_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_11 ] = KNOWLEDGR_HARDFORK_0_11_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_12 == 12, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_12 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_12_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_12 ] = KNOWLEDGR_HARDFORK_0_12_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_13 == 13, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_13 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_13_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_13 ] = KNOWLEDGR_HARDFORK_0_13_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_14 == 14, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_14 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_14_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_14 ] = KNOWLEDGR_HARDFORK_0_14_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_15 == 15, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_15 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_15_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_15 ] = KNOWLEDGR_HARDFORK_0_15_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_16 == 16, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_16 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_16_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_16 ] = KNOWLEDGR_HARDFORK_0_16_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_17 == 17, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_17 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_17_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_17 ] = KNOWLEDGR_HARDFORK_0_17_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_18 == 18, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_18 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_18_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_18 ] = KNOWLEDGR_HARDFORK_0_18_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_19 == 19, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_19 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_19_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_19 ] = KNOWLEDGR_HARDFORK_0_19_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_20 == 20, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_20 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_20_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_20 ] = KNOWLEDGR_HARDFORK_0_20_VERSION;
 #ifdef IS_TEST_NET
-   FC_ASSERT( COLAB_HARDFORK_0_21 == 21, "Invalid hardfork configuration" );
-   _hardfork_times[ COLAB_HARDFORK_0_21 ] = fc::time_point_sec( COLAB_HARDFORK_0_21_TIME );
-   _hardfork_versions[ COLAB_HARDFORK_0_21 ] = COLAB_HARDFORK_0_21_VERSION;
+   FC_ASSERT( KNOWLEDGR_HARDFORK_0_21 == 21, "Invalid hardfork configuration" );
+   _hardfork_times[ KNOWLEDGR_HARDFORK_0_21 ] = fc::time_point_sec( KNOWLEDGR_HARDFORK_0_21_TIME );
+   _hardfork_versions[ KNOWLEDGR_HARDFORK_0_21 ] = KNOWLEDGR_HARDFORK_0_21_VERSION;
 #endif
 
 
    const auto& hardforks = get_hardfork_property_object();
-   FC_ASSERT( hardforks.last_hardfork <= COLAB_NUM_HARDFORKS, "Chain knows of more hardforks than configuration", ("hardforks.last_hardfork",hardforks.last_hardfork)("COLAB_NUM_HARDFORKS",COLAB_NUM_HARDFORKS) );
-   FC_ASSERT( _hardfork_versions[ hardforks.last_hardfork ] <= COLAB_BLOCKCHAIN_VERSION, "Blockchain version is older than last applied hardfork" );
-   FC_ASSERT( COLAB_BLOCKCHAIN_HARDFORK_VERSION >= COLAB_BLOCKCHAIN_VERSION );
-   FC_ASSERT( COLAB_BLOCKCHAIN_HARDFORK_VERSION == _hardfork_versions[ COLAB_NUM_HARDFORKS ] );
+   FC_ASSERT( hardforks.last_hardfork <= KNOWLEDGR_NUM_HARDFORKS, "Chain knows of more hardforks than configuration", ("hardforks.last_hardfork",hardforks.last_hardfork)("KNOWLEDGR_NUM_HARDFORKS",KNOWLEDGR_NUM_HARDFORKS) );
+   FC_ASSERT( _hardfork_versions[ hardforks.last_hardfork ] <= KNOWLEDGR_BLOCKCHAIN_VERSION, "Blockchain version is older than last applied hardfork" );
+   FC_ASSERT( KNOWLEDGR_BLOCKCHAIN_HARDFORK_VERSION >= KNOWLEDGR_BLOCKCHAIN_VERSION );
+   FC_ASSERT( KNOWLEDGR_BLOCKCHAIN_HARDFORK_VERSION == _hardfork_versions[ KNOWLEDGR_NUM_HARDFORKS ] );
 }
 
 void database::process_hardforks()
@@ -4760,12 +4760,12 @@ void database::process_hardforks()
       // If there are upcoming hardforks and the next one is later, do nothing
       const auto& hardforks = get_hardfork_property_object();
 
-      if( has_hardfork( COLAB_HARDFORK_0_5__54 ) )
+      if( has_hardfork( KNOWLEDGR_HARDFORK_0_5__54 ) )
       {
          while( _hardfork_versions[ hardforks.last_hardfork ] < hardforks.next_hardfork
             && hardforks.next_hardfork_time <= head_block_time() )
          {
-            if( hardforks.last_hardfork < COLAB_NUM_HARDFORKS ) {
+            if( hardforks.last_hardfork < KNOWLEDGR_NUM_HARDFORKS ) {
                apply_hardfork( hardforks.last_hardfork + 1 );
             }
             else
@@ -4774,9 +4774,9 @@ void database::process_hardforks()
       }
       else
       {
-         while( hardforks.last_hardfork < COLAB_NUM_HARDFORKS
+         while( hardforks.last_hardfork < KNOWLEDGR_NUM_HARDFORKS
                && _hardfork_times[ hardforks.last_hardfork + 1 ] <= head_block_time()
-               && hardforks.last_hardfork < COLAB_HARDFORK_0_5__54 )
+               && hardforks.last_hardfork < KNOWLEDGR_HARDFORK_0_5__54 )
          {
             apply_hardfork( hardforks.last_hardfork + 1 );
          }
@@ -4799,9 +4799,9 @@ void database::set_hardfork( uint32_t hardfork, bool apply_now )
 {
    auto const& hardforks = get_hardfork_property_object();
 
-   for( uint32_t i = hardforks.last_hardfork + 1; i <= hardfork && i <= COLAB_NUM_HARDFORKS; i++ )
+   for( uint32_t i = hardforks.last_hardfork + 1; i <= hardfork && i <= KNOWLEDGR_NUM_HARDFORKS; i++ )
    {
-      if( i <= COLAB_HARDFORK_0_5__54 )
+      if( i <= KNOWLEDGR_HARDFORK_0_5__54 )
          _hardfork_times[i] = head_block_time();
       else
       {
@@ -4827,30 +4827,30 @@ void database::apply_hardfork( uint32_t hardfork )
 
    switch( hardfork )
    {
-      case COLAB_HARDFORK_0_1:
+      case KNOWLEDGR_HARDFORK_0_1:
 //         perform_vesting_share_split( 1000000 );
          break;
-      case COLAB_HARDFORK_0_2:
+      case KNOWLEDGR_HARDFORK_0_2:
          retally_witness_votes();
          break;
-      case COLAB_HARDFORK_0_3:
+      case KNOWLEDGR_HARDFORK_0_3:
          retally_witness_votes();
          break;
-      case COLAB_HARDFORK_0_4:
+      case KNOWLEDGR_HARDFORK_0_4:
          reset_virtual_schedule_time(*this);
          break;
-      case COLAB_HARDFORK_0_5:
+      case KNOWLEDGR_HARDFORK_0_5:
          break;
-      case COLAB_HARDFORK_0_6:
+      case KNOWLEDGR_HARDFORK_0_6:
          retally_witness_vote_counts();
          retally_comment_children();
          break;
-      case COLAB_HARDFORK_0_7:
+      case KNOWLEDGR_HARDFORK_0_7:
          break;
-      case COLAB_HARDFORK_0_8:
+      case KNOWLEDGR_HARDFORK_0_8:
          retally_witness_vote_counts(true);
          break;
-      case COLAB_HARDFORK_0_9:
+      case KNOWLEDGR_HARDFORK_0_9:
          {
             for( const std::string& acc : hardfork9::get_compromised_accounts() )
             {
@@ -4858,22 +4858,22 @@ void database::apply_hardfork( uint32_t hardfork )
                if( account == nullptr )
                   continue;
 
-               update_owner_authority( *account, authority( 1, public_key_type( "CLB7sw22HqsXbz7D2CmJfmMwt9rimtk518dRzsR1f8Cgw52dQR1pR" ), 1 ) );
+               update_owner_authority( *account, authority( 1, public_key_type( "KWR7sw22HqsXbz7D2CmJfmMwt9rimtk518dRzsR1f8Cgw52dQR1pR" ), 1 ) );
 
                modify( get< account_authority_object, by_account >( account->name ), [&]( account_authority_object& auth )
                {
-                  auth.active  = authority( 1, public_key_type( "CLB7sw22HqsXbz7D2CmJfmMwt9rimtk518dRzsR1f8Cgw52dQR1pR" ), 1 );
-                  auth.posting = authority( 1, public_key_type( "CLB7sw22HqsXbz7D2CmJfmMwt9rimtk518dRzsR1f8Cgw52dQR1pR" ), 1 );
+                  auth.active  = authority( 1, public_key_type( "KWR7sw22HqsXbz7D2CmJfmMwt9rimtk518dRzsR1f8Cgw52dQR1pR" ), 1 );
+                  auth.posting = authority( 1, public_key_type( "KWR7sw22HqsXbz7D2CmJfmMwt9rimtk518dRzsR1f8Cgw52dQR1pR" ), 1 );
                });
             }
          }
          break;
-      case COLAB_HARDFORK_0_10:
+      case KNOWLEDGR_HARDFORK_0_10:
          retally_liquidity_weight();
          break;
-      case COLAB_HARDFORK_0_11:
+      case KNOWLEDGR_HARDFORK_0_11:
          break;
-      case COLAB_HARDFORK_0_12:
+      case KNOWLEDGR_HARDFORK_0_12:
          {
             const auto& comment_idx = get_index< comment_index >().indices();
 
@@ -4882,14 +4882,14 @@ void database::apply_hardfork( uint32_t hardfork )
                // At the hardfork time, all new posts with no votes get their cashout time set to +12 hrs from head block time.
                // All posts with a payout get their cashout time set to +30 days. This hardfork takes place within 30 days
                // initial payout so we don't have to handle the case of posts that should be frozen that aren't
-               if( itr->parent_author == COLAB_ROOT_POST_PARENT )
+               if( itr->parent_author == KNOWLEDGR_ROOT_POST_PARENT )
                {
                   // Post has not been paid out and has no votes (cashout_time == 0 === net_rshares == 0, under current semmantics)
                   if( itr->last_payout == fc::time_point_sec::min() && itr->cashout_time == fc::time_point_sec::maximum() )
                   {
                      modify( *itr, [&]( comment_object & c )
                      {
-                        c.cashout_time = head_block_time() + COLAB_CASHOUT_WINDOW_SECONDS_PRE_HF17;
+                        c.cashout_time = head_block_time() + KNOWLEDGR_CASHOUT_WINDOW_SECONDS_PRE_HF17;
                      });
                   }
                   // Has been paid out, needs to be on second cashout window
@@ -4897,60 +4897,60 @@ void database::apply_hardfork( uint32_t hardfork )
                   {
                      modify( *itr, [&]( comment_object& c )
                      {
-                        c.cashout_time = c.last_payout + COLAB_SECOND_CASHOUT_WINDOW;
+                        c.cashout_time = c.last_payout + KNOWLEDGR_SECOND_CASHOUT_WINDOW;
                      });
                   }
                }
             }
 
-            modify( get< account_authority_object, by_account >( COLAB_MINER_ACCOUNT ), [&]( account_authority_object& auth )
+            modify( get< account_authority_object, by_account >( KNOWLEDGR_MINER_ACCOUNT ), [&]( account_authority_object& auth )
             {
                auth.posting = authority();
                auth.posting.weight_threshold = 1;
             });
 
-            modify( get< account_authority_object, by_account >( COLAB_NULL_ACCOUNT ), [&]( account_authority_object& auth )
+            modify( get< account_authority_object, by_account >( KNOWLEDGR_NULL_ACCOUNT ), [&]( account_authority_object& auth )
             {
                auth.posting = authority();
                auth.posting.weight_threshold = 1;
             });
 
-            modify( get< account_authority_object, by_account >( COLAB_TEMP_ACCOUNT ), [&]( account_authority_object& auth )
+            modify( get< account_authority_object, by_account >( KNOWLEDGR_TEMP_ACCOUNT ), [&]( account_authority_object& auth )
             {
                auth.posting = authority();
                auth.posting.weight_threshold = 1;
             });
          }
          break;
-      case COLAB_HARDFORK_0_13:
+      case KNOWLEDGR_HARDFORK_0_13:
          break;
-      case COLAB_HARDFORK_0_14:
+      case KNOWLEDGR_HARDFORK_0_14:
          break;
-      case COLAB_HARDFORK_0_15:
+      case KNOWLEDGR_HARDFORK_0_15:
          break;
-      case COLAB_HARDFORK_0_16:
+      case KNOWLEDGR_HARDFORK_0_16:
          {
 //             modify( get_feed_history(), [&]( feed_history_object& fho )
 //             {
-//                while( fho.price_history.size() > COLAB_FEED_HISTORY_WINDOW )
+//                while( fho.price_history.size() > KNOWLEDGR_FEED_HISTORY_WINDOW )
 //                   fho.price_history.pop_front();
 //             });
          }
          break;
-      case COLAB_HARDFORK_0_17:
+      case KNOWLEDGR_HARDFORK_0_17:
          {
             static_assert(
-               COLAB_MAX_VOTED_WITNESSES_HF0 + COLAB_MAX_MINER_WITNESSES_HF0 + COLAB_MAX_RUNNER_WITNESSES_HF0 == COLAB_MAX_WITNESSES,
-               "HF0 witness counts must add up to COLAB_MAX_WITNESSES" );
+               KNOWLEDGR_MAX_VOTED_WITNESSES_HF0 + KNOWLEDGR_MAX_MINER_WITNESSES_HF0 + KNOWLEDGR_MAX_RUNNER_WITNESSES_HF0 == KNOWLEDGR_MAX_WITNESSES,
+               "HF0 witness counts must add up to KNOWLEDGR_MAX_WITNESSES" );
             static_assert(
-               COLAB_MAX_VOTED_WITNESSES_HF17 + COLAB_MAX_MINER_WITNESSES_HF17 + COLAB_MAX_RUNNER_WITNESSES_HF17 == COLAB_MAX_WITNESSES,
-               "HF17 witness counts must add up to COLAB_MAX_WITNESSES" );
+               KNOWLEDGR_MAX_VOTED_WITNESSES_HF17 + KNOWLEDGR_MAX_MINER_WITNESSES_HF17 + KNOWLEDGR_MAX_RUNNER_WITNESSES_HF17 == KNOWLEDGR_MAX_WITNESSES,
+               "HF17 witness counts must add up to KNOWLEDGR_MAX_WITNESSES" );
 
             modify( get_witness_schedule_object(), [&]( witness_schedule_object& wso )
             {
-               wso.max_voted_witnesses = COLAB_MAX_VOTED_WITNESSES_HF17;
-               wso.max_miner_witnesses = COLAB_MAX_MINER_WITNESSES_HF17;
-               wso.max_runner_witnesses = COLAB_MAX_RUNNER_WITNESSES_HF17;
+               wso.max_voted_witnesses = KNOWLEDGR_MAX_VOTED_WITNESSES_HF17;
+               wso.max_miner_witnesses = KNOWLEDGR_MAX_MINER_WITNESSES_HF17;
+               wso.max_runner_witnesses = KNOWLEDGR_MAX_RUNNER_WITNESSES_HF17;
             });
 
             const auto& gpo = get_dynamic_global_properties();
@@ -4959,19 +4959,19 @@ void database::apply_hardfork( uint32_t hardfork )
             {
 
 				std::cerr<<"~~~ [database::apply_hardfork()] -- hardfork = "<<hardfork<<"\n";
-				std::cerr<<"~~~ [database::apply_hardfork()] -- gpo.total_reward_fund_colab = "<<gpo.total_reward_fund_colab.amount.value<<"\n";
+				std::cerr<<"~~~ [database::apply_hardfork()] -- gpo.total_reward_fund_knowledgr = "<<gpo.total_reward_fund_knowledgr.amount.value<<"\n";
 
-               rfo.name = COLAB_POST_REWARD_FUND_NAME;
+               rfo.name = KNOWLEDGR_POST_REWARD_FUND_NAME;
                rfo.last_update = head_block_time();
-               rfo.content_constant = COLAB_CONTENT_CONSTANT_HF0;
-               rfo.percent_curation_rewards = COLAB_1_PERCENT * 25;
-               rfo.percent_content_rewards = COLAB_100_PERCENT;
-			   rfo.reward_balance = gpo.total_reward_fund_colab;
-#if 0///~~~~~CLC~~~~~{ NOT NEED for pioneer CoLab
+               rfo.content_constant = KNOWLEDGR_CONTENT_CONSTANT_HF0;
+               rfo.percent_curation_rewards = KNOWLEDGR_1_PERCENT * 25;
+               rfo.percent_content_rewards = KNOWLEDGR_100_PERCENT;
+			   rfo.reward_balance = gpo.total_reward_fund_knowledgr;
+#if 0///~~~~~NLG~~~~~{ NOT NEED for pioneer Knowledgr
 #ifndef IS_TEST_NET
-               rfo.recent_claims = COLAB_HF_17_RECENT_CLAIMS;
+               rfo.recent_claims = KNOWLEDGR_HF_17_RECENT_CLAIMS;
 #endif
-#endif///~~~~~CLC~~~~~} NOT NEED for pioneer CoLab
+#endif///~~~~~NLG~~~~~} NOT NEED for pioneer Knowledgr
                rfo.author_reward_curve = curve_id::quadratic;
                rfo.curation_reward_curve = curve_id::quadratic_curation;
             });
@@ -4982,7 +4982,7 @@ void database::apply_hardfork( uint32_t hardfork )
 
             modify( gpo, [&]( dynamic_global_property_object& g )
             {
-               g.total_reward_fund_colab = asset( 0, CLC_SYMBOL );
+               g.total_reward_fund_knowledgr = asset( 0, NLG_SYMBOL );
                g.total_reward_shares2 = 0;
             });
 
@@ -5001,9 +5001,9 @@ void database::apply_hardfork( uint32_t hardfork )
             const auto& comment_idx = get_index< comment_index, by_cashout_time >();
             const auto& by_root_idx = get_index< comment_index, by_root >();
             vector< const comment_object* > root_posts;
-            root_posts.reserve( COLAB_HF_17_NUM_POSTS );
+            root_posts.reserve( KNOWLEDGR_HF_17_NUM_POSTS );
             vector< const comment_object* > replies;
-            replies.reserve( COLAB_HF_17_NUM_REPLIES );
+            replies.reserve( KNOWLEDGR_HF_17_NUM_REPLIES );
 
             for( auto itr = comment_idx.begin(); itr != comment_idx.end() && itr->cashout_time < fc::time_point_sec::maximum(); ++itr )
             {
@@ -5019,7 +5019,7 @@ void database::apply_hardfork( uint32_t hardfork )
             {
                modify( *itr, [&]( comment_object& c )
                {
-                  c.cashout_time = std::max( c.created + COLAB_CASHOUT_WINDOW_SECONDS, c.cashout_time );
+                  c.cashout_time = std::max( c.created + KNOWLEDGR_CASHOUT_WINDOW_SECONDS, c.cashout_time );
                });
             }
 
@@ -5027,29 +5027,29 @@ void database::apply_hardfork( uint32_t hardfork )
             {
                modify( *itr, [&]( comment_object& c )
                {
-                  c.cashout_time = std::max( calculate_discussion_payout_time( c ), c.created + COLAB_CASHOUT_WINDOW_SECONDS );
+                  c.cashout_time = std::max( calculate_discussion_payout_time( c ), c.created + KNOWLEDGR_CASHOUT_WINDOW_SECONDS );
                });
             }
          }
          break;
-      case COLAB_HARDFORK_0_18:
+      case KNOWLEDGR_HARDFORK_0_18:
          break;
-      case COLAB_HARDFORK_0_19:
+      case KNOWLEDGR_HARDFORK_0_19:
          {
             modify( get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
             {
-				gpo.vote_power_reserve_rate = COLAB_REDUCED_VOTE_POWER_RATE;
+				gpo.vote_power_reserve_rate = KNOWLEDGR_REDUCED_VOTE_POWER_RATE;
 				std::cerr<<"~~~ [database::apply_hardfork()] -- hardfork = "<<hardfork<<"\n";
-				std::cerr<<"~~~ [database::apply_hardfork()] -- gpo.total_reward_fund_colab = "<<gpo.total_reward_fund_colab.amount.value<<"\n";
+				std::cerr<<"~~~ [database::apply_hardfork()] -- gpo.total_reward_fund_knowledgr = "<<gpo.total_reward_fund_knowledgr.amount.value<<"\n";
 			});
 
-            modify( get< reward_fund_object, by_name >( COLAB_POST_REWARD_FUND_NAME ), [&]( reward_fund_object &rfo )
+            modify( get< reward_fund_object, by_name >( KNOWLEDGR_POST_REWARD_FUND_NAME ), [&]( reward_fund_object &rfo )
             {
-#if 0///~~~~~CLC~~~~~{ NOT NEED for pioneer CoLab
+#if 0///~~~~~NLG~~~~~{ NOT NEED for pioneer Knowledgr
 #ifndef IS_TEST_NET
-               rfo.recent_claims = COLAB_HF_19_RECENT_CLAIMS;
+               rfo.recent_claims = KNOWLEDGR_HF_19_RECENT_CLAIMS;
 #endif
-#endif///~~~~~CLC~~~~~} NOT NEED for pioneer CoLab
+#endif///~~~~~NLG~~~~~} NOT NEED for pioneer Knowledgr
                rfo.author_reward_curve = curve_id::linear;
                rfo.curation_reward_curve = curve_id::square_root;
             });
@@ -5073,14 +5073,14 @@ void database::apply_hardfork( uint32_t hardfork )
 //             }
          }
          break;
-      case COLAB_HARDFORK_0_20:
+      case KNOWLEDGR_HARDFORK_0_20:
          {
             modify( get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
             {
-               gpo.delegation_return_period = COLAB_DELEGATION_RETURN_PERIOD_HF20;
-               gpo.reverse_auction_seconds = COLAB_REVERSE_AUCTION_WINDOW_SECONDS_HF20;
-//                gpo.sbd_stop_percent = COLAB_SBD_STOP_PERCENT_HF20;
-//                gpo.sbd_start_percent = COLAB_SBD_START_PERCENT_HF20;
+               gpo.delegation_return_period = KNOWLEDGR_DELEGATION_RETURN_PERIOD_HF20;
+               gpo.reverse_auction_seconds = KNOWLEDGR_REVERSE_AUCTION_WINDOW_SECONDS_HF20;
+//                gpo.sbd_stop_percent = KNOWLEDGR_SBD_STOP_PERCENT_HF20;
+//                gpo.sbd_start_percent = KNOWLEDGR_SBD_START_PERCENT_HF20;
                gpo.available_account_subsidies = 0;
             });
 
@@ -5093,25 +5093,25 @@ void database::apply_hardfork( uint32_t hardfork )
                {
                   modify( get< witness_object, by_name >( witness ), [&]( witness_object& w )
                   {
-                     w.props.account_creation_fee = asset( w.props.account_creation_fee.amount * COLAB_CREATE_ACCOUNT_WITH_COLAB_MODIFIER, CLC_SYMBOL );
+                     w.props.account_creation_fee = asset( w.props.account_creation_fee.amount * KNOWLEDGR_CREATE_ACCOUNT_WITH_KNOWLEDGR_MODIFIER, NLG_SYMBOL );
                   });
                }
             }
 
             modify( wso, [&]( witness_schedule_object& wso )
             {
-               wso.median_props.account_creation_fee = asset( wso.median_props.account_creation_fee.amount * COLAB_CREATE_ACCOUNT_WITH_COLAB_MODIFIER, CLC_SYMBOL );
+               wso.median_props.account_creation_fee = asset( wso.median_props.account_creation_fee.amount * KNOWLEDGR_CREATE_ACCOUNT_WITH_KNOWLEDGR_MODIFIER, NLG_SYMBOL );
             });
          }
          break;
-      case COLAB_SMT_HARDFORK:
-#ifdef COLAB_ENABLE_SMT
+      case KNOWLEDGR_SMT_HARDFORK:
+#ifdef KNOWLEDGR_ENABLE_SMT
       {
          replenish_nai_pool( *this );
 
           modify( get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
          {
-            gpo.required_actions_partition_percent = 25 * COLAB_1_PERCENT;
+            gpo.required_actions_partition_percent = 25 * KNOWLEDGR_1_PERCENT;
          });
 
          break;
@@ -5151,10 +5151,10 @@ void database::validate_invariants()const
    try
    {
       const auto& account_idx = get_index<account_index>().indices().get<by_name>();
-      asset total_supply = asset( 0, CLC_SYMBOL );
+      asset total_supply = asset( 0, NLG_SYMBOL );
 //       asset total_sbd = asset( 0, SBD_SYMBOL );
 //       asset total_vesting = asset( 0, VESTS_SYMBOL );
-//      asset pending_vesting_colab = asset( 0, CLC_SYMBOL );
+//      asset pending_vesting_knowledgr = asset( 0, NLG_SYMBOL );
       share_type total_vsf_votes = share_type( 0 );
 
       auto gpo = get_dynamic_global_properties();
@@ -5168,17 +5168,17 @@ void database::validate_invariants()const
       {
          total_supply += itr->balance;
          total_supply += itr->savings_balance;
-         total_supply += itr->reward_clc_balance;
-///         total_sbd += itr->sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
-///         total_sbd += itr->savings_sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
-///         total_sbd += itr->reward_sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
+         total_supply += itr->reward_nlg_balance;
+///         total_sbd += itr->sbd_balance; ///~~~~~NLG~~~~~ NO NEED for Knowledgr
+///         total_sbd += itr->savings_sbd_balance; ///~~~~~NLG~~~~~ NO NEED for Knowledgr
+///         total_sbd += itr->reward_sbd_balance; ///~~~~~NLG~~~~~ NO NEED for Knowledgr
 ///         total_vesting += itr->vesting_shares;
-///         total_vesting += itr->reward_vesting_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
-///         pending_vesting_colab += itr->reward_vesting_clc;
-         total_vsf_votes += ( itr->proxy == COLAB_PROXY_TO_SELF_ACCOUNT ?
+///         total_vesting += itr->reward_vesting_balance; ///~~~~~NLG~~~~~ NO NEED for Knowledgr
+///         pending_vesting_knowledgr += itr->reward_vesting_nlg;
+         total_vsf_votes += ( itr->proxy == KNOWLEDGR_PROXY_TO_SELF_ACCOUNT ?
                                  itr->witness_vote_weight() :
-                                 ( COLAB_MAX_PROXY_RECURSION_DEPTH > 0 ?
-                                      itr->proxied_vsf_votes[COLAB_MAX_PROXY_RECURSION_DEPTH - 1] :
+                                 ( KNOWLEDGR_MAX_PROXY_RECURSION_DEPTH > 0 ?
+                                      itr->proxied_vsf_votes[KNOWLEDGR_MAX_PROXY_RECURSION_DEPTH - 1] :
                                       itr->balance/*vesting_shares*/.amount ) );
       }
 
@@ -5186,7 +5186,7 @@ void database::validate_invariants()const
 // 
 //       for( auto itr = convert_request_idx.begin(); itr != convert_request_idx.end(); ++itr )
 //       {
-//          if( itr->amount.symbol == CLC_SYMBOL )
+//          if( itr->amount.symbol == NLG_SYMBOL )
 //             total_supply += itr->amount;
 //          else if( itr->amount.symbol == SBD_SYMBOL )
 //             total_sbd += itr->amount;
@@ -5198,9 +5198,9 @@ void database::validate_invariants()const
 
       for( auto itr = limit_order_idx.begin(); itr != limit_order_idx.end(); ++itr )
       {
-         if( itr->sell_price.base.symbol == CLC_SYMBOL )
+         if( itr->sell_price.base.symbol == NLG_SYMBOL )
          {
-            total_supply += asset( itr->for_sale, CLC_SYMBOL );
+            total_supply += asset( itr->for_sale, NLG_SYMBOL );
          }
 //          else if ( itr->sell_price.base.symbol == SBD_SYMBOL )
 //          {
@@ -5212,27 +5212,27 @@ void database::validate_invariants()const
 
       for( auto itr = escrow_idx.begin(); itr != escrow_idx.end(); ++itr )
       {
-         total_supply += itr->clc_balance;
-//         total_sbd += itr->sbd_balance;///~~~~~CLC~~~~~ NO NEED for COLAB
+         total_supply += itr->nlg_balance;
+//         total_sbd += itr->sbd_balance;///~~~~~NLG~~~~~ NO NEED for KNOWLEDGR
 
-         if( itr->pending_fee.symbol == CLC_SYMBOL )
+         if( itr->pending_fee.symbol == NLG_SYMBOL )
             total_supply += itr->pending_fee;
 //          else if( itr->pending_fee.symbol == SBD_SYMBOL )
 //             total_sbd += itr->pending_fee;
          else
-            FC_ASSERT( false, "found escrow pending fee that is not SBD or CLC" );
+            FC_ASSERT( false, "found escrow pending fee that is not SBD or NLG" );
       }
 
       const auto& savings_withdraw_idx = get_index< savings_withdraw_index >().indices().get< by_id >();
 
       for( auto itr = savings_withdraw_idx.begin(); itr != savings_withdraw_idx.end(); ++itr )
       {
-         if( itr->amount.symbol == CLC_SYMBOL )
+         if( itr->amount.symbol == NLG_SYMBOL )
             total_supply += itr->amount;
 //          else if( itr->amount.symbol == SBD_SYMBOL )
 //             total_sbd += itr->amount;
          else
-            FC_ASSERT( false, "found savings withdraw that is not SBD or CLC" );
+            FC_ASSERT( false, "found savings withdraw that is not SBD or NLG" );
       }
 
       const auto& reward_idx = get_index< reward_fund_index, by_id >();
@@ -5242,13 +5242,13 @@ void database::validate_invariants()const
          total_supply += itr->reward_balance;
       }
 
-      total_supply += /*gpo.total_vesting_fund_clc + */gpo.total_reward_fund_colab/* + gpo.pending_rewarded_vesting_clc*/;
+      total_supply += /*gpo.total_vesting_fund_nlg + */gpo.total_reward_fund_knowledgr/* + gpo.pending_rewarded_vesting_nlg*/;
 
       FC_ASSERT( gpo.current_supply == total_supply, "", ("gpo.current_supply",gpo.current_supply)("total_supply",total_supply) );
 //       FC_ASSERT( gpo.current_sbd_supply == total_sbd, "", ("gpo.current_sbd_supply",gpo.current_sbd_supply)("total_sbd",total_sbd) );
 //       FC_ASSERT( gpo.total_vesting_shares + gpo.pending_rewarded_vesting_shares == total_vesting, "", ("gpo.total_vesting_shares",gpo.total_vesting_shares)("total_vesting",total_vesting) );
 //       FC_ASSERT( gpo.total_vesting_shares.amount == total_vsf_votes, "", ("total_vesting_shares",gpo.total_vesting_shares)("total_vsf_votes",total_vsf_votes) );
-//       FC_ASSERT( gpo.pending_rewarded_vesting_clc == pending_vesting_colab, "", ("pending_rewarded_vesting_clc",gpo.pending_rewarded_vesting_clc)("pending_vesting_colab", pending_vesting_colab));
+//       FC_ASSERT( gpo.pending_rewarded_vesting_nlg == pending_vesting_knowledgr, "", ("pending_rewarded_vesting_nlg",gpo.pending_rewarded_vesting_nlg)("pending_vesting_knowledgr", pending_vesting_knowledgr));
 
       FC_ASSERT( gpo.virtual_supply >= gpo.current_supply );
 //       if ( !get_feed_history().current_median_history.is_null() )
@@ -5260,7 +5260,7 @@ void database::validate_invariants()const
    FC_CAPTURE_LOG_AND_RETHROW( (head_block_num()) );
 }
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
 
 namespace {
    template <typename index_type, typename lambda>
@@ -5310,7 +5310,7 @@ void database::validate_smt_invariants()const
             }
       });
 
-      // - Process reward balances, collecting SMT counterparts of 'reward_clc_balance', 'reward_vesting_balance' & 'reward_vesting_clc'.
+      // - Process reward balances, collecting SMT counterparts of 'reward_nlg_balance', 'reward_vesting_balance' & 'reward_vesting_nlg'.
       const auto& rewards_balance_idx = get_index< account_rewards_balance_index, by_id >();
       add_from_balance_index( rewards_balance_idx, [ &theMap ] ( const account_rewards_balance_object& rewards )
       {
@@ -5360,7 +5360,7 @@ void database::validate_smt_invariants()const
          asset total_liquid_supply = totalIt == theMap.end() ? asset(0, smt.liquid_symbol) :
             ( totalIt->second.liquid + totalIt->second.pending_liquid );
          total_liquid_supply += asset( smt.total_vesting_fund_smt, smt.liquid_symbol )
-                             /*+ gpo.total_reward_fund_colab */
+                             /*+ gpo.total_reward_fund_knowledgr */
                              + asset( smt.pending_rewarded_vesting_smt, smt.liquid_symbol );
 #pragma message( "TODO: Supplement ^ once SMT rewards are implemented" )
          FC_ASSERT( asset(smt.current_supply, smt.liquid_symbol) == total_liquid_supply,
@@ -5399,11 +5399,11 @@ void database::validate_smt_invariants()const
 //             a.vesting_shares.amount *= magnitude;
 //             a.withdrawn             *= magnitude;
 //             a.to_withdraw           *= magnitude;
-//             a.vesting_withdraw_rate  = asset( a.to_withdraw / COLAB_VESTING_WITHDRAW_INTERVALS_PRE_HF_16, VESTS_SYMBOL );
+//             a.vesting_withdraw_rate  = asset( a.to_withdraw / KNOWLEDGR_VESTING_WITHDRAW_INTERVALS_PRE_HF_16, VESTS_SYMBOL );
 //             if( a.vesting_withdraw_rate.amount == 0 )
 //                a.vesting_withdraw_rate.amount = 1;
 // 
-//             for( uint32_t i = 0; i < COLAB_MAX_PROXY_RECURSION_DEPTH; ++i )
+//             for( uint32_t i = 0; i < KNOWLEDGR_MAX_PROXY_RECURSION_DEPTH; ++i )
 //                a.proxied_vsf_votes[i] *= magnitude;
 //          } );
 //       }
@@ -5444,7 +5444,7 @@ void database::retally_comment_children()
 
    for( auto itr = cidx.begin(); itr != cidx.end(); ++itr )
    {
-      if( itr->parent_author != COLAB_ROOT_POST_PARENT )
+      if( itr->parent_author != KNOWLEDGR_ROOT_POST_PARENT )
       {
 // Low memory nodes only need immediate child count, full nodes track total children
 #ifdef IS_LOW_MEM
@@ -5461,7 +5461,7 @@ void database::retally_comment_children()
                c.children++;
             });
 
-            if( parent->parent_author != COLAB_ROOT_POST_PARENT )
+            if( parent->parent_author != KNOWLEDGR_ROOT_POST_PARENT )
                parent = &get_comment( parent->parent_author, parent->parent_permlink );
             else
                parent = nullptr;
@@ -5490,7 +5490,7 @@ void database::retally_witness_votes()
    // Apply all existing votes by account
    for( auto itr = account_idx.begin(); itr != account_idx.end(); ++itr )
    {
-      if( itr->proxy != COLAB_PROXY_TO_SELF_ACCOUNT ) continue;
+      if( itr->proxy != KNOWLEDGR_PROXY_TO_SELF_ACCOUNT ) continue;
 
       const auto& a = *itr;
 
@@ -5513,7 +5513,7 @@ void database::retally_witness_vote_counts( bool force )
    {
       const auto& a = *itr;
       uint16_t witnesses_voted_for = 0;
-      if( force || (a.proxy != COLAB_PROXY_TO_SELF_ACCOUNT  ) )
+      if( force || (a.proxy != KNOWLEDGR_PROXY_TO_SELF_ACCOUNT  ) )
       {
         const auto& vidx = get_index< witness_vote_index >().indices().get< by_account_witness >();
         auto wit_itr = vidx.lower_bound( boost::make_tuple( a.name, account_name_type() ) );
@@ -5538,4 +5538,4 @@ optional< chainbase::database::session >& database::pending_transaction_session(
    return _pending_tx_session;
 }
 
-} } //colab::chain
+} } //knowledgr::chain

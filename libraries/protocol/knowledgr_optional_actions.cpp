@@ -1,11 +1,11 @@
-#include <colab/protocol/validation.hpp>
-#include <colab/protocol/colab_optional_actions.hpp>
+#include <knowledgr/protocol/validation.hpp>
+#include <knowledgr/protocol/knowledgr_optional_actions.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
 void example_optional_action::validate()const
 {
    validate_account_name( account );
 }
 
-} } //colab::protocol
+} } //knowledgr::protocol

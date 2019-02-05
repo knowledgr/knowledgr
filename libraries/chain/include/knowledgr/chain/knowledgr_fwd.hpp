@@ -1,6 +1,6 @@
 #pragma once
 
-// This header forward-declares pack/unpack and to/from variant functions for Colab types.
+// This header forward-declares pack/unpack and to/from variant functions for Knowledgr types.
 // These declarations need to be as early as possible to prevent compiler errors.
 
 #include <chainbase/allocators.hpp>

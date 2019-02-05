@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace colab { namespace plugins {
+namespace knowledgr { namespace plugins {
 
 void register_plugins();
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <colab/protocol/asset_symbol.hpp>
+#include <knowledgr/protocol/asset_symbol.hpp>
 
-namespace colab { namespace chain { namespace util {
+namespace knowledgr { namespace chain { namespace util {
 
 class nai_generator {
    nai_generator() = delete;
@@ -55,4 +55,4 @@ public:
    }
 };
 
-} } } // colab::chain::util
+} } } // knowledgr::chain::util

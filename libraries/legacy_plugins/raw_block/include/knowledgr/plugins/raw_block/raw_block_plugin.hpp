@@ -1,13 +1,13 @@
 
 #pragma once
 
-#include <colab/app/plugin.hpp>
+#include <knowledgr/app/plugin.hpp>
 
-namespace colab { namespace plugin { namespace raw_block {
+namespace knowledgr { namespace plugin { namespace raw_block {
 
-using colab::app::application;
+using knowledgr::app::application;
 
-class raw_block_plugin : public colab::app::plugin
+class raw_block_plugin : public knowledgr::app::plugin
 {
    public:
       raw_block_plugin( application* app );

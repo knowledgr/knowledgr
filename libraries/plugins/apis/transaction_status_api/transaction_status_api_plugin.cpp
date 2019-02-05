@@ -1,7 +1,7 @@
-#include <colab/plugins/transaction_status_api/transaction_status_api_plugin.hpp>
-#include <colab/plugins/transaction_status_api/transaction_status_api.hpp>
+#include <knowledgr/plugins/transaction_status_api/transaction_status_api_plugin.hpp>
+#include <knowledgr/plugins/transaction_status_api/transaction_status_api.hpp>
 
-namespace colab { namespace plugins { namespace transaction_status_api {
+namespace knowledgr { namespace plugins { namespace transaction_status_api {
 
 transaction_status_api_plugin::transaction_status_api_plugin() {}
 transaction_status_api_plugin::~transaction_status_api_plugin() {}
@@ -17,4 +17,4 @@ void transaction_status_api_plugin::plugin_startup() {}
 
 void transaction_status_api_plugin::plugin_shutdown() {}
 
-} } } // colab::plugins::transaction_status_api
+} } } // knowledgr::plugins::transaction_status_api

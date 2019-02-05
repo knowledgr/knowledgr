@@ -1,8 +1,8 @@
 #pragma once
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/types.hpp>
 #include <fc/interprocess/container.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
    struct authority
    {
@@ -92,16 +92,16 @@ void add_authority_accounts(
  * In addition we require the following:
  *
  * - All letters are lowercase
- * - Length is between (inclusive) COLAB_MIN_ACCOUNT_NAME_LENGTH and COLAB_MAX_ACCOUNT_NAME_LENGTH
+ * - Length is between (inclusive) KNOWLEDGR_MIN_ACCOUNT_NAME_LENGTH and KNOWLEDGR_MAX_ACCOUNT_NAME_LENGTH
  */
 bool is_valid_account_name( const string& name );
 
 bool operator == ( const authority& a, const authority& b );
 
-} } // namespace colab::protocol
+} } // namespace knowledgr::protocol
 
 
-FC_REFLECT_TYPENAME( colab::protocol::authority::account_authority_map)
-FC_REFLECT_TYPENAME( colab::protocol::authority::key_authority_map)
-FC_REFLECT( colab::protocol::authority, (weight_threshold)(account_auths)(key_auths) )
-FC_REFLECT_ENUM( colab::protocol::authority::classification, (owner)(active)(key)(posting) )
+FC_REFLECT_TYPENAME( knowledgr::protocol::authority::account_authority_map)
+FC_REFLECT_TYPENAME( knowledgr::protocol::authority::key_authority_map)
+FC_REFLECT( knowledgr::protocol::authority, (weight_threshold)(account_auths)(key_auths) )
+FC_REFLECT_ENUM( knowledgr::protocol::authority::classification, (owner)(active)(key)(posting) )

@@ -1,4 +1,4 @@
-file(GLOB HEADERS "include/colab/plugins/webserver/*.hpp")
+file(GLOB HEADERS "include/knowledgr/plugins/webserver/*.hpp")
 
 add_library( webserver_plugin
              webserver_plugin.cpp

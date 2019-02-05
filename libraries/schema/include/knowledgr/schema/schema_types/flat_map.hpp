@@ -1,12 +1,12 @@
 
 #pragma once
 
-#include <colab/schema/abstract_schema.hpp>
-#include <colab/schema/schema_impl.hpp>
+#include <knowledgr/schema/abstract_schema.hpp>
+#include <knowledgr/schema/schema_impl.hpp>
 
 #include <boost/container/flat_map.hpp>
 
-namespace colab { namespace schema { namespace detail {
+namespace knowledgr { namespace schema { namespace detail {
 
 //////////////////////////////////////////////
 // flat_map                                 //
@@ -16,7 +16,7 @@ template< typename K, typename V >
 struct schema_flat_map_impl
    : public abstract_schema
 {
-   COLAB_SCHEMA_TEMPLATE_CLASS_BODY( schema_flat_map_impl )
+   KNOWLEDGR_SCHEMA_TEMPLATE_CLASS_BODY( schema_flat_map_impl )
 };
 
 template< typename K, typename V >

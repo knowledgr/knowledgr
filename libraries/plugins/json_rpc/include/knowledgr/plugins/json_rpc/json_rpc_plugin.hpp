@@ -35,11 +35,11 @@
  * as the argument type.
  */
 
-#define COLAB_JSON_RPC_PLUGIN_NAME "json_rpc"
+#define KNOWLEDGR_JSON_RPC_PLUGIN_NAME "json_rpc"
 
 #define JSON_RPC_REGISTER_API( API_NAME )                                                       \
 {                                                                                               \
-   colab::plugins::json_rpc::detail::register_api_method_visitor vtor( API_NAME );              \
+   knowledgr::plugins::json_rpc::detail::register_api_method_visitor vtor( API_NAME );              \
    for_each_api( vtor );                                                                        \
 }
 
@@ -53,7 +53,7 @@
 #define JSON_RPC_PARSE_PARAMS_ERROR (-32002)
 #define JSON_RPC_ERROR_DURING_CALL  (-32003)
 
-namespace colab { namespace plugins { namespace json_rpc {
+namespace knowledgr { namespace plugins { namespace json_rpc {
 
 using namespace appbase;
 
@@ -94,7 +94,7 @@ class json_rpc_plugin : public appbase::plugin< json_rpc_plugin >
       APPBASE_PLUGIN_REQUIRES();
       virtual void set_program_options( options_description&, options_description& ) override;
 
-      static const std::string& name() { static std::string name = COLAB_JSON_RPC_PLUGIN_NAME; return name; }
+      static const std::string& name() { static std::string name = KNOWLEDGR_JSON_RPC_PLUGIN_NAME; return name; }
 
       virtual void plugin_initialize( const variables_map& options ) override;
       virtual void plugin_startup() override;
@@ -114,7 +114,7 @@ namespace detail {
       public:
          register_api_method_visitor( const std::string& api_name )
             : _api_name( api_name ),
-              _json_rpc_plugin( appbase::app().get_plugin< colab::plugins::json_rpc::json_rpc_plugin >() )
+              _json_rpc_plugin( appbase::app().get_plugin< knowledgr::plugins::json_rpc::json_rpc_plugin >() )
          {}
 
          template< typename Plugin, typename Method, typename Args, typename Ret >
@@ -135,11 +135,11 @@ namespace detail {
 
       private:
          std::string _api_name;
-         colab::plugins::json_rpc::json_rpc_plugin& _json_rpc_plugin;
+         knowledgr::plugins::json_rpc::json_rpc_plugin& _json_rpc_plugin;
    };
 
 }
 
-} } } // colab::plugins::json_rpc
+} } } // knowledgr::plugins::json_rpc
 
-FC_REFLECT( colab::plugins::json_rpc::api_method_signature, (args)(ret) )
+FC_REFLECT( knowledgr::plugins::json_rpc::api_method_signature, (args)(ret) )

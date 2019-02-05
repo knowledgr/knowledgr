@@ -1,15 +1,15 @@
 #pragma once
-#include <colab/plugins/json_rpc/utility.hpp>
+#include <knowledgr/plugins/json_rpc/utility.hpp>
 
-#include <colab/chain/history_object.hpp>
+#include <knowledgr/chain/history_object.hpp>
 
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/types.hpp>
 
 #include <fc/optional.hpp>
 #include <fc/variant.hpp>
 #include <fc/vector.hpp>
 
-namespace colab { namespace plugins { namespace account_history {
+namespace knowledgr { namespace plugins { namespace account_history {
 
 
 namespace detail { class abstract_account_history_api_impl; }
@@ -26,16 +26,16 @@ struct api_operation_object
       virtual_op( op_obj.virtual_op ),
       timestamp( op_obj.timestamp )
    {
-      op = fc::raw::unpack_from_buffer< colab::protocol::operation >( op_obj.serialized_op );
+      op = fc::raw::unpack_from_buffer< knowledgr::protocol::operation >( op_obj.serialized_op );
    }
 
-   colab::protocol::transaction_id_type trx_id;
+   knowledgr::protocol::transaction_id_type trx_id;
    uint32_t                               block = 0;
    uint32_t                               trx_in_block = 0;
    uint32_t                               op_in_trx = 0;
    uint32_t                               virtual_op = 0;
    fc::time_point_sec                     timestamp;
-   colab::protocol::operation             op;
+   knowledgr::protocol::operation             op;
 
    bool operator<( const api_operation_object& obj ) const
    {
@@ -58,15 +58,15 @@ struct get_ops_in_block_return
 
 struct get_transaction_args
 {
-   colab::protocol::transaction_id_type id;
+   knowledgr::protocol::transaction_id_type id;
 };
 
-typedef colab::protocol::annotated_signed_transaction get_transaction_return;
+typedef knowledgr::protocol::annotated_signed_transaction get_transaction_return;
 
 
 struct get_account_history_args
 {
-   colab::protocol::account_name_type   account;
+   knowledgr::protocol::account_name_type   account;
    uint64_t                               start = -1;
    uint32_t                               limit = 1000;
 };
@@ -110,28 +110,28 @@ class account_history_api
       std::unique_ptr< detail::abstract_account_history_api_impl > my;
 };
 
-} } } // colab::plugins::account_history
+} } } // knowledgr::plugins::account_history
 
-FC_REFLECT( colab::plugins::account_history::api_operation_object,
+FC_REFLECT( knowledgr::plugins::account_history::api_operation_object,
    (trx_id)(block)(trx_in_block)(op_in_trx)(virtual_op)(timestamp)(op) )
 
-FC_REFLECT( colab::plugins::account_history::get_ops_in_block_args,
+FC_REFLECT( knowledgr::plugins::account_history::get_ops_in_block_args,
    (block_num)(only_virtual) )
 
-FC_REFLECT( colab::plugins::account_history::get_ops_in_block_return,
+FC_REFLECT( knowledgr::plugins::account_history::get_ops_in_block_return,
    (ops) )
 
-FC_REFLECT( colab::plugins::account_history::get_transaction_args,
+FC_REFLECT( knowledgr::plugins::account_history::get_transaction_args,
    (id) )
 
-FC_REFLECT( colab::plugins::account_history::get_account_history_args,
+FC_REFLECT( knowledgr::plugins::account_history::get_account_history_args,
    (account)(start)(limit) )
 
-FC_REFLECT( colab::plugins::account_history::get_account_history_return,
+FC_REFLECT( knowledgr::plugins::account_history::get_account_history_return,
    (history) )
 
-FC_REFLECT( colab::plugins::account_history::enum_virtual_ops_args,
+FC_REFLECT( knowledgr::plugins::account_history::enum_virtual_ops_args,
    (block_range_begin)(block_range_end) )
 
-FC_REFLECT( colab::plugins::account_history::enum_virtual_ops_return,
+FC_REFLECT( knowledgr::plugins::account_history::enum_virtual_ops_return,
    (ops)(next_block_range_begin) )

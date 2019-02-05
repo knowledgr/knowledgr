@@ -27,8 +27,8 @@
 
 #include <fc/filesystem.hpp>
 
-namespace colab { namespace utilities {
+namespace knowledgr { namespace utilities {
 
 fc::path temp_directory_path();
 
-} } // colab::utilities
+} } // knowledgr::utilities

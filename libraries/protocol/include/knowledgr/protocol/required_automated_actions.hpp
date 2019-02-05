@@ -1,10 +1,10 @@
 #pragma once
 
-#include <colab/protocol/colab_required_actions.hpp>
+#include <knowledgr/protocol/knowledgr_required_actions.hpp>
 
-#include <colab/protocol/operation_util.hpp>
+#include <knowledgr/protocol/operation_util.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
    /** NOTE: do not change the order of any actions or it will trigger a hardfork.
     */
@@ -12,7 +12,7 @@ namespace colab { namespace protocol {
             example_required_action
          > required_automated_action;
 
-} } // colab::protocol
+} } // knowledgr::protocol
 
-COLAB_DECLARE_OPERATION_TYPE( colab::protocol::required_automated_action );
-FC_REFLECT_TYPENAME( colab::protocol::required_automated_action );
+KNOWLEDGR_DECLARE_OPERATION_TYPE( knowledgr::protocol::required_automated_action );
+FC_REFLECT_TYPENAME( knowledgr::protocol::required_automated_action );

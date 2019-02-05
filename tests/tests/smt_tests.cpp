@@ -1,25 +1,25 @@
 #include <fc/macros.hpp>
 
-#if defined IS_TEST_NET && defined COLAB_ENABLE_SMT
+#if defined IS_TEST_NET && defined KNOWLEDGR_ENABLE_SMT
 
 FC_TODO(Extend testing scenarios to support multiple NAIs per account)
 
 #include <boost/test/unit_test.hpp>
 
-#include <colab/protocol/exceptions.hpp>
-#include <colab/protocol/hardfork.hpp>
+#include <knowledgr/protocol/exceptions.hpp>
+#include <knowledgr/protocol/hardfork.hpp>
 
-#include <colab/chain/database.hpp>
-#include <colab/chain/database_exceptions.hpp>
-#include <colab/chain/colab_objects.hpp>
-#include <colab/chain/smt_objects.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/database_exceptions.hpp>
+#include <knowledgr/chain/knowledgr_objects.hpp>
+#include <knowledgr/chain/smt_objects.hpp>
 
-#include <colab/chain/util/smt_token.hpp>
+#include <knowledgr/chain/util/smt_token.hpp>
 
 #include "../db_fixture/database_fixture.hpp"
 
-using namespace colab::chain;
-using namespace colab::protocol;
+using namespace knowledgr::chain;
+using namespace knowledgr::protocol;
 using fc::string;
 using boost::container::flat_set;
 using boost::container::flat_map;
@@ -43,40 +43,40 @@ BOOST_AUTO_TEST_CASE( setup_emissions_validate )
 
       smt_setup_emissions_operation op;
       // Invalid token symbol.
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.symbol = alice_symbol;
       // Invalid account name.
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.control_account = "alice";
-      // schedule_time <= COLAB_GENESIS_TIME;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      // schedule_time <= KNOWLEDGR_GENESIS_TIME;
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       fc::time_point now = fc::time_point::now();
       op.schedule_time = now;
       // Empty emissions_unit.token_unit
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.emissions_unit.token_unit["alice"] = 10;
       // Both absolute amount fields are zero.
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.lep_abs_amount = ASSET( "0.000 TESTS" );
       // Amount symbol does NOT match control account name.
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.lep_abs_amount = asset( 0, alice_symbol );
       // Mismatch of absolute amount symbols.
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.rep_abs_amount = asset( -1, alice_symbol );
       // Negative absolute amount.
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.rep_abs_amount = asset( 0, alice_symbol );
       // Both amounts are equal zero.
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.rep_abs_amount = asset( 1000, alice_symbol );
       op.validate();
@@ -94,11 +94,11 @@ BOOST_AUTO_TEST_CASE( set_setup_parameters_validate )
 
       smt_set_setup_parameters_operation op;
 
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception ); // invalid symbol
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception ); // invalid symbol
       op.symbol = dany_symbol;
 
       op.control_account = "####";
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception ); // invalid account name
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception ); // invalid account name
 
       op.control_account = "dany";
       op.validate();
@@ -201,12 +201,12 @@ BOOST_AUTO_TEST_CASE( setup_emissions_apply )
          fail_op.symbol = smt2;
          fail_op.lep_abs_amount = fail_op.rep_abs_amount = asset( 1000, fail_op.symbol );
          // TODO: Replace the code below with account setup operation execution once its implemented.
-         const colab::chain::smt_token_object* smt = db->find< colab::chain::smt_token_object, by_symbol >( fail_op.symbol );
+         const knowledgr::chain::smt_token_object* smt = db->find< knowledgr::chain::smt_token_object, by_symbol >( fail_op.symbol );
          FC_ASSERT( smt != nullptr, "The SMT has just been created!" );
-         FC_ASSERT( smt->phase < colab::chain::smt_phase::setup_completed, "Who closed setup phase?!" );
-         db->modify( *smt, [&]( colab::chain::smt_token_object& token )
+         FC_ASSERT( smt->phase < knowledgr::chain::smt_phase::setup_completed, "Who closed setup phase?!" );
+         db->modify( *smt, [&]( knowledgr::chain::smt_token_object& token )
          {
-            token.phase = colab::chain::smt_phase::setup_completed;
+            token.phase = knowledgr::chain::smt_phase::setup_completed;
          });
          // Fail due to closed setup phase (too late).
          FAIL_WITH_OP(fail_op, alice_private_key, fc::assert_exception)
@@ -290,43 +290,43 @@ BOOST_AUTO_TEST_CASE( runtime_parameters_windows_validate )
       smt_set_runtime_parameters_operation op;
 
       op.control_account = "{}{}{}{}";
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.control_account = "alice";
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.symbol = alice_symbol;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       smt_param_windows_v1 windows;
       windows.reverse_auction_window_seconds = 2;
       windows.cashout_window_seconds = windows.reverse_auction_window_seconds;
       op.runtime_parameters.insert( windows );
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.runtime_parameters.clear();
       windows.reverse_auction_window_seconds = 2;
       windows.cashout_window_seconds = windows.reverse_auction_window_seconds - 1;
       op.runtime_parameters.insert( windows );
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.runtime_parameters.clear();
       windows.reverse_auction_window_seconds = SMT_VESTING_WITHDRAW_INTERVAL_SECONDS;
       windows.cashout_window_seconds = windows.reverse_auction_window_seconds + 1;
       op.runtime_parameters.insert( windows );
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.runtime_parameters.clear();
       windows.reverse_auction_window_seconds = 1;
       windows.cashout_window_seconds = SMT_VESTING_WITHDRAW_INTERVAL_SECONDS;
       op.runtime_parameters.insert( windows );
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.runtime_parameters.clear();
       windows.reverse_auction_window_seconds = 0;
       windows.cashout_window_seconds = SMT_UPVOTE_LOCKOUT;
       op.runtime_parameters.insert( windows );
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.runtime_parameters.clear();
       windows.reverse_auction_window_seconds = 0;
@@ -359,12 +359,12 @@ BOOST_AUTO_TEST_CASE( runtime_parameters_regeneration_period_validate )
 
       regeneration.vote_regeneration_period_seconds = SMT_VESTING_WITHDRAW_INTERVAL_SECONDS;
       op.runtime_parameters.insert( regeneration );
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.runtime_parameters.clear();
       regeneration.vote_regeneration_period_seconds = 0;
       op.runtime_parameters.insert( regeneration );
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.runtime_parameters.clear();
       regeneration.vote_regeneration_period_seconds = SMT_VESTING_WITHDRAW_INTERVAL_SECONDS - 1;
@@ -461,19 +461,19 @@ BOOST_AUTO_TEST_CASE( smt_refund_validate )
       op.validate();
 
       op.executor = "@@@@@";
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
       op.executor = "executor";
 
       op.contributor = "@@@@@";
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
       op.contributor = "contributor";
 
       op.symbol = op.amount.symbol;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
       op.symbol = creator_symbol;
 
       op.amount = asset( 1, creator_symbol );
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
       op.amount = ASSET( "1.000 TESTS" );
    }
    FC_LOG_AND_RETHROW()
@@ -624,7 +624,7 @@ BOOST_AUTO_TEST_CASE( comment_votable_assers_validate )
          }
 
          op.extensions.insert( ava );
-         COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
+         KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::assert_exception );
       }
 
       {
@@ -633,13 +633,13 @@ BOOST_AUTO_TEST_CASE( comment_votable_assers_validate )
          op.author = "alice";
          op.permlink = "test";
 
-         BOOST_TEST_MESSAGE( "--- Testing invalid configuration of votable_assets - CLC added to container" );
+         BOOST_TEST_MESSAGE( "--- Testing invalid configuration of votable_assets - NLG added to container" );
          allowed_vote_assets ava;
          const auto& smt = smts.front();
          ava.add_votable_asset(smt, share_type(20), false);
-         ava.add_votable_asset(CLC_SYMBOL, share_type(20), true);
+         ava.add_votable_asset(NLG_SYMBOL, share_type(20), true);
          op.extensions.insert( ava );
-         COLAB_REQUIRE_THROW( op.validate(), fc::assert_exception );
+         KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::assert_exception );
       }
    }
    FC_LOG_AND_RETHROW()
@@ -653,7 +653,7 @@ BOOST_AUTO_TEST_CASE( cap_commit_reveal_validate )
       reveal0.amount = 0;
       reveal0.nonce = 0;
       smt_revealed_cap revealMaxPlus;
-      revealMaxPlus.amount = COLAB_MAX_SHARE_SUPPLY + 1;
+      revealMaxPlus.amount = KNOWLEDGR_MAX_SHARE_SUPPLY + 1;
       revealMaxPlus.nonce = 0;
       smt_revealed_cap reveal1M;
       reveal1M.amount = 1000000;
@@ -676,12 +676,12 @@ BOOST_AUTO_TEST_CASE( cap_commit_reveal_validate )
       smt_cap_commitment public_cap0;
       public_cap0.lower_bound = public_cap0.upper_bound = 0;
       public_cap0.hash = fc::sha256::hash( reveal0 );
-      COLAB_REQUIRE_THROW( public_cap0.validate(), fc::assert_exception );
+      KNOWLEDGR_REQUIRE_THROW( public_cap0.validate(), fc::assert_exception );
       // Test cap value too big
       smt_cap_commitment public_capMaxPlus;
-      public_capMaxPlus.lower_bound = public_capMaxPlus.upper_bound = COLAB_MAX_SHARE_SUPPLY + 1;
+      public_capMaxPlus.lower_bound = public_capMaxPlus.upper_bound = KNOWLEDGR_MAX_SHARE_SUPPLY + 1;
       public_capMaxPlus.hash = fc::sha256::hash( revealMaxPlus );
-      COLAB_REQUIRE_THROW( public_capMaxPlus.validate(), fc::assert_exception );
+      KNOWLEDGR_REQUIRE_THROW( public_capMaxPlus.validate(), fc::assert_exception );
       // Test valid commitment cap ...
       smt_cap_commitment public_cap1M;
       public_cap1M.lower_bound = public_cap1M.upper_bound = 1000000;
@@ -697,11 +697,11 @@ BOOST_AUTO_TEST_CASE( cap_commit_reveal_validate )
       hidden_cap1M1234.hash = fc::sha256::hash( reveal1M1234 );
       hidden_cap1M1234.validate();
       // Test reveal too low
-      COLAB_REQUIRE_THROW( reveal1K1234.validate(hidden_cap1M1234), fc::assert_exception );
+      KNOWLEDGR_REQUIRE_THROW( reveal1K1234.validate(hidden_cap1M1234), fc::assert_exception );
       // Test reveal too big
-      COLAB_REQUIRE_THROW( reveal1G1234.validate(hidden_cap1M1234), fc::assert_exception );
+      KNOWLEDGR_REQUIRE_THROW( reveal1G1234.validate(hidden_cap1M1234), fc::assert_exception );
       // Test wrong nonce
-      COLAB_REQUIRE_THROW( reveal1M4321.validate(hidden_cap1M1234), fc::assert_exception );
+      KNOWLEDGR_REQUIRE_THROW( reveal1M4321.validate(hidden_cap1M1234), fc::assert_exception );
       // Test valid commitment cap matching reveal
       reveal1M1234.validate( hidden_cap1M1234 );
    }
@@ -714,13 +714,13 @@ BOOST_AUTO_TEST_CASE( asset_symbol_vesting_methods )
    {
       BOOST_TEST_MESSAGE( "Test asset_symbol vesting methods" );
 
-      asset_symbol_type Colab = CLC_SYMBOL;
-      FC_ASSERT( Colab.is_vesting() == false );
-      FC_ASSERT( Colab.get_paired_symbol() == VESTS_SYMBOL );
+      asset_symbol_type Knowledgr = NLG_SYMBOL;
+      FC_ASSERT( Knowledgr.is_vesting() == false );
+      FC_ASSERT( Knowledgr.get_paired_symbol() == VESTS_SYMBOL );
 
       asset_symbol_type Vests = VESTS_SYMBOL;
       FC_ASSERT( Vests.is_vesting() );
-      FC_ASSERT( Vests.get_paired_symbol() == CLC_SYMBOL );
+      FC_ASSERT( Vests.get_paired_symbol() == NLG_SYMBOL );
 
       asset_symbol_type Sbd = SBD_SYMBOL;
       FC_ASSERT( Sbd.is_vesting() == false );
@@ -779,31 +779,31 @@ BOOST_AUTO_TEST_CASE( setup_validate )
       asset_symbol_type alice_symbol = create_smt("alice", alice_private_key, 4);
 
       op.control_account = "";
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       //Invalid account
       op.control_account = "&&&&&&";
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       //FC_ASSERT( max_supply > 0 )
       op.control_account = "abcd";
       op.max_supply = -1;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.symbol = alice_symbol;
 
       //FC_ASSERT( max_supply > 0 )
       op.max_supply = 0;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      //FC_ASSERT( max_supply <= COLAB_MAX_SHARE_SUPPLY )
-      op.max_supply = COLAB_MAX_SHARE_SUPPLY + 1;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      //FC_ASSERT( max_supply <= KNOWLEDGR_MAX_SHARE_SUPPLY )
+      op.max_supply = KNOWLEDGR_MAX_SHARE_SUPPLY + 1;
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      //FC_ASSERT( generation_begin_time > COLAB_GENESIS_TIME )
-      op.max_supply = COLAB_MAX_SHARE_SUPPLY / 1000;
-      op.generation_begin_time = COLAB_GENESIS_TIME;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      //FC_ASSERT( generation_begin_time > KNOWLEDGR_GENESIS_TIME )
+      op.max_supply = KNOWLEDGR_MAX_SHARE_SUPPLY / 1000;
+      op.generation_begin_time = KNOWLEDGR_GENESIS_TIME;
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       fc::time_point_sec start_time = fc::variant( "2018-03-07T00:00:00" ).as< fc::time_point_sec >();
       fc::time_point_sec t50 = start_time + fc::seconds( 50 );
@@ -814,23 +814,23 @@ BOOST_AUTO_TEST_CASE( setup_validate )
       //FC_ASSERT( generation_end_time > generation_begin_time )
       op.generation_begin_time = t100;
       op.generation_end_time = t50;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       //FC_ASSERT( generation_end_time > generation_begin_time )
       op.generation_end_time = t100;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       //FC_ASSERT( announced_launch_time >= generation_end_time )
       op.announced_launch_time = t200;
       op.generation_end_time = t300;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       //FC_ASSERT( launch_expiration_time >= announced_launch_time )
       op.generation_begin_time = t50;
       op.generation_end_time = t100;
       op.announced_launch_time = t300;
       op.launch_expiration_time = t200;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.announced_launch_time = t200;
       op.launch_expiration_time = t300;
@@ -838,9 +838,9 @@ BOOST_AUTO_TEST_CASE( setup_validate )
       (
          get_generation_unit( { { "xyz", 1 } }, { { "xyz2", 2 } } )/*pre_soft_cap_unit*/,
          get_generation_unit()/*post_soft_cap_unit*/,
-         get_cap_commitment( 1 )/*min_colab_units_commitment*/,
-         get_cap_commitment( SMT_MIN_HARD_CAP_COLAB_UNITS + 1 )/*hard_cap_colab_units_commitment*/,
-         COLAB_100_PERCENT/*soft_cap_percent*/,
+         get_cap_commitment( 1 )/*min_knowledgr_units_commitment*/,
+         get_cap_commitment( SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS + 1 )/*hard_cap_knowledgr_units_commitment*/,
+         KNOWLEDGR_100_PERCENT/*soft_cap_percent*/,
          1/*min_unit_ratio*/,
          2/*max_unit_ratio*/
       );
@@ -849,7 +849,7 @@ BOOST_AUTO_TEST_CASE( setup_validate )
 
       //FC_ASSERT(decimal_places <= SMT_MAX_DECIMAL_PLACES)
       op.decimal_places = SMT_MAX_DECIMAL_PLACES + 1;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       op.decimal_places = 3;
 
@@ -857,191 +857,191 @@ BOOST_AUTO_TEST_CASE( setup_validate )
       for( uint32_t i = 0; i < SMT_MAX_UNIT_ROUTES + 1; ++i )
          to_many_units.emplace( "alice" + std::to_string( i ), 1 );
 
-      //FC_ASSERT( colab_unit.size() <= SMT_MAX_UNIT_ROUTES )
-      gp.pre_soft_cap_unit.colab_unit = to_many_units;
+      //FC_ASSERT( knowledgr_unit.size() <= SMT_MAX_UNIT_ROUTES )
+      gp.pre_soft_cap_unit.knowledgr_unit = to_many_units;
       gp.pre_soft_cap_unit.token_unit = { { "bob",3 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      gp.pre_soft_cap_unit.colab_unit = { { "bob2", 33 } };
+      gp.pre_soft_cap_unit.knowledgr_unit = { { "bob2", 33 } };
       gp.pre_soft_cap_unit.token_unit = to_many_units;
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       //Invalid account
-      gp.pre_soft_cap_unit.colab_unit = { { "{}{}", 12 } };
+      gp.pre_soft_cap_unit.knowledgr_unit = { { "{}{}", 12 } };
       gp.pre_soft_cap_unit.token_unit = { { "xyz", 13 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      gp.pre_soft_cap_unit.colab_unit = { { "xyz2", 14 } };
+      gp.pre_soft_cap_unit.knowledgr_unit = { { "xyz2", 14 } };
       gp.pre_soft_cap_unit.token_unit = { { "{}", 15 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       //Invalid account -> valid is '$from'
-      gp.pre_soft_cap_unit.colab_unit = { { "$fromx", 1 } };
+      gp.pre_soft_cap_unit.knowledgr_unit = { { "$fromx", 1 } };
       gp.pre_soft_cap_unit.token_unit = { { "$from", 2 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      gp.pre_soft_cap_unit.colab_unit = { { "$from", 3 } };
+      gp.pre_soft_cap_unit.knowledgr_unit = { { "$from", 3 } };
       gp.pre_soft_cap_unit.token_unit = { { "$from_", 4 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       //Invalid account -> valid is '$from.vesting'
-      gp.pre_soft_cap_unit.colab_unit = { { "$from.vestingx", 2 } };
+      gp.pre_soft_cap_unit.knowledgr_unit = { { "$from.vestingx", 2 } };
       gp.pre_soft_cap_unit.token_unit = { { "$from.vesting", 222 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      gp.pre_soft_cap_unit.colab_unit = { { "$from.vesting", 13 } };
+      gp.pre_soft_cap_unit.knowledgr_unit = { { "$from.vesting", 13 } };
       gp.pre_soft_cap_unit.token_unit = { { "$from.vesting.vesting", 3 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      //FC_ASSERT( colab_unit.value > 0 );
-      gp.pre_soft_cap_unit.colab_unit = { { "$from.vesting", 0 } };
+      //FC_ASSERT( knowledgr_unit.value > 0 );
+      gp.pre_soft_cap_unit.knowledgr_unit = { { "$from.vesting", 0 } };
       gp.pre_soft_cap_unit.token_unit = { { "$from.vesting", 2 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      gp.pre_soft_cap_unit.colab_unit = { { "$from.vesting", 10 } };
+      gp.pre_soft_cap_unit.knowledgr_unit = { { "$from.vesting", 10 } };
       gp.pre_soft_cap_unit.token_unit = { { "$from.vesting", 0 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      //FC_ASSERT( colab_unit.value > 0 );
-      gp.pre_soft_cap_unit.colab_unit = { { "$from", 0 } };
+      //FC_ASSERT( knowledgr_unit.value > 0 );
+      gp.pre_soft_cap_unit.knowledgr_unit = { { "$from", 0 } };
       gp.pre_soft_cap_unit.token_unit = { { "$from", 100 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      gp.pre_soft_cap_unit.colab_unit = { { "$from", 33 } };
+      gp.pre_soft_cap_unit.knowledgr_unit = { { "$from", 33 } };
       gp.pre_soft_cap_unit.token_unit = { { "$from", 0 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      //FC_ASSERT( colab_unit.value > 0 );
-      gp.pre_soft_cap_unit.colab_unit = { { "qprst", 0 } };
+      //FC_ASSERT( knowledgr_unit.value > 0 );
+      gp.pre_soft_cap_unit.knowledgr_unit = { { "qprst", 0 } };
       gp.pre_soft_cap_unit.token_unit = { { "qprst", 67 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      gp.pre_soft_cap_unit.colab_unit = { { "my_account2", 55 } };
+      gp.pre_soft_cap_unit.knowledgr_unit = { { "my_account2", 55 } };
       gp.pre_soft_cap_unit.token_unit = { { "my_account", 0 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      gp.pre_soft_cap_unit.colab_unit = { { "bob", 2 }, { "$from.vesting", 3 }, { "$from", 4 } };
+      gp.pre_soft_cap_unit.knowledgr_unit = { { "bob", 2 }, { "$from.vesting", 3 }, { "$from", 4 } };
       gp.pre_soft_cap_unit.token_unit = { { "alice", 5 }, { "$from", 3 } };
       op.initial_generation_policy = gp;
       op.validate();
 
       //FC_ASSERT( lower_bound > 0 )
-      gp.min_colab_units_commitment.lower_bound = 0;
+      gp.min_knowledgr_units_commitment.lower_bound = 0;
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      //FC_ASSERT( lower_bound >= SMT_MIN_HARD_CAP_COLAB_UNITS )
-      gp.min_colab_units_commitment.lower_bound = SMT_MIN_HARD_CAP_COLAB_UNITS - 1;
+      //FC_ASSERT( lower_bound >= SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS )
+      gp.min_knowledgr_units_commitment.lower_bound = SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS - 1;
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      //FC_ASSERT( upper_bound <= COLAB_MAX_SHARE_SUPPLY )
-      gp.min_colab_units_commitment.upper_bound = COLAB_MAX_SHARE_SUPPLY + 1;
+      //FC_ASSERT( upper_bound <= KNOWLEDGR_MAX_SHARE_SUPPLY )
+      gp.min_knowledgr_units_commitment.upper_bound = KNOWLEDGR_MAX_SHARE_SUPPLY + 1;
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       //FC_ASSERT( lower_bound <= upper_bound )
-      gp.min_colab_units_commitment.lower_bound = COLAB_MAX_SHARE_SUPPLY - 1;
-      gp.min_colab_units_commitment.upper_bound = gp.min_colab_units_commitment.lower_bound - 1;
+      gp.min_knowledgr_units_commitment.lower_bound = KNOWLEDGR_MAX_SHARE_SUPPLY - 1;
+      gp.min_knowledgr_units_commitment.upper_bound = gp.min_knowledgr_units_commitment.lower_bound - 1;
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      gp.min_colab_units_commitment.lower_bound = 1 * SMT_MIN_HARD_CAP_COLAB_UNITS;
-      gp.min_colab_units_commitment.upper_bound = 2 * SMT_MIN_HARD_CAP_COLAB_UNITS;
-      gp.hard_cap_colab_units_commitment.lower_bound = 1 * SMT_MIN_HARD_CAP_COLAB_UNITS;
-      gp.hard_cap_colab_units_commitment.upper_bound = 2 * SMT_MIN_HARD_CAP_COLAB_UNITS;
+      gp.min_knowledgr_units_commitment.lower_bound = 1 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
+      gp.min_knowledgr_units_commitment.upper_bound = 2 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
+      gp.hard_cap_knowledgr_units_commitment.lower_bound = 1 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
+      gp.hard_cap_knowledgr_units_commitment.upper_bound = 2 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
       op.initial_generation_policy = gp;
       gp.validate();
 
       //FC_ASSERT( soft_cap_percent > 0 )
       gp.soft_cap_percent = 0;
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      //FC_ASSERT( soft_cap_percent <= COLAB_100_PERCENT )
-      gp.soft_cap_percent = COLAB_100_PERCENT + 1;
+      //FC_ASSERT( soft_cap_percent <= KNOWLEDGR_100_PERCENT )
+      gp.soft_cap_percent = KNOWLEDGR_100_PERCENT + 1;
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      //FC_ASSERT( soft_cap_percent == COLAB_100_PERCENT && post_soft_cap_unit.colab_unit.size() == 0 )
-      gp.soft_cap_percent = COLAB_100_PERCENT;
-      gp.post_soft_cap_unit.colab_unit = { { "bob", 2 } };
+      //FC_ASSERT( soft_cap_percent == KNOWLEDGR_100_PERCENT && post_soft_cap_unit.knowledgr_unit.size() == 0 )
+      gp.soft_cap_percent = KNOWLEDGR_100_PERCENT;
+      gp.post_soft_cap_unit.knowledgr_unit = { { "bob", 2 } };
       gp.post_soft_cap_unit.token_unit = {};
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      //FC_ASSERT( soft_cap_percent == COLAB_100_PERCENT && post_soft_cap_unit.token_unit.size() == 0 )
-      gp.soft_cap_percent = COLAB_100_PERCENT;
-      gp.post_soft_cap_unit.colab_unit = {};
+      //FC_ASSERT( soft_cap_percent == KNOWLEDGR_100_PERCENT && post_soft_cap_unit.token_unit.size() == 0 )
+      gp.soft_cap_percent = KNOWLEDGR_100_PERCENT;
+      gp.post_soft_cap_unit.knowledgr_unit = {};
       gp.post_soft_cap_unit.token_unit = { { "alice", 3 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      //FC_ASSERT( soft_cap_percent != COLAB_100_PERCENT && post_soft_cap_unit.colab_unit.size() > 0 )
-      gp.soft_cap_percent = COLAB_100_PERCENT / 2;
-      gp.post_soft_cap_unit.colab_unit = {};
+      //FC_ASSERT( soft_cap_percent != KNOWLEDGR_100_PERCENT && post_soft_cap_unit.knowledgr_unit.size() > 0 )
+      gp.soft_cap_percent = KNOWLEDGR_100_PERCENT / 2;
+      gp.post_soft_cap_unit.knowledgr_unit = {};
       gp.post_soft_cap_unit.token_unit = {};
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      gp.soft_cap_percent = COLAB_100_PERCENT;
-      gp.post_soft_cap_unit.colab_unit = {};
+      gp.soft_cap_percent = KNOWLEDGR_100_PERCENT;
+      gp.post_soft_cap_unit.knowledgr_unit = {};
       gp.post_soft_cap_unit.token_unit = {};
       op.initial_generation_policy = gp;
       op.validate();
 
-      //FC_ASSERT( min_colab_units_commitment.lower_bound <= hard_cap_colab_units_commitment.lower_bound )
-      gp.min_colab_units_commitment.lower_bound = 10 * SMT_MIN_HARD_CAP_COLAB_UNITS;
-      gp.min_colab_units_commitment.upper_bound = 20 * SMT_MIN_HARD_CAP_COLAB_UNITS;
-      gp.hard_cap_colab_units_commitment.lower_bound = 9 * SMT_MIN_HARD_CAP_COLAB_UNITS;
-      gp.hard_cap_colab_units_commitment.upper_bound = 20 * SMT_MIN_HARD_CAP_COLAB_UNITS;
+      //FC_ASSERT( min_knowledgr_units_commitment.lower_bound <= hard_cap_knowledgr_units_commitment.lower_bound )
+      gp.min_knowledgr_units_commitment.lower_bound = 10 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
+      gp.min_knowledgr_units_commitment.upper_bound = 20 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
+      gp.hard_cap_knowledgr_units_commitment.lower_bound = 9 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
+      gp.hard_cap_knowledgr_units_commitment.upper_bound = 20 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      //FC_ASSERT( min_colab_units_commitment.upper_bound <= hard_cap_colab_units_commitment.upper_bound )
-      gp.hard_cap_colab_units_commitment.lower_bound = 11 * SMT_MIN_HARD_CAP_COLAB_UNITS;
-      gp.hard_cap_colab_units_commitment.upper_bound = 19 * SMT_MIN_HARD_CAP_COLAB_UNITS;
+      //FC_ASSERT( min_knowledgr_units_commitment.upper_bound <= hard_cap_knowledgr_units_commitment.upper_bound )
+      gp.hard_cap_knowledgr_units_commitment.lower_bound = 11 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
+      gp.hard_cap_knowledgr_units_commitment.upper_bound = 19 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      //FC_ASSERT( hard_cap_colab_units_commitment.lower_bound >= SMT_MIN_SATURATION_COLAB_UNITS * uint64_t( max_unit_ratio ) )
-      gp.hard_cap_colab_units_commitment.lower_bound = 11 * SMT_MIN_HARD_CAP_COLAB_UNITS;
-      gp.hard_cap_colab_units_commitment.upper_bound = 21 * SMT_MIN_HARD_CAP_COLAB_UNITS;
-      gp.max_unit_ratio = ( ( 11 * SMT_MIN_HARD_CAP_COLAB_UNITS ) / SMT_MIN_SATURATION_COLAB_UNITS ) * 2;
+      //FC_ASSERT( hard_cap_knowledgr_units_commitment.lower_bound >= SMT_MIN_SATURATION_KNOWLEDGR_UNITS * uint64_t( max_unit_ratio ) )
+      gp.hard_cap_knowledgr_units_commitment.lower_bound = 11 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
+      gp.hard_cap_knowledgr_units_commitment.upper_bound = 21 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
+      gp.max_unit_ratio = ( ( 11 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS ) / SMT_MIN_SATURATION_KNOWLEDGR_UNITS ) * 2;
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      gp.hard_cap_colab_units_commitment.lower_bound = 11 * SMT_MIN_HARD_CAP_COLAB_UNITS;
-      gp.hard_cap_colab_units_commitment.upper_bound = 21 * SMT_MIN_HARD_CAP_COLAB_UNITS;
+      gp.hard_cap_knowledgr_units_commitment.lower_bound = 11 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
+      gp.hard_cap_knowledgr_units_commitment.upper_bound = 21 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
       gp.max_unit_ratio = 2;
       op.initial_generation_policy = gp;
       op.validate();
 
       smt_capped_generation_policy gp_valid = gp;
 
-      //FC_ASSERT( min_soft_cap >= SMT_MIN_SOFT_CAP_COLAB_UNITS )
+      //FC_ASSERT( min_soft_cap >= SMT_MIN_SOFT_CAP_KNOWLEDGR_UNITS )
       gp.soft_cap_percent = 1;
-      gp.min_colab_units_commitment.lower_bound = 1 * SMT_MIN_HARD_CAP_COLAB_UNITS;
-      gp.min_colab_units_commitment.upper_bound = 2 * SMT_MIN_HARD_CAP_COLAB_UNITS;
-      gp.hard_cap_colab_units_commitment.lower_bound = 1 * SMT_MIN_HARD_CAP_COLAB_UNITS;
-      gp.hard_cap_colab_units_commitment.upper_bound = 2 * SMT_MIN_HARD_CAP_COLAB_UNITS;
-      gp.post_soft_cap_unit.colab_unit = { { "bob", 2 } };
+      gp.min_knowledgr_units_commitment.lower_bound = 1 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
+      gp.min_knowledgr_units_commitment.upper_bound = 2 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
+      gp.hard_cap_knowledgr_units_commitment.lower_bound = 1 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
+      gp.hard_cap_knowledgr_units_commitment.upper_bound = 2 * SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS;
+      gp.post_soft_cap_unit.knowledgr_unit = { { "bob", 2 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       gp = gp_valid;
       op.initial_generation_policy = gp;
@@ -1051,24 +1051,24 @@ BOOST_AUTO_TEST_CASE( setup_validate )
       uint32_t max_val_32 = std::numeric_limits<uint32_t>::max();
 
       //FC_ASSERT( max_tokens_created <= max_share_supply_u128 )
-      gp.soft_cap_percent = COLAB_100_PERCENT - 1;
+      gp.soft_cap_percent = KNOWLEDGR_100_PERCENT - 1;
       gp.min_unit_ratio = max_val_32;
-      gp.post_soft_cap_unit.colab_unit = { { "abc", 1 } };
+      gp.post_soft_cap_unit.knowledgr_unit = { { "abc", 1 } };
       gp.post_soft_cap_unit.token_unit = { { "abc1", max_val_16 } };
       gp.pre_soft_cap_unit.token_unit = { { "abc2", max_val_16 } };
-      gp.min_colab_units_commitment.upper_bound = COLAB_MAX_SHARE_SUPPLY;
-      gp.hard_cap_colab_units_commitment.upper_bound = COLAB_MAX_SHARE_SUPPLY;
+      gp.min_knowledgr_units_commitment.upper_bound = KNOWLEDGR_MAX_SHARE_SUPPLY;
+      gp.hard_cap_knowledgr_units_commitment.upper_bound = KNOWLEDGR_MAX_SHARE_SUPPLY;
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      //FC_ASSERT( max_colab_accepted <= max_share_supply_u128 )
+      //FC_ASSERT( max_knowledgr_accepted <= max_share_supply_u128 )
       gp.min_unit_ratio = 1;
       gp.post_soft_cap_unit.token_unit = { { "abc1", 1 } };
       gp.pre_soft_cap_unit.token_unit = { { "abc2", 1 } };
-      gp.post_soft_cap_unit.colab_unit = { { "abc3", max_val_16 } };
-      gp.pre_soft_cap_unit.colab_unit = { { "abc34", max_val_16 } };
+      gp.post_soft_cap_unit.knowledgr_unit = { { "abc3", max_val_16 } };
+      gp.pre_soft_cap_unit.knowledgr_unit = { { "abc34", max_val_16 } };
       op.initial_generation_policy = gp;
-      COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
    }
    FC_LOG_AND_RETHROW()
 }
@@ -1116,9 +1116,9 @@ BOOST_AUTO_TEST_CASE( setup_apply )
       (
          get_generation_unit( { { "xyz", 1 } }, { { "xyz2", 2 } } )/*pre_soft_cap_unit*/,
          get_generation_unit()/*post_soft_cap_unit*/,
-         get_cap_commitment( 1 )/*min_colab_units_commitment*/,
-         get_cap_commitment( SMT_MIN_HARD_CAP_COLAB_UNITS + 1 )/*hard_cap_colab_units_commitment*/,
-         COLAB_100_PERCENT/*soft_cap_percent*/,
+         get_cap_commitment( 1 )/*min_knowledgr_units_commitment*/,
+         get_cap_commitment( SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS + 1 )/*hard_cap_knowledgr_units_commitment*/,
+         KNOWLEDGR_100_PERCENT/*soft_cap_percent*/,
          1/*min_unit_ratio*/,
          2/*max_unit_ratio*/
       );
@@ -1136,9 +1136,9 @@ BOOST_AUTO_TEST_CASE( setup_apply )
 
       //SMT doesn't exist
       tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+      tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
       sign( tx, alice_private_key );
-      COLAB_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
+      KNOWLEDGR_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
       tx.operations.clear();
       tx.signatures.clear();
 
@@ -1151,7 +1151,7 @@ BOOST_AUTO_TEST_CASE( setup_apply )
       op.symbol = alice_symbol;
       op.decimal_places = 3;
       tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+      tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
       sign( tx, alice_private_key );
       db->push_transaction( tx, 0 );
       tx.operations.clear();
@@ -1162,11 +1162,11 @@ BOOST_AUTO_TEST_CASE( setup_apply )
       op.control_account = "bob";
       op.decimal_places = 5;
       tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + COLAB_MAX_TIME_UNTIL_EXPIRATION );
+      tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
       sign( tx, bob_private_key );
       db->push_transaction( tx, 0 );
 
-      const colab::chain::smt_token_object* smt_token = db->find< colab::chain::smt_token_object, by_control_account >( op.control_account );
+      const knowledgr::chain::smt_token_object* smt_token = db->find< knowledgr::chain::smt_token_object, by_control_account >( op.control_account );
       BOOST_REQUIRE( smt_token != nullptr );
       uint8_t decimals = smt_token->liquid_symbol.decimals();
       BOOST_REQUIRE( decimals == 5 );
@@ -1185,11 +1185,11 @@ BOOST_AUTO_TEST_CASE( smt_cap_reveal_validate )
    op.validate();
    // Check invalid control account name.
    op.control_account = "@@@@@";
-   COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+   KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
    op.control_account = "alice";
    // Check invalid SMT symbol.
    op.symbol = op.symbol.get_paired_symbol();
-   COLAB_REQUIRE_THROW( op.validate(), fc::exception );
+   KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
    op.symbol = op.symbol.get_paired_symbol();
    }
    FC_LOG_AND_RETHROW()
@@ -1242,9 +1242,9 @@ void setup_smt_and_reveal_caps( const account_name_type& control_account, const 
       (
          dbf.get_generation_unit( { { "xyz", 1 } }, { { "xyz2", 2 } } )/*pre_soft_cap_unit*/,
          dbf.get_generation_unit()/*post_soft_cap_unit*/,
-         dbf.get_cap_commitment( min_cap_val, nonce )/*min_colab_units_commitment*/,
-         dbf.get_cap_commitment( max_cap_val, nonce )/*hard_cap_colab_units_commitment*/,
-         COLAB_100_PERCENT/*soft_cap_percent*/,
+         dbf.get_cap_commitment( min_cap_val, nonce )/*min_knowledgr_units_commitment*/,
+         dbf.get_cap_commitment( max_cap_val, nonce )/*hard_cap_knowledgr_units_commitment*/,
+         KNOWLEDGR_100_PERCENT/*soft_cap_percent*/,
          1/*min_unit_ratio*/,
          2/*max_unit_ratio*/
       );
@@ -1259,31 +1259,31 @@ void setup_smt_and_reveal_caps( const account_name_type& control_account, const 
    }
 
    const auto& smt_object = db->get< smt_token_object, by_symbol >( smt_symbol );
-   FC_ASSERT( smt_object.colab_units_min_cap < 0 && smt_object.colab_units_hard_cap < 0 );
+   FC_ASSERT( smt_object.knowledgr_units_min_cap < 0 && smt_object.knowledgr_units_hard_cap < 0 );
    // Try to reveal correct value with invalid nonce.
    op.cap.nonce = invalid_val;
    op.cap.amount = max_cap_val;
    FAIL_WITH_OP( op, private_key, fc::assert_exception );
-   FC_ASSERT( smt_object.colab_units_min_cap < 0 && smt_object.colab_units_hard_cap < 0 );
+   FC_ASSERT( smt_object.knowledgr_units_min_cap < 0 && smt_object.knowledgr_units_hard_cap < 0 );
    // Try to reveal invalid amount with correct nonce. Note that the value will be tested against both cap's commitments.
    op.cap.nonce = nonce;
    op.cap.amount = invalid_val.to_uint64();
    FAIL_WITH_OP( op, private_key, fc::assert_exception );
-   FC_ASSERT( smt_object.colab_units_min_cap < 0 && smt_object.colab_units_hard_cap < 0 );
+   FC_ASSERT( smt_object.knowledgr_units_min_cap < 0 && smt_object.knowledgr_units_hard_cap < 0 );
    // Reveal max hard cap.
    op.cap.amount = max_cap_val;
    PUSH_OP( op, private_key );
-   FC_ASSERT( smt_object.colab_units_min_cap < 0 && smt_object.colab_units_hard_cap == max_cap_val );
+   FC_ASSERT( smt_object.knowledgr_units_min_cap < 0 && smt_object.knowledgr_units_hard_cap == max_cap_val );
    // Try to reveal max hard cap again.
    FAIL_WITH_OP( op, private_key, fc::assert_exception );
    // Try to reveal invalid amount again. Note that this time it will be tested against min cap only (as max hard cap has been already revealed).
    op.cap.amount = invalid_val.to_uint64();
    FAIL_WITH_OP( op, private_key, fc::assert_exception );
-   FC_ASSERT( smt_object.colab_units_min_cap < 0 && smt_object.colab_units_hard_cap == max_cap_val );
+   FC_ASSERT( smt_object.knowledgr_units_min_cap < 0 && smt_object.knowledgr_units_hard_cap == max_cap_val );
    // Reveal min cap.
    op.cap.amount = min_cap_val;
    PUSH_OP( op, private_key );
-   FC_ASSERT( smt_object.colab_units_min_cap == min_cap_val && smt_object.colab_units_hard_cap == max_cap_val );
+   FC_ASSERT( smt_object.knowledgr_units_min_cap == min_cap_val && smt_object.knowledgr_units_hard_cap == max_cap_val );
    // Try to reveal min cap again.
    FAIL_WITH_OP( op, private_key, fc::assert_exception );
 }
@@ -1298,9 +1298,9 @@ BOOST_AUTO_TEST_CASE( smt_cap_reveal_apply )
 
       auto smts = create_smt_3("alice", alice_private_key);
       // Test non-hidden caps (zero nonce).
-      setup_smt_and_reveal_caps("alice", alice_private_key, smts[0], 1, SMT_MIN_HARD_CAP_COLAB_UNITS + 1, 20000, 0, db, *this);
+      setup_smt_and_reveal_caps("alice", alice_private_key, smts[0], 1, SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS + 1, 20000, 0, db, *this);
       // Test hidden caps (1234 nonce).
-      setup_smt_and_reveal_caps("alice", alice_private_key, smts[1], 10000, SMT_MIN_HARD_CAP_COLAB_UNITS + 1, 20000, 1234, db, *this);
+      setup_smt_and_reveal_caps("alice", alice_private_key, smts[1], 10000, SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS + 1, 20000, 1234, db, *this);
    }
    FC_LOG_AND_RETHROW()
 }
@@ -1333,19 +1333,19 @@ BOOST_AUTO_TEST_CASE( smt_create_apply )
       op.precision = op.symbol.decimals();
 
       BOOST_TEST_MESSAGE( " -- SMT create with insufficient SBD balance" );
-      // Fund with CLC, and set fee with SBD.
+      // Fund with NLG, and set fee with SBD.
       FUND( "alice", test_amount );
       // Declare fee in SBD/TBD though alice has none.
       op.smt_creation_fee = asset( test_amount, SBD_SYMBOL );
       // Throw due to insufficient balance of SBD/TBD.
       FAIL_WITH_OP(op, alice_private_key, fc::assert_exception);
 
-      BOOST_TEST_MESSAGE( " -- SMT create with insufficient CLC balance" );
-      // Now fund with SBD, and set fee with CLC.
-      convert( "alice", asset( test_amount, CLC_SYMBOL ) );
-      // Declare fee in CLC though alice has none.
-      op.smt_creation_fee = asset( test_amount, CLC_SYMBOL );
-      // Throw due to insufficient balance of CLC.
+      BOOST_TEST_MESSAGE( " -- SMT create with insufficient NLG balance" );
+      // Now fund with SBD, and set fee with NLG.
+      convert( "alice", asset( test_amount, NLG_SYMBOL ) );
+      // Declare fee in NLG though alice has none.
+      op.smt_creation_fee = asset( test_amount, NLG_SYMBOL );
+      // Throw due to insufficient balance of NLG.
       FAIL_WITH_OP(op, alice_private_key, fc::assert_exception);
 
       BOOST_TEST_MESSAGE( " -- SMT create with available funds" );
@@ -1360,7 +1360,7 @@ BOOST_AUTO_TEST_CASE( smt_create_apply )
       // Check that another user/account can't be used to create duplicating SMT even with different precision.
       create_conflicting_smt(op.symbol, "bob", bob_private_key);
 
-      BOOST_TEST_MESSAGE( " -- Check that an SMT cannot be created with decimals greater than COLAB_MAX_DECIMALS" );
+      BOOST_TEST_MESSAGE( " -- Check that an SMT cannot be created with decimals greater than KNOWLEDGR_MAX_DECIMALS" );
       // Check that invalid SMT can't be created
       create_invalid_smt("alice", alice_private_key);
 
@@ -1375,15 +1375,15 @@ BOOST_AUTO_TEST_CASE( smt_create_apply )
       op.symbol = bob_symbol;
       op.precision = op.symbol.decimals();
 
-      BOOST_TEST_MESSAGE( " -- Check that we cannot create an SMT with an insufficent CLC creation fee" );
-      // Check too low fee in CLC.
+      BOOST_TEST_MESSAGE( " -- Check that we cannot create an SMT with an insufficent NLG creation fee" );
+      // Check too low fee in NLG.
       FUND( "bob", too_low_fee_amount );
-      op.smt_creation_fee = asset( too_low_fee_amount, CLC_SYMBOL );
+      op.smt_creation_fee = asset( too_low_fee_amount, NLG_SYMBOL );
       FAIL_WITH_OP(op, bob_private_key, fc::assert_exception);
 
       BOOST_TEST_MESSAGE( " -- Check that we cannot create an SMT with an insufficent SBD creation fee" );
       // Check too low fee in SBD.
-      convert( "bob", asset( too_low_fee_amount, CLC_SYMBOL ) );
+      convert( "bob", asset( too_low_fee_amount, NLG_SYMBOL ) );
       op.smt_creation_fee = asset( too_low_fee_amount, SBD_SYMBOL );
       FAIL_WITH_OP(op, bob_private_key, fc::assert_exception);
 

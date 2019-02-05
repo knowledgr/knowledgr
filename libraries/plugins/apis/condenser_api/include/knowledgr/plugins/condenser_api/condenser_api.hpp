@@ -1,23 +1,23 @@
 #pragma once
 
-#include <colab/plugins/database_api/database_api.hpp>
-#include <colab/plugins/block_api/block_api.hpp>
-#include <colab/plugins/account_history_api/account_history_api.hpp>
-#include <colab/plugins/account_by_key_api/account_by_key_api.hpp>
-#include <colab/plugins/network_broadcast_api/network_broadcast_api.hpp>
-#include <colab/plugins/tags_api/tags_api.hpp>
-#include <colab/plugins/follow_api/follow_api.hpp>
-#include <colab/plugins/reputation_api/reputation_api.hpp>
-#include <colab/plugins/market_history_api/market_history_api.hpp>
+#include <knowledgr/plugins/database_api/database_api.hpp>
+#include <knowledgr/plugins/block_api/block_api.hpp>
+#include <knowledgr/plugins/account_history_api/account_history_api.hpp>
+#include <knowledgr/plugins/account_by_key_api/account_by_key_api.hpp>
+#include <knowledgr/plugins/network_broadcast_api/network_broadcast_api.hpp>
+#include <knowledgr/plugins/tags_api/tags_api.hpp>
+#include <knowledgr/plugins/follow_api/follow_api.hpp>
+#include <knowledgr/plugins/reputation_api/reputation_api.hpp>
+#include <knowledgr/plugins/market_history_api/market_history_api.hpp>
 
-#include <colab/plugins/condenser_api/condenser_api_legacy_objects.hpp>
+#include <knowledgr/plugins/condenser_api/condenser_api_legacy_objects.hpp>
 
 #include <fc/optional.hpp>
 #include <fc/variant.hpp>
 #include <fc/vector.hpp>
 #include <fc/api.hpp>
 
-namespace colab { namespace plugins { namespace condenser_api {
+namespace knowledgr { namespace plugins { namespace condenser_api {
 
 using std::vector;
 using fc::variant;
@@ -118,19 +118,19 @@ struct api_account_object
       voting_manabar( a.voting_manabar ),
       balance( legacy_asset::from_asset( a.balance ) ),
       savings_balance( legacy_asset::from_asset( a.savings_balance ) ),
-      /*sbd_balance( legacy_asset::from_asset( a.sbd_balance ) ),*////~~~~~CLC~~~~~ NO NEED for CoLab
-      /*sbd_seconds( a.sbd_seconds ),*////~~~~~CLC~~~~~ NO NEED for CoLab
-      /*sbd_seconds_last_update( a.sbd_seconds_last_update ),*////~~~~~CLC~~~~~ NO NEED for CoLab
-      /*sbd_last_interest_payment( a.sbd_last_interest_payment ),*////~~~~~CLC~~~~~ NO NEED for CoLab
-      /*savings_sbd_balance( legacy_asset::from_asset( a.savings_sbd_balance ) ),*////~~~~~CLC~~~~~ NO NEED for CoLab
-      /*savings_sbd_seconds( a.savings_sbd_seconds ),*////~~~~~CLC~~~~~ NO NEED for CoLab
-      /*savings_sbd_seconds_last_update( a.savings_sbd_seconds_last_update ),*////~~~~~CLC~~~~~ NO NEED for CoLab
-      /*savings_sbd_last_interest_payment( a.savings_sbd_last_interest_payment ),*////~~~~~CLC~~~~~ NO NEED for CoLab
+      /*sbd_balance( legacy_asset::from_asset( a.sbd_balance ) ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+      /*sbd_seconds( a.sbd_seconds ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+      /*sbd_seconds_last_update( a.sbd_seconds_last_update ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+      /*sbd_last_interest_payment( a.sbd_last_interest_payment ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+      /*savings_sbd_balance( legacy_asset::from_asset( a.savings_sbd_balance ) ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+      /*savings_sbd_seconds( a.savings_sbd_seconds ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+      /*savings_sbd_seconds_last_update( a.savings_sbd_seconds_last_update ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+      /*savings_sbd_last_interest_payment( a.savings_sbd_last_interest_payment ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
       savings_withdraw_requests( a.savings_withdraw_requests ),
-      /*reward_sbd_balance( legacy_asset::from_asset( a.reward_sbd_balance ) ),*////~~~~~CLC~~~~~ NO NEED for CoLab
-      reward_clc_balance( legacy_asset::from_asset( a.reward_clc_balance ) ),
-      /*reward_vesting_balance( legacy_asset::from_asset( a.reward_vesting_balance ) ),*////~~~~~CLC~~~~~ NO NEED for CoLab
-      /*reward_vesting_clc( legacy_asset::from_asset( a.reward_vesting_clc ) ),*////~~~~~CLC~~~~~ NO NEED for CoLab
+      /*reward_sbd_balance( legacy_asset::from_asset( a.reward_sbd_balance ) ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+      reward_nlg_balance( legacy_asset::from_asset( a.reward_nlg_balance ) ),
+      /*reward_vesting_balance( legacy_asset::from_asset( a.reward_vesting_balance ) ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+      /*reward_vesting_nlg( legacy_asset::from_asset( a.reward_vesting_nlg ) ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
       curation_rewards( a.curation_rewards ),
       posting_rewards( a.posting_rewards ),
 //      vesting_shares( legacy_asset::from_asset( a.vesting_shares ) ),
@@ -147,13 +147,13 @@ struct api_account_object
       last_vote_time( a.last_vote_time ),
       post_bandwidth( a.post_bandwidth ),
       pending_claimed_accounts( a.pending_claimed_accounts ),
-	  member_of(a.member_of), ///~~~~~CLC~~~~~
-	  stake_balance( legacy_asset::from_asset(a.stake_balance) ), ///~~~~~CLC~~~~~
+	  member_of(a.member_of), ///~~~~~NLG~~~~~
+	  stake_balance( legacy_asset::from_asset(a.stake_balance) ), ///~~~~~NLG~~~~~
 	  rep_power_rewards(a.rep_power_rewards)
    {
-      //voting_power = _compute_voting_power(a);//////~~~~~CLC~~~~~
+      //voting_power = _compute_voting_power(a);//////~~~~~NLG~~~~~
 	  proxied_vsf_votes.insert( proxied_vsf_votes.end(), a.proxied_vsf_votes.begin(), a.proxied_vsf_votes.end() );
-	  for (auto& _expertise: a.expertises) {///~~~~~CLC~~~~~
+	  for (auto& _expertise: a.expertises) {///~~~~~NLG~~~~~
 		  expertises.push_back(_expertise);
 	  }
    }
@@ -186,27 +186,27 @@ struct api_account_object
 
    bool              can_vote = false;
    util::manabar     voting_manabar;
-//   uint16_t          voting_power = 0;///~~~~~CLC~~~~~ NO NEED for CoLab
+//   uint16_t          voting_power = 0;///~~~~~NLG~~~~~ NO NEED for Knowledgr
 
    legacy_asset      balance;
    legacy_asset      savings_balance;
 
-//   legacy_asset      sbd_balance;///~~~~~CLC~~~~~ NO NEED for CoLab
-//    uint128_t         sbd_seconds;///~~~~~CLC~~~~~ NO NEED for CoLab
-//    time_point_sec    sbd_seconds_last_update;///~~~~~CLC~~~~~ NO NEED for CoLab
-//    time_point_sec    sbd_last_interest_payment;///~~~~~CLC~~~~~ NO NEED for CoLab
+//   legacy_asset      sbd_balance;///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//    uint128_t         sbd_seconds;///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//    time_point_sec    sbd_seconds_last_update;///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//    time_point_sec    sbd_last_interest_payment;///~~~~~NLG~~~~~ NO NEED for Knowledgr
 
-//    legacy_asset      savings_sbd_balance;///~~~~~CLC~~~~~ NO NEED for CoLab
-//    uint128_t         savings_sbd_seconds;///~~~~~CLC~~~~~ NO NEED for CoLab
-//    time_point_sec    savings_sbd_seconds_last_update;///~~~~~CLC~~~~~ NO NEED for CoLab
-//    time_point_sec    savings_sbd_last_interest_payment;///~~~~~CLC~~~~~ NO NEED for CoLab
+//    legacy_asset      savings_sbd_balance;///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//    uint128_t         savings_sbd_seconds;///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//    time_point_sec    savings_sbd_seconds_last_update;///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//    time_point_sec    savings_sbd_last_interest_payment;///~~~~~NLG~~~~~ NO NEED for Knowledgr
 
    uint8_t           savings_withdraw_requests = 0;
 
-//   legacy_asset      reward_sbd_balance;///~~~~~CLC~~~~~ NO NEED for CoLab
-   legacy_asset      reward_clc_balance;
-//   legacy_asset      reward_vesting_balance;///~~~~~CLC~~~~~ NO NEED for CoLab
-//   legacy_asset      reward_vesting_clc;///~~~~~CLC~~~~~ NO NEED for CoLab
+//   legacy_asset      reward_sbd_balance;///~~~~~NLG~~~~~ NO NEED for Knowledgr
+   legacy_asset      reward_nlg_balance;
+//   legacy_asset      reward_vesting_balance;///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//   legacy_asset      reward_vesting_nlg;///~~~~~NLG~~~~~ NO NEED for Knowledgr
 
    share_type        curation_rewards;
    share_type        posting_rewards;
@@ -230,9 +230,9 @@ struct api_account_object
    uint32_t          post_bandwidth = 0;
 
    share_type        pending_claimed_accounts = 0;
-   vector<std::string>					expertises; ///~~~~~CLC~~~~~
-   account_object::account_member_of	member_of; ///~~~~~CLC~~~~~
-   legacy_asset							stake_balance; ///~~~~~CLC~~~~~
+   vector<std::string>					expertises; ///~~~~~NLG~~~~~
+   account_object::account_member_of	member_of; ///~~~~~NLG~~~~~
+   legacy_asset							stake_balance; ///~~~~~NLG~~~~~
    share_type		rep_power_rewards = 1;
 };
 
@@ -242,7 +242,7 @@ struct extended_account : public api_account_object
    extended_account( const database_api::api_account_object& a ) :
       api_account_object( a ) {}
 
-   legacy_asset                                             vesting_balance;  /// convert vesting_shares to vesting colab
+   legacy_asset                                             vesting_balance;  /// convert vesting_shares to vesting knowledgr
    share_type                                               reputation = 0;
    map< uint64_t, api_operation_object >   transfer_history; /// transfer to/from vesting
    map< uint64_t, api_operation_object >   market_history;   /// limit order / cancel / fill
@@ -261,7 +261,7 @@ struct extended_account : public api_account_object
    optional< vector< string > >                             recommended;      /// posts recommened for this user
 };
 
-///~~~~~CLC~~~~~{
+///~~~~~NLG~~~~~{
 struct api_stake_pending_object
 {
 	api_stake_pending_object(const database_api::api_stake_pending_object& a) : 
@@ -278,7 +278,7 @@ struct api_stake_pending_object
 	time_point_sec		created;
 	stake_pending_object::stake_type type;
 };
-///~~~~~CLC~~~~~}
+///~~~~~NLG~~~~~}
 
 struct api_comment_object
 {
@@ -313,17 +313,17 @@ struct api_comment_object
       root_author( c.root_author ),
       root_permlink( c.root_permlink ),
       max_accepted_payout( legacy_asset::from_asset( c.max_accepted_payout ) ),
-      percent_colab_dollars( c.percent_colab_dollars ),
+      percent_knowledgr_dollars( c.percent_knowledgr_dollars ),
       allow_replies( c.allow_replies ),
       allow_votes( c.allow_votes ),
       allow_curation_rewards( c.allow_curation_rewards ),
-	  type(c.type)///~~~~~CLC~~~~~
+	  type(c.type)///~~~~~NLG~~~~~
    {
       for( auto& route : c.beneficiaries )
       {
          beneficiaries.push_back( route );
 	  }
-	  for (auto& _id : c.citations) { ///~~~~~CLC~~~~~
+	  for (auto& _id : c.citations) { ///~~~~~NLG~~~~~
 		  citations.push_back(_id);
 	  }
    }
@@ -370,13 +370,13 @@ struct api_comment_object
    string            root_permlink;
 
    legacy_asset      max_accepted_payout;
-   uint16_t          percent_colab_dollars = 0;
+   uint16_t          percent_knowledgr_dollars = 0;
    bool              allow_replies = false;
    bool              allow_votes = false;
    bool              allow_curation_rewards = false;
    vector< beneficiary_route_type > beneficiaries;
-   comment_object::comment_type		 type; //~~~~~CLC~~~~~
-   vector<comment_id_type> citations; //~~~~~CLC~~~~~
+   comment_object::comment_type		 type; //~~~~~NLG~~~~~
+   vector<comment_id_type> citations; //~~~~~NLG~~~~~
 };
 
 struct extended_dynamic_global_properties
@@ -394,12 +394,12 @@ struct extended_dynamic_global_properties
       confidential_supply( legacy_asset::from_asset( o.confidential_supply ) ),
 //      current_sbd_supply( legacy_asset::from_asset( o.current_sbd_supply ) ),
 //      confidential_sbd_supply( legacy_asset::from_asset( o.confidential_sbd_supply ) ),
-//      total_vesting_fund_clc( legacy_asset::from_asset( o.total_vesting_fund_clc ) ),
+//      total_vesting_fund_nlg( legacy_asset::from_asset( o.total_vesting_fund_nlg ) ),
 //      total_vesting_shares( legacy_asset::from_asset( o.total_vesting_shares ) ),
-      total_reward_fund_colab( legacy_asset::from_asset( o.total_reward_fund_colab ) ),
+      total_reward_fund_knowledgr( legacy_asset::from_asset( o.total_reward_fund_knowledgr ) ),
       total_reward_shares2( o.total_reward_shares2 ),
 //      pending_rewarded_vesting_shares( legacy_asset::from_asset( o.pending_rewarded_vesting_shares ) ),
-//      pending_rewarded_vesting_clc( legacy_asset::from_asset( o.pending_rewarded_vesting_clc ) ),
+//      pending_rewarded_vesting_nlg( legacy_asset::from_asset( o.pending_rewarded_vesting_nlg ) ),
 //      sbd_interest_rate( o.sbd_interest_rate ),
 //      sbd_print_rate( o.sbd_print_rate ),
       maximum_block_size( o.maximum_block_size ),
@@ -429,15 +429,15 @@ struct extended_dynamic_global_properties
    legacy_asset      confidential_supply;
 //   legacy_asset      current_sbd_supply;
 //   legacy_asset      confidential_sbd_supply;
-//   legacy_asset      total_vesting_fund_clc;
+//   legacy_asset      total_vesting_fund_nlg;
 //   legacy_asset      total_vesting_shares;
-   legacy_asset      total_reward_fund_colab;
+   legacy_asset      total_reward_fund_knowledgr;
    fc::uint128       total_reward_shares2;
 //   legacy_asset      pending_rewarded_vesting_shares;
-//   legacy_asset      pending_rewarded_vesting_clc;
+//   legacy_asset      pending_rewarded_vesting_nlg;
 
 //   uint16_t          sbd_interest_rate = 0;
-//   uint16_t          sbd_print_rate = COLAB_100_PERCENT;
+//   uint16_t          sbd_print_rate = KNOWLEDGR_100_PERCENT;
 
    uint32_t          maximum_block_size = 0;
    uint64_t          current_aslot = 0;
@@ -446,8 +446,8 @@ struct extended_dynamic_global_properties
 
    uint32_t          last_irreversible_block_num = 0;
 
-   uint32_t          vote_power_reserve_rate = COLAB_INITIAL_VOTE_POWER_RATE;
-   uint32_t          delegation_return_period = COLAB_DELEGATION_RETURN_PERIOD_HF0;
+   uint32_t          vote_power_reserve_rate = KNOWLEDGR_INITIAL_VOTE_POWER_RATE;
+   uint32_t          delegation_return_period = KNOWLEDGR_DELEGATION_RETURN_PERIOD_HF0;
 
    uint64_t          reverse_auction_seconds = 0;
 
@@ -481,7 +481,7 @@ struct api_witness_object
       hardfork_version_vote( w.hardfork_version_vote ),
       hardfork_time_vote( w.hardfork_time_vote ),
       available_witness_account_subsidies( w.available_witness_account_subsidies ),
-	  schedule(w.schedule)//~~~~~CLC~~~~~
+	  schedule(w.schedule)//~~~~~NLG~~~~~
    {}
 
    witness_id_type  id;
@@ -503,9 +503,9 @@ struct api_witness_object
    digest_type             last_work;
    version                 running_version;
    hardfork_version        hardfork_version_vote;
-   time_point_sec          hardfork_time_vote = COLAB_GENESIS_TIME;
+   time_point_sec          hardfork_time_vote = KNOWLEDGR_GENESIS_TIME;
    int64_t                 available_witness_account_subsidies = 0;
-   witness_object::witness_schedule_type schedule;//~~~~~CLC~~~~~
+   witness_object::witness_schedule_type schedule;//~~~~~NLG~~~~~
 };
 
 struct api_witness_schedule_object
@@ -544,10 +544,10 @@ struct api_witness_schedule_object
    uint32_t                      witness_pay_normalization_factor = 25;
    api_chain_properties          median_props;
    version                       majority_version;
-   uint8_t                       max_voted_witnesses           = COLAB_MAX_VOTED_WITNESSES_HF0;
-   uint8_t                       max_miner_witnesses           = COLAB_MAX_MINER_WITNESSES_HF0;
-   uint8_t                       max_runner_witnesses          = COLAB_MAX_RUNNER_WITNESSES_HF0;
-   uint8_t                       hardfork_required_witnesses   = COLAB_HARDFORK_REQUIRED_WITNESSES;
+   uint8_t                       max_voted_witnesses           = KNOWLEDGR_MAX_VOTED_WITNESSES_HF0;
+   uint8_t                       max_miner_witnesses           = KNOWLEDGR_MAX_MINER_WITNESSES_HF0;
+   uint8_t                       max_runner_witnesses          = KNOWLEDGR_MAX_RUNNER_WITNESSES_HF0;
+   uint8_t                       hardfork_required_witnesses   = KNOWLEDGR_HARDFORK_REQUIRED_WITNESSES;
 
    rd_dynamics_params            account_subsidy_rd;
    rd_dynamics_params            account_subsidy_witness_rd;
@@ -610,8 +610,8 @@ struct api_escrow_object
       agent( e.agent ),
       ratification_deadline( e.ratification_deadline ),
       escrow_expiration( e.escrow_expiration ),
-//      sbd_balance( legacy_asset::from_asset( e.sbd_balance ) ),///~~~~~CLC~~~~~ NO NEED for CoLab
-      clc_balance( legacy_asset::from_asset( e.clc_balance ) ),
+//      sbd_balance( legacy_asset::from_asset( e.sbd_balance ) ),///~~~~~NLG~~~~~ NO NEED for Knowledgr
+      nlg_balance( legacy_asset::from_asset( e.nlg_balance ) ),
       pending_fee( legacy_asset::from_asset( e.pending_fee ) ),
       to_approved( e.to_approved ),
       disputed( e.disputed ),
@@ -625,8 +625,8 @@ struct api_escrow_object
    account_name_type agent;
    time_point_sec    ratification_deadline;
    time_point_sec    escrow_expiration;
-//   legacy_asset      sbd_balance;///~~~~~CLC~~~~~ NO NEED for CoLab
-   legacy_asset      clc_balance;
+//   legacy_asset      sbd_balance;///~~~~~NLG~~~~~ NO NEED for Knowledgr
+   legacy_asset      nlg_balance;
    legacy_asset      pending_fee;
    bool              to_approved = false;
    bool              disputed = false;
@@ -826,10 +826,10 @@ struct get_version_return
 {
    get_version_return() {}
    get_version_return( fc::string bc_v, fc::string s_v, fc::string fc_v )
-      :blockchain_version( bc_v ), colab_revision( s_v ), fc_revision( fc_v ) {}
+      :blockchain_version( bc_v ), knowledgr_revision( s_v ), fc_revision( fc_v ) {}
 
    fc::string blockchain_version;
-   fc::string colab_revision;
+   fc::string knowledgr_revision;
    fc::string fc_revision;
 };
 
@@ -897,7 +897,7 @@ struct ticker
       lowest_ask( t.lowest_ask ),
       highest_bid( t.highest_bid ),
       percent_change( t.percent_change ),
-      clc_volume( legacy_asset::from_asset( t.clc_volume ) ),
+      nlg_volume( legacy_asset::from_asset( t.nlg_volume ) ),
       sbd_volume( legacy_asset::from_asset( t.sbd_volume ) )
    {}
 
@@ -905,7 +905,7 @@ struct ticker
    double         lowest_ask = 0;
    double         highest_bid = 0;
    double         percent_change = 0;
-   legacy_asset   clc_volume;
+   legacy_asset   nlg_volume;
    legacy_asset   sbd_volume;
 };
 
@@ -913,11 +913,11 @@ struct volume
 {
    volume() {}
    volume( const market_history::get_volume_return& v ) :
-      clc_volume( legacy_asset::from_asset( v.clc_volume ) ),
+      nlg_volume( legacy_asset::from_asset( v.nlg_volume ) ),
       sbd_volume( legacy_asset::from_asset( v.sbd_volume ) )
    {}
 
-   legacy_asset   clc_volume;
+   legacy_asset   nlg_volume;
    legacy_asset   sbd_volume;
 };
 
@@ -927,14 +927,14 @@ struct order
    order( const market_history::order& o ) :
       order_price( o.order_price ),
       real_price( o.real_price ),
-      colab( o.colab ),
+      knowledgr( o.knowledgr ),
       sbd( o.sbd ),
       created( o.created )
    {}
 
    legacy_price   order_price;
    double         real_price;
-   share_type     colab;
+   share_type     knowledgr;
    share_type     sbd;
    time_point_sec created;
 };
@@ -1016,11 +1016,11 @@ DEFINE_API_ARGS( verify_account_authority,               vector< variant >,   bo
 DEFINE_API_ARGS( get_active_votes,                       vector< variant >,   vector< tags::vote_state > )
 DEFINE_API_ARGS( get_account_votes,                      vector< variant >,   vector< account_vote > )
 DEFINE_API_ARGS( get_content,                            vector< variant >,   discussion )
-DEFINE_API_ARGS( get_content_count,                      vector< variant >,   uint64_t )///~~~~~CLC~~~~~
-DEFINE_API_ARGS( list_comments,							 vector< variant >,   vector< discussion > )///~~~~~CLC~~~~~
-DEFINE_API_ARGS( get_content_parent_series,				 vector< variant >,   vector< discussion > )///~~~~~CLC~~~~~
-DEFINE_API_ARGS( list_pending_stakes,					 vector< variant >,   vector< api_stake_pending_object > )///~~~~~CLC~~~~~
-DEFINE_API_ARGS( find_pending_stake,					 vector< variant >,   vector< api_stake_pending_object > )///~~~~~CLC~~~~~
+DEFINE_API_ARGS( get_content_count,                      vector< variant >,   uint64_t )///~~~~~NLG~~~~~
+DEFINE_API_ARGS( list_comments,							 vector< variant >,   vector< discussion > )///~~~~~NLG~~~~~
+DEFINE_API_ARGS( get_content_parent_series,				 vector< variant >,   vector< discussion > )///~~~~~NLG~~~~~
+DEFINE_API_ARGS( list_pending_stakes,					 vector< variant >,   vector< api_stake_pending_object > )///~~~~~NLG~~~~~
+DEFINE_API_ARGS( find_pending_stake,					 vector< variant >,   vector< api_stake_pending_object > )///~~~~~NLG~~~~~
 DEFINE_API_ARGS( get_content_replies,                    vector< variant >,   vector< discussion > )
 DEFINE_API_ARGS( get_tags_used_by_author,                vector< variant >,   vector< tags::tag_count_object > )
 DEFINE_API_ARGS( get_post_discussions_by_payout,         vector< variant >,   vector< discussion > )
@@ -1114,11 +1114,11 @@ public:
       (get_active_votes)
       (get_account_votes)
 	  (get_content)
-	  (get_content_count)//~~~~~CLC~~~~~
-	  (list_comments)//~~~~~CLC~~~~~
-	  (get_content_parent_series)//~~~~~CLC~~~~~
-	  (list_pending_stakes)///~~~~~CLC~~~~~
-	  (find_pending_stake)///~~~~~CLC~~~~~
+	  (get_content_count)//~~~~~NLG~~~~~
+	  (list_comments)//~~~~~NLG~~~~~
+	  (get_content_parent_series)//~~~~~NLG~~~~~
+	  (list_pending_stakes)///~~~~~NLG~~~~~
+	  (find_pending_stake)///~~~~~NLG~~~~~
       (get_content_replies)
       (get_tags_used_by_author)
       (get_post_discussions_by_payout)
@@ -1166,52 +1166,52 @@ public:
       std::unique_ptr< detail::condenser_api_impl > my;
 };
 
-} } } // colab::plugins::condenser_api
+} } } // knowledgr::plugins::condenser_api
 
-FC_REFLECT( colab::plugins::condenser_api::discussion_index,
+FC_REFLECT( knowledgr::plugins::condenser_api::discussion_index,
             (category)(trending)(payout)(payout_comments)(trending30)(updated)(created)(responses)(active)(votes)(maturing)(best)(hot)(promoted)(cashout) )
 
-FC_REFLECT( colab::plugins::condenser_api::api_tag_object,
+FC_REFLECT( knowledgr::plugins::condenser_api::api_tag_object,
             (name)(total_payouts)(net_votes)(top_posts)(comments)(trending) )
 
-FC_REFLECT( colab::plugins::condenser_api::state,
+FC_REFLECT( knowledgr::plugins::condenser_api::state,
             (current_route)(props)(tag_idx)(tags)(content)(accounts)(witnesses)(discussion_idx)(witness_schedule)/*(feed_price)*/(error) )
 
-FC_REFLECT( colab::plugins::condenser_api::api_limit_order_object,
+FC_REFLECT( knowledgr::plugins::condenser_api::api_limit_order_object,
             (id)(created)(expiration)(seller)(orderid)(for_sale)(sell_price)(real_price)(rewarded) )
 
-FC_REFLECT( colab::plugins::condenser_api::api_operation_object,
+FC_REFLECT( knowledgr::plugins::condenser_api::api_operation_object,
              (trx_id)(block)(trx_in_block)(op_in_trx)(virtual_op)(timestamp)(op) )
 
-FC_REFLECT( colab::plugins::condenser_api::api_account_object,
+FC_REFLECT( knowledgr::plugins::condenser_api::api_account_object,
              (id)(name)(owner)(active)(posting)(memo_key)(json_metadata)(proxy)(last_owner_update)(last_account_update)
              (created)(mined)
              (recovery_account)(last_account_recovery)(reset_account)
              (comment_count)(lifetime_vote_count)(post_count)(can_vote)(voting_manabar)
-			 //(voting_power)///~~~~~CLC~~~~~
+			 //(voting_power)///~~~~~NLG~~~~~
              (balance)
              (savings_balance)
-             /*(sbd_balance)*////~~~~~CLC~~~~~ NO NEED for CoLab
-			 /*(sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)*////~~~~~CLC~~~~~ NO NEED for CoLab
-             /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~CLC~~~~~ NO NEED for CoLab
+             /*(sbd_balance)*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+			 /*(sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+             /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~NLG~~~~~ NO NEED for Knowledgr
 			 (savings_withdraw_requests)
-             (reward_clc_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_clc)*/////~~~~~CLC~~~~~ NO NEED for CoLab
+             (reward_nlg_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_nlg)*/////~~~~~NLG~~~~~ NO NEED for Knowledgr
              /*(vesting_shares)(delegated_vesting_shares)(received_vesting_shares)(vesting_withdraw_rate)(next_vesting_withdrawal)*/(withdrawn)(to_withdraw)(withdraw_routes)
              (curation_rewards)
              (posting_rewards)
              (proxied_vsf_votes)(witnesses_voted_for)
              (last_post)(last_root_post)(last_vote_time)
              (post_bandwidth)(pending_claimed_accounts)
-			 (expertises)///~~~~~CLC~~~~~
-			 (member_of)///~~~~~CLC~~~~~
-			 (stake_balance)///~~~~~CLC~~~~~
+			 (expertises)///~~~~~NLG~~~~~
+			 (member_of)///~~~~~NLG~~~~~
+			 (stake_balance)///~~~~~NLG~~~~~
 			 (rep_power_rewards)
           )
 
-FC_REFLECT_DERIVED( colab::plugins::condenser_api::extended_account, (colab::plugins::condenser_api::api_account_object),
+FC_REFLECT_DERIVED( knowledgr::plugins::condenser_api::extended_account, (knowledgr::plugins::condenser_api::api_account_object),
             (vesting_balance)(reputation)(transfer_history)(market_history)(post_history)(vote_history)(other_history)(witness_votes)(tags_usage)(guest_bloggers)(open_orders)(comments)(feed)(blog)(recent_replies)(recommended) )
 
-FC_REFLECT( colab::plugins::condenser_api::api_comment_object,
+FC_REFLECT( knowledgr::plugins::condenser_api::api_comment_object,
              (id)(author)(permlink)
              (category)(parent_author)(parent_permlink)
              (title)(body)(json_metadata)(last_update)(created)(active)(last_payout)
@@ -1220,22 +1220,22 @@ FC_REFLECT( colab::plugins::condenser_api::api_comment_object,
              (children_abs_rshares)(cashout_time)(max_cashout_time)
              (total_vote_weight)(reward_weight)(total_payout_value)(curator_payout_value)(author_rewards)(net_votes)
              (root_author)(root_permlink)
-             (max_accepted_payout)(percent_colab_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
+             (max_accepted_payout)(percent_knowledgr_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)
-			 (type)(citations)//~~~~~CLC~~~~~
+			 (type)(citations)//~~~~~NLG~~~~~
           )
 
-FC_REFLECT( colab::plugins::condenser_api::extended_dynamic_global_properties,
+FC_REFLECT( knowledgr::plugins::condenser_api::extended_dynamic_global_properties,
             (head_block_number)(head_block_id)(time)
             (current_witness)(total_pow)(num_pow_witnesses)
             (virtual_supply)(current_supply)(confidential_supply)/*(current_sbd_supply)(confidential_sbd_supply)*/
-            /*(total_vesting_fund_clc)(total_vesting_shares)*/
-            (total_reward_fund_colab)(total_reward_shares2)/*(pending_rewarded_vesting_shares)(pending_rewarded_vesting_clc)*/
+            /*(total_vesting_fund_nlg)(total_vesting_shares)*/
+            (total_reward_fund_knowledgr)(total_reward_shares2)/*(pending_rewarded_vesting_shares)(pending_rewarded_vesting_nlg)*/
             /*(sbd_interest_rate)(sbd_print_rate)*/
             (maximum_block_size)(current_aslot)(recent_slots_filled)(participation_count)(last_irreversible_block_num)(vote_power_reserve_rate)
             (delegation_return_period)(reverse_auction_seconds)/*(sbd_stop_percent)(sbd_start_percent)*/(num_of_accounts) )
 
-FC_REFLECT( colab::plugins::condenser_api::api_witness_object,
+FC_REFLECT( knowledgr::plugins::condenser_api::api_witness_object,
              (id)
              (owner)
              (created)
@@ -1247,10 +1247,10 @@ FC_REFLECT( colab::plugins::condenser_api::api_witness_object,
              (running_version)
              (hardfork_version_vote)(hardfork_time_vote)
              (available_witness_account_subsidies)
-			 (schedule)//~~~~~CLC~~~~~
+			 (schedule)//~~~~~NLG~~~~~
           )
 
-FC_REFLECT( colab::plugins::condenser_api::api_witness_schedule_object,
+FC_REFLECT( knowledgr::plugins::condenser_api::api_witness_schedule_object,
              (id)
              (current_virtual_time)
              (next_shuffle_block_num)
@@ -1271,13 +1271,13 @@ FC_REFLECT( colab::plugins::condenser_api::api_witness_schedule_object,
              (min_witness_account_subsidy_decay)
           )
 
-// FC_REFLECT( colab::plugins::condenser_api::api_feed_history_object,
+// FC_REFLECT( knowledgr::plugins::condenser_api::api_feed_history_object,
 //              (id)
 //              (current_median_history)
 //              (price_history)
 //           )
 
-FC_REFLECT( colab::plugins::condenser_api::api_reward_fund_object,
+FC_REFLECT( knowledgr::plugins::condenser_api::api_reward_fund_object,
             (id)
             (name)
             (reward_balance)
@@ -1290,14 +1290,14 @@ FC_REFLECT( colab::plugins::condenser_api::api_reward_fund_object,
             (curation_reward_curve)
          )
 
-FC_REFLECT( colab::plugins::condenser_api::api_escrow_object,
+FC_REFLECT( knowledgr::plugins::condenser_api::api_escrow_object,
              (id)(escrow_id)(from)(to)(agent)
              (ratification_deadline)(escrow_expiration)
-             /*(sbd_balance)*////~~~~~CLC~~~~~ NO NEED for CoLab
-			 (clc_balance)(pending_fee)
+             /*(sbd_balance)*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+			 (nlg_balance)(pending_fee)
              (to_approved)(agent_approved)(disputed) )
 
-FC_REFLECT( colab::plugins::condenser_api::api_savings_withdraw_object,
+FC_REFLECT( knowledgr::plugins::condenser_api::api_savings_withdraw_object,
              (id)
              (from)
              (to)
@@ -1307,63 +1307,63 @@ FC_REFLECT( colab::plugins::condenser_api::api_savings_withdraw_object,
              (complete)
           )
 
-// FC_REFLECT( colab::plugins::condenser_api::api_vesting_delegation_object,
+// FC_REFLECT( knowledgr::plugins::condenser_api::api_vesting_delegation_object,
 //             (id)(delegator)(delegatee)(vesting_shares)(min_delegation_time) )
 
-// FC_REFLECT( colab::plugins::condenser_api::api_vesting_delegation_expiration_object,
+// FC_REFLECT( knowledgr::plugins::condenser_api::api_vesting_delegation_expiration_object,
 //             (id)(delegator)(vesting_shares)(expiration) )
 
-// FC_REFLECT( colab::plugins::condenser_api::api_convert_request_object,
+// FC_REFLECT( knowledgr::plugins::condenser_api::api_convert_request_object,
 //              (id)(owner)(requestid)(amount)(conversion_date) )
 
-FC_REFLECT_DERIVED( colab::plugins::condenser_api::discussion, (colab::plugins::condenser_api::api_comment_object),
+FC_REFLECT_DERIVED( knowledgr::plugins::condenser_api::discussion, (knowledgr::plugins::condenser_api::api_comment_object),
              (url)(root_title)(pending_payout_value)(total_pending_payout_value)
              (active_votes)(replies)(author_reputation)(promoted)
              (body_length)(reblogged_by)(first_reblogged_by)(first_reblogged_on)
           )
 
-FC_REFLECT( colab::plugins::condenser_api::scheduled_hardfork,
+FC_REFLECT( knowledgr::plugins::condenser_api::scheduled_hardfork,
             (hf_version)(live_time) )
 
-FC_REFLECT( colab::plugins::condenser_api::account_vote,
+FC_REFLECT( knowledgr::plugins::condenser_api::account_vote,
             (authorperm)(weight)(rshares)(percent)(time) )
 
-FC_REFLECT( colab::plugins::condenser_api::tag_index, (trending) )
+FC_REFLECT( knowledgr::plugins::condenser_api::tag_index, (trending) )
 
-FC_REFLECT_ENUM( colab::plugins::condenser_api::withdraw_route_type, (incoming)(outgoing)(all) )
+FC_REFLECT_ENUM( knowledgr::plugins::condenser_api::withdraw_route_type, (incoming)(outgoing)(all) )
 
-FC_REFLECT( colab::plugins::condenser_api::get_version_return,
-            (blockchain_version)(colab_revision)(fc_revision) )
+FC_REFLECT( knowledgr::plugins::condenser_api::get_version_return,
+            (blockchain_version)(knowledgr_revision)(fc_revision) )
 
-FC_REFLECT( colab::plugins::condenser_api::broadcast_transaction_synchronous_return,
+FC_REFLECT( knowledgr::plugins::condenser_api::broadcast_transaction_synchronous_return,
             (id)(block_num)(trx_num)(expired) )
 
-FC_REFLECT( colab::plugins::condenser_api::comment_feed_entry,
+FC_REFLECT( knowledgr::plugins::condenser_api::comment_feed_entry,
             (comment)(reblog_by)(reblog_on)(entry_id) )
 
-FC_REFLECT( colab::plugins::condenser_api::comment_blog_entry,
+FC_REFLECT( knowledgr::plugins::condenser_api::comment_blog_entry,
             (comment)(blog)(reblog_on)(entry_id) )
 
-FC_REFLECT( colab::plugins::condenser_api::ticker,
-            (latest)(lowest_ask)(highest_bid)(percent_change)(clc_volume)(sbd_volume) )
+FC_REFLECT( knowledgr::plugins::condenser_api::ticker,
+            (latest)(lowest_ask)(highest_bid)(percent_change)(nlg_volume)(sbd_volume) )
 
-FC_REFLECT( colab::plugins::condenser_api::volume,
-            (clc_volume)(sbd_volume) )
+FC_REFLECT( knowledgr::plugins::condenser_api::volume,
+            (nlg_volume)(sbd_volume) )
 
-FC_REFLECT( colab::plugins::condenser_api::order,
-            (order_price)(real_price)(colab)(sbd)(created) )
+FC_REFLECT( knowledgr::plugins::condenser_api::order,
+            (order_price)(real_price)(knowledgr)(sbd)(created) )
 
-FC_REFLECT( colab::plugins::condenser_api::order_book,
+FC_REFLECT( knowledgr::plugins::condenser_api::order_book,
             (bids)(asks) )
 
-FC_REFLECT( colab::plugins::condenser_api::market_trade,
+FC_REFLECT( knowledgr::plugins::condenser_api::market_trade,
             (date)(current_pays)(open_pays) )
-///~~~~~CLC~~~~~{
-FC_REFLECT( colab::plugins::condenser_api::api_stake_pending_object,
+///~~~~~NLG~~~~~{
+FC_REFLECT( knowledgr::plugins::condenser_api::api_stake_pending_object,
 				(id)
 				(account)
 				(amount)
 				(created)
 				(type)
 		  )
-///~~~~~CLC~~~~~}
+///~~~~~NLG~~~~~}

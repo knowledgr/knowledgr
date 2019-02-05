@@ -1,8 +1,8 @@
-#include <colab/plugins/chain_api/chain_api_plugin.hpp>
-#include <colab/plugins/chain_api/chain_api.hpp>
+#include <knowledgr/plugins/chain_api/chain_api_plugin.hpp>
+#include <knowledgr/plugins/chain_api/chain_api.hpp>
 
 
-namespace colab { namespace plugins { namespace chain {
+namespace knowledgr { namespace plugins { namespace chain {
 
 chain_api_plugin::chain_api_plugin() {}
 chain_api_plugin::~chain_api_plugin() {}
@@ -17,4 +17,4 @@ void chain_api_plugin::plugin_initialize( const variables_map& options )
 void chain_api_plugin::plugin_startup() {}
 void chain_api_plugin::plugin_shutdown() {}
 
-} } } // colab::plugins::chain
+} } } // knowledgr::plugins::chain

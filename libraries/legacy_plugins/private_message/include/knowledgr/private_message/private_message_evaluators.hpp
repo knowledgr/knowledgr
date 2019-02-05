@@ -1,12 +1,12 @@
 #pragma once
 
-#include <colab/chain/evaluator.hpp>
+#include <knowledgr/chain/evaluator.hpp>
 
-#include <colab/private_message/private_message_operations.hpp>
-#include <colab/private_message/private_message_plugin.hpp>
+#include <knowledgr/private_message/private_message_operations.hpp>
+#include <knowledgr/private_message/private_message_plugin.hpp>
 
-namespace colab { namespace private_message {
+namespace knowledgr { namespace private_message {
 
-COLAB_DEFINE_PLUGIN_EVALUATOR( private_message_plugin, colab::private_message::private_message_plugin_operation, private_message )
+KNOWLEDGR_DEFINE_PLUGIN_EVALUATOR( private_message_plugin, knowledgr::private_message::private_message_plugin_operation, private_message )
 
 } }

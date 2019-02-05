@@ -1,7 +1,7 @@
 #pragma once
-#include <colab/plugins/condenser_api/condenser_api.hpp>
+#include <knowledgr/plugins/condenser_api/condenser_api.hpp>
 
-namespace colab { namespace wallet {
+namespace knowledgr { namespace wallet {
 
 using std::vector;
 using fc::variant;
@@ -67,11 +67,11 @@ struct remote_node_api
    vector< tags::vote_state > get_active_votes( account_name_type, string );
    vector< condenser_api::account_vote > get_account_votes( account_name_type );
    condenser_api::discussion get_content( account_name_type, string );
-   uint64_t get_content_count( );///~~~~~CLC~~~~~
-   vector< condenser_api::discussion > list_comments(uint32_t);///~~~~~CLC~~~~~
-   vector< condenser_api::discussion > get_content_parent_series(account_name_type, string);///~~~~~CLC~~~~~
-   vector< condenser_api::api_stake_pending_object > list_pending_stakes(uint32_t);///~~~~~CLC~~~~~
-   vector< condenser_api::api_stake_pending_object > find_pending_stake(account_name_type);///~~~~~CLC~~~~~
+   uint64_t get_content_count( );///~~~~~NLG~~~~~
+   vector< condenser_api::discussion > list_comments(uint32_t);///~~~~~NLG~~~~~
+   vector< condenser_api::discussion > get_content_parent_series(account_name_type, string);///~~~~~NLG~~~~~
+   vector< condenser_api::api_stake_pending_object > list_pending_stakes(uint32_t);///~~~~~NLG~~~~~
+   vector< condenser_api::api_stake_pending_object > find_pending_stake(account_name_type);///~~~~~NLG~~~~~
    vector< condenser_api::discussion > get_content_replies( account_name_type, string );
    vector< tags::tag_count_object > get_tags_used_by_author( account_name_type );
    vector< condenser_api::discussion > get_discussions_by_payout( tags::discussion_query );
@@ -115,7 +115,7 @@ struct remote_node_api
 
 } }
 
-FC_API( colab::wallet::remote_node_api,
+FC_API( knowledgr::wallet::remote_node_api,
         (get_version)
         (get_trending_tags)
         (get_state)
@@ -162,11 +162,11 @@ FC_API( colab::wallet::remote_node_api,
         (get_active_votes)
         (get_account_votes)
         (get_content)
-		(get_content_count)///~~~~~CLC~~~~~
-		(list_comments)///~~~~~CLC~~~~~
-		(get_content_parent_series)///~~~~~CLC~~~~~
-		(list_pending_stakes)///~~~~~CLC~~~~~
-		(find_pending_stake)///~~~~~CLC~~~~~
+		(get_content_count)///~~~~~NLG~~~~~
+		(list_comments)///~~~~~NLG~~~~~
+		(get_content_parent_series)///~~~~~NLG~~~~~
+		(list_pending_stakes)///~~~~~NLG~~~~~
+		(find_pending_stake)///~~~~~NLG~~~~~
         (get_content_replies)
         (get_tags_used_by_author)
         (get_discussions_by_payout)

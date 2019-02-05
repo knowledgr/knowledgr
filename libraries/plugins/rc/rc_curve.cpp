@@ -1,6 +1,6 @@
 
-#include <colab/plugins/rc/rc_curve.hpp>
-#include <colab/protocol/config.hpp>
+#include <knowledgr/plugins/rc/rc_curve.hpp>
+#include <knowledgr/protocol/config.hpp>
 
 #include <fc/exception/exception.hpp>
 #include <fc/log/logger.hpp>
@@ -8,7 +8,7 @@
 
 #include <cstdint>
 
-namespace colab { namespace plugins { namespace rc {
+namespace knowledgr { namespace plugins { namespace rc {
 
 void rc_curve_gen_params::validate()const
 {

@@ -1,11 +1,11 @@
-file(GLOB HEADERS "include/colab/plugins/debug_node/*.hpp")
+file(GLOB HEADERS "include/knowledgr/plugins/debug_node/*.hpp")
 
 add_library( debug_node_plugin
              ${HEADERS}
              debug_node_plugin.cpp
            )
 
-target_link_libraries( debug_node_plugin chain_plugin colab_utilities witness_plugin )
+target_link_libraries( debug_node_plugin chain_plugin knowledgr_utilities witness_plugin )
 target_include_directories( debug_node_plugin
                             PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 

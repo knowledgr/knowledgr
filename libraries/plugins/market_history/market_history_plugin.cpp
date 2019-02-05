@@ -1,27 +1,27 @@
 
-#include <colab/chain/colab_fwd.hpp>
+#include <knowledgr/chain/knowledgr_fwd.hpp>
 
-#include <colab/plugins/market_history/market_history_plugin.hpp>
+#include <knowledgr/plugins/market_history/market_history_plugin.hpp>
 
-#include <colab/chain/database.hpp>
-#include <colab/chain/index.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/index.hpp>
 
 #include <fc/io/json.hpp>
 
 #define MH_BUCKET_SIZE "market-history-bucket-size"
 #define MH_BUCKETS_PER_SIZE "market-history-buckets-per-size"
 
-namespace colab { namespace plugins { namespace market_history {
+namespace knowledgr { namespace plugins { namespace market_history {
 
 namespace detail {
 
-using colab::protocol::fill_order_operation;
+using knowledgr::protocol::fill_order_operation;
 
 class market_history_plugin_impl
 {
    public:
       market_history_plugin_impl() :
-         _db( appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db() ) {}
+         _db( appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db() ) {}
       virtual ~market_history_plugin_impl() {}
 
       /**
@@ -68,62 +68,62 @@ void market_history_plugin_impl::on_post_apply_operation( const operation_notifi
                b.open = open;
                b.seconds = bucket;
 
-               b.colab.fill( ( op.open_pays.symbol == CLC_SYMBOL ) ? op.open_pays.amount : op.current_pays.amount );
-#ifdef COLAB_ENABLE_SMT
-                  b.symbol = ( op.open_pays.symbol == CLC_SYMBOL ) ? op.current_pays.symbol : op.open_pays.symbol;
+               b.knowledgr.fill( ( op.open_pays.symbol == NLG_SYMBOL ) ? op.open_pays.amount : op.current_pays.amount );
+#ifdef KNOWLEDGR_ENABLE_SMT
+                  b.symbol = ( op.open_pays.symbol == NLG_SYMBOL ) ? op.current_pays.symbol : op.open_pays.symbol;
 #endif
-                  b.non_colab.fill( ( op.open_pays.symbol == CLC_SYMBOL ) ? op.current_pays.amount : op.open_pays.amount );
+                  b.non_knowledgr.fill( ( op.open_pays.symbol == NLG_SYMBOL ) ? op.current_pays.amount : op.open_pays.amount );
             });
          }
          else
          {
             _db.modify( *itr, [&]( bucket_object& b )
             {
-#ifdef COLAB_ENABLE_SMT
-               b.symbol = ( op.open_pays.symbol == CLC_SYMBOL ) ? op.current_pays.symbol : op.open_pays.symbol;
+#ifdef KNOWLEDGR_ENABLE_SMT
+               b.symbol = ( op.open_pays.symbol == NLG_SYMBOL ) ? op.current_pays.symbol : op.open_pays.symbol;
 #endif
-               if( op.open_pays.symbol == CLC_SYMBOL )
+               if( op.open_pays.symbol == NLG_SYMBOL )
                {
-                  b.colab.volume += op.open_pays.amount;
-                  b.colab.close = op.open_pays.amount;
+                  b.knowledgr.volume += op.open_pays.amount;
+                  b.knowledgr.close = op.open_pays.amount;
 
-                  b.non_colab.volume += op.current_pays.amount;
-                  b.non_colab.close = op.current_pays.amount;
+                  b.non_knowledgr.volume += op.current_pays.amount;
+                  b.non_knowledgr.close = op.current_pays.amount;
 
                   if( b.high() < price( op.current_pays, op.open_pays ) )
                   {
-                     b.colab.high = op.open_pays.amount;
+                     b.knowledgr.high = op.open_pays.amount;
 
-                     b.non_colab.high = op.current_pays.amount;
+                     b.non_knowledgr.high = op.current_pays.amount;
                   }
 
                   if( b.low() > price( op.current_pays, op.open_pays ) )
                   {
-                     b.colab.low = op.open_pays.amount;
+                     b.knowledgr.low = op.open_pays.amount;
 
-                     b.non_colab.low = op.current_pays.amount;
+                     b.non_knowledgr.low = op.current_pays.amount;
                   }
                }
                else
                {
-                  b.colab.volume += op.current_pays.amount;
-                  b.colab.close = op.current_pays.amount;
+                  b.knowledgr.volume += op.current_pays.amount;
+                  b.knowledgr.close = op.current_pays.amount;
 
-                  b.non_colab.volume += op.open_pays.amount;
-                  b.non_colab.close = op.open_pays.amount;
+                  b.non_knowledgr.volume += op.open_pays.amount;
+                  b.non_knowledgr.close = op.open_pays.amount;
 
                   if( b.high() < price( op.open_pays, op.current_pays ) )
                   {
-                     b.colab.high = op.current_pays.amount;
+                     b.knowledgr.high = op.current_pays.amount;
 
-                     b.non_colab.high = op.open_pays.amount;
+                     b.non_knowledgr.high = op.open_pays.amount;
                   }
 
                   if( b.low() > price( op.open_pays, op.current_pays ) )
                   {
-                     b.colab.low = op.current_pays.amount;
+                     b.knowledgr.low = op.current_pays.amount;
 
-                     b.non_colab.low = op.open_pays.amount;
+                     b.non_knowledgr.low = op.open_pays.amount;
                   }
                }
             });
@@ -212,4 +212,4 @@ uint32_t market_history_plugin::get_max_history_per_bucket() const
    return my->_maximum_history_per_bucket_size;
 }
 
-} } } // colab::plugins::market_history
+} } } // knowledgr::plugins::market_history

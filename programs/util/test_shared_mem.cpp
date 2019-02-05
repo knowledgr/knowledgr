@@ -8,12 +8,12 @@
 #include <fc/reflect/reflect.hpp>
 #include <fc/variant.hpp>
 
-#include <colab/utilities/key_conversion.hpp>
+#include <knowledgr/utilities/key_conversion.hpp>
 
-#include <colab/protocol/types.hpp>
-#include <colab/protocol/authority.hpp>
+#include <knowledgr/protocol/types.hpp>
+#include <knowledgr/protocol/authority.hpp>
 
-#include <colab/chain/shared_authority.hpp>
+#include <knowledgr/chain/shared_authority.hpp>
 
 #include <boost/interprocess/managed_mapped_file.hpp>
 #include <boost/interprocess/allocators/allocator.hpp>
@@ -98,7 +98,7 @@ struct book
      template<typename Constructor, typename Allocator>
      book( Constructor&& c, const Allocator& al )
      :name(al),author(al),pages(0),prize(0),
-     auth( allocator<colab::chain::shared_authority >( al )),
+     auth( allocator<knowledgr::chain::shared_authority >( al )),
      deq( allocator<shared_string>( al ) )
      {
         c( *this );
@@ -108,12 +108,12 @@ struct book
      shared_string author;
      int32_t                          pages;
      int32_t                          prize;
-     colab::chain::shared_authority auth;
+     knowledgr::chain::shared_authority auth;
      t_deque< shared_string > deq;
 
      book(const shared_string::allocator_type& al):
      name(al),author(al),pages(0),prize(0),
-     auth( allocator<colab::chain::shared_authority >( al )),
+     auth( allocator<knowledgr::chain::shared_authority >( al )),
      deq( allocator<shared_string>( al ) )
      {}
 
@@ -174,7 +174,7 @@ int main(int argc, char** argv, char** envp)
    }
 
    //b.pages = pbc->size();
-   //b.auth = colab::chain::authority( 1, "dan", pbc->size() );
+   //b.auth = knowledgr::chain::authority( 1, "dan", pbc->size() );
 #ifndef ENABLE_STD_ALLOCATOR
    pbc->emplace( [&]( book& b ) {
                  b.name = "emplace name";

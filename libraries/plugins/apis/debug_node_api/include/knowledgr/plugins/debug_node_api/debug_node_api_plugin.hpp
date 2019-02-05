@@ -1,13 +1,13 @@
 #pragma once
-#include <colab/plugins/debug_node/debug_node_plugin.hpp>
-#include <colab/plugins/json_rpc/json_rpc_plugin.hpp>
+#include <knowledgr/plugins/debug_node/debug_node_plugin.hpp>
+#include <knowledgr/plugins/json_rpc/json_rpc_plugin.hpp>
 
 #include <appbase/application.hpp>
 
-#define COLAB_DEBUG_NODE_API_PLUGIN_NAME "debug_node_api"
+#define KNOWLEDGR_DEBUG_NODE_API_PLUGIN_NAME "debug_node_api"
 
 
-namespace colab { namespace plugins { namespace debug_node {
+namespace knowledgr { namespace plugins { namespace debug_node {
 
 using namespace appbase;
 
@@ -15,14 +15,14 @@ class debug_node_api_plugin : public appbase::plugin< debug_node_api_plugin >
 {
 public:
    APPBASE_PLUGIN_REQUIRES(
-      (colab::plugins::debug_node::debug_node_plugin)
-      (colab::plugins::json_rpc::json_rpc_plugin)
+      (knowledgr::plugins::debug_node::debug_node_plugin)
+      (knowledgr::plugins::json_rpc::json_rpc_plugin)
    )
 
    debug_node_api_plugin();
    virtual ~debug_node_api_plugin();
 
-   static const std::string& name() { static std::string name = COLAB_DEBUG_NODE_API_PLUGIN_NAME; return name; }
+   static const std::string& name() { static std::string name = KNOWLEDGR_DEBUG_NODE_API_PLUGIN_NAME; return name; }
 
    virtual void set_program_options( options_description& cli, options_description& cfg ) override;
 
@@ -33,4 +33,4 @@ public:
    std::shared_ptr< class debug_node_api > api;
 };
 
-} } } // colab::plugins::debug_node
+} } } // knowledgr::plugins::debug_node

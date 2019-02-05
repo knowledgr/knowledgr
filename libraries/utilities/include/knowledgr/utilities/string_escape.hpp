@@ -25,8 +25,8 @@
 
 #include <string>
 
-namespace colab { namespace utilities {
+namespace knowledgr { namespace utilities {
 
   std::string escape_string_for_c_source_code(const std::string& input);
 
-} } // end namespace colab::utilities
+} } // end namespace knowledgr::utilities

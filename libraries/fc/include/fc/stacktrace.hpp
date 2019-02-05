@@ -2,7 +2,7 @@
 // published under the WTFPL v2.0
 
 // Downloaded from http://panthema.net/2008/0901-stacktrace-demangled/
-// and modified for C++ and FC by Colabit, Inc.
+// and modified for C++ and FC by Knowledgrit, Inc.
 
 #pragma once
 

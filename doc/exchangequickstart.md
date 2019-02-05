@@ -1,15 +1,15 @@
 Exchange Quickstart
 -------------------
 
-System Requirements: A dedicated server or virtual machine with a minimum of 64GB of RAM, and at least 220GB of fast **local** SSD storage. COLAB is one of the most active blockchains in the world and handles an incredibly large amount of transactions per second, as such, it requires fast storage to run efficiently.
+System Requirements: A dedicated server or virtual machine with a minimum of 64GB of RAM, and at least 220GB of fast **local** SSD storage. KNOWLEDGR is one of the most active blockchains in the world and handles an incredibly large amount of transactions per second, as such, it requires fast storage to run efficiently.
 
 With the right equipment and technical configuration a reindex should take **no longer than 24 hours**.  If recommendations are not followed precisely, the reindex can drag on for days or even weeks with significant slowdowns towards the end.
 
 Physically attached SSD will ensure an optimal reindex time.  SSD over a NAS or some kind of network storage backed by SSD will often have much higher latency. As an example, AWS EBS is not performant enough. A good recommended instance in AWS is the i3.2xlarge, it comes with a physically attached nVME drive (it must be formatted and mounted on instance launch).
 
-You can save a lot of time by replaying from a `block_log`. Colabit hosts a public `block_log` that is regularly updated. Using the docker method below, we have made it easy to download a `block_log` at launch and replay from it by passing in the `USE_PUBLIC_BLOCKLOG=1` environment variable. To do this, make sure your data directory is empty and does not contain a block_log. If you are not using docker, you can download a `block_log` from [here](https://s3.amazonaws.com/colabit-dev-blockchainstate/block_log-latest), put it in your colab data directory, and use the `--replay-blockchain` command line option. Be sure to remove the option if you have to stop/restart colabd after already being synced.
+You can save a lot of time by replaying from a `block_log`. Knowledgrit hosts a public `block_log` that is regularly updated. Using the docker method below, we have made it easy to download a `block_log` at launch and replay from it by passing in the `USE_PUBLIC_BLOCKLOG=1` environment variable. To do this, make sure your data directory is empty and does not contain a block_log. If you are not using docker, you can download a `block_log` from [here](https://s3.amazonaws.com/knowledgrit-dev-blockchainstate/block_log-latest), put it in your knowledgr data directory, and use the `--replay-blockchain` command line option. Be sure to remove the option if you have to stop/restart knowledgrd after already being synced.
 
-We recommend using docker to both build and run COLAB for exchanges. Docker is the world's leading containerization platform and using it guarantees that your build and run environment is identical to what our developers use. You can still build from source and you can keep both blockchain data and wallet data outside of the docker container. The instructions below will show you how to do this in just a few easy steps.
+We recommend using docker to both build and run KNOWLEDGR for exchanges. Docker is the world's leading containerization platform and using it guarantees that your build and run environment is identical to what our developers use. You can still build from source and you can keep both blockchain data and wallet data outside of the docker container. The instructions below will show you how to do this in just a few easy steps.
 
 ### Install docker and git (if not already installed)
 
@@ -24,12 +24,12 @@ curl -fsSL get.docker.com -o get-docker.sh
 sh get-docker.sh
 ```
 
-### Clone the colab repo
+### Clone the knowledgr repo
 
-Pull in the colab repo from the official source on github and then change into the directory that's created for it.
+Pull in the knowledgr repo from the official source on github and then change into the directory that's created for it.
 ```
-git clone https://github.com/norestlabs/colab
-cd colab
+git clone https://github.com/norestlabs/knowledgr
+cd knowledgr
 ```
 
 ### Build the image from source with docker
@@ -37,7 +37,7 @@ cd colab
 Docker isn't just for downloading already built images, it can be used to build from source the same way you would otherwise build. By doing this you ensure that your build environment is identical to what we use to develop the software. Use the below command to start the build:
 
 ```
-docker build -t=norestlabs/colab .
+docker build -t=norestlabs/knowledgr .
 ```
 
 Don't forget the `.` at the end of the line which indicates the build target is in the current directory.
@@ -51,20 +51,20 @@ When the build completes you will see a message indicating that it is 'successfu
 If you'd like to use our already pre-built official binary images, it's as simple as downloading it from the Dockerhub registry with only one command:
 
 ```
-docker pull norestlabs/colab
+docker pull norestlabs/knowledgr
 ```
 
 ### Running a binary build without a Docker container
 
-If you build with Docker but do not want to run colabd from within a docker container, you can stop here with this step and instead extract the binary from the container with the commands below. If you are going to run colabd with docker (recommended method), skip this step altogether. We're simply providing an option for everyone's use-case. Our binaries are built mostly static, only dynamically linking to linux kernel libraries. We have tested and confirmed binaries built in Docker work on Ubuntu and Fedora and will likely work on many other Linux distrubutions. Building the image yourself or pulling one of our pre-built images both work.
+If you build with Docker but do not want to run knowledgrd from within a docker container, you can stop here with this step and instead extract the binary from the container with the commands below. If you are going to run knowledgrd with docker (recommended method), skip this step altogether. We're simply providing an option for everyone's use-case. Our binaries are built mostly static, only dynamically linking to linux kernel libraries. We have tested and confirmed binaries built in Docker work on Ubuntu and Fedora and will likely work on many other Linux distrubutions. Building the image yourself or pulling one of our pre-built images both work.
 
 To extract the binary you need to start a container and then copy the file from it.
 
 ```
-docker run -d --name colabd-exchange colabit/colab
-docker cp colabd-exchange:/usr/local/colabd-default/bin/colabd /local/path/to/colabd
-docker cp colabd-exchange:/usr/local/colabd-default/bin/cli_wallet /local/path/to/cli_wallet
-docker stop colabd-exchange
+docker run -d --name knowledgrd-exchange knowledgrit/knowledgr
+docker cp knowledgrd-exchange:/usr/local/knowledgrd-default/bin/knowledgrd /local/path/to/knowledgrd
+docker cp knowledgrd-exchange:/usr/local/knowledgrd-default/bin/cli_wallet /local/path/to/cli_wallet
+docker stop knowledgrd-exchange
 ```
 
 For your convenience, we have provided a provided an [example\_config](example\_config.ini) that we expect should be sufficient to run your exchange node. Be sure to rename it to simply `config.ini`.
@@ -75,7 +75,7 @@ For re-usability, you can create directories to store blockchain and wallet data
 
 ```
 mkdir blockchain
-mkdir colabwallet
+mkdir knowledgrwallet
 ```
 
 ### Run the container
@@ -83,7 +83,7 @@ mkdir colabwallet
 The below command will start a daemonized instance opening ports for p2p and RPC  while linking the directories we created for blockchain and wallet data inside the container. Fill in `TRACK_ACCOUNT` with the name of your exchange account that you want to follow. The `-v` flags are how you map directories outside of the container to the inside, you list the path to the directories you created earlier before the `:` for each `-v` flag. The restart policy ensures that the container will automatically restart even if your system is restarted.
 
 ```
-docker run -d --name colabd-exchange --env TRACK_ACCOUNT=nameofaccount --env USE_PUBLIC_BLOCKLOG=1 -p 2001:2001 -p 8090:8090 -v /path/to/colabwallet:/var/colabwallet -v /path/to/blockchain:/var/lib/colabd/blockchain --restart always colabit/colab
+docker run -d --name knowledgrd-exchange --env TRACK_ACCOUNT=nameofaccount --env USE_PUBLIC_BLOCKLOG=1 -p 2001:2001 -p 8090:8090 -v /path/to/knowledgrwallet:/var/knowledgrwallet -v /path/to/blockchain:/var/lib/knowledgrd/blockchain --restart always knowledgrit/knowledgr
 ```
 
 You can see that the container is running with the `docker ps` command.
@@ -97,5 +97,5 @@ Initial syncing will take between 6 and 48 hours depending on your equipment, fa
 The command below will run the cli_wallet from inside the running container while mapping the `wallet.json` to the directory you created for it on the host.
 
 ```
-docker exec -it colabd-exchange /usr/local/colabd-default/bin/cli_wallet -w /var/colabwallet/wallet.json
+docker exec -it knowledgrd-exchange /usr/local/knowledgrd-default/bin/cli_wallet -w /var/knowledgrwallet/wallet.json
 ```

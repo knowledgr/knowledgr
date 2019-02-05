@@ -1,14 +1,14 @@
 #pragma once
-#include <colab/protocol/base.hpp>
+#include <knowledgr/protocol/base.hpp>
 
-#include <colab/chain/evaluator.hpp>
+#include <knowledgr/chain/evaluator.hpp>
 
 
-namespace colab { namespace plugins { namespace follow {
+namespace knowledgr { namespace plugins { namespace follow {
 
 using namespace std;
-using colab::protocol::account_name_type;
-using colab::protocol::base_operation;
+using knowledgr::protocol::account_name_type;
+using knowledgr::protocol::base_operation;
 
 class follow_plugin;
 
@@ -39,14 +39,14 @@ typedef fc::static_variant<
          reblog_operation
       > follow_plugin_operation;
 
-COLAB_DEFINE_PLUGIN_EVALUATOR( follow_plugin, follow_plugin_operation, follow );
-COLAB_DEFINE_PLUGIN_EVALUATOR( follow_plugin, follow_plugin_operation, reblog );
+KNOWLEDGR_DEFINE_PLUGIN_EVALUATOR( follow_plugin, follow_plugin_operation, follow );
+KNOWLEDGR_DEFINE_PLUGIN_EVALUATOR( follow_plugin, follow_plugin_operation, reblog );
 
-} } } // colab::plugins::follow
+} } } // knowledgr::plugins::follow
 
-FC_REFLECT( colab::plugins::follow::follow_operation, (follower)(following)(what) )
-FC_REFLECT( colab::plugins::follow::reblog_operation, (account)(author)(permlink) )
+FC_REFLECT( knowledgr::plugins::follow::follow_operation, (follower)(following)(what) )
+FC_REFLECT( knowledgr::plugins::follow::reblog_operation, (account)(author)(permlink) )
 
-COLAB_DECLARE_OPERATION_TYPE( colab::plugins::follow::follow_plugin_operation )
+KNOWLEDGR_DECLARE_OPERATION_TYPE( knowledgr::plugins::follow::follow_plugin_operation )
 
-FC_REFLECT_TYPENAME( colab::plugins::follow::follow_plugin_operation )
+FC_REFLECT_TYPENAME( knowledgr::plugins::follow::follow_plugin_operation )

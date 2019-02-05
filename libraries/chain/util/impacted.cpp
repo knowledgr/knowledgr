@@ -1,13 +1,13 @@
-#include <colab/protocol/authority.hpp>
+#include <knowledgr/protocol/authority.hpp>
 
-#include <colab/chain/util/impacted.hpp>
+#include <knowledgr/chain/util/impacted.hpp>
 
 #include <fc/utility.hpp>
 
-namespace colab { namespace app {
+namespace knowledgr { namespace app {
 
 using namespace fc;
-using namespace colab::protocol;
+using namespace knowledgr::protocol;
 
 // TODO:  Review all of these, especially no-ops
 struct get_impacted_account_visitor
@@ -31,7 +31,7 @@ struct get_impacted_account_visitor
       _impacted.insert( op.creator );
    }
 
-   ///~~~~~CLC~~~~~{
+   ///~~~~~NLG~~~~~{
    void operator()( const account_admin_update_operation& op )
    {
 	   _impacted.insert( op.admin );
@@ -54,7 +54,7 @@ struct get_impacted_account_visitor
 	   _impacted.insert( op.admin );
 	   _impacted.insert( op.account);
    }
-   ///~~~~~CLC~~~~~}
+   ///~~~~~NLG~~~~~}
 
 //    void operator()( const account_create_with_delegation_operation& op )
 //    {
@@ -260,12 +260,12 @@ struct get_impacted_account_visitor
       _impacted.insert( op.from );
       _impacted.insert( op.to );
    }
-   ///~~~~~CLC~~~~~{
+   ///~~~~~NLG~~~~~{
    void operator()( const stake_process_time_operation& op )
    {
 	   _impacted.insert( op.account );
    }
-   ///~~~~~CLC~~~~~}
+   ///~~~~~NLG~~~~~}
    void operator()( const return_vesting_delegation_operation& op )
    {
       _impacted.insert( op.account );
@@ -284,7 +284,7 @@ struct get_impacted_account_visitor
 
    void operator()( const hardfork_operation& op )
    {
-      _impacted.insert( COLAB_INIT_MINER_NAME );
+      _impacted.insert( KNOWLEDGR_INIT_MINER_NAME );
    }
 
    //void operator()( const operation& op ){}

@@ -1,7 +1,7 @@
 #pragma once
-#include <colab/app/plugin.hpp>
+#include <knowledgr/app/plugin.hpp>
 
-#include <colab/chain/colab_object_types.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
 
 #include <boost/multi_index/composite_key.hpp>
 
@@ -15,22 +15,22 @@
 // various template automagic depends on them being known at compile
 // time.
 //
-#ifndef COLAB_BLOCKCHAIN_STATISTICS_SPACE_ID
-#define COLAB_BLOCKCHAIN_STATISTICS_SPACE_ID 9
+#ifndef KNOWLEDGR_BLOCKCHAIN_STATISTICS_SPACE_ID
+#define KNOWLEDGR_BLOCKCHAIN_STATISTICS_SPACE_ID 9
 #endif
 
-#ifndef COLAB_BLOCKCHAIN_STATISTICS_PLUGIN_NAME
-#define COLAB_BLOCKCHAIN_STATISTICS_PLUGIN_NAME "chain_stats"
+#ifndef KNOWLEDGR_BLOCKCHAIN_STATISTICS_PLUGIN_NAME
+#define KNOWLEDGR_BLOCKCHAIN_STATISTICS_PLUGIN_NAME "chain_stats"
 #endif
 
-namespace colab { namespace blockchain_statistics {
+namespace knowledgr { namespace blockchain_statistics {
 
-using namespace colab::chain;
+using namespace knowledgr::chain;
 using app::application;
 
 enum blockchain_statistics_object_type
 {
-   bucket_object_type = ( COLAB_BLOCKCHAIN_STATISTICS_SPACE_ID << 8 )
+   bucket_object_type = ( KNOWLEDGR_BLOCKCHAIN_STATISTICS_SPACE_ID << 8 )
 };
 
 namespace detail
@@ -38,13 +38,13 @@ namespace detail
    class blockchain_statistics_plugin_impl;
 }
 
-class blockchain_statistics_plugin : public colab::app::plugin
+class blockchain_statistics_plugin : public knowledgr::app::plugin
 {
    public:
       blockchain_statistics_plugin( application* app );
       virtual ~blockchain_statistics_plugin();
 
-      virtual std::string plugin_name()const override { return COLAB_BLOCKCHAIN_STATISTICS_PLUGIN_NAME; }
+      virtual std::string plugin_name()const override { return KNOWLEDGR_BLOCKCHAIN_STATISTICS_PLUGIN_NAME; }
       virtual void plugin_set_program_options(
          boost::program_options::options_description& cli,
          boost::program_options::options_description& cfg ) override;
@@ -76,7 +76,7 @@ struct bucket_object : public object< bucket_object_type, bucket_object >
    uint32_t             operations = 0;                              ///< Operations evaluated
    uint32_t             transactions = 0;                            ///< Transactions processed
    uint32_t             transfers = 0;                               ///< Account to account transfers
-   share_type           clc_transferred = 0;                       ///< CLC transferred from account to account
+   share_type           nlg_transferred = 0;                       ///< NLG transferred from account to account
    share_type           sbd_transferred = 0;                         ///< SBD transferred from account to account
    share_type           sbd_paid_as_interest = 0;                    ///< SBD paid as interest
    uint32_t             paid_accounts_created = 0;                   ///< Accounts created with fee
@@ -95,20 +95,20 @@ struct bucket_object : public object< bucket_object_type, bucket_object >
    share_type           sbd_paid_to_authors = 0;                     ///< Ammount of SBD paid to authors
    share_type           vests_paid_to_authors = 0;                   ///< Ammount of VESS paid to authors
    share_type           vests_paid_to_curators = 0;                  ///< Ammount of VESTS paid to curators
-   share_type           liquidity_rewards_paid = 0;                  ///< Ammount of CLC paid to market makers
-   uint32_t             transfers_to_vesting = 0;                    ///< Transfers of CLC into VESTS
-   share_type           clc_vested = 0;                            ///< Ammount of CLC vested
+   share_type           liquidity_rewards_paid = 0;                  ///< Ammount of NLG paid to market makers
+   uint32_t             transfers_to_vesting = 0;                    ///< Transfers of NLG into VESTS
+   share_type           nlg_vested = 0;                            ///< Ammount of NLG vested
    uint32_t             new_vesting_withdrawal_requests = 0;         ///< New vesting withdrawal requests
    uint32_t             modified_vesting_withdrawal_requests = 0;    ///< Changes to vesting withdrawal requests
    share_type           vesting_withdraw_rate_delta = 0;
    uint32_t             vesting_withdrawals_processed = 0;           ///< Number of vesting withdrawals
    uint32_t             finished_vesting_withdrawals = 0;            ///< Processed vesting withdrawals that are now finished
-   share_type           vests_withdrawn = 0;                         ///< Ammount of VESTS withdrawn to CLC
+   share_type           vests_withdrawn = 0;                         ///< Ammount of VESTS withdrawn to NLG
    share_type           vests_transferred = 0;                       ///< Ammount of VESTS transferred to another account
    uint32_t             sbd_conversion_requests_created = 0;         ///< SBD conversion requests created
    share_type           sbd_to_be_converted = 0;                     ///< Amount of SBD to be converted
    uint32_t             sbd_conversion_requests_filled = 0;          ///< SBD conversion requests filled
-   share_type           clc_converted = 0;                         ///< Amount of CLC that was converted
+   share_type           nlg_converted = 0;                         ///< Amount of NLG that was converted
    uint32_t             limit_orders_created = 0;                    ///< Limit orders created
    uint32_t             limit_orders_filled = 0;                     ///< Limit orders filled
    uint32_t             limit_orders_cancelled = 0;                  ///< Limit orders cancelled
@@ -134,9 +134,9 @@ typedef multi_index_container<
    allocator< bucket_object >
 > bucket_index;
 
-} } // colab::blockchain_statistics
+} } // knowledgr::blockchain_statistics
 
-FC_REFLECT( colab::blockchain_statistics::bucket_object,
+FC_REFLECT( knowledgr::blockchain_statistics::bucket_object,
    (id)
    (open)
    (seconds)
@@ -145,7 +145,7 @@ FC_REFLECT( colab::blockchain_statistics::bucket_object,
    (operations)
    (transactions)
    (transfers)
-   (clc_transferred)
+   (nlg_transferred)
    (sbd_transferred)
    (sbd_paid_as_interest)
    (paid_accounts_created)
@@ -166,7 +166,7 @@ FC_REFLECT( colab::blockchain_statistics::bucket_object,
    (vests_paid_to_curators)
    (liquidity_rewards_paid)
    (transfers_to_vesting)
-   (clc_vested)
+   (nlg_vested)
    (new_vesting_withdrawal_requests)
    (modified_vesting_withdrawal_requests)
    (vesting_withdraw_rate_delta)
@@ -177,11 +177,11 @@ FC_REFLECT( colab::blockchain_statistics::bucket_object,
    (sbd_conversion_requests_created)
    (sbd_to_be_converted)
    (sbd_conversion_requests_filled)
-   (clc_converted)
+   (nlg_converted)
    (limit_orders_created)
    (limit_orders_filled)
    (limit_orders_cancelled)
    (total_pow)
    (estimated_hashpower)
 )
-CHAINBASE_SET_INDEX_TYPE( colab::blockchain_statistics::bucket_object, colab::blockchain_statistics::bucket_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::blockchain_statistics::bucket_object, knowledgr::blockchain_statistics::bucket_index )

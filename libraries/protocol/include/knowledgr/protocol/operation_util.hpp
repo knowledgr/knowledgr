@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <colab/protocol/authority.hpp>
+#include <knowledgr/protocol/authority.hpp>
 
 #include <fc/variant.hpp>
 
@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
 struct get_required_auth_visitor
 {
@@ -44,15 +44,15 @@ struct get_required_auth_visitor
    }
 };
 
-} } // colab::protocol
+} } // knowledgr::protocol
 
 //
-// Place COLAB_DECLARE_OPERATION_TYPE in a .hpp file to declare
+// Place KNOWLEDGR_DECLARE_OPERATION_TYPE in a .hpp file to declare
 // functions related to your operation type
 //
-#define COLAB_DECLARE_OPERATION_TYPE( OperationType )                            \
+#define KNOWLEDGR_DECLARE_OPERATION_TYPE( OperationType )                            \
                                                                                  \
-namespace colab { namespace protocol {                                           \
+namespace knowledgr { namespace protocol {                                           \
                                                                                  \
 void operation_validate( const OperationType& o );                               \
 void operation_get_required_authorities( const OperationType& op,                \
@@ -61,4 +61,4 @@ void operation_get_required_authorities( const OperationType& op,               
                                          flat_set< account_name_type >& posting, \
                                          vector< authority >& other );           \
                                                                                  \
-} } /* colab::protocol */
+} } /* knowledgr::protocol */

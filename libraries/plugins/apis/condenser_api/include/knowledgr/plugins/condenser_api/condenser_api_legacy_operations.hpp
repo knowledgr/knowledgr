@@ -1,10 +1,10 @@
-#include <colab/protocol/operations.hpp>
+#include <knowledgr/protocol/operations.hpp>
 
-#include <colab/chain/witness_objects.hpp>
+#include <knowledgr/chain/witness_objects.hpp>
 
-#include <colab/plugins/condenser_api/condenser_api_legacy_asset.hpp>
+#include <knowledgr/plugins/condenser_api/condenser_api_legacy_asset.hpp>
 
-namespace colab { namespace plugins { namespace condenser_api {
+namespace knowledgr { namespace plugins { namespace condenser_api {
 
    template< typename T >
    struct convert_to_legacy_static_variant
@@ -25,7 +25,7 @@ namespace colab { namespace plugins { namespace condenser_api {
 
    typedef static_variant<
             protocol::comment_payout_beneficiaries
-   #ifdef COLAB_ENABLE_SMT
+   #ifdef KNOWLEDGR_ENABLE_SMT
             ,protocol::allowed_vote_assets
    #endif
          > legacy_comment_options_extensions;
@@ -37,7 +37,7 @@ namespace colab { namespace plugins { namespace condenser_api {
             protocol::equihash_pow
          > legacy_pow2_work;
 
-   using namespace colab::protocol;
+   using namespace knowledgr::protocol;
 
    typedef account_update_operation               legacy_account_update_operation;
    typedef comment_operation                      legacy_comment_operation;
@@ -95,20 +95,20 @@ namespace colab { namespace plugins { namespace condenser_api {
       operator legacy_chain_properties() const
       {
          legacy_chain_properties props;
-         props.account_creation_fee = legacy_colab_asset::from_asset( asset( account_creation_fee ) );
+         props.account_creation_fee = legacy_knowledgr_asset::from_asset( asset( account_creation_fee ) );
          props.maximum_block_size = maximum_block_size;
 //         props.sbd_interest_rate = sbd_interest_rate;
          return props;
       }
 
       legacy_asset   account_creation_fee;
-      uint32_t       maximum_block_size = COLAB_MIN_BLOCK_SIZE_LIMIT * 2;
-//      uint16_t       sbd_interest_rate = COLAB_DEFAULT_SBD_INTEREST_RATE;
-      int32_t        account_subsidy_budget = COLAB_DEFAULT_ACCOUNT_SUBSIDY_BUDGET;
-      uint32_t       account_subsidy_decay = COLAB_DEFAULT_ACCOUNT_SUBSIDY_DECAY;
+      uint32_t       maximum_block_size = KNOWLEDGR_MIN_BLOCK_SIZE_LIMIT * 2;
+//      uint16_t       sbd_interest_rate = KNOWLEDGR_DEFAULT_SBD_INTEREST_RATE;
+      int32_t        account_subsidy_budget = KNOWLEDGR_DEFAULT_ACCOUNT_SUBSIDY_BUDGET;
+      uint32_t       account_subsidy_decay = KNOWLEDGR_DEFAULT_ACCOUNT_SUBSIDY_DECAY;
    };
 
-   ///~~~~~CLC~~~~~{
+   ///~~~~~NLG~~~~~{
    struct legacy_account_expertise_update_operation
    {
 	   legacy_account_expertise_update_operation() {}
@@ -197,7 +197,7 @@ namespace colab { namespace plugins { namespace condenser_api {
 	   account_name_type             admin;
 	   account_name_type             account;
    };
-   ///~~~~~CLC~~~~~}
+   ///~~~~~NLG~~~~~}
 
    struct legacy_account_create_operation
    {
@@ -290,7 +290,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          author( op.author ),
          permlink( op.permlink ),
          max_accepted_payout( legacy_asset::from_asset( op.max_accepted_payout ) ),
-         percent_colab_dollars( op.percent_colab_dollars ),
+         percent_knowledgr_dollars( op.percent_knowledgr_dollars ),
          allow_votes( op.allow_votes ),
          allow_curation_rewards( op.allow_curation_rewards )
       {
@@ -308,7 +308,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          op.author = author;
          op.permlink = permlink;
          op.max_accepted_payout = max_accepted_payout;
-         op.percent_colab_dollars = percent_colab_dollars;
+         op.percent_knowledgr_dollars = percent_knowledgr_dollars;
          op.allow_curation_rewards = allow_curation_rewards;
          op.extensions.insert( extensions.begin(), extensions.end() );
          return op;
@@ -318,7 +318,7 @@ namespace colab { namespace plugins { namespace condenser_api {
       string            permlink;
 
       legacy_asset      max_accepted_payout;
-      uint16_t          percent_colab_dollars;
+      uint16_t          percent_knowledgr_dollars;
       bool              allow_votes;
       bool              allow_curation_rewards;
       legacy_comment_options_extensions_type extensions;
@@ -360,7 +360,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          agent( op.agent ),
          escrow_id( op.escrow_id ),
 //         sbd_amount( legacy_asset::from_asset( op.sbd_amount ) ),
-         clc_amount( legacy_asset::from_asset( op.clc_amount ) ),
+         nlg_amount( legacy_asset::from_asset( op.nlg_amount ) ),
          fee( legacy_asset::from_asset( op.fee ) ),
          ratification_deadline( op.ratification_deadline ),
          escrow_expiration( op.escrow_expiration ),
@@ -375,7 +375,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          op.agent = agent;
          op.escrow_id = escrow_id;
 //         op.sbd_amount = sbd_amount;
-         op.clc_amount = clc_amount;
+         op.nlg_amount = nlg_amount;
          op.fee = fee;
          op.ratification_deadline = ratification_deadline;
          op.escrow_expiration = escrow_expiration;
@@ -389,7 +389,7 @@ namespace colab { namespace plugins { namespace condenser_api {
       uint32_t          escrow_id;
 
 //      legacy_asset      sbd_amount;
-      legacy_asset      clc_amount;
+      legacy_asset      nlg_amount;
       legacy_asset      fee;
 
       time_point_sec    ratification_deadline;
@@ -409,7 +409,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          receiver( op.receiver ),
          escrow_id( op.escrow_id ),
 //         sbd_amount( legacy_asset::from_asset( op.sbd_amount ) ),
-         clc_amount( legacy_asset::from_asset( op.clc_amount ) )
+         nlg_amount( legacy_asset::from_asset( op.nlg_amount ) )
       {}
 
       operator escrow_release_operation()const
@@ -422,7 +422,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          op.receiver = receiver;
          op.escrow_id = escrow_id;
 //         op.sbd_amount = sbd_amount;
-         op.clc_amount = clc_amount;
+         op.nlg_amount = nlg_amount;
          return op;
       }
 
@@ -434,7 +434,7 @@ namespace colab { namespace plugins { namespace condenser_api {
 
       uint32_t          escrow_id;
 //      legacy_asset      sbd_amount;
-      legacy_asset      clc_amount;
+      legacy_asset      nlg_amount;
    };
 
    struct legacy_pow2_operation
@@ -454,7 +454,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          pow2_operation op;
          work.visit( convert_to_legacy_static_variant< pow2_work >( op.work ) );
          op.new_owner_key = new_owner_key;
-         op.props.account_creation_fee = legacy_colab_asset::from_asset( asset( props.account_creation_fee ) );
+         op.props.account_creation_fee = legacy_knowledgr_asset::from_asset( asset( props.account_creation_fee ) );
          op.props.maximum_block_size = props.maximum_block_size;
 //         op.props.sbd_interest_rate = props.sbd_interest_rate;
          return op;
@@ -528,7 +528,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          op.owner = owner;
          op.url = url;
          op.block_signing_key = block_signing_key;
-         op.props.account_creation_fee = legacy_colab_asset::from_asset( asset( props.account_creation_fee ) );
+         op.props.account_creation_fee = legacy_knowledgr_asset::from_asset( asset( props.account_creation_fee ) );
          op.props.maximum_block_size = props.maximum_block_size;
 //         op.props.sbd_interest_rate = props.sbd_interest_rate;
          op.fee = fee;
@@ -709,7 +709,7 @@ namespace colab { namespace plugins { namespace condenser_api {
       legacy_claim_reward_balance_operation() {}
       legacy_claim_reward_balance_operation( const claim_reward_balance_operation& op ) :
          account( op.account ),
-         reward_colab( legacy_asset::from_asset( op.reward_colab ) )//,
+         reward_knowledgr( legacy_asset::from_asset( op.reward_knowledgr ) )//,
 //          reward_sbd( legacy_asset::from_asset( op.reward_sbd ) ),
 //          reward_vests( legacy_asset::from_asset( op.reward_vests ) )
       {}
@@ -718,14 +718,14 @@ namespace colab { namespace plugins { namespace condenser_api {
       {
          claim_reward_balance_operation op;
          op.account = account;
-         op.reward_colab = reward_colab;
+         op.reward_knowledgr = reward_knowledgr;
 //          op.reward_sbd = reward_sbd;
 //          op.reward_vests = reward_vests;
          return op;
       }
 
       account_name_type account;
-      legacy_asset      reward_colab;
+      legacy_asset      reward_knowledgr;
 //       legacy_asset      reward_sbd;
 //       legacy_asset      reward_vests;
    };
@@ -754,7 +754,7 @@ namespace colab { namespace plugins { namespace condenser_api {
 //    };
 
    struct legacy_author_reward_operation
-   {///~~~~~CLC~~~~~ CHANGED HERE, TOO, remove sbd, vesting...
+   {///~~~~~NLG~~~~~ CHANGED HERE, TOO, remove sbd, vesting...
       legacy_author_reward_operation() {}
       legacy_author_reward_operation( const author_reward_operation& op ) :
          author( op.author ),
@@ -978,7 +978,7 @@ namespace colab { namespace plugins { namespace condenser_api {
       string            memo;
    };
 
-   ///~~~~~CLC~~~~~}
+   ///~~~~~NLG~~~~~}
    struct legacy_stake_process_time_operation
    {
 	   legacy_stake_process_time_operation() {}
@@ -999,30 +999,30 @@ namespace colab { namespace plugins { namespace condenser_api {
 	   uint32_t          type;///0-stake, 1-unstake
 	   time_point_sec    created;
    };
-   ///~~~~~CLC~~~~~}
+   ///~~~~~NLG~~~~~}
 
    struct legacy_return_vesting_delegation_operation
    {
       legacy_return_vesting_delegation_operation() {}
       legacy_return_vesting_delegation_operation( const return_vesting_delegation_operation& op ) :
          account( op.account ),
-         clc_tokens( legacy_asset::from_asset( op.clc_tokens ) )
+         nlg_tokens( legacy_asset::from_asset( op.nlg_tokens ) )
       {}
 
       operator return_vesting_delegation_operation()const
       {
          return_vesting_delegation_operation op;
          op.account = account;
-         op.clc_tokens = clc_tokens;
+         op.nlg_tokens = nlg_tokens;
          return op;
       }
 
       account_name_type account;
-      legacy_asset      clc_tokens;
+      legacy_asset      nlg_tokens;
    };
 
    struct legacy_comment_benefactor_reward_operation
-   {///~~~~~CLC~~~~~ HERE, TOO. 
+   {///~~~~~NLG~~~~~ HERE, TOO. 
       legacy_comment_benefactor_reward_operation() {}
       legacy_comment_benefactor_reward_operation( const comment_benefactor_reward_operation& op ) :
          benefactor( op.benefactor ),
@@ -1052,19 +1052,19 @@ namespace colab { namespace plugins { namespace condenser_api {
       legacy_producer_reward_operation() {}
       legacy_producer_reward_operation( const producer_reward_operation& op ) :
          producer( op.producer ),
-         clc_tokens( legacy_asset::from_asset( op.clc_tokens ) )
+         nlg_tokens( legacy_asset::from_asset( op.nlg_tokens ) )
       {}
 
       operator producer_reward_operation()const
       {
          producer_reward_operation op;
          op.producer = producer;
-         op.clc_tokens = clc_tokens;
+         op.nlg_tokens = nlg_tokens;
          return op;
       }
 
       account_name_type producer;
-      legacy_asset      clc_tokens;
+      legacy_asset      nlg_tokens;
    };
 
    struct legacy_claim_account_operation
@@ -1102,10 +1102,10 @@ namespace colab { namespace plugins { namespace condenser_api {
 //            legacy_feed_publish_operation,
 //            legacy_convert_operation,
 			legacy_account_create_operation,
-			legacy_account_admin_update_operation,///~~~~~CLC~~~~~
-			legacy_account_expertise_update_operation,///~~~~~CLC~~~~~
-			legacy_stake_request_operation,///~~~~~CLC~~~~~
-			legacy_stake_process_operation,///~~~~~CLC~~~~~
+			legacy_account_admin_update_operation,///~~~~~NLG~~~~~
+			legacy_account_expertise_update_operation,///~~~~~NLG~~~~~
+			legacy_stake_request_operation,///~~~~~NLG~~~~~
+			legacy_stake_process_operation,///~~~~~NLG~~~~~
             legacy_account_update_operation,
             legacy_witness_update_operation,
             legacy_account_witness_vote_operation,
@@ -1149,7 +1149,7 @@ namespace colab { namespace plugins { namespace condenser_api {
             legacy_fill_order_operation,
             legacy_shutdown_witness_operation,
             legacy_fill_transfer_from_savings_operation,
-			legacy_stake_process_time_operation, ///~~~~~CLC~~~~~
+			legacy_stake_process_time_operation, ///~~~~~NLG~~~~~
             legacy_hardfork_operation,
             legacy_comment_payout_update_operation,
             legacy_return_vesting_delegation_operation,
@@ -1235,7 +1235,7 @@ namespace colab { namespace plugins { namespace condenser_api {
          return true;
       }
 
-	  ///~~~~~CLC~~~~~{
+	  ///~~~~~NLG~~~~~{
 	  bool operator()( const account_admin_update_operation& op )const
 	  {
 		  l_op = legacy_account_admin_update_operation( op );
@@ -1259,7 +1259,7 @@ namespace colab { namespace plugins { namespace condenser_api {
 		  l_op = legacy_stake_process_operation( op );
 		  return true;
 	  }
-	  ///~~~~~CLC~~~~~}
+	  ///~~~~~NLG~~~~~}
 
       bool operator()( const witness_update_operation& op )const
       {
@@ -1381,13 +1381,13 @@ namespace colab { namespace plugins { namespace condenser_api {
          return true;
       }
 
-	  ///~~~~~CLC~~~~~{
+	  ///~~~~~NLG~~~~~{
 	  bool operator()( const stake_process_time_operation& op )const
 	  {
 		  l_op = legacy_stake_process_time_operation( op );
 		  return true;
 	  }
-	  ///~~~~~CLC~~~~~}
+	  ///~~~~~NLG~~~~~}
 
       bool operator()( const return_vesting_delegation_operation& op )const
       {
@@ -1460,7 +1460,7 @@ struct convert_from_legacy_operation_visitor
       return operation( account_create_operation( op ) );
    }
 
-   //~~~~~CLC~~~~~{
+   //~~~~~NLG~~~~~{
    operation operator()( const legacy_account_admin_update_operation& op )const
    {
 	   return operation( account_admin_update_operation( op ) );
@@ -1480,7 +1480,7 @@ struct convert_from_legacy_operation_visitor
    {
 	   return operation( stake_process_operation( op ) );
    }
-   //~~~~~CLC~~~~~}
+   //~~~~~NLG~~~~~}
 
    operation operator()( const legacy_witness_update_operation& op )const
    {
@@ -1582,12 +1582,12 @@ struct convert_from_legacy_operation_visitor
       return operation( fill_transfer_from_savings_operation( op ) );
    }
 
-///~~~~~CLC~~~~~{
+///~~~~~NLG~~~~~{
    operation operator()( const legacy_stake_process_time_operation& op )const
    {
 	   return operation( stake_process_time_operation( op ) );
    }
-///~~~~~CLC~~~~~}
+///~~~~~NLG~~~~~}
 
    operation operator()( const legacy_return_vesting_delegation_operation& op )const
    {
@@ -1616,18 +1616,18 @@ struct convert_from_legacy_operation_visitor
    }
 };
 
-} } } // colab::plugins::condenser_api
+} } } // knowledgr::plugins::condenser_api
 
 namespace fc {
 
-void to_variant( const colab::plugins::condenser_api::legacy_operation&, fc::variant& );
-void from_variant( const fc::variant&, colab::plugins::condenser_api::legacy_operation& );
+void to_variant( const knowledgr::plugins::condenser_api::legacy_operation&, fc::variant& );
+void from_variant( const fc::variant&, knowledgr::plugins::condenser_api::legacy_operation& );
 
-void to_variant( const colab::plugins::condenser_api::legacy_comment_options_extensions&, fc::variant& );
-void from_variant( const fc::variant&, colab::plugins::condenser_api::legacy_comment_options_extensions& );
+void to_variant( const knowledgr::plugins::condenser_api::legacy_comment_options_extensions&, fc::variant& );
+void from_variant( const fc::variant&, knowledgr::plugins::condenser_api::legacy_comment_options_extensions& );
 
-void to_variant( const colab::plugins::condenser_api::legacy_pow2_work&, fc::variant& );
-void from_variant( const fc::variant&, colab::plugins::condenser_api::legacy_pow2_work& );
+void to_variant( const knowledgr::plugins::condenser_api::legacy_pow2_work&, fc::variant& );
+void from_variant( const fc::variant&, knowledgr::plugins::condenser_api::legacy_pow2_work& );
 
 struct from_old_static_variant
 {
@@ -1674,37 +1674,37 @@ void old_sv_from_variant( const fc::variant& v, T& sv )
 
 }
 
-FC_REFLECT( colab::plugins::condenser_api::api_chain_properties,
+FC_REFLECT( knowledgr::plugins::condenser_api::api_chain_properties,
             (account_creation_fee)(maximum_block_size)/*(sbd_interest_rate)*/(account_subsidy_budget)(account_subsidy_decay)
           )
 
-FC_REFLECT( colab::plugins::condenser_api::legacy_price, (base)(quote) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_transfer_to_savings_operation, (from)(to)(amount)(memo) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_transfer_from_savings_operation, (from)(request_id)(to)(amount)(memo) )
-//FC_REFLECT( colab::plugins::condenser_api::legacy_convert_operation, (owner)(requestid)(amount) )
-//FC_REFLECT( colab::plugins::condenser_api::legacy_feed_publish_operation, (publisher)(exchange_rate) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_price, (base)(quote) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_transfer_to_savings_operation, (from)(to)(amount)(memo) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_transfer_from_savings_operation, (from)(request_id)(to)(amount)(memo) )
+//FC_REFLECT( knowledgr::plugins::condenser_api::legacy_convert_operation, (owner)(requestid)(amount) )
+//FC_REFLECT( knowledgr::plugins::condenser_api::legacy_feed_publish_operation, (publisher)(exchange_rate) )
 
-///~~~~~CLC~~~~~{
-FC_REFLECT( colab::plugins::condenser_api::legacy_account_expertise_update_operation,
+///~~~~~NLG~~~~~{
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_account_expertise_update_operation,
             (admin)
             (account)
             (expertises) )
 
-FC_REFLECT( colab::plugins::condenser_api::legacy_account_admin_update_operation,
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_account_admin_update_operation,
             (admin)
             (account) )
 
-FC_REFLECT( colab::plugins::condenser_api::legacy_stake_request_operation,
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_stake_request_operation,
             (account)
 			(amount)
 			(type) )
 
-FC_REFLECT( colab::plugins::condenser_api::legacy_stake_process_operation,
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_stake_process_operation,
 			(admin)
 			(account) )
-///~~~~~CLC~~~~~}
+///~~~~~NLG~~~~~}
 
-FC_REFLECT( colab::plugins::condenser_api::legacy_account_create_operation,
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_account_create_operation,
             (fee)
             (creator)
             (new_account_name)
@@ -1714,7 +1714,7 @@ FC_REFLECT( colab::plugins::condenser_api::legacy_account_create_operation,
             (memo_key)
             (json_metadata) )
 
-// FC_REFLECT( colab::plugins::condenser_api::legacy_account_create_with_delegation_operation,
+// FC_REFLECT( knowledgr::plugins::condenser_api::legacy_account_create_with_delegation_operation,
 //             (fee)
 //             (delegation)
 //             (creator)
@@ -1726,31 +1726,31 @@ FC_REFLECT( colab::plugins::condenser_api::legacy_account_create_operation,
 //             (json_metadata)
 //             (extensions) )
 
-FC_REFLECT( colab::plugins::condenser_api::legacy_transfer_operation, (from)(to)(amount)(memo) )
-//FC_REFLECT( colab::plugins::condenser_api::legacy_transfer_to_vesting_operation, (from)(to)(amount) )
-//FC_REFLECT( colab::plugins::condenser_api::legacy_withdraw_vesting_operation, (account)(vesting_shares) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_witness_update_operation, (owner)(url)(block_signing_key)(props)(fee) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_limit_order_create_operation, (owner)(orderid)(amount_to_sell)(min_to_receive)(fill_or_kill)(expiration) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_limit_order_create2_operation, (owner)(orderid)(amount_to_sell)(exchange_rate)(fill_or_kill)(expiration) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_comment_options_operation, (author)(permlink)(max_accepted_payout)(percent_colab_dollars)(allow_votes)(allow_curation_rewards)(extensions) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_escrow_transfer_operation, (from)(to)/*(sbd_amount)*/(clc_amount)(escrow_id)(agent)(fee)(json_meta)(ratification_deadline)(escrow_expiration) );
-FC_REFLECT( colab::plugins::condenser_api::legacy_escrow_release_operation, (from)(to)(agent)(who)(receiver)(escrow_id)/*(sbd_amount)*/(clc_amount) );
-FC_REFLECT( colab::plugins::condenser_api::legacy_pow2_operation, (work)(new_owner_key)(props) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_claim_reward_balance_operation, (account)(reward_colab)/*(reward_sbd)(reward_vests)*/ )
-//FC_REFLECT( colab::plugins::condenser_api::legacy_delegate_vesting_shares_operation, (delegator)(delegatee)(vesting_shares) );
-FC_REFLECT( colab::plugins::condenser_api::legacy_author_reward_operation, (author)(permlink)(payout)/*(clc_payout)(vesting_payout)*/ )///~~~~~CLC~~~~~
-FC_REFLECT( colab::plugins::condenser_api::legacy_curation_reward_operation, (curator)(reward)(comment_author)(comment_permlink) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_comment_reward_operation, (author)(permlink)(payout) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_fill_convert_request_operation, (owner)(requestid)(amount_in)(amount_out) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_liquidity_reward_operation, (owner)(payout) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_interest_operation, (owner)(interest) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_fill_vesting_withdraw_operation, (from_account)(to_account)(withdrawn)(deposited) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_fill_order_operation, (current_owner)(current_orderid)(current_pays)(open_owner)(open_orderid)(open_pays) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_fill_transfer_from_savings_operation, (from)(to)(amount)(request_id)(memo) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_stake_process_time_operation, (account)(amount)(type)(created) )///~~~~~CLC~~~~~
-FC_REFLECT( colab::plugins::condenser_api::legacy_return_vesting_delegation_operation, (account)(clc_tokens/*vesting_shares*/) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_comment_benefactor_reward_operation, (benefactor)(author)(permlink)(payout)/*(clc_payout)(vesting_payout)*/ )///~~~~~CLC~~~~~
-FC_REFLECT( colab::plugins::condenser_api::legacy_producer_reward_operation, (producer)(clc_tokens/*vesting_shares*/) )
-FC_REFLECT( colab::plugins::condenser_api::legacy_claim_account_operation, (creator)(fee)(extensions) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_transfer_operation, (from)(to)(amount)(memo) )
+//FC_REFLECT( knowledgr::plugins::condenser_api::legacy_transfer_to_vesting_operation, (from)(to)(amount) )
+//FC_REFLECT( knowledgr::plugins::condenser_api::legacy_withdraw_vesting_operation, (account)(vesting_shares) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_witness_update_operation, (owner)(url)(block_signing_key)(props)(fee) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_limit_order_create_operation, (owner)(orderid)(amount_to_sell)(min_to_receive)(fill_or_kill)(expiration) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_limit_order_create2_operation, (owner)(orderid)(amount_to_sell)(exchange_rate)(fill_or_kill)(expiration) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_comment_options_operation, (author)(permlink)(max_accepted_payout)(percent_knowledgr_dollars)(allow_votes)(allow_curation_rewards)(extensions) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_escrow_transfer_operation, (from)(to)/*(sbd_amount)*/(nlg_amount)(escrow_id)(agent)(fee)(json_meta)(ratification_deadline)(escrow_expiration) );
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_escrow_release_operation, (from)(to)(agent)(who)(receiver)(escrow_id)/*(sbd_amount)*/(nlg_amount) );
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_pow2_operation, (work)(new_owner_key)(props) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_claim_reward_balance_operation, (account)(reward_knowledgr)/*(reward_sbd)(reward_vests)*/ )
+//FC_REFLECT( knowledgr::plugins::condenser_api::legacy_delegate_vesting_shares_operation, (delegator)(delegatee)(vesting_shares) );
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_author_reward_operation, (author)(permlink)(payout)/*(nlg_payout)(vesting_payout)*/ )///~~~~~NLG~~~~~
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_curation_reward_operation, (curator)(reward)(comment_author)(comment_permlink) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_comment_reward_operation, (author)(permlink)(payout) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_fill_convert_request_operation, (owner)(requestid)(amount_in)(amount_out) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_liquidity_reward_operation, (owner)(payout) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_interest_operation, (owner)(interest) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_fill_vesting_withdraw_operation, (from_account)(to_account)(withdrawn)(deposited) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_fill_order_operation, (current_owner)(current_orderid)(current_pays)(open_owner)(open_orderid)(open_pays) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_fill_transfer_from_savings_operation, (from)(to)(amount)(request_id)(memo) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_stake_process_time_operation, (account)(amount)(type)(created) )///~~~~~NLG~~~~~
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_return_vesting_delegation_operation, (account)(nlg_tokens/*vesting_shares*/) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_comment_benefactor_reward_operation, (benefactor)(author)(permlink)(payout)/*(nlg_payout)(vesting_payout)*/ )///~~~~~NLG~~~~~
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_producer_reward_operation, (producer)(nlg_tokens/*vesting_shares*/) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_claim_account_operation, (creator)(fee)(extensions) )
 
-FC_REFLECT_TYPENAME( colab::plugins::condenser_api::legacy_operation )
+FC_REFLECT_TYPENAME( knowledgr::plugins::condenser_api::legacy_operation )

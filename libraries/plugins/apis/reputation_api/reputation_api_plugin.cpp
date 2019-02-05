@@ -1,8 +1,8 @@
-#include <colab/plugins/reputation_api/reputation_api_plugin.hpp>
-#include <colab/plugins/reputation_api/reputation_api.hpp>
+#include <knowledgr/plugins/reputation_api/reputation_api_plugin.hpp>
+#include <knowledgr/plugins/reputation_api/reputation_api.hpp>
 
 
-namespace colab { namespace plugins { namespace reputation {
+namespace knowledgr { namespace plugins { namespace reputation {
 
 reputation_api_plugin::reputation_api_plugin() {}
 reputation_api_plugin::~reputation_api_plugin() {}
@@ -17,4 +17,4 @@ void reputation_api_plugin::plugin_initialize( const variables_map& options )
 void reputation_api_plugin::plugin_startup() {}
 void reputation_api_plugin::plugin_shutdown() {}
 
-} } } // colab::plugins::reputation
+} } } // knowledgr::plugins::reputation

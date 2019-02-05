@@ -1,7 +1,7 @@
 #pragma once
-#include <colab/plugins/chain/chain_plugin.hpp>
+#include <knowledgr/plugins/chain/chain_plugin.hpp>
 
-#include <colab/chain/colab_object_types.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
 
 #include <boost/multi_index/composite_key.hpp>
 
@@ -15,24 +15,24 @@
 // various template automagic depends on them being known at compile
 // time.
 //
-#ifndef COLAB_MARKET_HISTORY_SPACE_ID
-#define COLAB_MARKET_HISTORY_SPACE_ID 7
+#ifndef KNOWLEDGR_MARKET_HISTORY_SPACE_ID
+#define KNOWLEDGR_MARKET_HISTORY_SPACE_ID 7
 #endif
 
-#ifndef COLAB_MARKET_HISTORY_PLUGIN_NAME
-#define COLAB_MARKET_HISTORY_PLUGIN_NAME "market_history"
+#ifndef KNOWLEDGR_MARKET_HISTORY_PLUGIN_NAME
+#define KNOWLEDGR_MARKET_HISTORY_PLUGIN_NAME "market_history"
 #endif
 
 
-namespace colab { namespace plugins { namespace market_history {
+namespace knowledgr { namespace plugins { namespace market_history {
 
-using namespace colab::chain;
+using namespace knowledgr::chain;
 using namespace appbase;
 
 enum market_history_object_types
 {
-   bucket_object_type        = ( COLAB_MARKET_HISTORY_SPACE_ID << 8 ),
-   order_history_object_type = ( COLAB_MARKET_HISTORY_SPACE_ID << 8 ) + 1
+   bucket_object_type        = ( KNOWLEDGR_MARKET_HISTORY_SPACE_ID << 8 ),
+   order_history_object_type = ( KNOWLEDGR_MARKET_HISTORY_SPACE_ID << 8 ) + 1
 };
 
 namespace detail { class market_history_plugin_impl; }
@@ -43,9 +43,9 @@ class market_history_plugin : public plugin< market_history_plugin >
       market_history_plugin();
       virtual ~market_history_plugin();
 
-      APPBASE_PLUGIN_REQUIRES( (colab::plugins::chain::chain_plugin) )
+      APPBASE_PLUGIN_REQUIRES( (knowledgr::plugins::chain::chain_plugin) )
 
-      static const std::string& name() { static std::string name = COLAB_MARKET_HISTORY_PLUGIN_NAME; return name; }
+      static const std::string& name() { static std::string name = KNOWLEDGR_MARKET_HISTORY_PLUGIN_NAME; return name; }
 
       flat_set< uint32_t > get_tracked_buckets() const;
       uint32_t get_max_history_per_bucket() const;
@@ -97,17 +97,17 @@ struct bucket_object : public object< bucket_object_type, bucket_object >
    fc::time_point_sec   open;
    uint32_t             seconds = 0;
 
-   bucket_object_details colab;
-   bucket_object_details non_colab;
+   bucket_object_details knowledgr;
+   bucket_object_details non_knowledgr;
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
    asset_symbol_type symbol = SBD_SYMBOL;
 
-   price high()const { return asset( non_colab.high, symbol ) / asset( colab.high, CLC_SYMBOL ); }
-   price low()const { return asset( non_colab.low, symbol ) / asset( colab.low, CLC_SYMBOL ); }
+   price high()const { return asset( non_knowledgr.high, symbol ) / asset( knowledgr.high, NLG_SYMBOL ); }
+   price low()const { return asset( non_knowledgr.low, symbol ) / asset( knowledgr.low, NLG_SYMBOL ); }
 #else
-   price high()const { return asset( non_colab.high, SBD_SYMBOL ) / asset( colab.high, CLC_SYMBOL ); }
-   price low()const { return asset( non_colab.low, SBD_SYMBOL ) / asset( colab.low, CLC_SYMBOL ); }
+   price high()const { return asset( non_knowledgr.high, SBD_SYMBOL ) / asset( knowledgr.high, NLG_SYMBOL ); }
+   price low()const { return asset( non_knowledgr.low, SBD_SYMBOL ) / asset( knowledgr.low, NLG_SYMBOL ); }
 #endif
 };
 
@@ -157,33 +157,33 @@ typedef multi_index_container<
    allocator< order_history_object >
 > order_history_index;
 
-} } } // colab::plugins::market_history
+} } } // knowledgr::plugins::market_history
 
-FC_REFLECT( colab::plugins::market_history::bucket_object_details,
+FC_REFLECT( knowledgr::plugins::market_history::bucket_object_details,
             (high)
             (low)
             (open)
             (close)
             (volume) )
 
-#if defined COLAB_ENABLE_SMT
-FC_REFLECT( colab::plugins::market_history::bucket_object,
+#if defined KNOWLEDGR_ENABLE_SMT
+FC_REFLECT( knowledgr::plugins::market_history::bucket_object,
                      (id)
                      (open)(seconds)
-                     (colab)(symbol)(non_colab)
+                     (knowledgr)(symbol)(non_knowledgr)
          )
 #else
-FC_REFLECT( colab::plugins::market_history::bucket_object,
+FC_REFLECT( knowledgr::plugins::market_history::bucket_object,
                      (id)
                      (open)(seconds)
-                     (colab)(non_colab)
+                     (knowledgr)(non_knowledgr)
          )
 #endif
 
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::market_history::bucket_object, colab::plugins::market_history::bucket_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::market_history::bucket_object, knowledgr::plugins::market_history::bucket_index )
 
-FC_REFLECT( colab::plugins::market_history::order_history_object,
+FC_REFLECT( knowledgr::plugins::market_history::order_history_object,
                      (id)
                      (time)
                      (op) )
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::market_history::order_history_object, colab::plugins::market_history::order_history_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::market_history::order_history_object, knowledgr::plugins::market_history::order_history_index )

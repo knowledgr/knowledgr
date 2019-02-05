@@ -1,8 +1,8 @@
 
 # Introduction
 
-In this document we derive the approximate integer square root function used by Colab for the curation curve
-[here](https://github.com/norestlabs/colab/issues/1052).
+In this document we derive the approximate integer square root function used by Knowledgr for the curation curve
+[here](https://github.com/norestlabs/knowledgr/issues/1052).
 
 # MSB function
 

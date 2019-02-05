@@ -1,14 +1,14 @@
 #include <stdint.h>
-#include <colab/utilities/git_revision.hpp>
+#include <knowledgr/utilities/git_revision.hpp>
 
-#define COLAB_GIT_REVISION_SHA "@COLAB_GIT_REVISION_SHA@"
-#define COLAB_GIT_REVISION_UNIX_TIMESTAMP @COLAB_GIT_REVISION_UNIX_TIMESTAMP@
-#define COLAB_GIT_REVISION_DESCRIPTION "@COLAB_GIT_REVISION_DESCRIPTION@"
+#define KNOWLEDGR_GIT_REVISION_SHA "@KNOWLEDGR_GIT_REVISION_SHA@"
+#define KNOWLEDGR_GIT_REVISION_UNIX_TIMESTAMP @KNOWLEDGR_GIT_REVISION_UNIX_TIMESTAMP@
+#define KNOWLEDGR_GIT_REVISION_DESCRIPTION "@KNOWLEDGR_GIT_REVISION_DESCRIPTION@"
 
-namespace colab { namespace utilities {
+namespace knowledgr { namespace utilities {
 
-const char* const git_revision_sha = COLAB_GIT_REVISION_SHA;
-const uint32_t git_revision_unix_timestamp = COLAB_GIT_REVISION_UNIX_TIMESTAMP;
-const char* const git_revision_description = COLAB_GIT_REVISION_DESCRIPTION;
+const char* const git_revision_sha = KNOWLEDGR_GIT_REVISION_SHA;
+const uint32_t git_revision_unix_timestamp = KNOWLEDGR_GIT_REVISION_UNIX_TIMESTAMP;
+const char* const git_revision_description = KNOWLEDGR_GIT_REVISION_DESCRIPTION;
 
-} } // end namespace colab::utilities
+} } // end namespace knowledgr::utilities

@@ -1,14 +1,14 @@
 #pragma once
-#include <colab/plugins/chain/chain_plugin.hpp>
-#include <colab/plugins/json_rpc/json_rpc_plugin.hpp>
+#include <knowledgr/plugins/chain/chain_plugin.hpp>
+#include <knowledgr/plugins/json_rpc/json_rpc_plugin.hpp>
 
 #include <appbase/application.hpp>
 
-namespace colab { namespace plugins { namespace database_api {
+namespace knowledgr { namespace plugins { namespace database_api {
 
 using namespace appbase;
 
-#define COLAB_DATABASE_API_PLUGIN_NAME "database_api"
+#define KNOWLEDGR_DATABASE_API_PLUGIN_NAME "database_api"
 
 class database_api_plugin : public plugin< database_api_plugin >
 {
@@ -17,11 +17,11 @@ class database_api_plugin : public plugin< database_api_plugin >
       virtual ~database_api_plugin();
 
       APPBASE_PLUGIN_REQUIRES(
-         (colab::plugins::json_rpc::json_rpc_plugin)
-         (colab::plugins::chain::chain_plugin)
+         (knowledgr::plugins::json_rpc::json_rpc_plugin)
+         (knowledgr::plugins::chain::chain_plugin)
       )
 
-      static const std::string& name() { static std::string name = COLAB_DATABASE_API_PLUGIN_NAME; return name; }
+      static const std::string& name() { static std::string name = KNOWLEDGR_DATABASE_API_PLUGIN_NAME; return name; }
 
       virtual void set_program_options(
          options_description& cli,
@@ -33,4 +33,4 @@ class database_api_plugin : public plugin< database_api_plugin >
       std::shared_ptr< class database_api > api;
 };
 
-} } } // colab::plugins::database_api
+} } } // knowledgr::plugins::database_api

@@ -1,20 +1,20 @@
-#include <colab/plugins/market_history_api/market_history_api_plugin.hpp>
-#include <colab/plugins/market_history_api/market_history_api.hpp>
+#include <knowledgr/plugins/market_history_api/market_history_api_plugin.hpp>
+#include <knowledgr/plugins/market_history_api/market_history_api.hpp>
 
-#include <colab/chain/colab_objects.hpp>
+#include <knowledgr/chain/knowledgr_objects.hpp>
 
 #define ASSET_TO_REAL( asset ) (double)( asset.amount.value )
 
-namespace colab { namespace plugins { namespace market_history {
+namespace knowledgr { namespace plugins { namespace market_history {
 
 namespace detail {
 
-using namespace colab::plugins::market_history;
+using namespace knowledgr::plugins::market_history;
 
 class market_history_api_impl
 {
    public:
-      market_history_api_impl() : _db( appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db() ) {}
+      market_history_api_impl() : _db( appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db() ) {}
 
       DECLARE_API_IMPL(
          (get_ticker)
@@ -38,9 +38,9 @@ DEFINE_API_IMPL( market_history_api_impl, get_ticker )
 
    if( itr != bucket_idx.end() )
    {
-      auto open = ASSET_TO_REAL( asset( itr->non_colab.open, SBD_SYMBOL ) ) / ASSET_TO_REAL( asset( itr->colab.open, CLC_SYMBOL ) );
+      auto open = ASSET_TO_REAL( asset( itr->non_knowledgr.open, SBD_SYMBOL ) ) / ASSET_TO_REAL( asset( itr->knowledgr.open, NLG_SYMBOL ) );
       itr = bucket_idx.lower_bound( boost::make_tuple( 0, _db.head_block_time() ) );
-      result.latest = ASSET_TO_REAL( asset( itr->non_colab.close, SBD_SYMBOL ) ) / ASSET_TO_REAL( asset( itr->colab.close, CLC_SYMBOL ) );
+      result.latest = ASSET_TO_REAL( asset( itr->non_knowledgr.close, SBD_SYMBOL ) ) / ASSET_TO_REAL( asset( itr->knowledgr.close, NLG_SYMBOL ) );
       result.percent_change = ( (result.latest - open ) / open ) * 100;
    }
 
@@ -51,7 +51,7 @@ DEFINE_API_IMPL( market_history_api_impl, get_ticker )
       result.lowest_ask = orders.asks[0].real_price;
 
    auto volume = get_volume( get_volume_args() );
-   result.clc_volume = volume.clc_volume;
+   result.nlg_volume = volume.nlg_volume;
    result.sbd_volume = volume.sbd_volume;
 
    return result;
@@ -69,8 +69,8 @@ DEFINE_API_IMPL( market_history_api_impl, get_volume )
    uint32_t bucket_size = itr->seconds;
    do
    {
-      result.clc_volume.amount += itr->colab.volume;
-      result.sbd_volume.amount += itr->non_colab.volume;
+      result.nlg_volume.amount += itr->knowledgr.volume;
+      result.sbd_volume.amount += itr->non_knowledgr.volume;
 
       ++itr;
    } while( itr != bucket_idx.end() && itr->seconds == bucket_size );
@@ -83,7 +83,7 @@ DEFINE_API_IMPL( market_history_api_impl, get_order_book )
    FC_ASSERT( args.limit <= 500 );
 
    const auto& order_idx = _db.get_index< chain::limit_order_index, chain::by_price >();
-   auto itr = order_idx.lower_bound( price::max( SBD_SYMBOL, CLC_SYMBOL ) );
+   auto itr = order_idx.lower_bound( price::max( SBD_SYMBOL, NLG_SYMBOL ) );
 
    get_order_book_return result;
 
@@ -92,22 +92,22 @@ DEFINE_API_IMPL( market_history_api_impl, get_order_book )
       order cur;
       cur.order_price = itr->sell_price;
       cur.real_price = ASSET_TO_REAL( itr->sell_price.base ) / ASSET_TO_REAL( itr->sell_price.quote );
-      cur.colab = ( asset( itr->for_sale, SBD_SYMBOL ) * itr->sell_price ).amount;
+      cur.knowledgr = ( asset( itr->for_sale, SBD_SYMBOL ) * itr->sell_price ).amount;
       cur.sbd = itr->for_sale;
       cur.created = itr->created;
       result.bids.push_back( cur );
       ++itr;
    }
 
-   itr = order_idx.lower_bound( price::max( CLC_SYMBOL, SBD_SYMBOL ) );
+   itr = order_idx.lower_bound( price::max( NLG_SYMBOL, SBD_SYMBOL ) );
 
-   while( itr != order_idx.end() && itr->sell_price.base.symbol == CLC_SYMBOL && result.asks.size() < args.limit )
+   while( itr != order_idx.end() && itr->sell_price.base.symbol == NLG_SYMBOL && result.asks.size() < args.limit )
    {
       order cur;
       cur.order_price = itr->sell_price;
       cur.real_price = ASSET_TO_REAL( itr->sell_price.quote ) / ASSET_TO_REAL( itr->sell_price.base );
-      cur.colab = itr->for_sale;
-      cur.sbd = ( asset( itr->for_sale, CLC_SYMBOL ) * itr->sell_price ).amount;
+      cur.knowledgr = itr->for_sale;
+      cur.sbd = ( asset( itr->for_sale, NLG_SYMBOL ) * itr->sell_price ).amount;
       cur.created = itr->created;
       result.asks.push_back( cur );
       ++itr;
@@ -178,7 +178,7 @@ DEFINE_API_IMPL( market_history_api_impl, get_market_history )
 DEFINE_API_IMPL( market_history_api_impl, get_market_history_buckets )
 {
    get_market_history_buckets_return result;
-   result.bucket_sizes = appbase::app().get_plugin< colab::plugins::market_history::market_history_plugin >().get_tracked_buckets();
+   result.bucket_sizes = appbase::app().get_plugin< knowledgr::plugins::market_history::market_history_plugin >().get_tracked_buckets();
    return result;
 }
 
@@ -187,7 +187,7 @@ DEFINE_API_IMPL( market_history_api_impl, get_market_history_buckets )
 
 market_history_api::market_history_api(): my( new detail::market_history_api_impl() )
 {
-   JSON_RPC_REGISTER_API( COLAB_MARKET_HISTORY_API_PLUGIN_NAME );
+   JSON_RPC_REGISTER_API( KNOWLEDGR_MARKET_HISTORY_API_PLUGIN_NAME );
 }
 
 market_history_api::~market_history_api() {}
@@ -202,4 +202,4 @@ DEFINE_READ_APIS( market_history_api,
    (get_market_history_buckets)
 )
 
-} } } // colab::plugins::market_history
+} } } // knowledgr::plugins::market_history

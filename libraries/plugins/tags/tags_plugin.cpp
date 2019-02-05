@@ -1,14 +1,14 @@
 
-#include <colab/chain/colab_fwd.hpp>
+#include <knowledgr/chain/knowledgr_fwd.hpp>
 
-#include <colab/plugins/tags/tags_plugin.hpp>
+#include <knowledgr/plugins/tags/tags_plugin.hpp>
 
-#include <colab/protocol/config.hpp>
+#include <knowledgr/protocol/config.hpp>
 
-#include <colab/chain/database.hpp>
-#include <colab/chain/index.hpp>
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/comment_object.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/index.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/comment_object.hpp>
 
 #include <fc/smart_ref_impl.hpp>
 #include <fc/thread/thread.hpp>
@@ -18,7 +18,7 @@
 #include <boost/range/iterator_range.hpp>
 #include <boost/algorithm/string.hpp>
 
-namespace colab { namespace plugins { namespace tags {
+namespace knowledgr { namespace plugins { namespace tags {
 
 /**
  * https://medium.com/hacking-and-gonzo/how-reddit-ranking-algorithms-work-ef111e33d0d9#.lcbj6auuw
@@ -50,7 +50,7 @@ inline double calculate_trending( const share_type& score, const time_point_sec&
 
 namespace detail {
 
-using namespace colab::protocol;
+using namespace knowledgr::protocol;
 
 class tags_plugin_impl
 {
@@ -79,7 +79,7 @@ class tags_plugin_impl
 };
 
 tags_plugin_impl::tags_plugin_impl() :
-   _db( appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db() ) {}
+   _db( appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db() ) {}
 
 tags_plugin_impl::~tags_plugin_impl() {}
 
@@ -384,7 +384,7 @@ struct operation_visitor
 
    void operator()( const transfer_operation& op )const
    {
-      if( _my._db.head_block_time() >= _my._promoted_start_time && op.to == COLAB_NULL_ACCOUNT && op.amount.symbol == CLC_SYMBOL/*SBD_SYMBOL*/ )
+      if( _my._db.head_block_time() >= _my._promoted_start_time && op.to == KNOWLEDGR_NULL_ACCOUNT && op.amount.symbol == NLG_SYMBOL/*SBD_SYMBOL*/ )
       {
          vector<string> part; part.reserve(4);
          auto path = op.memo;
@@ -559,4 +559,4 @@ void tags_plugin::plugin_startup()
    chain::util::disconnect_signal( my->_post_apply_operation_conn );
 }
 
-} } } /// colab::plugins::tags
+} } } /// knowledgr::plugins::tags

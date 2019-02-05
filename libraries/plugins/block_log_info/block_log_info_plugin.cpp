@@ -1,19 +1,19 @@
 
-#include <colab/chain/colab_fwd.hpp>
+#include <knowledgr/chain/knowledgr_fwd.hpp>
 
-#include <colab/plugins/block_log_info/block_log_info_plugin.hpp>
-#include <colab/plugins/block_log_info/block_log_info_objects.hpp>
+#include <knowledgr/plugins/block_log_info/block_log_info_plugin.hpp>
+#include <knowledgr/plugins/block_log_info/block_log_info_objects.hpp>
 
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/database.hpp>
-#include <colab/chain/global_property_object.hpp>
-#include <colab/chain/index.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/global_property_object.hpp>
+#include <knowledgr/chain/index.hpp>
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
 
-namespace colab { namespace plugins { namespace block_log_info {
+namespace knowledgr { namespace plugins { namespace block_log_info {
 
 namespace detail {
 
@@ -21,7 +21,7 @@ class block_log_info_plugin_impl
 {
    public:
       block_log_info_plugin_impl( block_log_info_plugin& _plugin ) :
-         _db( appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db() ),
+         _db( appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db() ),
          _self( _plugin ) {}
 
       void on_post_apply_block( const block_notification& note );
@@ -150,7 +150,7 @@ void block_log_info_plugin::plugin_initialize( const boost::program_options::var
    try
    {
       ilog( "Initializing block_log_info plugin" );
-      chain::database& db = appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db();
+      chain::database& db = appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db();
 
       my->_post_apply_block_conn = db.add_post_apply_block_handler(
          [&]( const block_notification& note ){ my->on_post_apply_block( note ); }, *this );
@@ -179,4 +179,4 @@ void block_log_info_plugin::plugin_shutdown()
    chain::util::disconnect_signal( my->_post_apply_block_conn );
 }
 
-} } } // colab::plugins::block_log_info
+} } } // knowledgr::plugins::block_log_info

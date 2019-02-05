@@ -5,14 +5,14 @@ class uint128;
 class variant;
 } // fc
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 template< typename Storage = fc::uint128 >
 class fixed_string_impl;
 
 class asset_symbol_type;
-class legacy_colab_asset_symbol_type;
-struct legacy_colab_asset;
-} } // colab::protocol
+class legacy_knowledgr_asset_symbol_type;
+struct legacy_knowledgr_asset;
+} } // knowledgr::protocol
 
 namespace fc { namespace raw {
 
@@ -22,30 +22,30 @@ template<typename Stream>
 inline void unpack( Stream& s, uint128& u );
 
 template< typename Stream, typename Storage >
-inline void pack( Stream& s, const colab::protocol::fixed_string_impl< Storage >& u );
+inline void pack( Stream& s, const knowledgr::protocol::fixed_string_impl< Storage >& u );
 template< typename Stream, typename Storage >
-inline void unpack( Stream& s, colab::protocol::fixed_string_impl< Storage >& u );
+inline void unpack( Stream& s, knowledgr::protocol::fixed_string_impl< Storage >& u );
 
 template< typename Stream >
-inline void pack( Stream& s, const colab::protocol::asset_symbol_type& sym );
+inline void pack( Stream& s, const knowledgr::protocol::asset_symbol_type& sym );
 template< typename Stream >
-inline void unpack( Stream& s, colab::protocol::asset_symbol_type& sym );
+inline void unpack( Stream& s, knowledgr::protocol::asset_symbol_type& sym );
 
 template< typename Stream >
-inline void pack( Stream& s, const colab::protocol::legacy_colab_asset_symbol_type& sym );
+inline void pack( Stream& s, const knowledgr::protocol::legacy_knowledgr_asset_symbol_type& sym );
 template< typename Stream >
-inline void unpack( Stream& s, colab::protocol::legacy_colab_asset_symbol_type& sym );
+inline void unpack( Stream& s, knowledgr::protocol::legacy_knowledgr_asset_symbol_type& sym );
 
 } // raw
 
 template< typename Storage >
-inline void to_variant( const colab::protocol::fixed_string_impl< Storage >& s, fc::variant& v );
+inline void to_variant( const knowledgr::protocol::fixed_string_impl< Storage >& s, fc::variant& v );
 template< typename Storage >
-inline void from_variant( const variant& v, colab::protocol::fixed_string_impl< Storage >& s );
+inline void from_variant( const variant& v, knowledgr::protocol::fixed_string_impl< Storage >& s );
 
-inline void to_variant( const colab::protocol::asset_symbol_type& sym, fc::variant& v );
+inline void to_variant( const knowledgr::protocol::asset_symbol_type& sym, fc::variant& v );
 
-inline void from_variant( const fc::variant& v, colab::protocol::legacy_colab_asset& leg );
-inline void to_variant( const colab::protocol::legacy_colab_asset& leg, fc::variant& v );
+inline void from_variant( const fc::variant& v, knowledgr::protocol::legacy_knowledgr_asset& leg );
+inline void to_variant( const knowledgr::protocol::legacy_knowledgr_asset& leg, fc::variant& v );
 
 } // fc

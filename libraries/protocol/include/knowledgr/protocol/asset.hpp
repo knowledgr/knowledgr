@@ -1,9 +1,9 @@
 #pragma once
-#include <colab/protocol/types.hpp>
-#include <colab/protocol/config.hpp>
-#include <colab/protocol/asset_symbol.hpp>
+#include <knowledgr/protocol/types.hpp>
+#include <knowledgr/protocol/config.hpp>
+#include <knowledgr/protocol/asset_symbol.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
    struct asset
    {
@@ -14,7 +14,7 @@ namespace colab { namespace protocol {
          :amount(a),symbol(id){}
 
       asset()
-         :amount(0),symbol(CLC_SYMBOL){}
+         :amount(0),symbol(NLG_SYMBOL){}
 
       share_type        amount;
       asset_symbol_type symbol;
@@ -148,12 +148,12 @@ namespace colab { namespace protocol {
    bool  operator != ( const price& a, const price& b );
    asset operator *  ( const asset& a, const price& b );
 
-} } // colab::protocol
+} } // knowledgr::protocol
 
 namespace fc {
-    void to_variant( const colab::protocol::asset& var,  fc::variant& vo );
-    void from_variant( const fc::variant& var,  colab::protocol::asset& vo );
+    void to_variant( const knowledgr::protocol::asset& var,  fc::variant& vo );
+    void from_variant( const fc::variant& var,  knowledgr::protocol::asset& vo );
 }
 
-FC_REFLECT( colab::protocol::asset, (amount)(symbol) )
-FC_REFLECT( colab::protocol::price, (base)(quote) )
+FC_REFLECT( knowledgr::protocol::asset, (amount)(symbol) )
+FC_REFLECT( knowledgr::protocol::price, (base)(quote) )

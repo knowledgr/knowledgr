@@ -1,27 +1,27 @@
 #pragma once
-#include <colab/chain/colab_object_types.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
 
 #include <boost/multi_index/composite_key.hpp>
 
-namespace colab { namespace plugins { namespace follow {
+namespace knowledgr { namespace plugins { namespace follow {
 
 using namespace std;
-using namespace colab::chain;
+using namespace knowledgr::chain;
 
 using chainbase::t_vector;
 
-#ifndef COLAB_FOLLOW_SPACE_ID
-#define COLAB_FOLLOW_SPACE_ID 8
+#ifndef KNOWLEDGR_FOLLOW_SPACE_ID
+#define KNOWLEDGR_FOLLOW_SPACE_ID 8
 #endif
 
 enum follow_plugin_object_type
 {
-   follow_object_type            = ( COLAB_FOLLOW_SPACE_ID << 8 ),
-   feed_object_type              = ( COLAB_FOLLOW_SPACE_ID << 8 ) + 1,
-   reputation_object_type        = ( COLAB_FOLLOW_SPACE_ID << 8 ) + 2,
-   blog_object_type              = ( COLAB_FOLLOW_SPACE_ID << 8 ) + 3,
-   follow_count_object_type      = ( COLAB_FOLLOW_SPACE_ID << 8 ) + 4,
-   blog_author_stats_object_type = ( COLAB_FOLLOW_SPACE_ID << 8 ) + 5
+   follow_object_type            = ( KNOWLEDGR_FOLLOW_SPACE_ID << 8 ),
+   feed_object_type              = ( KNOWLEDGR_FOLLOW_SPACE_ID << 8 ) + 1,
+   reputation_object_type        = ( KNOWLEDGR_FOLLOW_SPACE_ID << 8 ) + 2,
+   blog_object_type              = ( KNOWLEDGR_FOLLOW_SPACE_ID << 8 ) + 3,
+   follow_count_object_type      = ( KNOWLEDGR_FOLLOW_SPACE_ID << 8 ) + 4,
+   blog_author_stats_object_type = ( KNOWLEDGR_FOLLOW_SPACE_ID << 8 ) + 5
 };
 
 enum follow_type
@@ -100,12 +100,12 @@ class blog_object : public object< blog_object_type, blog_object >
 typedef oid< blog_object > blog_id_type;
 
 /**
- *  This index is maintained to get an idea of which authors are recolabed by a particular blogger and
+ *  This index is maintained to get an idea of which authors are reknowledgred by a particular blogger and
  *  how frequnetly. It is designed to give an overview of the type of people a blogger sponsors as well
  *  as to enable generation of filter set for a blog list.
  *
  *  Give me the top authors promoted by this blog
- *  Give me all blog posts by [authors] that were recolabed by this blog
+ *  Give me all blog posts by [authors] that were reknowledgred by this blog
  */
 class blog_author_stats_object : public object< blog_author_stats_object_type, blog_author_stats_object >
 {
@@ -284,36 +284,36 @@ typedef multi_index_container<
    allocator< follow_count_object >
 > follow_count_index;
 
-} } } // colab::plugins::follow
+} } } // knowledgr::plugins::follow
 
-FC_REFLECT_ENUM( colab::plugins::follow::follow_type, (undefined)(blog)(ignore) )
+FC_REFLECT_ENUM( knowledgr::plugins::follow::follow_type, (undefined)(blog)(ignore) )
 
-FC_REFLECT( colab::plugins::follow::follow_object, (id)(follower)(following)(what) )
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::follow::follow_object, colab::plugins::follow::follow_index )
+FC_REFLECT( knowledgr::plugins::follow::follow_object, (id)(follower)(following)(what) )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::follow::follow_object, knowledgr::plugins::follow::follow_index )
 
-FC_REFLECT( colab::plugins::follow::feed_object, (id)(account)(first_reblogged_by)(first_reblogged_on)(reblogged_by)(comment)(account_feed_id) )
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::follow::feed_object, colab::plugins::follow::feed_index )
+FC_REFLECT( knowledgr::plugins::follow::feed_object, (id)(account)(first_reblogged_by)(first_reblogged_on)(reblogged_by)(comment)(account_feed_id) )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::follow::feed_object, knowledgr::plugins::follow::feed_index )
 
-FC_REFLECT( colab::plugins::follow::blog_object, (id)(account)(comment)(reblogged_on)(blog_feed_id) )
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::follow::blog_object, colab::plugins::follow::blog_index )
+FC_REFLECT( knowledgr::plugins::follow::blog_object, (id)(account)(comment)(reblogged_on)(blog_feed_id) )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::follow::blog_object, knowledgr::plugins::follow::blog_index )
 
-FC_REFLECT( colab::plugins::follow::reputation_object, (id)(account)(reputation) )
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::follow::reputation_object, colab::plugins::follow::reputation_index )
+FC_REFLECT( knowledgr::plugins::follow::reputation_object, (id)(account)(reputation) )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::follow::reputation_object, knowledgr::plugins::follow::reputation_index )
 
-FC_REFLECT( colab::plugins::follow::follow_count_object, (id)(account)(follower_count)(following_count) )
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::follow::follow_count_object, colab::plugins::follow::follow_count_index )
+FC_REFLECT( knowledgr::plugins::follow::follow_count_object, (id)(account)(follower_count)(following_count) )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::follow::follow_count_object, knowledgr::plugins::follow::follow_count_index )
 
-FC_REFLECT( colab::plugins::follow::blog_author_stats_object, (id)(blogger)(guest)(count) )
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::follow::blog_author_stats_object, colab::plugins::follow::blog_author_stats_index );
+FC_REFLECT( knowledgr::plugins::follow::blog_author_stats_object, (id)(blogger)(guest)(count) )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::follow::blog_author_stats_object, knowledgr::plugins::follow::blog_author_stats_index );
 
 namespace helpers
 {
    template <>
-   class index_statistic_provider<colab::plugins::follow::feed_index>
+   class index_statistic_provider<knowledgr::plugins::follow::feed_index>
    {
    public:
-      typedef colab::plugins::follow::feed_index IndexType;
-      typedef typename colab::plugins::follow::feed_object::t_reblogged_by_container t_reblogged_by_container;
+      typedef knowledgr::plugins::follow::feed_index IndexType;
+      typedef typename knowledgr::plugins::follow::feed_object::t_reblogged_by_container t_reblogged_by_container;
 
       index_statistic_info gather_statistics(const IndexType& index, bool onlyStaticInfo) const
       {

@@ -4,7 +4,7 @@ an open-sourcing contract is signed.
 Copyright (c) 2017 Steemit, Inc., and contributors.
 
 The following license applies to code contained within this repository that
-is created by Colabit, Inc. Other copy right holders have licensed dependencies such
+is created by Knowledgrit, Inc. Other copy right holders have licensed dependencies such
 as Graphene, FC, and Boost under their own individual licenses.
 
 The MIT License

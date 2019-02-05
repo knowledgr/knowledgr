@@ -1,13 +1,13 @@
 #pragma once
-#include <colab/protocol/required_automated_actions.hpp>
+#include <knowledgr/protocol/required_automated_actions.hpp>
 
-#include <colab/chain/colab_object_types.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
 
 #include <boost/multi_index/composite_key.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
-using colab::protocol::required_automated_action;
+using knowledgr::protocol::required_automated_action;
 
 class pending_required_action_object : public object< pending_required_action_object_type, pending_required_action_object >
 {
@@ -42,8 +42,8 @@ typedef multi_index_container<
    allocator< pending_required_action_object >
 > pending_required_action_index;
 
-} } //colab::chain
+} } //knowledgr::chain
 
-FC_REFLECT( colab::chain::pending_required_action_object,
+FC_REFLECT( knowledgr::chain::pending_required_action_object,
             (id)(execution_time)(action) )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::pending_required_action_object, colab::chain::pending_required_action_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::pending_required_action_object, knowledgr::chain::pending_required_action_index )

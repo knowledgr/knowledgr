@@ -1,4 +1,4 @@
-file(GLOB HEADERS "include/colab/plugins/rc_api/*.hpp")
+file(GLOB HEADERS "include/knowledgr/plugins/rc_api/*.hpp")
 add_library( rc_api_plugin
              rc_api_plugin.cpp
              rc_api.cpp

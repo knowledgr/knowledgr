@@ -1,26 +1,26 @@
 #pragma once
 
-#include <colab/protocol/authority.hpp>
-#include <colab/protocol/colab_operations.hpp>
-#include <colab/protocol/misc_utilities.hpp>
+#include <knowledgr/protocol/authority.hpp>
+#include <knowledgr/protocol/knowledgr_operations.hpp>
+#include <knowledgr/protocol/misc_utilities.hpp>
 
-#include <colab/chain/colab_object_types.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
 
 #include <boost/multi_index/composite_key.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
 
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
-   using colab::protocol::asset;
-   using colab::protocol::price;
-   using colab::protocol::asset_symbol_type;
+   using knowledgr::protocol::asset;
+   using knowledgr::protocol::price;
+   using knowledgr::protocol::asset_symbol_type;
    using chainbase::t_deque;
 
    typedef protocol::fixed_string< 16 > reward_fund_name_type;
 
 //    /**
-//     *  This object is used to track pending requests to convert sbd to colab
+//     *  This object is used to track pending requests to convert sbd to knowledgr
 //     */
 //    class convert_request_object : public object< convert_request_object_type, convert_request_object >
 //    {
@@ -61,8 +61,8 @@ namespace colab { namespace chain {
          account_name_type agent;
          time_point_sec    ratification_deadline;
          time_point_sec    escrow_expiration;
-///         asset             sbd_balance; ///~~~~~CLC~~~~~ NO NEED for CoLab
-         asset             clc_balance;
+///         asset             sbd_balance; ///~~~~~NLG~~~~~ NO NEED for Knowledgr
+         asset             nlg_balance;
          asset             pending_fee;
          bool              to_approved = false;
          bool              agent_approved = false;
@@ -102,7 +102,7 @@ namespace colab { namespace chain {
     *  When a user is a taker, their volume decreases
     *
     *  Every 1000 blocks, the account that has the highest volume_weight() is paid the maximum of
-    *  1000 CLC or 1000 * virtual_supply / (100*blocks_per_year) aka 10 * virtual_supply / blocks_per_year
+    *  1000 NLG or 1000 * virtual_supply / (100*blocks_per_year) aka 10 * virtual_supply / blocks_per_year
     *
     *  After being paid volume gets reset to 0
     */
@@ -120,7 +120,7 @@ namespace colab { namespace chain {
          id_type           id;
 
          account_id_type   owner;
-         int64_t           clc_volume = 0;
+         int64_t           nlg_volume = 0;
          int64_t           sbd_volume = 0;
          uint128_t         weight = 0;
 
@@ -129,12 +129,12 @@ namespace colab { namespace chain {
          /// this is the sort index
          uint128_t volume_weight()const
          {
-            return clc_volume * sbd_volume * is_positive();
+            return nlg_volume * sbd_volume * is_positive();
          }
 
          uint128_t min_volume_weight()const
          {
-            return std::min(clc_volume,sbd_volume) * is_positive();
+            return std::min(nlg_volume,sbd_volume) * is_positive();
          }
 
          void update_weight( bool hf9 )
@@ -144,7 +144,7 @@ namespace colab { namespace chain {
 
          inline int is_positive()const
          {
-            return ( clc_volume > 0 && sbd_volume > 0 ) ? 1 : 0;
+            return ( nlg_volume > 0 && sbd_volume > 0 ) ? 1 : 0;
          }
    };
 
@@ -267,7 +267,7 @@ namespace colab { namespace chain {
 
          reward_fund_id_type     id;
          reward_fund_name_type   name;
-         asset                   reward_balance = asset( 0, CLC_SYMBOL );
+         asset                   reward_balance = asset( 0, NLG_SYMBOL );
          fc::uint128_t           recent_claims = 0;
          time_point_sec          last_update;
          uint128_t               content_constant = 0;
@@ -277,7 +277,7 @@ namespace colab { namespace chain {
          protocol::curve_id                curation_reward_curve;
    };
 
-   ///~~~~~CLC~~~~~{
+   ///~~~~~NLG~~~~~{
    class stake_pending_object : public object< stake_pending_object_type, stake_pending_object >
    {
    public:
@@ -298,7 +298,7 @@ namespace colab { namespace chain {
 	   time_point_sec		created;
 	   stake_type			type;
    };
-   ///~~~~~CLC~~~~~}
+   ///~~~~~NLG~~~~~}
 
    struct by_price;
    struct by_expiration;
@@ -481,7 +481,7 @@ namespace colab { namespace chain {
       allocator< reward_fund_object >
    > reward_fund_index;
 
-   ///~~~~~CLC~~~~~{
+   ///~~~~~NLG~~~~~{
    struct by_created_before;
    typedef multi_index_container<
 	   stake_pending_object,
@@ -497,50 +497,50 @@ namespace colab { namespace chain {
 	   >,
 	   allocator< stake_pending_object >
    > stake_pending_index;
-   ///~~~~~CLC~~~~~}
+   ///~~~~~NLG~~~~~}
 
-} } // colab::chain
+} } // knowledgr::chain
 
-#include <colab/chain/comment_object.hpp>
-#include <colab/chain/account_object.hpp>
+#include <knowledgr/chain/comment_object.hpp>
+#include <knowledgr/chain/account_object.hpp>
 
-FC_REFLECT( colab::chain::limit_order_object,
+FC_REFLECT( knowledgr::chain::limit_order_object,
              (id)(created)(expiration)(seller)(orderid)(for_sale)(sell_price) )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::limit_order_object, colab::chain::limit_order_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::limit_order_object, knowledgr::chain::limit_order_index )
 
-// FC_REFLECT( colab::chain::feed_history_object,
+// FC_REFLECT( knowledgr::chain::feed_history_object,
 //              (id)(current_median_history)(price_history) )
-// CHAINBASE_SET_INDEX_TYPE( colab::chain::feed_history_object, colab::chain::feed_history_index )
+// CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::feed_history_object, knowledgr::chain::feed_history_index )
 
-// FC_REFLECT( colab::chain::convert_request_object,
+// FC_REFLECT( knowledgr::chain::convert_request_object,
 //              (id)(owner)(requestid)(amount)(conversion_date) )
-// CHAINBASE_SET_INDEX_TYPE( colab::chain::convert_request_object, colab::chain::convert_request_index )
+// CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::convert_request_object, knowledgr::chain::convert_request_index )
 
-FC_REFLECT( colab::chain::liquidity_reward_balance_object,
-             (id)(owner)(clc_volume)(sbd_volume)(weight)(last_update) )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::liquidity_reward_balance_object, colab::chain::liquidity_reward_balance_index )
+FC_REFLECT( knowledgr::chain::liquidity_reward_balance_object,
+             (id)(owner)(nlg_volume)(sbd_volume)(weight)(last_update) )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::liquidity_reward_balance_object, knowledgr::chain::liquidity_reward_balance_index )
 
-FC_REFLECT( colab::chain::withdraw_vesting_route_object,
+FC_REFLECT( knowledgr::chain::withdraw_vesting_route_object,
              (id)(from_account)(to_account)(percent)(auto_vest) )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::withdraw_vesting_route_object, colab::chain::withdraw_vesting_route_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::withdraw_vesting_route_object, knowledgr::chain::withdraw_vesting_route_index )
 
-FC_REFLECT( colab::chain::savings_withdraw_object,
+FC_REFLECT( knowledgr::chain::savings_withdraw_object,
              (id)(from)(to)(memo)(request_id)(amount)(complete) )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::savings_withdraw_object, colab::chain::savings_withdraw_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::savings_withdraw_object, knowledgr::chain::savings_withdraw_index )
 
-FC_REFLECT( colab::chain::escrow_object,
+FC_REFLECT( knowledgr::chain::escrow_object,
              (id)(escrow_id)(from)(to)(agent)
              (ratification_deadline)(escrow_expiration)
-             /*(sbd_balance)*////~~~~~CLC~~~~~ NO NEED for CoLab
-			 (clc_balance)(pending_fee)
+             /*(sbd_balance)*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+			 (nlg_balance)(pending_fee)
              (to_approved)(agent_approved)(disputed) )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::escrow_object, colab::chain::escrow_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::escrow_object, knowledgr::chain::escrow_index )
 
-FC_REFLECT( colab::chain::decline_voting_rights_request_object,
+FC_REFLECT( knowledgr::chain::decline_voting_rights_request_object,
              (id)(account)(effective_date) )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::decline_voting_rights_request_object, colab::chain::decline_voting_rights_request_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::decline_voting_rights_request_object, knowledgr::chain::decline_voting_rights_request_index )
 
-FC_REFLECT( colab::chain::reward_fund_object,
+FC_REFLECT( knowledgr::chain::reward_fund_object,
             (id)
             (name)
             (reward_balance)
@@ -552,17 +552,17 @@ FC_REFLECT( colab::chain::reward_fund_object,
             (author_reward_curve)
             (curation_reward_curve)
          )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::reward_fund_object, colab::chain::reward_fund_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::reward_fund_object, knowledgr::chain::reward_fund_index )
 
-///~~~~~CLC~~~~~{
-FC_REFLECT_ENUM( colab::chain::stake_pending_object::stake_type, (staking)(unstaking) )//~~~~~CLC~~~~~
-FC_REFLECT( colab::chain::stake_pending_object,
+///~~~~~NLG~~~~~{
+FC_REFLECT_ENUM( knowledgr::chain::stake_pending_object::stake_type, (staking)(unstaking) )//~~~~~NLG~~~~~
+FC_REFLECT( knowledgr::chain::stake_pending_object,
 			(id)
 			(account)
 			(amount)
 			(created)
 			(type)
 		)
-CHAINBASE_SET_INDEX_TYPE( colab::chain::stake_pending_object, colab::chain::stake_pending_index)
-///~~~~~CLC~~~~~}
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::stake_pending_object, knowledgr::chain::stake_pending_index)
+///~~~~~NLG~~~~~}
 

@@ -1,13 +1,13 @@
 #pragma once
 #include <appbase/application.hpp>
 
-#include <colab/plugins/chain/chain_plugin.hpp>
+#include <knowledgr/plugins/chain/chain_plugin.hpp>
 
-namespace colab { namespace plugins { namespace smt_test {
+namespace knowledgr { namespace plugins { namespace smt_test {
 
 using namespace appbase;
 
-#define COLAB_SMT_TEST_PLUGIN_NAME "smt_test"
+#define KNOWLEDGR_SMT_TEST_PLUGIN_NAME "smt_test"
 
 class smt_test_plugin : public appbase::plugin< smt_test_plugin >
 {
@@ -15,9 +15,9 @@ class smt_test_plugin : public appbase::plugin< smt_test_plugin >
       smt_test_plugin();
       virtual ~smt_test_plugin();
 
-      APPBASE_PLUGIN_REQUIRES( (colab::plugins::chain::chain_plugin) )
+      APPBASE_PLUGIN_REQUIRES( (knowledgr::plugins::chain::chain_plugin) )
 
-      static const std::string& name() { static std::string name = COLAB_SMT_TEST_PLUGIN_NAME; return name; }
+      static const std::string& name() { static std::string name = KNOWLEDGR_SMT_TEST_PLUGIN_NAME; return name; }
 
       virtual void set_program_options( options_description& cli, options_description& cfg ) override;
       void plugin_initialize( const variables_map& options ) override;
@@ -28,4 +28,4 @@ class smt_test_plugin : public appbase::plugin< smt_test_plugin >
       std::unique_ptr< class smt_test_plugin_impl > my;
 };
 
-} } } // colab::plugins::smt_test
+} } } // knowledgr::plugins::smt_test
