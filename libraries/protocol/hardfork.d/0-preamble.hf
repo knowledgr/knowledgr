@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include <colab/protocol/version.hpp>
+#include <knowledgr/protocol/version.hpp>
 #include <set>
 
 #ifdef IS_TEST_NET
-#define COLAB_NUM_HARDFORKS 21
+#define KNOWLEDGR_NUM_HARDFORKS 21
 #else
-#define COLAB_NUM_HARDFORKS 20
+#define KNOWLEDGR_NUM_HARDFORKS 20
 #endif

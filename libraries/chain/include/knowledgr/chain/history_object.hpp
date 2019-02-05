@@ -1,17 +1,17 @@
 #pragma once
 
-#include <colab/protocol/authority.hpp>
-#include <colab/protocol/operations.hpp>
-#include <colab/protocol/colab_operations.hpp>
+#include <knowledgr/protocol/authority.hpp>
+#include <knowledgr/protocol/operations.hpp>
+#include <knowledgr/protocol/knowledgr_operations.hpp>
 
-#include <colab/chain/buffer_type.hpp>
-#include <colab/chain/colab_object_types.hpp>
-#include <colab/chain/witness_objects.hpp>
+#include <knowledgr/chain/buffer_type.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
+#include <knowledgr/chain/witness_objects.hpp>
 
 #include <boost/multi_index/composite_key.hpp>
 
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
    class operation_object : public object< operation_object_type, operation_object >
    {
@@ -92,20 +92,20 @@ namespace colab { namespace chain {
    > account_history_index;
 } }
 
-FC_REFLECT( colab::chain::operation_object, (id)(trx_id)(block)(trx_in_block)(op_in_trx)(virtual_op)(timestamp)(serialized_op) )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::operation_object, colab::chain::operation_index )
+FC_REFLECT( knowledgr::chain::operation_object, (id)(trx_id)(block)(trx_in_block)(op_in_trx)(virtual_op)(timestamp)(serialized_op) )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::operation_object, knowledgr::chain::operation_index )
 
-FC_REFLECT( colab::chain::account_history_object, (id)(account)(sequence)(op) )
+FC_REFLECT( knowledgr::chain::account_history_object, (id)(account)(sequence)(op) )
 
-CHAINBASE_SET_INDEX_TYPE( colab::chain::account_history_object, colab::chain::account_history_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::account_history_object, knowledgr::chain::account_history_index )
 
 namespace helpers
 {
    template <>
-   class index_statistic_provider<colab::chain::operation_index>
+   class index_statistic_provider<knowledgr::chain::operation_index>
    {
    public:
-      typedef colab::chain::operation_index IndexType;
+      typedef knowledgr::chain::operation_index IndexType;
 
       index_statistic_info gather_statistics(const IndexType& index, bool onlyStaticInfo) const
       {
@@ -116,7 +116,7 @@ namespace helpers
          {
             for(const auto& o : index)
                info._item_additional_allocation +=
-                  o.serialized_op.capacity()*sizeof(colab::chain::buffer_type::value_type);
+                  o.serialized_op.capacity()*sizeof(knowledgr::chain::buffer_type::value_type);
          }
 
          return info;
@@ -124,10 +124,10 @@ namespace helpers
    };
 
    template <>
-   class index_statistic_provider<colab::chain::account_history_index>
+   class index_statistic_provider<knowledgr::chain::account_history_index>
    {
    public:
-      typedef colab::chain::account_history_index IndexType;
+      typedef knowledgr::chain::account_history_index IndexType;
 
       index_statistic_info gather_statistics(const IndexType& index, bool onlyStaticInfo) const
       {
@@ -138,7 +138,7 @@ namespace helpers
          {
             //for(const auto& o : index)
             //   info._item_additional_allocation += o.get_ops().capacity()*
-            //      sizeof(colab::chain::account_history_object::operation_container::value_type);
+            //      sizeof(knowledgr::chain::account_history_object::operation_container::value_type);
          }
 
          return info;

@@ -1,11 +1,11 @@
 #pragma once
-#include <colab/protocol/operations.hpp>
-#include <colab/protocol/sign_state.hpp>
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/operations.hpp>
+#include <knowledgr/protocol/sign_state.hpp>
+#include <knowledgr/protocol/types.hpp>
 
 #include <numeric>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
 using fc::ecc::canonical_signature_type;
 
@@ -65,9 +65,9 @@ using fc::ecc::canonical_signature_type;
          const authority_getter& get_active,
          const authority_getter& get_owner,
          const authority_getter& get_posting,
-         uint32_t max_recursion = COLAB_MAX_SIG_CHECK_DEPTH,
-         uint32_t max_membership = COLAB_MAX_AUTHORITY_MEMBERSHIP,
-         uint32_t max_account_auths = COLAB_MAX_SIG_CHECK_ACCOUNTS,
+         uint32_t max_recursion = KNOWLEDGR_MAX_SIG_CHECK_DEPTH,
+         uint32_t max_membership = KNOWLEDGR_MAX_AUTHORITY_MEMBERSHIP,
+         uint32_t max_account_auths = KNOWLEDGR_MAX_SIG_CHECK_ACCOUNTS,
          canonical_signature_type canon_type = fc::ecc::fc_canonical
          )const;
 
@@ -76,9 +76,9 @@ using fc::ecc::canonical_signature_type;
          const authority_getter& get_active,
          const authority_getter& get_owner,
          const authority_getter& get_posting,
-         uint32_t max_recursion/* = COLAB_MAX_SIG_CHECK_DEPTH*/,
-         uint32_t max_membership = COLAB_MAX_AUTHORITY_MEMBERSHIP,
-         uint32_t max_account_auths = COLAB_MAX_SIG_CHECK_ACCOUNTS,
+         uint32_t max_recursion/* = KNOWLEDGR_MAX_SIG_CHECK_DEPTH*/,
+         uint32_t max_membership = KNOWLEDGR_MAX_AUTHORITY_MEMBERSHIP,
+         uint32_t max_account_auths = KNOWLEDGR_MAX_SIG_CHECK_ACCOUNTS,
          canonical_signature_type canon_type = fc::ecc::fc_canonical
          )const;
 
@@ -88,9 +88,9 @@ using fc::ecc::canonical_signature_type;
          const authority_getter& get_active,
          const authority_getter& get_owner,
          const authority_getter& get_posting,
-         uint32_t max_recursion = COLAB_MAX_SIG_CHECK_DEPTH,
-         uint32_t max_membership = COLAB_MAX_AUTHORITY_MEMBERSHIP,
-         uint32_t max_account_auths = COLAB_MAX_SIG_CHECK_ACCOUNTS,
+         uint32_t max_recursion = KNOWLEDGR_MAX_SIG_CHECK_DEPTH,
+         uint32_t max_membership = KNOWLEDGR_MAX_AUTHORITY_MEMBERSHIP,
+         uint32_t max_account_auths = KNOWLEDGR_MAX_SIG_CHECK_ACCOUNTS,
          canonical_signature_type canon_type = fc::ecc::fc_canonical
          ) const;
 
@@ -116,8 +116,8 @@ using fc::ecc::canonical_signature_type;
 
    /// @} transactions group
 
-} } // colab::protocol
+} } // knowledgr::protocol
 
-FC_REFLECT( colab::protocol::transaction, (ref_block_num)(ref_block_prefix)(expiration)(operations)(extensions) )
-FC_REFLECT_DERIVED( colab::protocol::signed_transaction, (colab::protocol::transaction), (signatures) )
-FC_REFLECT_DERIVED( colab::protocol::annotated_signed_transaction, (colab::protocol::signed_transaction), (transaction_id)(block_num)(transaction_num) );
+FC_REFLECT( knowledgr::protocol::transaction, (ref_block_num)(ref_block_prefix)(expiration)(operations)(extensions) )
+FC_REFLECT_DERIVED( knowledgr::protocol::signed_transaction, (knowledgr::protocol::transaction), (signatures) )
+FC_REFLECT_DERIVED( knowledgr::protocol::annotated_signed_transaction, (knowledgr::protocol::signed_transaction), (transaction_id)(block_num)(transaction_num) );

@@ -1,14 +1,14 @@
-#include <colab/utilities/git_revision.hpp>
-#include <colab/utilities/key_conversion.hpp>
-#include <colab/utilities/words.hpp>
+#include <knowledgr/utilities/git_revision.hpp>
+#include <knowledgr/utilities/key_conversion.hpp>
+#include <knowledgr/utilities/words.hpp>
 
-#include <colab/protocol/base.hpp>
-#include <colab/wallet/wallet.hpp>
-#include <colab/wallet/api_documentation.hpp>
-#include <colab/wallet/reflect_util.hpp>
-#include <colab/wallet/remote_node_api.hpp>
+#include <knowledgr/protocol/base.hpp>
+#include <knowledgr/wallet/wallet.hpp>
+#include <knowledgr/wallet/api_documentation.hpp>
+#include <knowledgr/wallet/reflect_util.hpp>
+#include <knowledgr/wallet/remote_node_api.hpp>
 
-#include <colab/plugins/follow/follow_operations.hpp>
+#include <knowledgr/plugins/follow/follow_operations.hpp>
 
 #include <algorithm>
 #include <cctype>
@@ -59,9 +59,9 @@
 
 #define BRAIN_KEY_WORD_COUNT 16
 
-namespace colab { namespace wallet {
+namespace knowledgr { namespace wallet {
 
-using colab::plugins::condenser_api::legacy_asset;
+using knowledgr::plugins::condenser_api::legacy_asset;
 
 namespace detail {
 
@@ -219,14 +219,14 @@ class wallet_api_impl
 
 public:
    wallet_api& self;
-   wallet_api_impl( wallet_api& s, const wallet_data& initial_data, const colab::protocol::chain_id_type& _colab_chain_id, fc::api< remote_node_api > rapi )
+   wallet_api_impl( wallet_api& s, const wallet_data& initial_data, const knowledgr::protocol::chain_id_type& _knowledgr_chain_id, fc::api< remote_node_api > rapi )
       : self( s ),
         _remote_api( rapi )
    {
       init_prototype_ops();
 
       _wallet.ws_server = initial_data.ws_server;
-      colab_chain_id = _colab_chain_id;
+      knowledgr_chain_id = _knowledgr_chain_id;
    }
    virtual ~wallet_api_impl()
    {}
@@ -295,22 +295,22 @@ public:
       result["participation"] = (100*dynamic_props.recent_slots_filled.popcount()) / 128.0;
       //result["median_sbd_price"] = _remote_api->get_current_median_history_price();
       result["account_creation_fee"] = _remote_api->get_chain_properties().account_creation_fee;
-      result["post_reward_fund"] = fc::variant(_remote_api->get_reward_fund( COLAB_POST_REWARD_FUND_NAME )).get_object();
+      result["post_reward_fund"] = fc::variant(_remote_api->get_reward_fund( KNOWLEDGR_POST_REWARD_FUND_NAME )).get_object();
       return result;
    }
 
    variant_object about() const
    {
-      string client_version( colab::utilities::git_revision_description );
+      string client_version( knowledgr::utilities::git_revision_description );
       const size_t pos = client_version.find( '/' );
       if( pos != string::npos && client_version.size() > pos )
          client_version = client_version.substr( pos + 1 );
 
       fc::mutable_variant_object result;
-      result["blockchain_version"]       = COLAB_BLOCKCHAIN_VERSION;
+      result["blockchain_version"]       = KNOWLEDGR_BLOCKCHAIN_VERSION;
       result["client_version"]           = client_version;
-      result["colab_revision"]           = colab::utilities::git_revision_sha;
-      result["colab_revision_age"]       = fc::get_approximate_relative_time_string( fc::time_point_sec( colab::utilities::git_revision_unix_timestamp ) );
+      result["knowledgr_revision"]           = knowledgr::utilities::git_revision_sha;
+      result["knowledgr_revision_age"]       = fc::get_approximate_relative_time_string( fc::time_point_sec( knowledgr::utilities::git_revision_unix_timestamp ) );
       result["fc_revision"]              = fc::git_revision_sha;
       result["fc_revision_age"]          = fc::get_approximate_relative_time_string( fc::time_point_sec( fc::git_revision_unix_timestamp ) );
       result["compile_date"]             = "compiled on " __DATE__ " at " __TIME__;
@@ -333,7 +333,7 @@ public:
       {
          auto v = _remote_api->get_version();
          result["server_blockchain_version"] = v.blockchain_version;
-         result["server_colab_revision"] = v.colab_revision;
+         result["server_knowledgr_revision"] = v.knowledgr_revision;
          result["server_fc_revision"] = v.fc_revision;
       }
       catch( fc::exception& )
@@ -385,7 +385,7 @@ public:
       fc::optional<fc::ecc::private_key> optional_private_key = wif_to_key(wif_key);
       if (!optional_private_key)
          FC_THROW("Invalid private key");
-      colab::chain::public_key_type wif_pub_key = optional_private_key->get_public_key();
+      knowledgr::chain::public_key_type wif_pub_key = optional_private_key->get_public_key();
 
       _keys[wif_pub_key] = wif_key;
       return true;
@@ -456,7 +456,7 @@ public:
       for (int key_index = 0; ; ++key_index)
       {
          fc::ecc::private_key derived_private_key = derive_private_key(key_to_wif(parent_key), key_index);
-         colab::chain::public_key_type derived_public_key = derived_private_key.get_public_key();
+         knowledgr::chain::public_key_type derived_public_key = derived_private_key.get_public_key();
          if( _keys.find(derived_public_key) == _keys.end() )
          {
             if (number_of_consecutive_unused_keys)
@@ -492,9 +492,9 @@ public:
          int memo_key_index = find_first_unused_derived_key_index(active_privkey);
          fc::ecc::private_key memo_privkey = derive_private_key( key_to_wif(active_privkey), memo_key_index);
 
-         colab::chain::public_key_type owner_pubkey = owner_privkey.get_public_key();
-         colab::chain::public_key_type active_pubkey = active_privkey.get_public_key();
-         colab::chain::public_key_type memo_pubkey = memo_privkey.get_public_key();
+         knowledgr::chain::public_key_type owner_pubkey = owner_privkey.get_public_key();
+         knowledgr::chain::public_key_type active_pubkey = active_privkey.get_public_key();
+         knowledgr::chain::public_key_type memo_pubkey = memo_privkey.get_public_key();
 
          account_create_operation account_create_op;
 
@@ -541,7 +541,7 @@ public:
 
    void set_transaction_expiration( uint32_t tx_expiration_seconds )
    {
-      FC_ASSERT( tx_expiration_seconds < COLAB_MAX_TIME_UNTIL_EXPIRATION );
+      FC_ASSERT( tx_expiration_seconds < KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
       _tx_expiration_seconds = tx_expiration_seconds;
    }
 
@@ -686,7 +686,7 @@ public:
       }
 
       auto minimal_signing_keys = tx.minimize_required_signatures(
-         colab_chain_id,
+         knowledgr_chain_id,
          available_keys,
          [&]( const string& account_name ) -> const authority&
          {
@@ -712,9 +712,9 @@ public:
 
             return null_auth;
          },
-         COLAB_MAX_SIG_CHECK_DEPTH,
-         COLAB_MAX_AUTHORITY_MEMBERSHIP,
-         COLAB_MAX_SIG_CHECK_ACCOUNTS,
+         KNOWLEDGR_MAX_SIG_CHECK_DEPTH,
+         KNOWLEDGR_MAX_AUTHORITY_MEMBERSHIP,
+         KNOWLEDGR_MAX_SIG_CHECK_ACCOUNTS,
          fc::ecc::fc_canonical
          );
 
@@ -724,7 +724,7 @@ public:
          FC_ASSERT( it != available_private_keys.end() );
 		 std::cerr<<"~~~ [sign_transaction()] - pubkey : "<<(std::string)k<<"\n";
 		 std::cerr<<"~~~ [sign_transaction()] - privkey: "<<(std::string)key_to_wif(it->second)<<"\n";
-         tx.sign( it->second, colab_chain_id, fc::ecc::fc_canonical );
+         tx.sign( it->second, knowledgr_chain_id, fc::ecc::fc_canonical );
       }
 
       if( broadcast )
@@ -763,23 +763,23 @@ public:
          std::stringstream out;
 
          auto accounts = result.as<vector<condenser_api::api_account_object>>();
-         asset total_colab;
+         asset total_knowledgr;
 //          asset total_vest(0, VESTS_SYMBOL );
 //          asset total_sbd(0, SBD_SYMBOL );
          for( const auto& a : accounts ) {
-            total_colab += a.balance.to_asset();
+            total_knowledgr += a.balance.to_asset();
             //total_vest  += a.vesting_shares.to_asset();
-            //total_sbd  += a.sbd_balance.to_asset();///~~~~~CLC~~~~~ NO NEED for CoLab
+            //total_sbd  += a.sbd_balance.to_asset();///~~~~~NLG~~~~~ NO NEED for Knowledgr
             out << std::left << std::setw( 17 ) << std::string(a.name)
                 << std::right << std::setw(18) << fc::variant(a.balance).as_string() <<" "
 				<< std::right << std::setw(18) << fc::variant(a.stake_balance).as_string() <<" "
 				<< std::right << std::setw(18) << a.rep_power_rewards.value <<" "
                 /*<< std::right << std::setw(26) << fc::variant(a.vesting_shares).as_string()*/ <<" "<<"\n";
-                //<< std::right << std::setw(16) << fc::variant(a.sbd_balance).as_string() ///~~~~~CLC~~~~~ NO NEED for CoLab
+                //<< std::right << std::setw(16) << fc::variant(a.sbd_balance).as_string() ///~~~~~NLG~~~~~ NO NEED for Knowledgr
          }
          out << "-------------------------------------------------------------------------\n";
             out << std::left << std::setw( 17 ) << "TOTAL"
-                << std::right << std::setw(18) << legacy_asset::from_asset(total_colab).to_string() <<" "
+                << std::right << std::setw(18) << legacy_asset::from_asset(total_knowledgr).to_string() <<" "
                 /*<< std::right << std::setw(26) << legacy_asset::from_asset(total_vest).to_string() <<" "*/
                 /*<< std::right << std::setw(16) << legacy_asset::from_asset(total_sbd).to_string() */<<"\n";
          return out.str();
@@ -819,7 +819,7 @@ public:
              ss << ' ' << setw( 10 ) << o.orderid;
              ss << ' ' << setw( 10 ) << o.real_price;
              ss << ' ' << setw( 10 ) << fc::variant( asset( o.for_sale, o.sell_price.base.symbol ) ).as_string();
-             ss << ' ' << setw( 10 ) << (o.sell_price.base.symbol == CLC_SYMBOL ? "SELL" : "BUY");
+             ss << ' ' << setw( 10 ) << (o.sell_price.base.symbol == NLG_SYMBOL ? "SELL" : "BUY");
              ss << "\n";
           }
           return ss.str();
@@ -837,10 +837,10 @@ public:
             << ' '
             << setw( spacing + 3 ) << "Sum(SBD)"
             << setw( spacing + 1) << "SBD"
-            << setw( spacing + 1 ) << "CLC"
+            << setw( spacing + 1 ) << "NLG"
             << setw( spacing + 1 ) << "Price"
             << setw( spacing + 1 ) << "Price"
-            << setw( spacing + 1 ) << "CLC "
+            << setw( spacing + 1 ) << "NLG "
             << setw( spacing + 1 ) << "SBD " << "Sum(SBD)"
             << "\n====================================================================================================="
             << "|=====================================================================================================\n";
@@ -853,7 +853,7 @@ public:
                ss
                   << ' ' << setw( spacing ) << legacy_asset::from_asset( bid_sum ).to_string()
                   << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.bids[i].sbd, SBD_SYMBOL ) ).to_string()
-                  << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.bids[i].colab, CLC_SYMBOL ) ).to_string()
+                  << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.bids[i].knowledgr, NLG_SYMBOL ) ).to_string()
                   << ' ' << setw( spacing ) << orders.bids[i].real_price;
             }
             else
@@ -867,7 +867,7 @@ public:
             {
                ask_sum += asset( orders.asks[i].sbd, SBD_SYMBOL );
                ss << ' ' << setw( spacing ) << orders.asks[i].real_price
-                  << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.asks[i].colab, CLC_SYMBOL ) ).to_string()
+                  << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.asks[i].knowledgr, NLG_SYMBOL ) ).to_string()
                   << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.asks[i].sbd, SBD_SYMBOL ) ).to_string()
                   << ' ' << setw( spacing ) << legacy_asset::from_asset( ask_sum ).to_string();
             }
@@ -916,7 +916,7 @@ public:
 
    string                                  _wallet_filename;
    wallet_data                             _wallet;
-   colab::protocol::chain_id_type          colab_chain_id;
+   knowledgr::protocol::chain_id_type          knowledgr_chain_id;
 
    map<public_key_type,string>             _keys;
    fc::sha512                              _checksum;
@@ -933,14 +933,14 @@ public:
    const string _wallet_filename_extension = ".wallet";
 };
 
-} } } // colab::wallet::detail
+} } } // knowledgr::wallet::detail
 
 
 
-namespace colab { namespace wallet {
+namespace knowledgr { namespace wallet {
 
-wallet_api::wallet_api(const wallet_data& initial_data, const colab::protocol::chain_id_type& _colab_chain_id, fc::api< remote_node_api > rapi)
-   : my(new detail::wallet_api_impl(*this, initial_data, _colab_chain_id, rapi))
+wallet_api::wallet_api(const wallet_data& initial_data, const knowledgr::protocol::chain_id_type& _knowledgr_chain_id, fc::api< remote_node_api > rapi)
+   : my(new detail::wallet_api_impl(*this, initial_data, _knowledgr_chain_id, rapi))
 {}
 
 wallet_api::~wallet_api(){}
@@ -985,7 +985,7 @@ vector< condenser_api::api_account_object > wallet_api::list_my_accounts()
    return result;
 }
 
-//~~~~~CLC~~~~~{
+//~~~~~NLG~~~~~{
 condenser_api::extended_dynamic_global_properties wallet_api::get_dynamic_global_properties() const
 {
 	return my->_remote_api->get_dynamic_global_properties();
@@ -995,7 +995,7 @@ condenser_api::api_witness_schedule_object	wallet_api::get_witness_schedule() co
 {
 	return my->_remote_api->get_witness_schedule();
 }
-//~~~~~CLC~~~~~}
+//~~~~~NLG~~~~~}
 vector< account_name_type > wallet_api::list_accounts(const string& lowerbound, uint32_t limit)
 {
    return my->_remote_api->lookup_accounts( lowerbound, limit );
@@ -1020,11 +1020,11 @@ brain_key_info wallet_api::suggest_brain_key()const
 
    for( int i=0; i<BRAIN_KEY_WORD_COUNT; i++ )
    {
-      fc::bigint choice = entropy % colab::words::word_list_size;
-      entropy /= colab::words::word_list_size;
+      fc::bigint choice = entropy % knowledgr::words::word_list_size;
+      entropy /= knowledgr::words::word_list_size;
       if( i > 0 )
          brain_key += " ";
-      brain_key += colab::words::word_list[ choice.to_int64() ];
+      brain_key += knowledgr::words::word_list[ choice.to_int64() ];
    }
 
    brain_key = normalize_brain_key(brain_key);
@@ -1050,7 +1050,7 @@ condenser_api::api_account_object wallet_api::get_account( string account_name )
    return my->get_account( account_name );
 }
 
-//~~~~~CLC~~~~~{
+//~~~~~NLG~~~~~{
 condenser_api::discussion wallet_api::get_comment( string author, string permlink ) const
 {
 	return my->_remote_api->get_content( author, permlink );
@@ -1128,7 +1128,7 @@ vector<condenser_api::api_stake_pending_object> wallet_api::find_pending_stake( 
 {
 	return my->_remote_api->find_pending_stake(account);
 }
-//~~~~~CLC~~~~~}
+//~~~~~NLG~~~~~}
 
 bool wallet_api::import_key(string wif_key)
 {
@@ -1353,8 +1353,8 @@ condenser_api::legacy_signed_transaction wallet_api::create_account_with_keys(
  */
 // condenser_api::legacy_signed_transaction wallet_api::create_account_with_keys_delegated(
 //    string creator,
-//    condenser_api::legacy_asset clc_fee,
-//    condenser_api::legacy_asset delegated_clc,
+//    condenser_api::legacy_asset nlg_fee,
+//    condenser_api::legacy_asset delegated_nlg,
 //    string new_account_name,
 //    string json_meta,
 //    public_key_type owner,
@@ -1372,8 +1372,8 @@ condenser_api::legacy_signed_transaction wallet_api::create_account_with_keys(
 //    op.posting = authority( 1, posting, 1 );
 //    op.memo_key = memo;
 //    op.json_metadata = json_meta;
-//    op.fee = clc_fee.to_asset();
-//    op.delegation = delegated_clc.to_asset();
+//    op.fee = nlg_fee.to_asset();
+//    op.delegation = delegated_nlg.to_asset();
 // 
 //    signed_transaction tx;
 //    tx.operations.push_back(op);
@@ -1431,7 +1431,7 @@ vector< database_api::api_owner_authority_history_object > wallet_api::get_owner
    return my->_remote_api->get_owner_history( account );
 }
 
-//~~~~~CLC~~~~~{
+//~~~~~NLG~~~~~{
 
 condenser_api::legacy_signed_transaction wallet_api::update_account_admin(
 	string admin,
@@ -1479,7 +1479,7 @@ condenser_api::legacy_signed_transaction wallet_api::update_account_expertise(
 	}
 	FC_CAPTURE_AND_RETHROW( (admin)(account)(expertises)(broadcast) )
 }
-//~~~~~CLC~~~~~}
+//~~~~~NLG~~~~~}
 
 condenser_api::legacy_signed_transaction wallet_api::update_account(
    string account_name,
@@ -1819,8 +1819,8 @@ condenser_api::legacy_signed_transaction wallet_api::create_account(
  */
 // condenser_api::legacy_signed_transaction wallet_api::create_account_delegated(
 //    string creator,
-//    condenser_api::legacy_asset clc_fee,
-//    condenser_api::legacy_asset delegated_clc,
+//    condenser_api::legacy_asset nlg_fee,
+//    condenser_api::legacy_asset delegated_nlg,
 //    string new_account_name,
 //    string json_meta,
 //    bool broadcast )
@@ -1834,7 +1834,7 @@ condenser_api::legacy_signed_transaction wallet_api::create_account(
 //    import_key( active.wif_priv_key );
 //    import_key( posting.wif_priv_key );
 //    import_key( memo.wif_priv_key );
-//    return create_account_with_keys_delegated( creator, clc_fee, delegated_clc, new_account_name, json_meta,  owner.pub_key, active.pub_key, posting.pub_key, memo.pub_key, broadcast );
+//    return create_account_with_keys_delegated( creator, nlg_fee, delegated_nlg, new_account_name, json_meta,  owner.pub_key, active.pub_key, posting.pub_key, memo.pub_key, broadcast );
 // } FC_CAPTURE_AND_RETHROW( (creator)(new_account_name)(json_meta) ) }
 
 
@@ -2013,7 +2013,7 @@ condenser_api::legacy_signed_transaction wallet_api::escrow_transfer(
    string agent,
    uint32_t escrow_id,
 //   condenser_api::legacy_asset sbd_amount,
-   condenser_api::legacy_asset clc_amount,
+   condenser_api::legacy_asset nlg_amount,
    condenser_api::legacy_asset fee,
    time_point_sec ratification_deadline,
    time_point_sec escrow_expiration,
@@ -2027,7 +2027,7 @@ condenser_api::legacy_signed_transaction wallet_api::escrow_transfer(
    op.agent = agent;
    op.escrow_id = escrow_id;
 //   op.sbd_amount = sbd_amount.to_asset();
-   op.clc_amount = clc_amount.to_asset();
+   op.nlg_amount = nlg_amount.to_asset();
    op.fee = fee.to_asset();
    op.ratification_deadline = ratification_deadline;
    op.escrow_expiration = escrow_expiration;
@@ -2095,7 +2095,7 @@ condenser_api::legacy_signed_transaction wallet_api::escrow_release(
    string receiver,
    uint32_t escrow_id,
 //   condenser_api::legacy_asset sbd_amount,
-   condenser_api::legacy_asset clc_amount,
+   condenser_api::legacy_asset nlg_amount,
    bool broadcast )
 {
    FC_ASSERT( !is_locked() );
@@ -2107,7 +2107,7 @@ condenser_api::legacy_signed_transaction wallet_api::escrow_release(
    op.receiver = receiver;
    op.escrow_id = escrow_id;
 //   op.sbd_amount = sbd_amount.to_asset();
-   op.clc_amount = clc_amount.to_asset();
+   op.nlg_amount = nlg_amount.to_asset();
 
    signed_transaction tx;
    tx.operations.push_back( op );
@@ -2345,7 +2345,7 @@ condenser_api::legacy_signed_transaction wallet_api::decline_voting_rights(
 
 condenser_api::legacy_signed_transaction wallet_api::claim_reward_balance(
    string account,
-   condenser_api::legacy_asset reward_colab,
+   condenser_api::legacy_asset reward_knowledgr,
 //    condenser_api::legacy_asset reward_sbd,
 //    condenser_api::legacy_asset reward_vests,
    bool broadcast )
@@ -2353,7 +2353,7 @@ condenser_api::legacy_signed_transaction wallet_api::claim_reward_balance(
    FC_ASSERT( !is_locked() );
    claim_reward_balance_operation op;
    op.account = account;
-   op.reward_colab = reward_colab.to_asset();
+   op.reward_knowledgr = reward_knowledgr.to_asset();
 //    op.reward_sbd = reward_sbd.to_asset();
 //    op.reward_vests = reward_vests.to_asset();
 
@@ -2459,9 +2459,9 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
    string permlink,
    string parent_author,
    string parent_permlink,
-   const vector<std::string>& categories, //~~~~~CLC~~~~~
-   string type, //~~~~~CLC~~~~~
-   const vector<citation>& citations, //~~~~~CLC~~~~~
+   const vector<std::string>& categories, //~~~~~NLG~~~~~
+   string type, //~~~~~NLG~~~~~
+   const vector<citation>& citations, //~~~~~NLG~~~~~
    string title,
    string body,
    string json,
@@ -2469,7 +2469,7 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
 {
    FC_ASSERT( !is_locked() );
    comment_operation op;
-   if (type == "O") {//~~~~~CLC~~~~~
+   if (type == "O") {//~~~~~NLG~~~~~
 	   op.type = 0;
    } else if (type == "Q") {
 	   op.type = 1;
@@ -2480,7 +2480,7 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
    } else {
 	   op.type = 4;
    }
-   for( const citation& cit : citations ) {//~~~~~CLC~~~~~
+   for( const citation& cit : citations ) {//~~~~~NLG~~~~~
 	   op.citations.push_back(cit);
    }
    op.parent_author =  parent_author;
@@ -2490,20 +2490,20 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
    op.title = title;
    op.body = body;
    op.json_metadata = json;
-   //~~~~~CLC~~~~~{
+   //~~~~~NLG~~~~~{
    for (auto & cs : categories) {
 	   protocol::expertise_category c = protocol::expertise::category_from_string(cs);
 	   op.categories.push_back(c);
    }
-   //~~~~~CLC~~~~~}
+   //~~~~~NLG~~~~~}
    signed_transaction tx;
 
-   if (op.type == 3) {//~~~~~CLC~~~~~
+   if (op.type == 3) {//~~~~~NLG~~~~~
 	   vote_operation op2;
 	   op2.voter = author;
 	   op2.author = parent_author;
 	   op2.permlink = parent_permlink;
-	   op2.weight = 100 * COLAB_1_PERCENT; 
+	   op2.weight = 100 * KNOWLEDGR_1_PERCENT; 
 	   tx.operations.push_back(op2);
    }
    tx.operations.push_back( op );
@@ -2513,7 +2513,7 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
    return my->sign_transaction( tx, broadcast );
 }
 
-///~~~~~CLC~~~~~{
+///~~~~~NLG~~~~~{
 condenser_api::legacy_signed_transaction wallet_api::post_review( 
 	string author, 
 	string permlink, 
@@ -2544,7 +2544,7 @@ condenser_api::legacy_signed_transaction wallet_api::post_review(
 	op2.voter = author;
 	op2.author = parent_author;
 	op2.permlink = parent_permlink;
-	op2.weight = weight * COLAB_1_PERCENT; 
+	op2.weight = weight * KNOWLEDGR_1_PERCENT; 
 
 	signed_transaction tx;
 	tx.operations.push_back( op );
@@ -2614,7 +2614,7 @@ condenser_api::legacy_signed_transaction wallet_api::process_pending_stake(
 	FC_CAPTURE_AND_RETHROW( (admin)(account)(broadcast) )
 }
 
-///~~~~~CLC~~~~~}
+///~~~~~NLG~~~~~}
 
 condenser_api::legacy_signed_transaction wallet_api::vote(
    string voter,
@@ -2630,7 +2630,7 @@ condenser_api::legacy_signed_transaction wallet_api::vote(
    op.voter = voter;
    op.author = author;
    op.permlink = permlink;
-   op.weight = weight * COLAB_1_PERCENT;
+   op.weight = weight * KNOWLEDGR_1_PERCENT;
 
    signed_transaction tx;
    tx.operations.push_back( op );
@@ -2681,4 +2681,4 @@ condenser_api::legacy_signed_transaction wallet_api::follow( string follower, st
    return my->sign_transaction( trx, broadcast );
 }
 
-} } // colab::wallet
+} } // knowledgr::wallet

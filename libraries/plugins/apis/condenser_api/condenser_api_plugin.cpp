@@ -1,8 +1,8 @@
-#include <colab/plugins/condenser_api/condenser_api_plugin.hpp>
-#include <colab/plugins/condenser_api/condenser_api.hpp>
-#include <colab/plugins/chain/chain_plugin.hpp>
+#include <knowledgr/plugins/condenser_api/condenser_api_plugin.hpp>
+#include <knowledgr/plugins/condenser_api/condenser_api.hpp>
+#include <knowledgr/plugins/chain/chain_plugin.hpp>
 
-namespace colab { namespace plugins { namespace condenser_api {
+namespace knowledgr { namespace plugins { namespace condenser_api {
 
 condenser_api_plugin::condenser_api_plugin() {}
 condenser_api_plugin::~condenser_api_plugin() {}
@@ -26,4 +26,4 @@ void condenser_api_plugin::plugin_startup()
 
 void condenser_api_plugin::plugin_shutdown() {}
 
-} } } // colab::plugins::condenser_api
+} } } // knowledgr::plugins::condenser_api

@@ -28,8 +28,8 @@
 #include <fc/crypto/elliptic.hpp>
 #include <fc/io/json.hpp>
 
-#include <colab/protocol/types.hpp>
-#include <colab/utilities/key_conversion.hpp>
+#include <knowledgr/protocol/types.hpp>
+#include <knowledgr/utilities/key_conversion.hpp>
 
 #ifndef WIN32
 #include <csignal>
@@ -87,8 +87,8 @@ int main( int argc, char** argv )
       auto show_key = [&]( const fc::ecc::private_key& priv_key, const std::string& name )
       {
          fc::mutable_variant_object mvo;
-         colab::protocol::public_key_type pub_key = priv_key.get_public_key();
-         mvo( "private_key",    colab::utilities::key_to_wif( priv_key ) )
+         knowledgr::protocol::public_key_type pub_key = priv_key.get_public_key();
+         mvo( "private_key",    knowledgr::utilities::key_to_wif( priv_key ) )
 	    ( "public_key",     std::string( pub_key ) )
 	    ( "account_name", name )
 	 ;

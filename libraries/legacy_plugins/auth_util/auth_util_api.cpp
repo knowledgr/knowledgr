@@ -1,19 +1,19 @@
 
-#include <colab/app/api_context.hpp>
-#include <colab/app/application.hpp>
+#include <knowledgr/app/api_context.hpp>
+#include <knowledgr/app/application.hpp>
 
-#include <colab/protocol/authority.hpp>
-#include <colab/protocol/sign_state.hpp>
+#include <knowledgr/protocol/authority.hpp>
+#include <knowledgr/protocol/sign_state.hpp>
 
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/database.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/database.hpp>
 
-#include <colab/plugins/auth_util/auth_util_api.hpp>
-#include <colab/plugins/auth_util/auth_util_plugin.hpp>
+#include <knowledgr/plugins/auth_util/auth_util_api.hpp>
+#include <knowledgr/plugins/auth_util/auth_util_plugin.hpp>
 
 #include <fc/container/flat.hpp>
 
-namespace colab { namespace plugin { namespace auth_util {
+namespace knowledgr { namespace plugin { namespace auth_util {
 
 using boost::container::flat_set;
 
@@ -22,18 +22,18 @@ namespace detail {
 class auth_util_api_impl
 {
    public:
-      auth_util_api_impl( colab::app::application& _app );
+      auth_util_api_impl( knowledgr::app::application& _app );
       void check_authority_signature( const check_authority_signature_params& args, check_authority_signature_result& result );
 
-      std::shared_ptr< colab::plugin::auth_util::auth_util_plugin > get_plugin();
+      std::shared_ptr< knowledgr::plugin::auth_util::auth_util_plugin > get_plugin();
 
-      colab::app::application& app;
+      knowledgr::app::application& app;
 };
 
-auth_util_api_impl::auth_util_api_impl( colab::app::application& _app ) : app( _app )
+auth_util_api_impl::auth_util_api_impl( knowledgr::app::application& _app ) : app( _app )
 {}
 
-std::shared_ptr< colab::plugin::auth_util::auth_util_plugin > auth_util_api_impl::get_plugin()
+std::shared_ptr< knowledgr::plugin::auth_util::auth_util_plugin > auth_util_api_impl::get_plugin()
 {
    return app.get_plugin< auth_util_plugin >( "auth_util" );
 }
@@ -80,7 +80,7 @@ void auth_util_api_impl::check_authority_signature( const check_authority_signat
 
 } // detail
 
-auth_util_api::auth_util_api( const colab::app::api_context& ctx )
+auth_util_api::auth_util_api( const knowledgr::app::api_context& ctx )
 {
    my = std::make_shared< detail::auth_util_api_impl >(ctx.app);
 }
@@ -94,4 +94,4 @@ check_authority_signature_result auth_util_api::check_authority_signature( check
    return result;
 }
 
-} } } // colab::plugin::auth_util
+} } } // knowledgr::plugin::auth_util

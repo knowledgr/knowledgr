@@ -3,10 +3,10 @@
 #include <fc/string.hpp>
 #include <fc/time.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
 /*
- * This class represents the basic versioning scheme of the Colab blockchain.
+ * This class represents the basic versioning scheme of the Knowledgr blockchain.
  * All versions are a triple consisting of a major version, hardfork version, and release version.
  * It allows easy comparison between versions. A version is a read only object.
  */
@@ -66,20 +66,20 @@ struct hardfork_version_vote
    fc::time_point_sec hf_time;
 };
 
-} } // colab::protocol
+} } // knowledgr::protocol
 
 namespace fc
 {
    class variant;
-   void to_variant( const colab::protocol::version& v, variant& var );
-   void from_variant( const variant& var, colab::protocol::version& v );
+   void to_variant( const knowledgr::protocol::version& v, variant& var );
+   void from_variant( const variant& var, knowledgr::protocol::version& v );
 
-   void to_variant( const colab::protocol::hardfork_version& hv, variant& var );
-   void from_variant( const variant& var, colab::protocol::hardfork_version& hv );
+   void to_variant( const knowledgr::protocol::hardfork_version& hv, variant& var );
+   void from_variant( const variant& var, knowledgr::protocol::hardfork_version& hv );
 } // fc
 
 #include <fc/reflect/reflect.hpp>
-FC_REFLECT( colab::protocol::version, (v_num) )
-FC_REFLECT_DERIVED( colab::protocol::hardfork_version, (colab::protocol::version), )
+FC_REFLECT( knowledgr::protocol::version, (v_num) )
+FC_REFLECT_DERIVED( knowledgr::protocol::hardfork_version, (knowledgr::protocol::version), )
 
-FC_REFLECT( colab::protocol::hardfork_version_vote, (hf_version)(hf_time) )
+FC_REFLECT( knowledgr::protocol::hardfork_version_vote, (hf_version)(hf_time) )

@@ -10,7 +10,7 @@
 
 #include <boost/program_options.hpp>
 
-namespace colab { namespace utilities {
+namespace knowledgr { namespace utilities {
 
 struct appender_args
 {
@@ -34,7 +34,7 @@ void set_logging_program_options( boost::program_options::options_description& o
 
 fc::optional<fc::logging_config> load_logging_config( const boost::program_options::variables_map& args, const boost::filesystem::path& pwd );
 
-} } // colab::utilities
+} } // knowledgr::utilities
 
-FC_REFLECT( colab::utilities::appender_args, (appender)(file)(stream) )
-FC_REFLECT( colab::utilities::logger_args, (name)(level)(appender) )
+FC_REFLECT( knowledgr::utilities::appender_args, (appender)(file)(stream) )
+FC_REFLECT( knowledgr::utilities::logger_args, (name)(level)(appender) )

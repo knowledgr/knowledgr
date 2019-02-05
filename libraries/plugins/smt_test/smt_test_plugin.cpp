@@ -1,23 +1,23 @@
-#include <colab/plugins/smt_test/smt_test_plugin.hpp>
-#include <colab/plugins/smt_test/smt_test_objects.hpp>
+#include <knowledgr/plugins/smt_test/smt_test_plugin.hpp>
+#include <knowledgr/plugins/smt_test/smt_test_objects.hpp>
 
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/database.hpp>
-#include <colab/chain/index.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/index.hpp>
 
-#include <colab/protocol/smt_operations.hpp>
+#include <knowledgr/protocol/smt_operations.hpp>
 
 #define SMT_TEST_PLUGIN_NAI (SMT_MIN_NON_RESERVED_NAI * 10 + 6)
 
-namespace colab { namespace plugins { namespace smt_test {
+namespace knowledgr { namespace plugins { namespace smt_test {
 
-using namespace colab::protocol;
+using namespace knowledgr::protocol;
 
 class smt_test_plugin_impl
 {
    public:
       smt_test_plugin_impl( smt_test_plugin& _plugin ) :
-         _db( appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db() ),
+         _db( appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db() ),
          _self( _plugin ) {}
 
       void on_pre_apply_operation( const operation_notification& op_obj );
@@ -65,34 +65,34 @@ void smt_test_plugin_impl::on_post_apply_operation( const operation_notification
    note.op.visit( post_operation_visitor( *this ) );
 }
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
 
 void test_alpha()
 {
    vector<operation>  operations;
 
    smt_capped_generation_policy gpolicy;
-   uint64_t max_supply = COLAB_MAX_SHARE_SUPPLY / 6000;
+   uint64_t max_supply = KNOWLEDGR_MAX_SHARE_SUPPLY / 6000;
 
-   // set colab unit, total is 100 CLC-satoshis = 0.1 CLC
-   gpolicy.pre_soft_cap_unit.colab_unit.emplace( "founder-a",   7 );
-   gpolicy.pre_soft_cap_unit.colab_unit.emplace( "founder-b",  23 );
-   gpolicy.pre_soft_cap_unit.colab_unit.emplace( "founder-c",  70 );
+   // set knowledgr unit, total is 100 NLG-satoshis = 0.1 NLG
+   gpolicy.pre_soft_cap_unit.knowledgr_unit.emplace( "founder-a",   7 );
+   gpolicy.pre_soft_cap_unit.knowledgr_unit.emplace( "founder-b",  23 );
+   gpolicy.pre_soft_cap_unit.knowledgr_unit.emplace( "founder-c",  70 );
 
    // set token unit, total is 6 token-satoshis = 0.0006 ALPHA
    gpolicy.pre_soft_cap_unit.token_unit.emplace( "$from", 5 );
    gpolicy.pre_soft_cap_unit.token_unit.emplace( "founder-d", 1 );
 
    // no soft cap -> no soft cap unit
-   gpolicy.post_soft_cap_unit.colab_unit.clear();
+   gpolicy.post_soft_cap_unit.knowledgr_unit.clear();
    gpolicy.post_soft_cap_unit.token_unit.clear();
 
-   gpolicy.min_colab_units_commitment.fillin_nonhidden_value( 1 );
-   gpolicy.hard_cap_colab_units_commitment.fillin_nonhidden_value( max_supply );
+   gpolicy.min_knowledgr_units_commitment.fillin_nonhidden_value( 1 );
+   gpolicy.hard_cap_knowledgr_units_commitment.fillin_nonhidden_value( max_supply );
 
-   gpolicy.soft_cap_percent = COLAB_100_PERCENT;
+   gpolicy.soft_cap_percent = KNOWLEDGR_100_PERCENT;
 
-   // .0006 ALPHA / 0.1 CLC -> 1000 token-units / colab-unit
+   // .0006 ALPHA / 0.1 NLG -> 1000 token-units / knowledgr-unit
    gpolicy.min_unit_ratio = 1000;
    gpolicy.max_unit_ratio = 1000;
 
@@ -133,9 +133,9 @@ void test_beta()
 
    smt_capped_generation_policy gpolicy;
 
-   // set colab unit, total is 100 CLC-satoshis = 0.1 CLC
-   gpolicy.pre_soft_cap_unit.colab_unit.emplace( "fred"  , 3 );
-   gpolicy.pre_soft_cap_unit.colab_unit.emplace( "george", 2 );
+   // set knowledgr unit, total is 100 NLG-satoshis = 0.1 NLG
+   gpolicy.pre_soft_cap_unit.knowledgr_unit.emplace( "fred"  , 3 );
+   gpolicy.pre_soft_cap_unit.knowledgr_unit.emplace( "george", 2 );
 
    // set token unit, total is 6 token-satoshis = 0.0006 ALPHA
    gpolicy.pre_soft_cap_unit.token_unit.emplace( "$from" , 7 );
@@ -143,15 +143,15 @@ void test_beta()
    gpolicy.pre_soft_cap_unit.token_unit.emplace( "henry" , 2 );
 
    // no soft cap -> no soft cap unit
-   gpolicy.post_soft_cap_unit.colab_unit.clear();
+   gpolicy.post_soft_cap_unit.knowledgr_unit.clear();
    gpolicy.post_soft_cap_unit.token_unit.clear();
 
-   gpolicy.min_colab_units_commitment.fillin_nonhidden_value( 5000000 );
-   gpolicy.hard_cap_colab_units_commitment.fillin_nonhidden_value( 30000000 );
+   gpolicy.min_knowledgr_units_commitment.fillin_nonhidden_value( 5000000 );
+   gpolicy.hard_cap_knowledgr_units_commitment.fillin_nonhidden_value( 30000000 );
 
-   gpolicy.soft_cap_percent = COLAB_100_PERCENT;
+   gpolicy.soft_cap_percent = KNOWLEDGR_100_PERCENT;
 
-   // .0006 ALPHA / 0.1 CLC -> 1000 token-units / colab-unit
+   // .0006 ALPHA / 0.1 NLG -> 1000 token-units / knowledgr-unit
    gpolicy.min_unit_ratio = 50;
    gpolicy.max_unit_ratio = 100;
 
@@ -191,22 +191,22 @@ void test_delta()
 
    smt_capped_generation_policy gpolicy;
 
-   // set colab unit, total is 1 CLC-satoshi = 0.001 CLC
-   gpolicy.pre_soft_cap_unit.colab_unit.emplace( "founder", 1 );
+   // set knowledgr unit, total is 1 NLG-satoshi = 0.001 NLG
+   gpolicy.pre_soft_cap_unit.knowledgr_unit.emplace( "founder", 1 );
 
    // set token unit, total is 10,000 token-satoshis = 0.10000 DELTA
    gpolicy.pre_soft_cap_unit.token_unit.emplace( "founder" , 10000 );
 
    // no soft cap -> no soft cap unit
-   gpolicy.post_soft_cap_unit.colab_unit.clear();
+   gpolicy.post_soft_cap_unit.knowledgr_unit.clear();
    gpolicy.post_soft_cap_unit.token_unit.clear();
 
-   gpolicy.min_colab_units_commitment.fillin_nonhidden_value(      10000000 );
-   gpolicy.hard_cap_colab_units_commitment.fillin_nonhidden_value( 10000000 );
+   gpolicy.min_knowledgr_units_commitment.fillin_nonhidden_value(      10000000 );
+   gpolicy.hard_cap_knowledgr_units_commitment.fillin_nonhidden_value( 10000000 );
 
-   gpolicy.soft_cap_percent = COLAB_100_PERCENT;
+   gpolicy.soft_cap_percent = KNOWLEDGR_100_PERCENT;
 
-   // .001 CLC / .100000 DELTA -> 100 DELTA / CLC
+   // .001 NLG / .100000 DELTA -> 100 DELTA / NLG
    gpolicy.min_unit_ratio = 1000;
    gpolicy.max_unit_ratio = 1000;
 
@@ -274,7 +274,7 @@ void smt_test_plugin::plugin_initialize( const boost::program_options::variables
    try
    {
       ilog( "Initializing smt_test plugin" );
-      chain::database& db = appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db();
+      chain::database& db = appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db();
 
       db.add_pre_apply_operation_handler( [&]( const operation_notification& note ){ my->on_pre_apply_operation( note ); }, *this, 0 );
       db.add_post_apply_operation_handler( [&]( const operation_notification& note ){ my->on_post_apply_operation( note ); }, *this, 0 );
@@ -288,4 +288,4 @@ void smt_test_plugin::plugin_startup() {}
 
 void smt_test_plugin::plugin_shutdown() {}
 
-} } } // colab::plugins::smt_test
+} } } // knowledgr::plugins::smt_test

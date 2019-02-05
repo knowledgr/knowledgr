@@ -1,12 +1,12 @@
 #pragma once
 
-#include <colab/protocol/types.hpp>
-#include <colab/protocol/authority.hpp>
-#include <colab/protocol/version.hpp>
+#include <knowledgr/protocol/types.hpp>
+#include <knowledgr/protocol/authority.hpp>
+#include <knowledgr/protocol/version.hpp>
 
 #include <fc/time.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
    struct base_operation
    {
@@ -32,6 +32,6 @@ namespace colab { namespace protocol {
    typedef flat_set<future_extensions> extensions_type;
 
 
-} } // colab::protocol
+} } // knowledgr::protocol
 
-FC_REFLECT_TYPENAME( colab::protocol::future_extensions )
+FC_REFLECT_TYPENAME( knowledgr::protocol::future_extensions )

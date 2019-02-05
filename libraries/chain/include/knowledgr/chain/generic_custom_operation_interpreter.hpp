@@ -1,24 +1,24 @@
 
 #pragma once
 
-#include <colab/protocol/schema_types.hpp>
-#include <colab/chain/schema_types.hpp>
-#include <colab/schema/schema.hpp>
+#include <knowledgr/protocol/schema_types.hpp>
+#include <knowledgr/chain/schema_types.hpp>
+#include <knowledgr/schema/schema.hpp>
 
-#include <colab/protocol/colab_operations.hpp>
-#include <colab/protocol/operation_util_impl.hpp>
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/knowledgr_operations.hpp>
+#include <knowledgr/protocol/operation_util_impl.hpp>
+#include <knowledgr/protocol/types.hpp>
 
-#include <colab/chain/evaluator.hpp>
-#include <colab/chain/evaluator_registry.hpp>
-#include <colab/chain/custom_operation_interpreter.hpp>
+#include <knowledgr/chain/evaluator.hpp>
+#include <knowledgr/chain/evaluator_registry.hpp>
+#include <knowledgr/chain/custom_operation_interpreter.hpp>
 
 #include <fc/variant.hpp>
 
 #include <string>
 #include <vector>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
 using protocol::operation;
 using protocol::authority;
@@ -218,9 +218,9 @@ class generic_custom_operation_interpreter
          FC_CAPTURE_AND_RETHROW( (outer_o) )
       }
 
-      virtual std::shared_ptr< colab::schema::abstract_schema > get_operation_schema() override
+      virtual std::shared_ptr< knowledgr::schema::abstract_schema > get_operation_schema() override
       {
-         return colab::schema::get_schema_for_type< CustomOperationType >();
+         return knowledgr::schema::get_schema_for_type< CustomOperationType >();
       }
 };
 

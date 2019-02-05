@@ -13,10 +13,10 @@ my $outFile = new IO::File($outputFileName, "w")
 my $fileHeader = <<'END';
 /** GENERATED FILE **/
 #include <set>
-#include <colab/wallet/api_documentation.hpp>
-#include <colab/wallet/wallet.hpp>
+#include <knowledgr/wallet/api_documentation.hpp>
+#include <knowledgr/wallet/wallet.hpp>
 
-namespace colab { namespace wallet {
+namespace knowledgr { namespace wallet {
    namespace detail
    {
       struct api_method_name_collector_visitor
@@ -38,7 +38,7 @@ $outFile->print($fileHeader);
 
 for my $class (@{$doxydocs->{classes}})
 {
-  if ($class->{name} eq 'colab::wallet::wallet_api')
+  if ($class->{name} eq 'knowledgr::wallet::wallet_api')
   {
     for my $member (@{$class->{public_methods}->{members}})
     {
@@ -84,7 +84,7 @@ my $fileFooter = <<'END';
           ++iter;
    }
 
-} } // end namespace colab::wallet
+} } // end namespace knowledgr::wallet
 END
 $outFile->print($fileFooter);
 $outFile->close();

@@ -1,8 +1,8 @@
 #pragma once
-#include <colab/protocol/block_header.hpp>
-#include <colab/protocol/transaction.hpp>
+#include <knowledgr/protocol/block_header.hpp>
+#include <knowledgr/protocol/transaction.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
    struct signed_block : public signed_block_header
    {
@@ -10,6 +10,6 @@ namespace colab { namespace protocol {
       vector<signed_transaction> transactions;
    };
 
-} } // colab::protocol
+} } // knowledgr::protocol
 
-FC_REFLECT_DERIVED( colab::protocol::signed_block, (colab::protocol::signed_block_header), (transactions) )
+FC_REFLECT_DERIVED( knowledgr::protocol::signed_block, (knowledgr::protocol::signed_block_header), (transactions) )

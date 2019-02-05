@@ -1,4 +1,4 @@
-file(GLOB HEADERS "include/colab/plugins/account_history_rocksdb/*.hpp")
+file(GLOB HEADERS "include/knowledgr/plugins/account_history_rocksdb/*.hpp")
 
 add_library( account_history_rocksdb_plugin
              account_history_rocksdb_plugin.cpp
@@ -6,7 +6,7 @@ add_library( account_history_rocksdb_plugin
            )
 
 target_link_libraries( account_history_rocksdb_plugin
-   chain_plugin colab_chain colab_protocol json_rpc_plugin rocksdb
+   chain_plugin knowledgr_chain knowledgr_protocol json_rpc_plugin rocksdb
    )
 
 target_include_directories( account_history_rocksdb_plugin

@@ -1,20 +1,20 @@
-#include <colab/blockchain_statistics/blockchain_statistics_api.hpp>
+#include <knowledgr/blockchain_statistics/blockchain_statistics_api.hpp>
 
-#include <colab/app/impacted.hpp>
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/comment_object.hpp>
-#include <colab/chain/history_object.hpp>
+#include <knowledgr/app/impacted.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/comment_object.hpp>
+#include <knowledgr/chain/history_object.hpp>
 
-#include <colab/chain/database.hpp>
-#include <colab/chain/index.hpp>
-#include <colab/chain/operation_notification.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/index.hpp>
+#include <knowledgr/chain/operation_notification.hpp>
 
-namespace colab { namespace blockchain_statistics {
+namespace knowledgr { namespace blockchain_statistics {
 
 namespace detail
 {
 
-using namespace colab::protocol;
+using namespace knowledgr::protocol;
 
 class blockchain_statistics_plugin_impl
 {
@@ -53,8 +53,8 @@ struct operation_process
       {
          b.transfers++;
 
-         if( op.amount.symbol == CLC_SYMBOL )
-            b.clc_transferred += op.amount.amount;
+         if( op.amount.symbol == NLG_SYMBOL )
+            b.nlg_transferred += op.amount.amount;
          else
             b.sbd_transferred += op.amount.amount;
       });
@@ -152,7 +152,7 @@ struct operation_process
    void operator()( const author_reward_operation& op )const
    {
       _db.modify( _bucket, [&]( bucket_object& b )
-      {///~~~~~CLC~~~~~
+      {///~~~~~NLG~~~~~
          b.payouts++;
          b.sbd_paid_to_authors += op.payout;
          b.vests_paid_to_authors += op.payout;
@@ -180,7 +180,7 @@ struct operation_process
 //       _db.modify( _bucket, [&]( bucket_object& b )
 //       {
 //          b.transfers_to_vesting++;
-//          b.clc_vested += op.amount.amount;
+//          b.nlg_vested += op.amount.amount;
 //       });
 //    }
 
@@ -191,7 +191,7 @@ struct operation_process
       _db.modify( _bucket, [&]( bucket_object& b )
       {
          b.vesting_withdrawals_processed++;
-         if( op.deposited.symbol == CLC_SYMBOL )
+         if( op.deposited.symbol == NLG_SYMBOL )
             b.vests_withdrawn += op.withdrawn.amount;
          else
             b.vests_transferred += op.withdrawn.amount;
@@ -239,7 +239,7 @@ struct operation_process
       _db.modify( _bucket, [&]( bucket_object& b )
       {
          b.sbd_conversion_requests_filled++;
-         b.clc_converted += op.amount_out.amount;
+         b.nlg_converted += op.amount_out.amount;
       });
    }
 };
@@ -357,11 +357,11 @@ void blockchain_statistics_plugin_impl::pre_operation( const operation_notificat
 //          auto& account = db.get_account( op.account );
 //          const auto& bucket = db.get(bucket_id);
 // 
-//          auto new_vesting_withdrawal_rate = op.vesting_shares.amount / COLAB_VESTING_WITHDRAW_INTERVALS;
+//          auto new_vesting_withdrawal_rate = op.vesting_shares.amount / KNOWLEDGR_VESTING_WITHDRAW_INTERVALS;
 //          if( op.vesting_shares.amount > 0 && new_vesting_withdrawal_rate == 0 )
 //             new_vesting_withdrawal_rate = 1;
 // 
-//          if( !db.has_hardfork( COLAB_HARDFORK_0_1 ) )
+//          if( !db.has_hardfork( KNOWLEDGR_HARDFORK_0_1 ) )
 //             new_vesting_withdrawal_rate *= 1000000;
 // 
 //          db.modify( bucket, [&]( bucket_object& b )
@@ -468,6 +468,6 @@ uint32_t blockchain_statistics_plugin::get_max_history_per_bucket() const
    return _my->_maximum_history_per_bucket_size;
 }
 
-} } // colab::blockchain_statistics
+} } // knowledgr::blockchain_statistics
 
-COLAB_DEFINE_PLUGIN( blockchain_statistics, colab::blockchain_statistics::blockchain_statistics_plugin );
+KNOWLEDGR_DEFINE_PLUGIN( blockchain_statistics, knowledgr::blockchain_statistics::blockchain_statistics_plugin );

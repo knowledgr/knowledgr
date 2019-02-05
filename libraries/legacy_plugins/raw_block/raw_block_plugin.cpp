@@ -1,11 +1,11 @@
 
 
-#include <colab/plugins/raw_block/raw_block_api.hpp>
-#include <colab/plugins/raw_block/raw_block_plugin.hpp>
+#include <knowledgr/plugins/raw_block/raw_block_api.hpp>
+#include <knowledgr/plugins/raw_block/raw_block_plugin.hpp>
 
 #include <string>
 
-namespace colab { namespace plugin { namespace raw_block {
+namespace knowledgr { namespace plugin { namespace raw_block {
 
 raw_block_plugin::raw_block_plugin( application* app ) : plugin( app ) {}
 raw_block_plugin::~raw_block_plugin() {}
@@ -28,6 +28,6 @@ void raw_block_plugin::plugin_shutdown()
 {
 }
 
-} } } // colab::plugin::raw_block
+} } } // knowledgr::plugin::raw_block
 
-COLAB_DEFINE_PLUGIN( raw_block, colab::plugin::raw_block::raw_block_plugin )
+KNOWLEDGR_DEFINE_PLUGIN( raw_block, knowledgr::plugin::raw_block::raw_block_plugin )

@@ -1,14 +1,14 @@
 #pragma once
-#include <colab/plugins/account_history_rocksdb/account_history_rocksdb_objects.hpp>
+#include <knowledgr/plugins/account_history_rocksdb/account_history_rocksdb_objects.hpp>
 
-#include <colab/plugins/chain/chain_plugin.hpp>
+#include <knowledgr/plugins/chain/chain_plugin.hpp>
 
 #include <appbase/application.hpp>
 
 #include <functional>
 #include <memory>
 
-namespace colab {
+namespace knowledgr {
 
 namespace plugins { namespace account_history_rocksdb {
 
@@ -19,7 +19,7 @@ namespace bfs = boost::filesystem;
 class account_history_rocksdb_plugin final : public appbase::plugin< account_history_rocksdb_plugin >
 {
 public:
-   APPBASE_PLUGIN_REQUIRES((colab::plugins::chain::chain_plugin))
+   APPBASE_PLUGIN_REQUIRES((knowledgr::plugins::chain::chain_plugin))
 
    account_history_rocksdb_plugin();
    virtual ~account_history_rocksdb_plugin();
@@ -52,4 +52,4 @@ private:
 };
 
 
-} } } // colab::plugins::account_history_rocksdb
+} } } // knowledgr::plugins::account_history_rocksdb

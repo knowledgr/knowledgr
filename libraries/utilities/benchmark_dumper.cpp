@@ -1,7 +1,7 @@
 
-#include <colab/utilities/benchmark_dumper.hpp>
+#include <knowledgr/utilities/benchmark_dumper.hpp>
 
-namespace colab { namespace utilities {
+namespace knowledgr { namespace utilities {
 
 #define PROC_STATUS_LINE_LENGTH 1028
 

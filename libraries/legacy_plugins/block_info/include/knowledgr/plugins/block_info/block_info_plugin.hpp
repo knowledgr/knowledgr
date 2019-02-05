@@ -1,21 +1,21 @@
 
 #pragma once
 
-#include <colab/app/plugin.hpp>
-#include <colab/plugins/block_info/block_info.hpp>
+#include <knowledgr/app/plugin.hpp>
+#include <knowledgr/plugins/block_info/block_info.hpp>
 
 #include <string>
 #include <vector>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 struct signed_block;
 } }
 
-namespace colab { namespace plugin { namespace block_info {
+namespace knowledgr { namespace plugin { namespace block_info {
 
-using colab::app::application;
+using knowledgr::app::application;
 
-class block_info_plugin : public colab::app::plugin
+class block_info_plugin : public knowledgr::app::plugin
 {
    public:
       block_info_plugin( application* app );

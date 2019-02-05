@@ -1,26 +1,26 @@
 
-#include <colab/chain/colab_fwd.hpp>
+#include <knowledgr/chain/knowledgr_fwd.hpp>
 
-#include <colab/plugins/reputation/reputation_plugin.hpp>
-#include <colab/plugins/reputation/reputation_objects.hpp>
+#include <knowledgr/plugins/reputation/reputation_plugin.hpp>
+#include <knowledgr/plugins/reputation/reputation_objects.hpp>
 
-#include <colab/chain/util/impacted.hpp>
+#include <knowledgr/chain/util/impacted.hpp>
 
-#include <colab/protocol/config.hpp>
+#include <knowledgr/protocol/config.hpp>
 
-#include <colab/chain/database.hpp>
-#include <colab/chain/index.hpp>
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/comment_object.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/index.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/comment_object.hpp>
 
 #include <fc/smart_ref_impl.hpp>
 #include <fc/thread/thread.hpp>
 
 #include <memory>
 
-namespace colab { namespace plugins { namespace reputation {
+namespace knowledgr { namespace plugins { namespace reputation {
 
-using namespace colab::protocol;
+using namespace knowledgr::protocol;
 
 namespace detail {
 
@@ -28,7 +28,7 @@ class reputation_plugin_impl
 {
    public:
       reputation_plugin_impl( reputation_plugin& _plugin ) :
-         _db( appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db() ),
+         _db( appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db() ),
          _self( _plugin ) {}
       ~reputation_plugin_impl() {}
 
@@ -220,4 +220,4 @@ void reputation_plugin::plugin_shutdown()
    chain::util::disconnect_signal( my->_post_apply_operation_conn );
 }
 
-} } } // colab::plugins::reputation
+} } } // knowledgr::plugins::reputation

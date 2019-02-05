@@ -21,10 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <colab/utilities/string_escape.hpp>
+#include <knowledgr/utilities/string_escape.hpp>
 #include <sstream>
 
-namespace colab { namespace utilities {
+namespace knowledgr { namespace utilities {
 
   std::string escape_string_for_c_source_code(const std::string& input)
   {
@@ -69,5 +69,5 @@ namespace colab { namespace utilities {
     return escaped_string.str();
   }
 
-} } // end namespace colab::utilities
+} } // end namespace knowledgr::utilities
 

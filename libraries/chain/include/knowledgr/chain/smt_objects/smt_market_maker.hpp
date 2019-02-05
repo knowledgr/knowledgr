@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
 
 #include <cstdint>
 #include <utility>
@@ -8,7 +8,7 @@
 
 #include <fc/reflect/reflect.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
 struct rational_u64
 {
@@ -24,7 +24,7 @@ const std::vector< rational_u64 >& get_mm_ticks();
 
 } }
 
-FC_REFLECT( colab::chain::rational_u64,
+FC_REFLECT( knowledgr::chain::rational_u64,
    (numerator)
    (denominator)
    )

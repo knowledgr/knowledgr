@@ -1,7 +1,7 @@
-#include <colab/plugins/json_rpc/json_rpc_plugin.hpp>
-#include <colab/plugins/json_rpc/utility.hpp>
+#include <knowledgr/plugins/json_rpc/json_rpc_plugin.hpp>
+#include <knowledgr/plugins/json_rpc/utility.hpp>
 
-#include <colab/plugins/statsd/utility.hpp>
+#include <knowledgr/plugins/statsd/utility.hpp>
 
 #include <boost/algorithm/string.hpp>
 
@@ -14,7 +14,7 @@
 
 #define ENABLE_JSON_RPC_LOG
 
-namespace colab { namespace plugins { namespace json_rpc {
+namespace knowledgr { namespace plugins { namespace json_rpc {
 
 namespace detail
 {
@@ -492,9 +492,9 @@ string json_rpc_plugin::call( const string& message )
 
 }
 
-} } } // colab::plugins::json_rpc
+} } } // knowledgr::plugins::json_rpc
 
-FC_REFLECT( colab::plugins::json_rpc::detail::json_rpc_error, (code)(message)(data) )
-FC_REFLECT( colab::plugins::json_rpc::detail::json_rpc_response, (jsonrpc)(result)(error)(id) )
+FC_REFLECT( knowledgr::plugins::json_rpc::detail::json_rpc_error, (code)(message)(data) )
+FC_REFLECT( knowledgr::plugins::json_rpc::detail::json_rpc_response, (jsonrpc)(result)(error)(id) )
 
-FC_REFLECT( colab::plugins::json_rpc::detail::get_signature_args, (method) )
+FC_REFLECT( knowledgr::plugins::json_rpc::detail::get_signature_args, (method) )

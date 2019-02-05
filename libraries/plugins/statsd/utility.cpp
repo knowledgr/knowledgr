@@ -1,6 +1,6 @@
-#include <colab/plugins/statsd/utility.hpp>
+#include <knowledgr/plugins/statsd/utility.hpp>
 
-namespace colab { namespace plugins{ namespace statsd { namespace util {
+namespace knowledgr { namespace plugins{ namespace statsd { namespace util {
 
 bool statsd_enabled()
 {
@@ -14,4 +14,4 @@ const statsd_plugin& get_statsd()
    return statsd;
 }
 
-} } } } // colab::plugins::statsd::util
+} } } } // knowledgr::plugins::statsd::util

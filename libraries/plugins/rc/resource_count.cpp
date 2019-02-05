@@ -1,12 +1,12 @@
 
-#include <colab/plugins/rc/resource_count.hpp>
-#include <colab/plugins/rc/resource_sizes.hpp>
+#include <knowledgr/plugins/rc/resource_count.hpp>
+#include <knowledgr/plugins/rc/resource_sizes.hpp>
 
-#include <colab/protocol/operations.hpp>
+#include <knowledgr/protocol/operations.hpp>
 
-namespace colab { namespace plugins { namespace rc {
+namespace knowledgr { namespace plugins { namespace rc {
 
-using namespace colab::protocol;
+using namespace knowledgr::protocol;
 
 struct count_operation_visitor
 {
@@ -199,7 +199,7 @@ struct count_operation_visitor
 //       execution_time_count += _e.withdraw_vesting_operation_exec_time;
 //    }
 
-   ///~~~~~CLC~~~~~{
+   ///~~~~~NLG~~~~~{
    void operator()( const account_expertise_update_operation& op )const
    {
 	   execution_time_count += _e.account_expertise_update_operation_exec_time;
@@ -219,7 +219,7 @@ struct count_operation_visitor
    {
 	   execution_time_count += _e.stake_process_operation_exec_time;
    }
-   ///~~~~~CLC~~~~~}
+   ///~~~~~NLG~~~~~}
 
    void operator()( const account_update_operation& )const
    {
@@ -315,7 +315,7 @@ struct count_operation_visitor
       execution_time_count += _e.witness_set_properties_operation_exec_time;
    }
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
    void operator()( const claim_reward_balance2_operation& op )const
    {
       FC_TODO( "Change RC state bytes computation to take SMT's into account" )
@@ -388,7 +388,7 @@ struct count_operation_visitor
    void operator()( const fill_order_operation& ) const {}
    void operator()( const shutdown_witness_operation& ) const {}
    void operator()( const fill_transfer_from_savings_operation& ) const {}
-   void operator()( const stake_process_time_operation& ) const {}///~~~~~CLC~~~~~
+   void operator()( const stake_process_time_operation& ) const {}///~~~~~NLG~~~~~
    void operator()( const hardfork_operation& ) const {}
    void operator()( const comment_payout_update_operation& ) const {}
    void operator()( const return_vesting_delegation_operation& ) const {}
@@ -460,4 +460,4 @@ void count_resources(
    result.resource_count[ resource_execution_time ] += vtor.execution_time_count;
 }
 
-} } } // colab::plugins::rc
+} } } // knowledgr::plugins::rc

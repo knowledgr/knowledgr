@@ -1,9 +1,9 @@
 #pragma once
 
-#include <colab/plugins/transaction_status_api/transaction_status_api_args.hpp>
-#include <colab/plugins/json_rpc/utility.hpp>
+#include <knowledgr/plugins/transaction_status_api/transaction_status_api_args.hpp>
+#include <knowledgr/plugins/json_rpc/utility.hpp>
 
-namespace colab { namespace plugins { namespace transaction_status_api {
+namespace knowledgr { namespace plugins { namespace transaction_status_api {
 
 namespace detail { class transaction_status_api_impl; }
 
@@ -18,5 +18,5 @@ private:
    std::unique_ptr< detail::transaction_status_api_impl > my;
 };
 
-} } } //colab::plugins::transaction_status_api
+} } } //knowledgr::plugins::transaction_status_api
 

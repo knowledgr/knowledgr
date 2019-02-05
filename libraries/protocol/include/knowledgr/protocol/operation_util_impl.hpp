@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include <colab/protocol/operation_util.hpp>
+#include <knowledgr/protocol/operation_util.hpp>
 
 #include <fc/static_variant.hpp>
 
@@ -37,7 +37,7 @@ namespace fc
    };
 }
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
 struct operation_validate_visitor
 {
@@ -46,19 +46,19 @@ struct operation_validate_visitor
    void operator()( const T& v )const { v.validate(); }
 };
 
-} } // colab::protocol
+} } // knowledgr::protocol
 
 //
-// Place COLAB_DEFINE_OPERATION_TYPE in a .cpp file to define
+// Place KNOWLEDGR_DEFINE_OPERATION_TYPE in a .cpp file to define
 // functions related to your operation type
 //
-#define COLAB_DEFINE_OPERATION_TYPE( OperationType )                       \
+#define KNOWLEDGR_DEFINE_OPERATION_TYPE( OperationType )                       \
                                                                            \
-namespace colab { namespace protocol {                                     \
+namespace knowledgr { namespace protocol {                                     \
                                                                            \
 void operation_validate( const OperationType& op )                         \
 {                                                                          \
-   op.visit( colab::protocol::operation_validate_visitor() );              \
+   op.visit( knowledgr::protocol::operation_validate_visitor() );              \
 }                                                                          \
                                                                            \
 void operation_get_required_authorities( const OperationType& op,          \
@@ -67,7 +67,7 @@ void operation_get_required_authorities( const OperationType& op,          \
                                          flat_set< account_name_type >& posting,        \
                                          std::vector< authority >& other ) \
 {                                                                          \
-   op.visit( colab::protocol::get_required_auth_visitor( active, owner, posting, other ) ); \
+   op.visit( knowledgr::protocol::get_required_auth_visitor( active, owner, posting, other ) ); \
 }                                                                          \
                                                                            \
-} } /* colab::protocol */
+} } /* knowledgr::protocol */

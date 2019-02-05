@@ -1,12 +1,12 @@
 #pragma once
-#include <colab/plugins/json_rpc/json_rpc_plugin.hpp>
-#include <colab/plugins/transaction_status/transaction_status_plugin.hpp>
+#include <knowledgr/plugins/json_rpc/json_rpc_plugin.hpp>
+#include <knowledgr/plugins/transaction_status/transaction_status_plugin.hpp>
 
 #include <appbase/application.hpp>
 
-namespace colab { namespace plugins { namespace transaction_status_api {
+namespace knowledgr { namespace plugins { namespace transaction_status_api {
 
-#define COLAB_TRANSACTION_STATUS_API_PLUGIN_NAME "transaction_status_api"
+#define KNOWLEDGR_TRANSACTION_STATUS_API_PLUGIN_NAME "transaction_status_api"
 
 class transaction_status_api_plugin : public appbase::plugin< transaction_status_api_plugin >
 {
@@ -15,11 +15,11 @@ class transaction_status_api_plugin : public appbase::plugin< transaction_status
       virtual ~transaction_status_api_plugin();
 
       APPBASE_PLUGIN_REQUIRES(
-         (colab::plugins::json_rpc::json_rpc_plugin)
-         (colab::plugins::transaction_status::transaction_status_plugin)
+         (knowledgr::plugins::json_rpc::json_rpc_plugin)
+         (knowledgr::plugins::transaction_status::transaction_status_plugin)
       )
 
-      static const std::string& name() { static std::string name = COLAB_TRANSACTION_STATUS_API_PLUGIN_NAME; return name; }
+      static const std::string& name() { static std::string name = KNOWLEDGR_TRANSACTION_STATUS_API_PLUGIN_NAME; return name; }
 
       virtual void set_program_options(
          boost::program_options::options_description& cli,
@@ -31,4 +31,4 @@ class transaction_status_api_plugin : public appbase::plugin< transaction_status
       std::unique_ptr< class transaction_status_api > api;
 };
 
-} } } // colab::plugins::transaction_status_api
+} } } // knowledgr::plugins::transaction_status_api

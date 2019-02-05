@@ -1,6 +1,6 @@
-#include<colab/wallet/remote_node_api.hpp>
+#include<knowledgr/wallet/remote_node_api.hpp>
 
-namespace colab { namespace wallet{
+namespace knowledgr { namespace wallet{
 
 // This class exists only to provide method signature information to fc::api, not to execute calls.
 
@@ -233,7 +233,7 @@ condenser_api::discussion remote_node_api::get_content( account_name_type, strin
 {
    FC_ASSERT( false );
 }
-///~~~~~CLC~~~~~{
+///~~~~~NLG~~~~~{
 uint64_t remote_node_api::get_content_count()
 {
 	FC_ASSERT( false );
@@ -258,7 +258,7 @@ vector< condenser_api::api_stake_pending_object > remote_node_api::find_pending_
 {
 	FC_ASSERT( false );
 }
-///~~~~~CLC~~~~~}
+///~~~~~NLG~~~~~}
 vector< condenser_api::discussion > remote_node_api::get_content_replies( account_name_type, string )
 {
    FC_ASSERT( false );

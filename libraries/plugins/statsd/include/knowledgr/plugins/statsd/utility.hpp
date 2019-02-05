@@ -1,12 +1,12 @@
 #pragma once
-#include <colab/plugins/statsd/statsd_plugin.hpp>
+#include <knowledgr/plugins/statsd/statsd_plugin.hpp>
 
 #include <fc/optional.hpp>
 #include <fc/time.hpp>
 
-namespace colab { namespace plugins { namespace statsd { namespace util {
+namespace knowledgr { namespace plugins { namespace statsd { namespace util {
 
-using colab::plugins::statsd::statsd_plugin;
+using knowledgr::plugins::statsd::statsd_plugin;
 
 bool statsd_enabled();
 const statsd_plugin& get_statsd();
@@ -54,47 +54,47 @@ inline uint32_t timing_helper( const fc::time_point& time ) { return time.time_s
 inline uint32_t timing_helper( const fc::time_point_sec& time ) { return time.sec_since_epoch() * 1000; }
 inline uint32_t timing_helper( uint32_t time ) { return time; }
 
-} } } } // colab::plugins::statsd::util
+} } } } // knowledgr::plugins::statsd::util
 
 #define STATSD_INCREMENT( NAMESPACE, STAT, KEY, FREQ )   \
-if( colab::plugins::statsd::util::statsd_enabled() )     \
+if( knowledgr::plugins::statsd::util::statsd_enabled() )     \
 {                                                        \
-   colab::plugins::statsd::util::get_statsd().increment( \
+   knowledgr::plugins::statsd::util::get_statsd().increment( \
       NAMESPACE, STAT, KEY, FREQ                         \
    );                                                    \
 }
 
 #define STATSD_DECREMENT( NAMESPACE, STAT, KEY, FREQ )   \
-if( colab::plugins::statsd::util::statsd_enabled() )     \
+if( knowledgr::plugins::statsd::util::statsd_enabled() )     \
 {                                                        \
-   colab::plugins::statsd::util::get_statsd().decrement( \
+   knowledgr::plugins::statsd::util::get_statsd().decrement( \
       NAMESPACE, STAT, KEY, FREQ                         \
    );                                                    \
 }
 
 #define STATSD_COUNT( NAMESPACE, STAT, KEY, VAL, FREQ )  \
-if( colab::plugins::statsd::util::statsd_enabled() )     \
+if( knowledgr::plugins::statsd::util::statsd_enabled() )     \
 {                                                        \
-   colab::plugins::statsd::util::get_statsd().count(     \
+   knowledgr::plugins::statsd::util::get_statsd().count(     \
       NAMESPACE, STAT, KEY, VAL, FREQ                    \
    );                                                    \
 }
 
 #define STATSD_GAUGE( NAMESPACE, STAT, KEY, VAL, FREQ )  \
-if( colab::plugins::statsd::util::statsd_enabled() )     \
+if( knowledgr::plugins::statsd::util::statsd_enabled() )     \
 {                                                        \
-   colab::plugins::statsd::util::get_statsd().gauge(     \
+   knowledgr::plugins::statsd::util::get_statsd().gauge(     \
       NAMESPACE, STAT, KEY, VAL, FREQ                    \
    );                                                    \
 }
 
 // You can only have one statsd timer in the current scope at a time
 #define STATSD_START_TIMER( NAMESPACE, STAT, KEY, FREQ )                         \
-fc::optional< colab::plugins::statsd::util::statsd_timer_helper > statsd_timer;  \
-if( colab::plugins::statsd::util::statsd_enabled() )                             \
+fc::optional< knowledgr::plugins::statsd::util::statsd_timer_helper > statsd_timer;  \
+if( knowledgr::plugins::statsd::util::statsd_enabled() )                             \
 {                                                                                \
-   statsd_timer = colab::plugins::statsd::util::statsd_timer_helper(             \
-      NAMESPACE, STAT, KEY, FREQ, colab::plugins::statsd::util::get_statsd()     \
+   statsd_timer = knowledgr::plugins::statsd::util::statsd_timer_helper(             \
+      NAMESPACE, STAT, KEY, FREQ, knowledgr::plugins::statsd::util::get_statsd()     \
    );                                                                            \
 }
 
@@ -102,11 +102,11 @@ if( colab::plugins::statsd::util::statsd_enabled() )                            
    statsd_timer.reset();
 
 #define STATSD_TIMER( NAMESPACE, STAT, KEY, VAL, FREQ )  \
-if( colab::plugins::statsd::util::statsd_enabled() )     \
+if( knowledgr::plugins::statsd::util::statsd_enabled() )     \
 {                                                        \
-   colab::plugins::statsd::util::get_statsd().timing(    \
+   knowledgr::plugins::statsd::util::get_statsd().timing(    \
       NAMESPACE, STAT, KEY,                              \
-      colab::plugins::statsd::util::timing_helper( VAL ),\
+      knowledgr::plugins::statsd::util::timing_helper( VAL ),\
       FREQ                                               \
    );                                                    \
 }

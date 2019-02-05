@@ -8,7 +8,7 @@
 #include <fc/exception/exception.hpp>
 #include <fc/reflect/reflect.hpp>
 
-namespace colab { namespace chain { namespace util {
+namespace knowledgr { namespace chain { namespace util {
 
 struct manabar_params
 {
@@ -36,13 +36,13 @@ struct manabar
 
    void regenerate(uint32_t now) {
 	   int64_t elapsed_seconds = int64_t(now - last_update_time);
-	   int64_t regenerated_power = (COLAB_100_PERCENT * elapsed_seconds) / COLAB_VOTING_MANA_REGENERATION_SECONDS;
-	   current_mana = std::min( current_mana + regenerated_power, int64_t(COLAB_100_PERCENT) );
+	   int64_t regenerated_power = (KNOWLEDGR_100_PERCENT * elapsed_seconds) / KNOWLEDGR_VOTING_MANA_REGENERATION_SECONDS;
+	   current_mana = std::min( current_mana + regenerated_power, int64_t(KNOWLEDGR_100_PERCENT) );
 	   last_update_time = now;
    }
    static uint128_t calculate_mana_to_be_used(manabar voting_manabar, int64_t percent, int64_t votes_num_per_day) {
-	   uint128_t used_mana = ( uint128_t( voting_manabar.current_mana ) * percent * 60 * 60 * 24 ) / COLAB_100_PERCENT;
-	   int64_t max_vote_denom = votes_num_per_day * COLAB_VOTING_MANA_REGENERATION_SECONDS;
+	   uint128_t used_mana = ( uint128_t( voting_manabar.current_mana ) * percent * 60 * 60 * 24 ) / KNOWLEDGR_100_PERCENT;
+	   int64_t max_vote_denom = votes_num_per_day * KNOWLEDGR_VOTING_MANA_REGENERATION_SECONDS;
 	   std::cerr<<"~~~ [manabar::calculate_mana_to_be_used()] - max_vote_denom = "<<max_vote_denom<<"\n";
 	   FC_ASSERT( max_vote_denom > 0 );
 
@@ -50,7 +50,7 @@ struct manabar
 	   return used_mana;
    }
 
-#if 1 ///~~~~~CLC~~~~~{
+#if 1 ///~~~~~NLG~~~~~{
 
 
 //    template< bool skip_cap_regen = false >
@@ -85,7 +85,7 @@ struct manabar
 //    {
 //       regenerate_mana< skip_cap_regen >( params, now.sec_since_epoch() );
 //    }
-#endif ///~~~~~CLC~~~~~}
+#endif ///~~~~~NLG~~~~~}
 
    bool has_mana( int64_t mana_needed )const
    {
@@ -115,7 +115,7 @@ struct manabar
    }
 };
 
-///~~~~~CLC~~~~~{
+///~~~~~NLG~~~~~{
 //	template< typename T >
 // int64_t get_effective_vesting_shares( const T& account )
 // {
@@ -136,11 +136,11 @@ struct manabar
 // 
 //    return effective_vesting_shares;
 // }
-///~~~~~CLC~~~~~}
+///~~~~~NLG~~~~~}
 
-} } } // colab::chain::util
+} } } // knowledgr::chain::util
 
-FC_REFLECT( colab::chain::util::manabar,
+FC_REFLECT( knowledgr::chain::util::manabar,
    (current_mana)
    (last_update_time)
    )

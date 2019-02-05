@@ -1,14 +1,14 @@
 #pragma once
 #include <fc/uint128.hpp>
 
-#include <colab/chain/colab_object_types.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
 
-#include <colab/protocol/asset.hpp>
+#include <knowledgr/protocol/asset.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
-   using colab::protocol::asset;
-   using colab::protocol::price;
+   using knowledgr::protocol::asset;
+   using knowledgr::protocol::price;
 
    /**
     * @class dynamic_global_property_object
@@ -49,33 +49,33 @@ namespace colab { namespace chain {
           */
          uint32_t num_pow_witnesses = 0;
 
-         asset       virtual_supply             = asset( 0, CLC_SYMBOL );
-         asset       current_supply             = asset( 0, CLC_SYMBOL );
-         asset       confidential_supply        = asset( 0, CLC_SYMBOL ); ///< total asset held in confidential balances
+         asset       virtual_supply             = asset( 0, NLG_SYMBOL );
+         asset       current_supply             = asset( 0, NLG_SYMBOL );
+         asset       confidential_supply        = asset( 0, NLG_SYMBOL ); ///< total asset held in confidential balances
 
 //         asset       current_sbd_supply         = asset( 0, SBD_SYMBOL );
 //         asset       confidential_sbd_supply    = asset( 0, SBD_SYMBOL ); ///< total asset held in confidential balances
-//         asset       total_vesting_fund_clc   = asset( 0, CLC_SYMBOL );
+//         asset       total_vesting_fund_nlg   = asset( 0, NLG_SYMBOL );
 //         asset       total_vesting_shares       = asset( 0, VESTS_SYMBOL );
 
-         asset       total_reward_fund_colab    = asset( 0, CLC_SYMBOL );
+         asset       total_reward_fund_knowledgr    = asset( 0, NLG_SYMBOL );
          fc::uint128 total_reward_shares2; ///< the running total of REWARD^2
 
 //         asset       pending_rewarded_vesting_shares = asset( 0, VESTS_SYMBOL );
-//         asset       pending_rewarded_vesting_clc = asset( 0, CLC_SYMBOL );
+//         asset       pending_rewarded_vesting_nlg = asset( 0, NLG_SYMBOL );
 
 //          price       get_vesting_share_price() const
 //          {
-//             if ( total_vesting_fund_clc.amount == 0 || total_vesting_shares.amount == 0 )
-//                return price ( asset( 1000, CLC_SYMBOL ), asset( 1000000, VESTS_SYMBOL ) );
+//             if ( total_vesting_fund_nlg.amount == 0 || total_vesting_shares.amount == 0 )
+//                return price ( asset( 1000, NLG_SYMBOL ), asset( 1000000, VESTS_SYMBOL ) );
 // 
-//             return price( total_vesting_shares, total_vesting_fund_clc );
+//             return price( total_vesting_shares, total_vesting_fund_nlg );
 //          }
 
 //          price get_reward_vesting_share_price() const
 //          {
 //             return price( total_vesting_shares + pending_rewarded_vesting_shares,
-//                total_vesting_fund_clc + pending_rewarded_vesting_clc );
+//                total_vesting_fund_nlg + pending_rewarded_vesting_nlg );
 //          }
 
 //          /**
@@ -83,7 +83,7 @@ namespace colab { namespace chain {
 //           */
 //         uint16_t sbd_interest_rate = 0;
 
-//         uint16_t sbd_print_rate = COLAB_100_PERCENT;
+//         uint16_t sbd_print_rate = KNOWLEDGR_100_PERCENT;
 
          /**
           *  Maximum block size is decided by the set of active witnesses which change every round.
@@ -124,9 +124,9 @@ namespace colab { namespace chain {
           * "wasting" voting power through spillover; any user voting faster than this rate will have
           * their votes reduced.
           */
-         uint32_t vote_power_reserve_rate = COLAB_INITIAL_VOTE_POWER_RATE;
+         uint32_t vote_power_reserve_rate = KNOWLEDGR_INITIAL_VOTE_POWER_RATE;
 
-         uint32_t delegation_return_period = COLAB_DELEGATION_RETURN_PERIOD_HF0;
+         uint32_t delegation_return_period = KNOWLEDGR_DELEGATION_RETURN_PERIOD_HF0;
 
          uint64_t reverse_auction_seconds = 0;
 
@@ -136,7 +136,7 @@ namespace colab { namespace chain {
 //          uint16_t sbd_start_percent = 0;
 
 		 uint64_t num_of_accounts = 0;
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
          asset smt_creation_fee = asset( 1000, SBD_SYMBOL );
 #endif
    };
@@ -150,9 +150,9 @@ namespace colab { namespace chain {
       allocator< dynamic_global_property_object >
    > dynamic_global_property_index;
 
-} } // colab::chain
+} } // knowledgr::chain
 
-FC_REFLECT( colab::chain::dynamic_global_property_object,
+FC_REFLECT( knowledgr::chain::dynamic_global_property_object,
              (id)
              (head_block_number)
              (head_block_id)
@@ -165,12 +165,12 @@ FC_REFLECT( colab::chain::dynamic_global_property_object,
              (confidential_supply)
 //             (current_sbd_supply)
 //             (confidential_sbd_supply)
-//             (total_vesting_fund_clc)
+//             (total_vesting_fund_nlg)
 //             (total_vesting_shares)
-             (total_reward_fund_colab)
+             (total_reward_fund_knowledgr)
              (total_reward_shares2)
 //             (pending_rewarded_vesting_shares)
-//             (pending_rewarded_vesting_clc)
+//             (pending_rewarded_vesting_nlg)
 //             (sbd_interest_rate)
 //             (sbd_print_rate)
              (maximum_block_size)
@@ -185,9 +185,9 @@ FC_REFLECT( colab::chain::dynamic_global_property_object,
              (available_account_subsidies)
 //              (sbd_stop_percent)
 //              (sbd_start_percent)
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
              (smt_creation_fee)
 #endif
 			 (num_of_accounts)
           )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::dynamic_global_property_object, colab::chain::dynamic_global_property_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::dynamic_global_property_object, knowledgr::chain::dynamic_global_property_index )

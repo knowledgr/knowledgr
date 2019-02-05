@@ -1,4 +1,4 @@
-file(GLOB HEADERS "include/colab/plugins/reputation/*.hpp")
+file(GLOB HEADERS "include/knowledgr/plugins/reputation/*.hpp")
 
 add_library( reputation_plugin
              reputation_plugin.cpp

@@ -1,17 +1,17 @@
 #pragma once
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/block_summary_object.hpp>
-#include <colab/chain/comment_object.hpp>
-#include <colab/chain/global_property_object.hpp>
-#include <colab/chain/history_object.hpp>
-#include <colab/chain/colab_objects.hpp>
-#include <colab/chain/transaction_object.hpp>
-#include <colab/chain/witness_objects.hpp>
-#include <colab/chain/database.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/block_summary_object.hpp>
+#include <knowledgr/chain/comment_object.hpp>
+#include <knowledgr/chain/global_property_object.hpp>
+#include <knowledgr/chain/history_object.hpp>
+#include <knowledgr/chain/knowledgr_objects.hpp>
+#include <knowledgr/chain/transaction_object.hpp>
+#include <knowledgr/chain/witness_objects.hpp>
+#include <knowledgr/chain/database.hpp>
 
-namespace colab { namespace plugins { namespace block_api {
+namespace knowledgr { namespace plugins { namespace block_api {
 
-using namespace colab::chain;
+using namespace knowledgr::chain;
 
 struct api_signed_block_object : public signed_block
 {
@@ -30,9 +30,9 @@ struct api_signed_block_object : public signed_block
    vector< transaction_id_type > transaction_ids;
 };
 
-} } } // colab::plugins::database_api
+} } } // knowledgr::plugins::database_api
 
-FC_REFLECT_DERIVED( colab::plugins::block_api::api_signed_block_object, (colab::protocol::signed_block),
+FC_REFLECT_DERIVED( knowledgr::plugins::block_api::api_signed_block_object, (knowledgr::protocol::signed_block),
                      (block_id)
                      (signing_key)
                      (transaction_ids)

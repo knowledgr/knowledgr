@@ -1,12 +1,12 @@
 #pragma once
 #include <appbase/application.hpp>
 
-#include <colab/plugins/json_rpc/json_rpc_plugin.hpp>
-#include <colab/plugins/json_rpc/utility.hpp>
+#include <knowledgr/plugins/json_rpc/json_rpc_plugin.hpp>
+#include <knowledgr/plugins/json_rpc/utility.hpp>
 
-#define COLAB_TEST_API_PLUGIN_NAME "test_api"
+#define KNOWLEDGR_TEST_API_PLUGIN_NAME "test_api"
 
-namespace colab { namespace plugins { namespace test_api {
+namespace knowledgr { namespace plugins { namespace test_api {
 
 using namespace appbase;
 
@@ -25,7 +25,7 @@ class test_api_plugin : public appbase::plugin< test_api_plugin >
       //APPBASE_PLUGIN_REQUIRES()
       APPBASE_PLUGIN_REQUIRES( (plugins::json_rpc::json_rpc_plugin) );
 
-      static const std::string& name() { static std::string name = COLAB_TEST_API_PLUGIN_NAME; return name; }
+      static const std::string& name() { static std::string name = KNOWLEDGR_TEST_API_PLUGIN_NAME; return name; }
 
       virtual void set_program_options( options_description&, options_description& ) override {}
 
@@ -39,9 +39,9 @@ class test_api_plugin : public appbase::plugin< test_api_plugin >
       )
 };
 
-} } } // colab::plugins::test_api
+} } } // knowledgr::plugins::test_api
 
-FC_REFLECT( colab::plugins::test_api::test_api_a_args, )
-FC_REFLECT( colab::plugins::test_api::test_api_b_args, )
-FC_REFLECT( colab::plugins::test_api::test_api_a_return, (value) )
-FC_REFLECT( colab::plugins::test_api::test_api_b_return, (value) )
+FC_REFLECT( knowledgr::plugins::test_api::test_api_a_args, )
+FC_REFLECT( knowledgr::plugins::test_api::test_api_b_args, )
+FC_REFLECT( knowledgr::plugins::test_api::test_api_a_return, (value) )
+FC_REFLECT( knowledgr::plugins::test_api::test_api_b_return, (value) )

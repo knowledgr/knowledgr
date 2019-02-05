@@ -1,8 +1,8 @@
-#include <colab/plugins/debug_node_api/debug_node_api_plugin.hpp>
-#include <colab/plugins/debug_node_api/debug_node_api.hpp>
+#include <knowledgr/plugins/debug_node_api/debug_node_api_plugin.hpp>
+#include <knowledgr/plugins/debug_node_api/debug_node_api.hpp>
 
 
-namespace colab { namespace plugins { namespace debug_node {
+namespace knowledgr { namespace plugins { namespace debug_node {
 
 debug_node_api_plugin::debug_node_api_plugin() {}
 debug_node_api_plugin::~debug_node_api_plugin() {}
@@ -17,4 +17,4 @@ void debug_node_api_plugin::plugin_initialize( const variables_map& options )
 void debug_node_api_plugin::plugin_startup() {}
 void debug_node_api_plugin::plugin_shutdown() {}
 
-} } } // colab::plugins::debug_node
+} } } // knowledgr::plugins::debug_node

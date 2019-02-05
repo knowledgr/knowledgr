@@ -5,11 +5,11 @@
 #include <fc/io/datastream.hpp>
 #include <fc/io/raw.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
 typedef chainbase::t_vector< char > buffer_type;
 
-} } // colab::chain
+} } // knowledgr::chain
 
 namespace fc { namespace raw {
 
@@ -38,5 +38,5 @@ template< typename T, typename B > inline T unpack_from_buffer( const B& raw )
 } } // fc::raw
 
 #ifndef ENABLE_STD_ALLOCATOR
-FC_REFLECT_TYPENAME( colab::chain::buffer_type )
+FC_REFLECT_TYPENAME( knowledgr::chain::buffer_type )
 #endif

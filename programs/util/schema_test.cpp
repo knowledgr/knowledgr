@@ -1,27 +1,27 @@
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 struct votable_asset_info_v1;
 } }
 
-#include <colab/protocol/types_fwd.hpp>
+#include <knowledgr/protocol/types_fwd.hpp>
 
-#include <colab/schema/schema.hpp>
-#include <colab/schema/schema_impl.hpp>
-#include <colab/schema/schema_types.hpp>
+#include <knowledgr/schema/schema.hpp>
+#include <knowledgr/schema/schema_impl.hpp>
+#include <knowledgr/schema/schema_types.hpp>
 
-#include <colab/chain/schema_types/oid.hpp>
-#include <colab/protocol/schema_types/account_name_type.hpp>
-#include <colab/protocol/schema_types/asset_symbol_type.hpp>
+#include <knowledgr/chain/schema_types/oid.hpp>
+#include <knowledgr/protocol/schema_types/account_name_type.hpp>
+#include <knowledgr/protocol/schema_types/asset_symbol_type.hpp>
 
 #include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/colab_objects.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/knowledgr_objects.hpp>
 
-using namespace colab::schema;
+using namespace knowledgr::schema;
 
 struct mystruct
 {
@@ -60,8 +60,8 @@ int main( int argc, char** argv, char** envp )
    std::vector< std::shared_ptr< abstract_schema > > schemas;
 
    schemas.push_back( get_schema_for_type< mystruct >() );
-   schemas.push_back( get_schema_for_type< colab::chain::account_object >() );
-   schemas.push_back( get_schema_for_type< colab::chain::comment_object >() );
+   schemas.push_back( get_schema_for_type< knowledgr::chain::account_object >() );
+   schemas.push_back( get_schema_for_type< knowledgr::chain::comment_object >() );
    add_dependent_schemas( schemas );
 
    for( const std::shared_ptr< abstract_schema >& s : schemas )

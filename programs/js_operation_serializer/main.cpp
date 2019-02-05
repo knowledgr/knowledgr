@@ -21,13 +21,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#include <colab/protocol/protocol.hpp>
-#include <colab/chain/colab_objects.hpp>
+#include <knowledgr/protocol/protocol.hpp>
+#include <knowledgr/chain/knowledgr_objects.hpp>
 #include <fc/smart_ref_impl.hpp>
 #include <iostream>
 
-using namespace colab::chain;
-using namespace colab::protocol;
+using namespace knowledgr::chain;
+using namespace knowledgr::protocol;
 
 using std::string;
 using std::map;
@@ -57,7 +57,7 @@ string remove_namespace( string str )
    str = remove_tail_if( str, '_', "t" );
    str = remove_tail_if( str, '_', "object" );
    str = remove_tail_if( str, '_', "type" );
-   str = remove_namespace_if( str, "colab::chain" );
+   str = remove_namespace_if( str, "knowledgr::chain" );
    str = remove_namespace_if( str, "chainbase" );
    str = remove_namespace_if( str, "std" );
    str = remove_namespace_if( str, "fc" );
@@ -77,7 +77,7 @@ void register_serializer();
 
 
 map<string, size_t >                st;
-colab::vector<std::function<void()>>       serializers;
+knowledgr::vector<std::function<void()>>       serializers;
 
 bool register_serializer( const string& name, std::function<void()> sr )
 {

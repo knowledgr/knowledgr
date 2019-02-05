@@ -1,6 +1,6 @@
-#include <colab/chain/generic_custom_operation_interpreter.hpp>
+#include <knowledgr/chain/generic_custom_operation_interpreter.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
 std::string legacy_custom_name_from_type( const std::string& type_name )
 {
@@ -9,4 +9,4 @@ std::string legacy_custom_name_from_type( const std::string& type_name )
    return type_name.substr( start, end-start );
 }
 
-} } // colab::chain
+} } // knowledgr::chain

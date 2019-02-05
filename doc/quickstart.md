@@ -1,12 +1,12 @@
 Quickstart
 ----------
 
-### Get current colabd
+### Get current knowledgrd
 Use docker:
 ```
 docker run \
-    -d -p 2001:2001 -p 8090:8090 --name colabd-default \
-    --restart unless-stopped colabit/colab
+    -d -p 2001:2001 -p 8090:8090 --name knowledgrd-default \
+    --restart unless-stopped knowledgrit/knowledgr
 ```
 #### Low memory node?
 Above runs low memory node, which is suitable for:
@@ -18,9 +18,9 @@ For full api node use:
 ```
 docker run \
     --env USE_WAY_TOO_MUCH_RAM=1 --env USE_FULL_WEB_NODE=1 \
-    -d -p 2001:2001 -p 8090:8090 --name colabd-full \
+    -d -p 2001:2001 -p 8090:8090 --name knowledgrd-full \
     --restart unless-stopped \
-    colabit/colab
+    knowledgrit/knowledgr
 ```
 ### Configure for your use case
 #### Full API node
@@ -42,9 +42,9 @@ This configuration exists in Docker with the following command
 
 ```
 docker run -d --env TRACK_ACCOUNT="yourexchangeid" \
-    --name colabd \
+    --name knowledgrd \
     --restart unless-stopped \
-    colabit/colab
+    knowledgrit/knowledgr
 ```
 
 ### Resources usage

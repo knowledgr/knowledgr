@@ -1,18 +1,18 @@
 #ifdef IS_TEST_NET
-#include <colab/chain/generic_custom_operation_interpreter.hpp>
-#include <colab/chain/account_object.hpp>
+#include <knowledgr/chain/generic_custom_operation_interpreter.hpp>
+#include <knowledgr/chain/account_object.hpp>
 
 #include <boost/test/unit_test.hpp>
 
 #include "../db_fixture/database_fixture.hpp"
 
-using namespace colab::chain;
-using namespace colab::chain::test;
+using namespace knowledgr::chain;
+using namespace knowledgr::chain::test;
 /*
-namespace colab { namespace plugin_tests {
+namespace knowledgr { namespace plugin_tests {
 
-using namespace colab::app;
-using namespace colab::chain;
+using namespace knowledgr::app;
+using namespace knowledgr::chain;
 
 struct test_a_operation : base_operation
 {
@@ -42,8 +42,8 @@ class test_plugin : public plugin
       std::shared_ptr< generic_custom_operation_interpreter< test_op > > _evaluator_registry;
 };
 
-COLAB_DEFINE_PLUGIN_EVALUATOR( test_plugin, test_a_operation, test_a );
-COLAB_DEFINE_PLUGIN_EVALUATOR( test_plugin, test_b_operation, test_b );
+KNOWLEDGR_DEFINE_PLUGIN_EVALUATOR( test_plugin, test_a_operation, test_a );
+KNOWLEDGR_DEFINE_PLUGIN_EVALUATOR( test_plugin, test_b_operation, test_b );
 
 void test_a_evaluator::do_apply( const test_a_operation& o )
 {
@@ -75,16 +75,16 @@ test_plugin::test_plugin( application* app ) : plugin( app )
    database().set_custom_operation_interpreter( plugin_name(), _evaluator_registry );
 }
 
-} } // colab::plugin_tests
+} } // knowledgr::plugin_tests
 
-COLAB_DEFINE_PLUGIN( test, colab::plugin_tests::test_plugin )
+KNOWLEDGR_DEFINE_PLUGIN( test, knowledgr::plugin_tests::test_plugin )
 
-FC_REFLECT( colab::plugin_tests::test_a_operation, (account) )
-FC_REFLECT( colab::plugin_tests::test_b_operation, (account) )
+FC_REFLECT( knowledgr::plugin_tests::test_a_operation, (account) )
+FC_REFLECT( knowledgr::plugin_tests::test_b_operation, (account) )
 
-COLAB_DECLARE_OPERATION_TYPE( colab::plugin_tests::test_op );
-FC_REFLECT_TYPENAME( colab::plugin_tests::test_op );
-COLAB_DEFINE_OPERATION_TYPE( colab::plugin_tests::test_op );
+KNOWLEDGR_DECLARE_OPERATION_TYPE( knowledgr::plugin_tests::test_op );
+FC_REFLECT_TYPENAME( knowledgr::plugin_tests::test_op );
+KNOWLEDGR_DEFINE_OPERATION_TYPE( knowledgr::plugin_tests::test_op );
 */
 
 BOOST_FIXTURE_TEST_SUITE( plugin_ops, clean_database_fixture );

@@ -1,20 +1,20 @@
 #pragma once
-#include <colab/protocol/base.hpp>
-#include <colab/protocol/block_header.hpp>
-#include <colab/protocol/asset.hpp>
+#include <knowledgr/protocol/base.hpp>
+#include <knowledgr/protocol/block_header.hpp>
+#include <knowledgr/protocol/asset.hpp>
 
 #include <fc/utf8.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
-   struct author_reward_operation : public virtual_operation {///~~~~~CLC~~~~~ I Changed here, remove sbd, vesting tokens...
+   struct author_reward_operation : public virtual_operation {///~~~~~NLG~~~~~ I Changed here, remove sbd, vesting tokens...
       author_reward_operation(){}
-      author_reward_operation( const account_name_type& a, const string& p, const asset& clc )
-         :author(a), permlink(p), payout(clc) {}
+      author_reward_operation( const account_name_type& a, const string& p, const asset& nlg )
+         :author(a), permlink(p), payout(nlg) {}
 
       account_name_type author;
       string            permlink;
-      asset             payout; /// Reward by CLC Token
+      asset             payout; /// Reward by NLG Token
    };
 
 
@@ -25,7 +25,7 @@ namespace colab { namespace protocol {
          :curator(c), reward(r), comment_author(a), comment_permlink(p) {}
 
       account_name_type curator;
-      asset             reward; /// Reward by CLC Token
+      asset             reward; /// Reward by NLG Token
       account_name_type comment_author;
       string            comment_permlink;
    };
@@ -126,7 +126,7 @@ namespace colab { namespace protocol {
       string            memo;
    };
 
-   ///~~~~~CLC~~~~~}
+   ///~~~~~NLG~~~~~}
    struct stake_process_time_operation : public virtual_operation
    {
 	   stake_process_time_operation() {}
@@ -138,7 +138,7 @@ namespace colab { namespace protocol {
 	   uint32_t          type;///0-stake, 1-unstake
 	   time_point_sec    created;
    };
-   ///~~~~~CLC~~~~~}
+   ///~~~~~NLG~~~~~}
 
    struct hardfork_operation : public virtual_operation
    {
@@ -160,14 +160,14 @@ namespace colab { namespace protocol {
    struct return_vesting_delegation_operation : public virtual_operation
    {
       return_vesting_delegation_operation() {}
-      return_vesting_delegation_operation( const account_name_type& a, const asset& v ) : account( a ), clc_tokens( v ) {}
+      return_vesting_delegation_operation( const account_name_type& a, const asset& v ) : account( a ), nlg_tokens( v ) {}
 
       account_name_type account;
-      asset             clc_tokens;
+      asset             nlg_tokens;
    };
 
    struct comment_benefactor_reward_operation : public virtual_operation
-   {///~~~~~CLC~~~~~ HERE, TOO, removed sbd, vesting ...
+   {///~~~~~NLG~~~~~ HERE, TOO, removed sbd, vesting ...
       comment_benefactor_reward_operation() {}
       comment_benefactor_reward_operation( const account_name_type& b, const account_name_type& a, const string& p, const asset& s )
          : benefactor( b ), author( a ), permlink( p ), payout( s ) {}
@@ -181,10 +181,10 @@ namespace colab { namespace protocol {
    struct producer_reward_operation : public virtual_operation
    {
       producer_reward_operation(){}
-      producer_reward_operation( const string& p, const asset& v ) : producer( p ), clc_tokens( v ) {}
+      producer_reward_operation( const string& p, const asset& v ) : producer( p ), nlg_tokens( v ) {}
 
       account_name_type producer;
-      asset             clc_tokens;//vesting_shares;
+      asset             nlg_tokens;//vesting_shares;
 
    };
 
@@ -193,22 +193,22 @@ namespace colab { namespace protocol {
       vector< asset >   total_cleared;
    };
 
-} } //colab::protocol
+} } //knowledgr::protocol
 
-FC_REFLECT( colab::protocol::author_reward_operation, (author)(permlink)(payout) )///~~~~~CLC~~~~~ remove sbd, vesting...
-FC_REFLECT( colab::protocol::curation_reward_operation, (curator)(reward)(comment_author)(comment_permlink) )
-FC_REFLECT( colab::protocol::comment_reward_operation, (author)(permlink)(payout) )
-FC_REFLECT( colab::protocol::fill_convert_request_operation, (owner)(requestid)(amount_in)(amount_out) )
-FC_REFLECT( colab::protocol::liquidity_reward_operation, (owner)(payout) )
-FC_REFLECT( colab::protocol::interest_operation, (owner)(interest) )
-FC_REFLECT( colab::protocol::fill_vesting_withdraw_operation, (from_account)(to_account)(withdrawn)(deposited) )
-FC_REFLECT( colab::protocol::shutdown_witness_operation, (owner) )
-FC_REFLECT( colab::protocol::fill_order_operation, (current_owner)(current_orderid)(current_pays)(open_owner)(open_orderid)(open_pays) )
-FC_REFLECT( colab::protocol::fill_transfer_from_savings_operation, (from)(to)(amount)(request_id)(memo) )
-FC_REFLECT( colab::protocol::stake_process_time_operation, (account)(amount)(type)(created) )///~~~~~CLC~~~~~
-FC_REFLECT( colab::protocol::hardfork_operation, (hardfork_id) )
-FC_REFLECT( colab::protocol::comment_payout_update_operation, (author)(permlink) )
-FC_REFLECT( colab::protocol::return_vesting_delegation_operation, (account)(clc_tokens/*vesting_shares*/) )
-FC_REFLECT( colab::protocol::comment_benefactor_reward_operation, (benefactor)(author)(permlink)(payout)/*(clc_payout)(vesting_payout)*/ )///~~~~~CLC~~~~~
-FC_REFLECT( colab::protocol::producer_reward_operation, (producer)(clc_tokens/*vesting_shares*/) )
-FC_REFLECT( colab::protocol::clear_null_account_balance_operation, (total_cleared) )
+FC_REFLECT( knowledgr::protocol::author_reward_operation, (author)(permlink)(payout) )///~~~~~NLG~~~~~ remove sbd, vesting...
+FC_REFLECT( knowledgr::protocol::curation_reward_operation, (curator)(reward)(comment_author)(comment_permlink) )
+FC_REFLECT( knowledgr::protocol::comment_reward_operation, (author)(permlink)(payout) )
+FC_REFLECT( knowledgr::protocol::fill_convert_request_operation, (owner)(requestid)(amount_in)(amount_out) )
+FC_REFLECT( knowledgr::protocol::liquidity_reward_operation, (owner)(payout) )
+FC_REFLECT( knowledgr::protocol::interest_operation, (owner)(interest) )
+FC_REFLECT( knowledgr::protocol::fill_vesting_withdraw_operation, (from_account)(to_account)(withdrawn)(deposited) )
+FC_REFLECT( knowledgr::protocol::shutdown_witness_operation, (owner) )
+FC_REFLECT( knowledgr::protocol::fill_order_operation, (current_owner)(current_orderid)(current_pays)(open_owner)(open_orderid)(open_pays) )
+FC_REFLECT( knowledgr::protocol::fill_transfer_from_savings_operation, (from)(to)(amount)(request_id)(memo) )
+FC_REFLECT( knowledgr::protocol::stake_process_time_operation, (account)(amount)(type)(created) )///~~~~~NLG~~~~~
+FC_REFLECT( knowledgr::protocol::hardfork_operation, (hardfork_id) )
+FC_REFLECT( knowledgr::protocol::comment_payout_update_operation, (author)(permlink) )
+FC_REFLECT( knowledgr::protocol::return_vesting_delegation_operation, (account)(nlg_tokens/*vesting_shares*/) )
+FC_REFLECT( knowledgr::protocol::comment_benefactor_reward_operation, (benefactor)(author)(permlink)(payout)/*(nlg_payout)(vesting_payout)*/ )///~~~~~NLG~~~~~
+FC_REFLECT( knowledgr::protocol::producer_reward_operation, (producer)(nlg_tokens/*vesting_shares*/) )
+FC_REFLECT( knowledgr::protocol::clear_null_account_balance_operation, (total_cleared) )

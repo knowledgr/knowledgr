@@ -25,19 +25,19 @@
 #include <iostream>
 #include <boost/test/included/unit_test.hpp>
 
-// extern uint32_t COLAB_TESTING_GENESIS_TIMESTAMP;
+// extern uint32_t KNOWLEDGR_TESTING_GENESIS_TIMESTAMP;
 
 boost::unit_test::test_suite* init_unit_test_suite(int argc, char* argv[])
 {
    std::srand(time(NULL));
    std::cout << "Random number generator seeded to " << time(NULL) << std::endl;
 /*
-   const char* genesis_timestamp_str = getenv("COLAB_TESTING_GENESIS_TIMESTAMP");
+   const char* genesis_timestamp_str = getenv("KNOWLEDGR_TESTING_GENESIS_TIMESTAMP");
    if( genesis_timestamp_str != nullptr )
    {
-      COLAB_TESTING_GENESIS_TIMESTAMP = std::stoul( genesis_timestamp_str );
+      KNOWLEDGR_TESTING_GENESIS_TIMESTAMP = std::stoul( genesis_timestamp_str );
    }
-   std::cout << "COLAB_TESTING_GENESIS_TIMESTAMP is " << COLAB_TESTING_GENESIS_TIMESTAMP << std::endl;
+   std::cout << "KNOWLEDGR_TESTING_GENESIS_TIMESTAMP is " << KNOWLEDGR_TESTING_GENESIS_TIMESTAMP << std::endl;
 */
    return nullptr;
 }

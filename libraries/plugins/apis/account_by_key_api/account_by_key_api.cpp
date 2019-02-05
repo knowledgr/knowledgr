@@ -1,16 +1,16 @@
-#include <colab/plugins/account_by_key_api/account_by_key_api_plugin.hpp>
-#include <colab/plugins/account_by_key_api/account_by_key_api.hpp>
+#include <knowledgr/plugins/account_by_key_api/account_by_key_api_plugin.hpp>
+#include <knowledgr/plugins/account_by_key_api/account_by_key_api.hpp>
 
-#include <colab/plugins/account_by_key/account_by_key_objects.hpp>
+#include <knowledgr/plugins/account_by_key/account_by_key_objects.hpp>
 
-namespace colab { namespace plugins { namespace account_by_key {
+namespace knowledgr { namespace plugins { namespace account_by_key {
 
 namespace detail {
 
 class account_by_key_api_impl
 {
    public:
-      account_by_key_api_impl() : _db( appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db() ) {}
+      account_by_key_api_impl() : _db( appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db() ) {}
 
       get_key_references_return get_key_references( const get_key_references_args& args )const;
 
@@ -26,7 +26,7 @@ get_key_references_return account_by_key_api_impl::get_key_references( const get
 
    for( auto& key : args.keys )
    {
-      std::vector< colab::protocol::account_name_type > result;
+      std::vector< knowledgr::protocol::account_name_type > result;
       auto lookup_itr = key_idx.lower_bound( key );
 
       while( lookup_itr != key_idx.end() && lookup_itr->key == key )
@@ -45,11 +45,11 @@ get_key_references_return account_by_key_api_impl::get_key_references( const get
 
 account_by_key_api::account_by_key_api(): my( new detail::account_by_key_api_impl() )
 {
-   JSON_RPC_REGISTER_API( COLAB_ACCOUNT_BY_KEY_API_PLUGIN_NAME );
+   JSON_RPC_REGISTER_API( KNOWLEDGR_ACCOUNT_BY_KEY_API_PLUGIN_NAME );
 }
 
 account_by_key_api::~account_by_key_api() {}
 
 DEFINE_READ_APIS( account_by_key_api, (get_key_references) )
 
-} } } // colab::plugins::account_by_key
+} } } // knowledgr::plugins::account_by_key

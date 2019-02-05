@@ -24,10 +24,10 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <colab/chain/database.hpp>
-#include <colab/protocol/protocol.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/protocol/protocol.hpp>
 
-#include <colab/protocol/colab_operations.hpp>
+#include <knowledgr/protocol/knowledgr_operations.hpp>
 
 #include <fc/crypto/digest.hpp>
 #include <fc/crypto/hex.hpp>
@@ -36,9 +36,9 @@
 #include <algorithm>
 #include <random>
 
-using namespace colab;
-using namespace colab::chain;
-using namespace colab::protocol;
+using namespace knowledgr;
+using namespace knowledgr::chain;
+using namespace knowledgr::protocol;
 
 BOOST_FIXTURE_TEST_SUITE( basic_tests, clean_database_fixture )
 

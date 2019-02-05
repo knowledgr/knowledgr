@@ -1,10 +1,10 @@
 #pragma once
 #include <fc/filesystem.hpp>
-#include <colab/protocol/block.hpp>
+#include <knowledgr/protocol/block.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
-   using namespace colab::protocol;
+   using namespace knowledgr::protocol;
 
    namespace detail { class block_log_impl; }
 

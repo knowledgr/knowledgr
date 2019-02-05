@@ -6,7 +6,7 @@
 // Data structures and functions for resource dynamics "in-flight" (i.e. in the absence of user (witness) tweaking)
 // This header includes RESOURCES functionality only, no RC (price / price curve).
 
-namespace colab { namespace chain { namespace util {
+namespace knowledgr { namespace chain { namespace util {
 
 struct rd_decay_params
 {
@@ -67,12 +67,12 @@ int64_t rd_compute_pool_decay(
 
 } } }
 
-FC_REFLECT( colab::chain::util::rd_decay_params,
+FC_REFLECT( knowledgr::chain::util::rd_decay_params,
    (decay_per_time_unit)
    (decay_per_time_unit_denom_shift)
    )
 
-FC_REFLECT( colab::chain::util::rd_dynamics_params,
+FC_REFLECT( knowledgr::chain::util::rd_dynamics_params,
    (resource_unit)
    (budget_per_time_unit)
    (pool_eq)

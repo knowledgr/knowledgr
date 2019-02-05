@@ -1,28 +1,28 @@
 
-#include <colab/chain/colab_fwd.hpp>
+#include <knowledgr/chain/knowledgr_fwd.hpp>
 
-#include <colab/plugins/follow/follow_plugin.hpp>
-#include <colab/plugins/follow/follow_objects.hpp>
-#include <colab/plugins/follow/follow_operations.hpp>
-#include <colab/plugins/follow/inc_performance.hpp>
+#include <knowledgr/plugins/follow/follow_plugin.hpp>
+#include <knowledgr/plugins/follow/follow_objects.hpp>
+#include <knowledgr/plugins/follow/follow_operations.hpp>
+#include <knowledgr/plugins/follow/inc_performance.hpp>
 
-#include <colab/chain/util/impacted.hpp>
+#include <knowledgr/chain/util/impacted.hpp>
 
-#include <colab/protocol/config.hpp>
+#include <knowledgr/protocol/config.hpp>
 
-#include <colab/chain/database.hpp>
-#include <colab/chain/index.hpp>
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/comment_object.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/index.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/comment_object.hpp>
 
 #include <fc/smart_ref_impl.hpp>
 #include <fc/thread/thread.hpp>
 
 #include <memory>
 
-namespace colab { namespace plugins { namespace follow {
+namespace knowledgr { namespace plugins { namespace follow {
 
-using namespace colab::protocol;
+using namespace knowledgr::protocol;
 
 namespace detail {
 
@@ -30,7 +30,7 @@ class follow_plugin_impl
 {
    public:
       follow_plugin_impl( follow_plugin& _plugin ) :
-         _db( appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db() ),
+         _db( appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db() ),
          _self( _plugin ) {}
       ~follow_plugin_impl() {}
 
@@ -152,7 +152,7 @@ struct post_operation_visitor
    {
       try
       {
-         if( op.id == COLAB_FOLLOW_PLUGIN_NAME )
+         if( op.id == KNOWLEDGR_FOLLOW_PLUGIN_NAME )
          {
             custom_json_operation new_cop;
 
@@ -342,7 +342,7 @@ void follow_plugin::plugin_initialize( const boost::program_options::variables_m
       my = std::make_unique< detail::follow_plugin_impl >( *this );
 
       // Each plugin needs its own evaluator registry.
-      _custom_operation_interpreter = std::make_shared< generic_custom_operation_interpreter< colab::plugins::follow::follow_plugin_operation > >( my->_db );
+      _custom_operation_interpreter = std::make_shared< generic_custom_operation_interpreter< knowledgr::plugins::follow::follow_plugin_operation > >( my->_db );
 
       // Add each operation evaluator to the registry
       _custom_operation_interpreter->register_evaluator< follow_evaluator >( this );
@@ -388,4 +388,4 @@ void follow_plugin::plugin_shutdown()
    chain::util::disconnect_signal( my->_post_apply_operation_conn );
 }
 
-} } } // colab::plugins::follow
+} } } // knowledgr::plugins::follow

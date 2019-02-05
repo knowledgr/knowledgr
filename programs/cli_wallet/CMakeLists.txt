@@ -9,14 +9,14 @@ if( GPERFTOOLS_FOUND )
     list( APPEND PLATFORM_SPECIFIC_LIBS tcmalloc )
 endif()
 
-if( COLAB_STATIC_BUILD )
+if( KNOWLEDGR_STATIC_BUILD )
    target_link_libraries( cli_wallet PRIVATE
                           "-static-libstdc++ -static-libgcc -lreadline"
-                          graphene_net colab_chain colab_protocol colab_utilities colab_wallet condenser_api_plugin fc ${CMAKE_DL_LIBS} ${PLATFORM_SPECIFIC_LIBS} )
-else( COLAB_STATIC_BUILD )
+                          graphene_net knowledgr_chain knowledgr_protocol knowledgr_utilities knowledgr_wallet condenser_api_plugin fc ${CMAKE_DL_LIBS} ${PLATFORM_SPECIFIC_LIBS} )
+else( KNOWLEDGR_STATIC_BUILD )
    target_link_libraries( cli_wallet PRIVATE
-                          graphene_net colab_chain colab_protocol colab_utilities colab_wallet condenser_api_plugin fc ${CMAKE_DL_LIBS} ${PLATFORM_SPECIFIC_LIBS} )
-endif( COLAB_STATIC_BUILD )
+                          graphene_net knowledgr_chain knowledgr_protocol knowledgr_utilities knowledgr_wallet condenser_api_plugin fc ${CMAKE_DL_LIBS} ${PLATFORM_SPECIFIC_LIBS} )
+endif( KNOWLEDGR_STATIC_BUILD )
 
 if( CLANG_TIDY_EXE )
    set_target_properties(

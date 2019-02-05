@@ -1,7 +1,7 @@
 /*Code by Dmitry Khovratovich, 2016
 CC0 license
 
-Modifications by Colabit, Inc. 2016
+Modifications by Knowledgrit, Inc. 2016
 */
 
 #include <equihash/pow.hpp>
@@ -177,7 +177,7 @@ Proof Equihash::FindProof(){
 }
 
 /**
- * Added by Colabit, Inc. for single iteration
+ * Added by Knowledgrit, Inc. for single iteration
  */
 Proof Equihash::FindProof( Nonce _nonce )
 {

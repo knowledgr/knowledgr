@@ -1,18 +1,18 @@
 #pragma once
 
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/types.hpp>
 
 #include <fc/reflect/reflect.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 struct signed_transaction;
-} } // colab::protocol
+} } // knowledgr::protocol
 
-namespace colab { namespace plugins { namespace rc {
+namespace knowledgr { namespace plugins { namespace rc {
 
-using colab::protocol::account_name_type;
-using colab::protocol::signed_transaction;
+using knowledgr::protocol::account_name_type;
+using knowledgr::protocol::signed_transaction;
 
 account_name_type get_resource_user( const signed_transaction& tx );
 
-} } } // colab::plugins::rc
+} } } // knowledgr::plugins::rc

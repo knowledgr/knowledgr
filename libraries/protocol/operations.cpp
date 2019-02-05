@@ -1,8 +1,8 @@
-#include <colab/protocol/operations.hpp>
+#include <knowledgr/protocol/operations.hpp>
 
-#include <colab/protocol/operation_util_impl.hpp>
+#include <knowledgr/protocol/operation_util_impl.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
 struct is_market_op_visitor {
    typedef bool result_type;
@@ -32,6 +32,6 @@ bool is_virtual_operation( const operation& op )
    return op.visit( is_vop_visitor() );
 }
 
-} } // colab::protocol
+} } // knowledgr::protocol
 
-COLAB_DEFINE_OPERATION_TYPE( colab::protocol::operation )
+KNOWLEDGR_DEFINE_OPERATION_TYPE( knowledgr::protocol::operation )

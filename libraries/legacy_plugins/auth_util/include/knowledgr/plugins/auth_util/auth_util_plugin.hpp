@@ -1,13 +1,13 @@
 
 #pragma once
 
-#include <colab/app/plugin.hpp>
+#include <knowledgr/app/plugin.hpp>
 
-namespace colab { namespace plugin { namespace auth_util {
+namespace knowledgr { namespace plugin { namespace auth_util {
 
-using colab::app::application;
+using knowledgr::app::application;
 
-class auth_util_plugin : public colab::app::plugin
+class auth_util_plugin : public knowledgr::app::plugin
 {
    public:
       auth_util_plugin( application* app ) ;

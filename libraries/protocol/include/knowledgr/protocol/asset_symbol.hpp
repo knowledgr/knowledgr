@@ -1,55 +1,55 @@
 #pragma once
 
 #include <fc/io/raw.hpp>
-#include <colab/protocol/types_fwd.hpp>
+#include <knowledgr/protocol/types_fwd.hpp>
 
-#define COLAB_ASSET_SYMBOL_PRECISION_BITS    4
-#define COLAB_ASSET_CONTROL_BITS             1
-#define COLAB_NAI_SHIFT                      ( COLAB_ASSET_SYMBOL_PRECISION_BITS + COLAB_ASSET_CONTROL_BITS )
+#define KNOWLEDGR_ASSET_SYMBOL_PRECISION_BITS    4
+#define KNOWLEDGR_ASSET_CONTROL_BITS             1
+#define KNOWLEDGR_NAI_SHIFT                      ( KNOWLEDGR_ASSET_SYMBOL_PRECISION_BITS + KNOWLEDGR_ASSET_CONTROL_BITS )
 #define SMT_MAX_NAI                          99999999
 #define SMT_MIN_NAI                          1
 #define SMT_MIN_NON_RESERVED_NAI             10000000
-#define COLAB_ASSET_SYMBOL_NAI_LENGTH        10
-#define COLAB_ASSET_SYMBOL_NAI_STRING_LENGTH ( COLAB_ASSET_SYMBOL_NAI_LENGTH + 2 )
+#define KNOWLEDGR_ASSET_SYMBOL_NAI_LENGTH        10
+#define KNOWLEDGR_ASSET_SYMBOL_NAI_STRING_LENGTH ( KNOWLEDGR_ASSET_SYMBOL_NAI_LENGTH + 2 )
 #define SMT_MAX_NAI_POOL_COUNT               10
 #define SMT_MAX_NAI_GENERATION_TRIES         100
 
-#define COLAB_PRECISION_SBD   (3)
-#define COLAB_PRECISION_CLC (3)
-#define COLAB_PRECISION_VESTS (6)
+#define KNOWLEDGR_PRECISION_SBD   (3)
+#define KNOWLEDGR_PRECISION_NLG (3)
+#define KNOWLEDGR_PRECISION_VESTS (6)
 
 // One's place is used for check digit, which means NAI 0-9 all have NAI data of 0 which is invalid
 // This space is safe to use because it would alwasys result in failure to convert from NAI
-#define COLAB_NAI_SBD   (1)
-#define COLAB_NAI_CLC (2)
-#define COLAB_NAI_VESTS (3)
+#define KNOWLEDGR_NAI_SBD   (1)
+#define KNOWLEDGR_NAI_NLG (2)
+#define KNOWLEDGR_NAI_VESTS (3)
 
-#define COLAB_ASSET_NUM_SBD \
-  (uint32_t(((SMT_MAX_NAI + COLAB_NAI_SBD)   << COLAB_NAI_SHIFT) | COLAB_PRECISION_SBD))
-#define COLAB_ASSET_NUM_CLC \
-  (uint32_t(((SMT_MAX_NAI + COLAB_NAI_CLC) << COLAB_NAI_SHIFT) | COLAB_PRECISION_CLC))
-#define COLAB_ASSET_NUM_VESTS \
-  (uint32_t(((SMT_MAX_NAI + COLAB_NAI_VESTS) << COLAB_NAI_SHIFT) | COLAB_PRECISION_VESTS))
+#define KNOWLEDGR_ASSET_NUM_SBD \
+  (uint32_t(((SMT_MAX_NAI + KNOWLEDGR_NAI_SBD)   << KNOWLEDGR_NAI_SHIFT) | KNOWLEDGR_PRECISION_SBD))
+#define KNOWLEDGR_ASSET_NUM_NLG \
+  (uint32_t(((SMT_MAX_NAI + KNOWLEDGR_NAI_NLG) << KNOWLEDGR_NAI_SHIFT) | KNOWLEDGR_PRECISION_NLG))
+#define KNOWLEDGR_ASSET_NUM_VESTS \
+  (uint32_t(((SMT_MAX_NAI + KNOWLEDGR_NAI_VESTS) << KNOWLEDGR_NAI_SHIFT) | KNOWLEDGR_PRECISION_VESTS))
 
 #ifdef IS_TEST_NET
 
 #define VESTS_SYMBOL_U64  (uint64_t('V') | (uint64_t('E') << 8) | (uint64_t('S') << 16) | (uint64_t('T') << 24) | (uint64_t('S') << 32))
-#define CLC_SYMBOL_U64  (uint64_t('T') | (uint64_t('E') << 8) | (uint64_t('S') << 16) | (uint64_t('T') << 24) | (uint64_t('S') << 32))
+#define NLG_SYMBOL_U64  (uint64_t('T') | (uint64_t('E') << 8) | (uint64_t('S') << 16) | (uint64_t('T') << 24) | (uint64_t('S') << 32))
 #define SBD_SYMBOL_U64    (uint64_t('T') | (uint64_t('B') << 8) | (uint64_t('D') << 16))
 
 #else
 
 #define VESTS_SYMBOL_U64  (uint64_t('V') | (uint64_t('E') << 8) | (uint64_t('S') << 16) | (uint64_t('T') << 24) | (uint64_t('S') << 32))
-#define CLC_SYMBOL_U64  (uint64_t('C') | (uint64_t('L') << 8) | (uint64_t('C') << 16))
+#define NLG_SYMBOL_U64  (uint64_t('C') | (uint64_t('L') << 8) | (uint64_t('C') << 16))
 #define SBD_SYMBOL_U64    (uint64_t('S') | (uint64_t('B') << 8) | (uint64_t('D') << 16))
 
 #endif
 
 #define VESTS_SYMBOL_SER  (uint64_t(6) | (VESTS_SYMBOL_U64 << 8)) ///< VESTS|VESTS with 6 digits of precision
-#define CLC_SYMBOL_SER  (uint64_t(3) | (CLC_SYMBOL_U64 << 8)) ///< CLC|TESTS with 3 digits of precision
+#define NLG_SYMBOL_SER  (uint64_t(3) | (NLG_SYMBOL_U64 << 8)) ///< NLG|TESTS with 3 digits of precision
 #define SBD_SYMBOL_SER    (uint64_t(3) |   (SBD_SYMBOL_U64 << 8)) ///< SBD|TBD with 3 digits of precision
 
-#define COLAB_ASSET_MAX_DECIMALS 12
+#define KNOWLEDGR_ASSET_MAX_DECIMALS 12
 
 #define SMT_ASSET_NUM_PRECISION_MASK   0xF
 #define SMT_ASSET_NUM_CONTROL_MASK     0x10
@@ -58,7 +58,7 @@
 #define ASSET_SYMBOL_NAI_KEY      "nai"
 #define ASSET_SYMBOL_DECIMALS_KEY "decimals"
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
 class asset_symbol_type
 {
@@ -71,7 +71,7 @@ class asset_symbol_type
 
       explicit operator uint32_t() { return to_nai(); }
 
-      // buf must have space for COLAB_ASSET_SYMBOL_MAX_LENGTH+1
+      // buf must have space for KNOWLEDGR_ASSET_SYMBOL_MAX_LENGTH+1
       static asset_symbol_type from_string( const std::string& str );
       static asset_symbol_type from_nai_string( const char* buf, uint8_t decimal_places );
       static asset_symbol_type from_asset_num( uint32_t asset_num )
@@ -86,7 +86,7 @@ class asset_symbol_type
       void to_nai_string( char* buf )const;
       std::string to_nai_string()const
       {
-         char buf[ COLAB_ASSET_SYMBOL_NAI_STRING_LENGTH ];
+         char buf[ KNOWLEDGR_ASSET_SYMBOL_NAI_STRING_LENGTH ];
          to_nai_string( buf );
          return std::string( buf );
       }
@@ -131,9 +131,9 @@ class asset_symbol_type
       uint32_t asset_num = 0;
 };
 
-} } // colab::protocol
+} } // knowledgr::protocol
 
-FC_REFLECT(colab::protocol::asset_symbol_type, (asset_num))
+FC_REFLECT(knowledgr::protocol::asset_symbol_type, (asset_num))
 
 namespace fc { namespace raw {
 
@@ -148,22 +148,22 @@ namespace fc { namespace raw {
 // NAI internal storage of legacy assets
 
 template< typename Stream >
-inline void pack( Stream& s, const colab::protocol::asset_symbol_type& sym )
+inline void pack( Stream& s, const knowledgr::protocol::asset_symbol_type& sym )
 {
    switch( sym.space() )
    {
-      case colab::protocol::asset_symbol_type::legacy_space:
+      case knowledgr::protocol::asset_symbol_type::legacy_space:
       {
          uint64_t ser = 0;
          switch( sym.asset_num )
          {
-            case COLAB_ASSET_NUM_CLC:
-               ser = CLC_SYMBOL_SER;
+            case KNOWLEDGR_ASSET_NUM_NLG:
+               ser = NLG_SYMBOL_SER;
                break;
-            case COLAB_ASSET_NUM_SBD:
+            case KNOWLEDGR_ASSET_NUM_SBD:
                ser = SBD_SYMBOL_SER;
                break;
-            case COLAB_ASSET_NUM_VESTS:
+            case KNOWLEDGR_ASSET_NUM_VESTS:
                ser = VESTS_SYMBOL_SER;
                break;
             default:
@@ -172,7 +172,7 @@ inline void pack( Stream& s, const colab::protocol::asset_symbol_type& sym )
          pack( s, ser );
          break;
       }
-      case colab::protocol::asset_symbol_type::smt_nai_space:
+      case knowledgr::protocol::asset_symbol_type::smt_nai_space:
          pack( s, sym.asset_num );
          break;
       default:
@@ -181,27 +181,27 @@ inline void pack( Stream& s, const colab::protocol::asset_symbol_type& sym )
 }
 
 template< typename Stream >
-inline void unpack( Stream& s, colab::protocol::asset_symbol_type& sym )
+inline void unpack( Stream& s, knowledgr::protocol::asset_symbol_type& sym )
 {
    uint64_t ser = 0;
    s.read( (char*) &ser, 4 );
 
    switch( ser )
    {
-      case CLC_SYMBOL_SER & 0xFFFFFFFF:
+      case NLG_SYMBOL_SER & 0xFFFFFFFF:
          s.read( ((char*) &ser)+4, 4 );
-         FC_ASSERT( ser == CLC_SYMBOL_SER, "invalid asset bits" );
-         sym.asset_num = COLAB_ASSET_NUM_CLC;
+         FC_ASSERT( ser == NLG_SYMBOL_SER, "invalid asset bits" );
+         sym.asset_num = KNOWLEDGR_ASSET_NUM_NLG;
          break;
       case SBD_SYMBOL_SER & 0xFFFFFFFF:
          s.read( ((char*) &ser)+4, 4 );
          FC_ASSERT( ser == SBD_SYMBOL_SER, "invalid asset bits" );
-         sym.asset_num = COLAB_ASSET_NUM_SBD;
+         sym.asset_num = KNOWLEDGR_ASSET_NUM_SBD;
          break;
       case VESTS_SYMBOL_SER & 0xFFFFFFFF:
          s.read( ((char*) &ser)+4, 4 );
          FC_ASSERT( ser == VESTS_SYMBOL_SER, "invalid asset bits" );
-         sym.asset_num = COLAB_ASSET_NUM_VESTS;
+         sym.asset_num = KNOWLEDGR_ASSET_NUM_VESTS;
          break;
       default:
          sym.asset_num = uint32_t( ser );
@@ -211,7 +211,7 @@ inline void unpack( Stream& s, colab::protocol::asset_symbol_type& sym )
 
 } // fc::raw
 
-inline void to_variant( const colab::protocol::asset_symbol_type& sym, fc::variant& var )
+inline void to_variant( const knowledgr::protocol::asset_symbol_type& sym, fc::variant& var )
 {
    try
    {
@@ -222,9 +222,9 @@ inline void to_variant( const colab::protocol::asset_symbol_type& sym, fc::varia
    } FC_CAPTURE_AND_RETHROW()
 }
 
-inline void from_variant( const fc::variant& var, colab::protocol::asset_symbol_type& sym )
+inline void from_variant( const fc::variant& var, knowledgr::protocol::asset_symbol_type& sym )
 {
-   using colab::protocol::asset_symbol_type;
+   using knowledgr::protocol::asset_symbol_type;
 
    try
    {
@@ -239,8 +239,8 @@ inline void from_variant( const fc::variant& var, colab::protocol::asset_symbol_
       auto decimals = o.find( ASSET_SYMBOL_DECIMALS_KEY );
       FC_ASSERT( decimals != o.end(), "Expected key '${key}'.", ("key", ASSET_SYMBOL_DECIMALS_KEY) );
       FC_ASSERT( decimals->value().is_uint64(), "Expected an unsigned integer type for value '${key}'.", ("key", ASSET_SYMBOL_DECIMALS_KEY) );
-      FC_ASSERT( decimals->value().as_uint64() <= COLAB_ASSET_MAX_DECIMALS,
-         "Expected decimals to be less than or equal to ${num}", ("num", COLAB_ASSET_MAX_DECIMALS) );
+      FC_ASSERT( decimals->value().as_uint64() <= KNOWLEDGR_ASSET_MAX_DECIMALS,
+         "Expected decimals to be less than or equal to ${num}", ("num", KNOWLEDGR_ASSET_MAX_DECIMALS) );
 
       sym = asset_symbol_type::from_nai_string( nai->value().as_string().c_str(), decimals->value().as< uint8_t >() );
    } FC_CAPTURE_AND_RETHROW()

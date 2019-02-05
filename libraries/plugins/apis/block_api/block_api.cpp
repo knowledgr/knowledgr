@@ -1,11 +1,11 @@
 #include <appbase/application.hpp>
 
-#include <colab/plugins/block_api/block_api.hpp>
-#include <colab/plugins/block_api/block_api_plugin.hpp>
+#include <knowledgr/plugins/block_api/block_api.hpp>
+#include <knowledgr/plugins/block_api/block_api_plugin.hpp>
 
-#include <colab/protocol/get_config.hpp>
+#include <knowledgr/protocol/get_config.hpp>
 
-namespace colab { namespace plugins { namespace block_api {
+namespace knowledgr { namespace plugins { namespace block_api {
 
 class block_api_impl
 {
@@ -31,13 +31,13 @@ block_api::block_api()
    : my( new block_api_impl() )
 {
 	std::cerr<<"~~~ [block_api::block_api()] -\n";
-   JSON_RPC_REGISTER_API( COLAB_BLOCK_API_PLUGIN_NAME );
+   JSON_RPC_REGISTER_API( KNOWLEDGR_BLOCK_API_PLUGIN_NAME );
 }
 
 block_api::~block_api() {}
 
 block_api_impl::block_api_impl()
-   : _db( appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db() ) {}
+   : _db( appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db() ) {}
 
 block_api_impl::~block_api_impl() {}
 
@@ -74,4 +74,4 @@ DEFINE_READ_APIS( block_api,
    (get_block)
 )
 
-} } } // colab::plugins::block_api
+} } } // knowledgr::plugins::block_api

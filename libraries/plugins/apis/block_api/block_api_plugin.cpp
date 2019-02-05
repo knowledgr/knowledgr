@@ -1,7 +1,7 @@
-#include <colab/plugins/block_api/block_api.hpp>
-#include <colab/plugins/block_api/block_api_plugin.hpp>
+#include <knowledgr/plugins/block_api/block_api.hpp>
+#include <knowledgr/plugins/block_api/block_api_plugin.hpp>
 
-namespace colab { namespace plugins { namespace block_api {
+namespace knowledgr { namespace plugins { namespace block_api {
 
 block_api_plugin::block_api_plugin() {}
 block_api_plugin::~block_api_plugin() {}
@@ -19,4 +19,4 @@ void block_api_plugin::plugin_startup() {}
 
 void block_api_plugin::plugin_shutdown() {}
 
-} } } // colab::plugins::block_api
+} } } // knowledgr::plugins::block_api

@@ -1,24 +1,24 @@
 #pragma once
 
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/types.hpp>
 
-#include <colab/plugins/block_data_export/exportable_block_data.hpp>
-#include <colab/plugins/rc/resource_count.hpp>
+#include <knowledgr/plugins/block_data_export/exportable_block_data.hpp>
+#include <knowledgr/plugins/rc/resource_count.hpp>
 
 #include <fc/int_array.hpp>
 
 #include <vector>
 
-namespace colab { namespace plugins { namespace rc {
+namespace knowledgr { namespace plugins { namespace rc {
 
-using colab::plugins::block_data_export::exportable_block_data;
-using colab::protocol::account_name_type;
+using knowledgr::plugins::block_data_export::exportable_block_data;
+using knowledgr::protocol::account_name_type;
 
 struct rc_transaction_info
 {
    account_name_type         resource_user;
    count_resources_result    usage;
-   fc::int_array< int64_t, COLAB_NUM_RESOURCE_TYPES >
+   fc::int_array< int64_t, KNOWLEDGR_NUM_RESOURCE_TYPES >
                              cost;
 };
 
@@ -47,15 +47,15 @@ struct exp_rc_data
    std::vector< rc_optional_action_info > opt_action_info;
 };
 
-} } } // colab::plugins::rc
+} } } // knowledgr::plugins::rc
 
-FC_REFLECT( colab::plugins::rc::rc_transaction_info,
+FC_REFLECT( knowledgr::plugins::rc::rc_transaction_info,
    (resource_user)
    (usage)
    (cost)
 )
 
-FC_REFLECT( colab::plugins::rc::rc_block_info,
+FC_REFLECT( knowledgr::plugins::rc::rc_block_info,
    (dt)
    (decay)
    (budget)
@@ -64,7 +64,7 @@ FC_REFLECT( colab::plugins::rc::rc_block_info,
    (pool)
 )
 
-FC_REFLECT( colab::plugins::rc::exp_rc_data,
+FC_REFLECT( knowledgr::plugins::rc::exp_rc_data,
    (block_info)
    (tx_info)
    (opt_action_info)

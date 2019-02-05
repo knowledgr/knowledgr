@@ -1,11 +1,11 @@
 #pragma once
 
-#include <colab/chain/colab_object_types.hpp>
-#include <colab/protocol/smt_operations.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
+#include <knowledgr/protocol/smt_operations.hpp>
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
 /**
  * Class responsible for holding regular (i.e. non-reward) balance of SMT for given account.
@@ -27,7 +27,7 @@ public:
    id_type             id;
    /// Name of the account, the balance is held for.
    account_name_type   owner;
-   asset               liquid;   /// 'balance' for CLC
+   asset               liquid;   /// 'balance' for NLG
 //   asset               vesting;  /// 'vesting_shares' for VESTS
 
    /** Set of simple methods that allow unification of
@@ -52,7 +52,7 @@ public:
    ///@}
 
    bool validate() const
-   { return liquid.symbol == CLC_SYMBOL/*vesting.symbol.get_paired_symbol()*/; }
+   { return liquid.symbol == NLG_SYMBOL/*vesting.symbol.get_paired_symbol()*/; }
 };
 
 /**
@@ -75,9 +75,9 @@ public:
    id_type             id;
    /// Name of the account, the balance is held for.
    account_name_type   owner;
-   asset               pending_liquid;          /// 'reward_clc_balance' for pending CLC
+   asset               pending_liquid;          /// 'reward_nlg_balance' for pending NLG
 //    asset               pending_vesting_shares;  /// 'reward_vesting_balance' for pending VESTS
-//    asset               pending_vesting_value;   /// 'reward_vesting_clc' for pending VESTS
+//    asset               pending_vesting_value;   /// 'reward_vesting_nlg' for pending VESTS
 
    /** Set of simple methods that allow unification of
     *  regular and rewards balance manipulation code.
@@ -143,16 +143,16 @@ typedef multi_index_container <
    allocator< account_rewards_balance_object >
 > account_rewards_balance_index;
 
-} } // namespace colab::chain
+} } // namespace knowledgr::chain
 
-FC_REFLECT( colab::chain::account_regular_balance_object,
+FC_REFLECT( knowledgr::chain::account_regular_balance_object,
    (id)
    (owner)
    (liquid)
 //   (vesting)
 )
 
-FC_REFLECT( colab::chain::account_rewards_balance_object,
+FC_REFLECT( knowledgr::chain::account_rewards_balance_object,
    (id)
    (owner)
    (pending_liquid)
@@ -160,7 +160,7 @@ FC_REFLECT( colab::chain::account_rewards_balance_object,
 //    (pending_vesting_value)
 )
 
-CHAINBASE_SET_INDEX_TYPE( colab::chain::account_regular_balance_object, colab::chain::account_regular_balance_index )
-CHAINBASE_SET_INDEX_TYPE( colab::chain::account_rewards_balance_object, colab::chain::account_rewards_balance_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::account_regular_balance_object, knowledgr::chain::account_regular_balance_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::account_rewards_balance_object, knowledgr::chain::account_rewards_balance_index )
 
 #endif

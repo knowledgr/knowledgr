@@ -1,10 +1,10 @@
 #pragma once
 
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/types.hpp>
 
 #include <fc/uint128.hpp>
 
-namespace colab { namespace chain { namespace util {
+namespace knowledgr { namespace chain { namespace util {
 
 inline u256 to256( const fc::uint128& t )
 {

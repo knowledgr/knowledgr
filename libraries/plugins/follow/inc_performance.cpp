@@ -1,9 +1,9 @@
-#include <colab/plugins/follow/inc_performance.hpp>
+#include <knowledgr/plugins/follow/inc_performance.hpp>
 
-#include <colab/chain/database.hpp>
-#include <colab/plugins/follow/follow_objects.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/plugins/follow/follow_objects.hpp>
 
-namespace colab { namespace plugins{ namespace follow {
+namespace knowledgr { namespace plugins{ namespace follow {
 
 std::unique_ptr< dumper > dumper::self;
 
@@ -214,4 +214,4 @@ template uint32_t performance::delete_old_objects< performance_data::t_creation_
 template uint32_t performance::delete_old_objects< performance_data::t_creation_type::part_feed >( t_feed& old_idx, const account_name_type& start_account, uint32_t max_size, performance_data& pd ) const;
 template uint32_t performance::delete_old_objects< performance_data::t_creation_type::full_blog >( t_blog& old_idx, const account_name_type& start_account, uint32_t max_size, performance_data& pd ) const;
 
-} } } //colab::follow
+} } } //knowledgr::follow

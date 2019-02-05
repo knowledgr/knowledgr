@@ -1,7 +1,7 @@
-#include <colab/plugins/database_api/database_api.hpp>
-#include <colab/plugins/database_api/database_api_plugin.hpp>
+#include <knowledgr/plugins/database_api/database_api.hpp>
+#include <knowledgr/plugins/database_api/database_api_plugin.hpp>
 
-namespace colab { namespace plugins { namespace database_api {
+namespace knowledgr { namespace plugins { namespace database_api {
 
 database_api_plugin::database_api_plugin() {}
 database_api_plugin::~database_api_plugin() {}
@@ -19,4 +19,4 @@ void database_api_plugin::plugin_startup() {}
 
 void database_api_plugin::plugin_shutdown() {}
 
-} } } // colab::plugins::database_api
+} } } // knowledgr::plugins::database_api

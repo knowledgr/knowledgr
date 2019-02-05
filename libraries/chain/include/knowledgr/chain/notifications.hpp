@@ -1,31 +1,31 @@
 #pragma once
 
-#include <colab/protocol/block.hpp>
+#include <knowledgr/protocol/block.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
 struct block_notification
 {
-   block_notification( const colab::protocol::signed_block& b ) : block(b)
+   block_notification( const knowledgr::protocol::signed_block& b ) : block(b)
    {
       block_id = b.id();
       block_num = block_header::num_from_id( block_id );
    }
 
-   colab::protocol::block_id_type          block_id;
+   knowledgr::protocol::block_id_type          block_id;
    uint32_t                                block_num = 0;
-   const colab::protocol::signed_block&    block;
+   const knowledgr::protocol::signed_block&    block;
 };
 
 struct transaction_notification
 {
-   transaction_notification( const colab::protocol::signed_transaction& tx ) : transaction(tx)
+   transaction_notification( const knowledgr::protocol::signed_transaction& tx ) : transaction(tx)
    {
       transaction_id = tx.id();
    }
 
-   colab::protocol::transaction_id_type          transaction_id;
-   const colab::protocol::signed_transaction&    transaction;
+   knowledgr::protocol::transaction_id_type          transaction_id;
+   const knowledgr::protocol::signed_transaction&    transaction;
 };
 
 struct operation_notification

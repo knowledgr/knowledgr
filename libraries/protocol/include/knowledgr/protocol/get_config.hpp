@@ -2,8 +2,8 @@
 
 #include <fc/variant_object.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
 fc::variant_object get_config();
 
-} } // colab::protocol
+} } // knowledgr::protocol

@@ -1,9 +1,9 @@
 #pragma once
-#include <colab/protocol/base.hpp>
+#include <knowledgr/protocol/base.hpp>
 
-#include <colab/chain/evaluator.hpp>
+#include <knowledgr/chain/evaluator.hpp>
 
-namespace colab { namespace plugins { namespace rc {
+namespace knowledgr { namespace plugins { namespace rc {
 
 struct delegate_to_pool_operation : base_operation
 {
@@ -31,22 +31,22 @@ typedef fc::static_variant<
          delegate_drc_from_pool_operation
       > rc_plugin_operation;
 
-COLAB_DEFINE_PLUGIN_EVALUATOR( rc_plugin, rc_plugin_operation, delegate_to_pool_operation );
-COLAB_DEFINE_PLUGIN_EVALUATOR( rc_plugin, rc_plugin_operation, delegate_drc_from_pool_operation );
+KNOWLEDGR_DEFINE_PLUGIN_EVALUATOR( rc_plugin, rc_plugin_operation, delegate_to_pool_operation );
+KNOWLEDGR_DEFINE_PLUGIN_EVALUATOR( rc_plugin, rc_plugin_operation, delegate_drc_from_pool_operation );
 
-} } } // colab::plugins::rc
+} } } // knowledgr::plugins::rc
 
-FC_REFLECT( colab::plugins::rc::delegate_to_pool_operation,
+FC_REFLECT( knowledgr::plugins::rc::delegate_to_pool_operation,
    (from_account)
    (to_pool)
    (amount)
    )
-FC_REFLECT( colab::plugins::rc::delegate_drc_from_pool_operation,
+FC_REFLECT( knowledgr::plugins::rc::delegate_drc_from_pool_operation,
    (from_pool)
    (to_account)
    (mana_change)
    (drc_max_mana)
    )
 
-COLAB_DECLARE_OPERATION_TYPE( colab::plugins::rc::rc_plugin_operation )
-FC_REFLECT_TYPENAME( colab::plugins::rc::rc_plugin_operation )
+KNOWLEDGR_DECLARE_OPERATION_TYPE( knowledgr::plugins::rc::rc_plugin_operation )
+FC_REFLECT_TYPENAME( knowledgr::plugins::rc::rc_plugin_operation )

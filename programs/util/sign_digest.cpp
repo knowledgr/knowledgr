@@ -8,9 +8,9 @@
 #include <fc/reflect/reflect.hpp>
 #include <fc/variant.hpp>
 
-#include <colab/utilities/key_conversion.hpp>
+#include <knowledgr/utilities/key_conversion.hpp>
 
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/types.hpp>
 
 struct signing_request
 {
@@ -21,8 +21,8 @@ struct signing_request
 struct signing_result
 {
    fc::sha256                         dig;
-   colab::protocol::public_key_type key;
-   colab::protocol::signature_type  sig;
+   knowledgr::protocol::public_key_type key;
+   knowledgr::protocol::signature_type  sig;
 };
 
 FC_REFLECT( signing_request, (dig)(wif) )
@@ -45,9 +45,9 @@ int main(int argc, char** argv, char** envp)
       fc::from_variant( v, sreq );
       signing_result sres;
       sres.dig = sreq.dig;
-      fc::ecc::private_key priv_key = *colab::utilities::wif_to_key( sreq.wif );
+      fc::ecc::private_key priv_key = *knowledgr::utilities::wif_to_key( sreq.wif );
       sres.sig = priv_key.sign_compact( sreq.dig );
-      sres.key = colab::protocol::public_key_type( priv_key.get_public_key() );
+      sres.key = knowledgr::protocol::public_key_type( priv_key.get_public_key() );
       std::cout << fc::json::to_string( sres ) << std::endl;
    }
    return 0;

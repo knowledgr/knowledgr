@@ -1,20 +1,20 @@
 #pragma once
-#include <colab/chain/colab_object_types.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
 
 #include <boost/multi_index/composite_key.hpp>
 
-namespace colab { namespace plugins { namespace smt_test {
+namespace knowledgr { namespace plugins { namespace smt_test {
 
 using namespace std;
-using namespace colab::chain;
+using namespace knowledgr::chain;
 
-#ifndef COLAB_SMT_TEST_SPACE_ID
-#define COLAB_SMT_TEST_SPACE_ID 13
+#ifndef KNOWLEDGR_SMT_TEST_SPACE_ID
+#define KNOWLEDGR_SMT_TEST_SPACE_ID 13
 #endif
 
 enum smt_test_object_types
 {
-   smt_token_object_type = ( COLAB_SMT_TEST_SPACE_ID << 8 )
+   smt_token_object_type = ( KNOWLEDGR_SMT_TEST_SPACE_ID << 8 )
 };
 
 class smt_token_object : public object< smt_token_object_type, smt_token_object >
@@ -30,7 +30,7 @@ class smt_token_object : public object< smt_token_object_type, smt_token_object 
 
       account_name_type       control_account;
       uint8_t                 decimal_places = 0;
-      int64_t                 max_supply = COLAB_MAX_SHARE_SUPPLY;
+      int64_t                 max_supply = KNOWLEDGR_MAX_SHARE_SUPPLY;
 
       time_point_sec          generation_begin_time;
       time_point_sec          generation_end_time;
@@ -57,9 +57,9 @@ typedef multi_index_container<
    allocator< smt_token_object >
 > smt_token_index;
 
-} } } // colab::plugins::smt_test
+} } } // knowledgr::plugins::smt_test
 
-FC_REFLECT( colab::plugins::smt_test::smt_token_object,
+FC_REFLECT( knowledgr::plugins::smt_test::smt_token_object,
    (id)
    (control_account)
    (decimal_places)
@@ -69,4 +69,4 @@ FC_REFLECT( colab::plugins::smt_test::smt_token_object,
    (announced_launch_time)
    (launch_expiration_time)
    )
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::smt_test::smt_token_object, colab::plugins::smt_test::smt_token_index )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::smt_test::smt_token_object, knowledgr::plugins::smt_test::smt_token_index )

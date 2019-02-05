@@ -1,10 +1,10 @@
 
-#include <colab/plugins/rc/rc_utility.hpp>
+#include <knowledgr/plugins/rc/rc_utility.hpp>
 
 #include <fc/reflect/variant.hpp>
 #include <fc/uint128.hpp>
 
-namespace colab { namespace plugins { namespace rc {
+namespace knowledgr { namespace plugins { namespace rc {
 
 using fc::uint128_t;
 

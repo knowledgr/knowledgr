@@ -3,13 +3,13 @@
 
 #include <fc/api.hpp>
 
-#include <colab/plugins/block_info/block_info.hpp>
+#include <knowledgr/plugins/block_info/block_info.hpp>
 
-namespace colab { namespace app {
+namespace knowledgr { namespace app {
    struct api_context;
 } }
 
-namespace colab { namespace plugin { namespace block_info {
+namespace knowledgr { namespace plugin { namespace block_info {
 
 namespace detail {
 class block_info_api_impl;
@@ -24,7 +24,7 @@ struct get_block_info_args
 class block_info_api
 {
    public:
-      block_info_api( const colab::app::api_context& ctx );
+      block_info_api( const knowledgr::app::api_context& ctx );
 
       void on_api_startup();
 
@@ -37,12 +37,12 @@ class block_info_api
 
 } } }
 
-FC_REFLECT( colab::plugin::block_info::get_block_info_args,
+FC_REFLECT( knowledgr::plugin::block_info::get_block_info_args,
    (start_block_num)
    (count)
    )
 
-FC_API( colab::plugin::block_info::block_info_api,
+FC_API( knowledgr::plugin::block_info::block_info_api,
    (get_block_info)
    (get_blocks_with_info)
    )

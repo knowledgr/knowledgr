@@ -10,7 +10,7 @@
 
 #include <utility>
 
-namespace colab { namespace chain { namespace util {
+namespace knowledgr { namespace chain { namespace util {
 
 template <typename TCntr>
 struct emplace_ret_value
@@ -107,11 +107,11 @@ class advanced_benchmark_dumper
       void dump();
 };
 
-} } } // colab::chain::util
+} } } // knowledgr::chain::util
 
-FC_REFLECT( colab::chain::util::advanced_benchmark_dumper::item, (op_name)(time) )
-FC_REFLECT( colab::chain::util::advanced_benchmark_dumper::ritem, (op_name)(time) )
+FC_REFLECT( knowledgr::chain::util::advanced_benchmark_dumper::item, (op_name)(time) )
+FC_REFLECT( knowledgr::chain::util::advanced_benchmark_dumper::ritem, (op_name)(time) )
 
-FC_REFLECT( colab::chain::util::advanced_benchmark_dumper::total_info< std::set< colab::chain::util::advanced_benchmark_dumper::item > >, (total_time)(items) )
-FC_REFLECT( colab::chain::util::advanced_benchmark_dumper::total_info< std::multiset< colab::chain::util::advanced_benchmark_dumper::ritem > >, (total_time)(items) )
+FC_REFLECT( knowledgr::chain::util::advanced_benchmark_dumper::total_info< std::set< knowledgr::chain::util::advanced_benchmark_dumper::item > >, (total_time)(items) )
+FC_REFLECT( knowledgr::chain::util::advanced_benchmark_dumper::total_info< std::multiset< knowledgr::chain::util::advanced_benchmark_dumper::ritem > >, (total_time)(items) )
 

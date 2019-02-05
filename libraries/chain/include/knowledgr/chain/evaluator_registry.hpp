@@ -1,8 +1,8 @@
 #pragma once
 
-#include <colab/chain/evaluator.hpp>
+#include <knowledgr/chain/evaluator.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
 template< typename OperationType >
 class evaluator_registry

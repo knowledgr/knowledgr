@@ -1,12 +1,12 @@
-#include <colab/plugins/account_history/account_history_plugin.hpp>
+#include <knowledgr/plugins/account_history/account_history_plugin.hpp>
 
-#include <colab/chain/util/impacted.hpp>
+#include <knowledgr/chain/util/impacted.hpp>
 
-#include <colab/protocol/config.hpp>
+#include <knowledgr/protocol/config.hpp>
 
-#include <colab/chain/history_object.hpp>
+#include <knowledgr/chain/history_object.hpp>
 
-#include <colab/utilities/plugin_utilities.hpp>
+#include <knowledgr/utilities/plugin_utilities.hpp>
 
 #include <fc/io/json.hpp>
 #include <fc/smart_ref_impl.hpp>
@@ -14,11 +14,11 @@
 #include <boost/algorithm/string.hpp>
 
 
-#define COLAB_NAMESPACE_PREFIX "colab::protocol::"
+#define KNOWLEDGR_NAMESPACE_PREFIX "knowledgr::protocol::"
 
-namespace colab { namespace plugins { namespace account_history {
+namespace knowledgr { namespace plugins { namespace account_history {
 
-using namespace colab::protocol;
+using namespace knowledgr::protocol;
 
 using chain::database;
 using chain::operation_notification;
@@ -30,7 +30,7 @@ class account_history_plugin_impl
 {
    public:
       account_history_plugin_impl() :
-         _db( appbase::app().get_plugin< colab::plugins::chain::chain_plugin >().db() ) {}
+         _db( appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >().db() ) {}
 
       virtual ~account_history_plugin_impl() {}
 
@@ -223,12 +223,12 @@ void account_history_plugin::plugin_initialize( const boost::program_options::va
       [&]( const operation_notification& note ){ my->on_pre_apply_operation(note); }, *this, 0 );
 
    typedef pair< account_name_type, account_name_type > pairstring;
-   COLAB_LOAD_VALUE_SET(options, "account-history-track-account-range", my->_tracked_accounts, pairstring);
+   KNOWLEDGR_LOAD_VALUE_SET(options, "account-history-track-account-range", my->_tracked_accounts, pairstring);
 
    if( options.count( "track-account-range" ) )
    {
       wlog( "track-account-range is deprecated in favor of account-history-track-account-range" );
-      COLAB_LOAD_VALUE_SET( options, "track-account-range", my->_tracked_accounts, pairstring );
+      KNOWLEDGR_LOAD_VALUE_SET( options, "track-account-range", my->_tracked_accounts, pairstring );
    }
 
    fc::mutable_variant_object state_opts;
@@ -253,7 +253,7 @@ void account_history_plugin::plugin_initialize( const boost::program_options::va
             for( const string& op : ops )
             {
                if( op.size() )
-                  my->_op_list.insert( COLAB_NAMESPACE_PREFIX + op );
+                  my->_op_list.insert( KNOWLEDGR_NAMESPACE_PREFIX + op );
             }
          }
       }
@@ -270,7 +270,7 @@ void account_history_plugin::plugin_initialize( const boost::program_options::va
             for( const string& op : ops )
             {
                if( op.size() )
-                  my->_op_list.insert( COLAB_NAMESPACE_PREFIX + op );
+                  my->_op_list.insert( KNOWLEDGR_NAMESPACE_PREFIX + op );
             }
          }
       }
@@ -297,7 +297,7 @@ void account_history_plugin::plugin_initialize( const boost::program_options::va
             for( const string& op : ops )
             {
                if( op.size() )
-                  my->_op_list.insert( COLAB_NAMESPACE_PREFIX + op );
+                  my->_op_list.insert( KNOWLEDGR_NAMESPACE_PREFIX + op );
             }
          }
       }
@@ -314,7 +314,7 @@ void account_history_plugin::plugin_initialize( const boost::program_options::va
             for( const string& op : ops )
             {
                if( op.size() )
-                  my->_op_list.insert( COLAB_NAMESPACE_PREFIX + op );
+                  my->_op_list.insert( KNOWLEDGR_NAMESPACE_PREFIX + op );
             }
          }
       }
@@ -348,4 +348,4 @@ flat_map< account_name_type, account_name_type > account_history_plugin::tracked
    return my->_tracked_accounts;
 }
 
-} } } // colab::plugins::account_history
+} } } // knowledgr::plugins::account_history

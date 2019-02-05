@@ -1,14 +1,14 @@
 #pragma once
 
-#include <colab/blockchain_statistics/blockchain_statistics_plugin.hpp>
+#include <knowledgr/blockchain_statistics/blockchain_statistics_plugin.hpp>
 
 #include <fc/api.hpp>
 
-namespace colab { namespace app {
+namespace knowledgr { namespace app {
    struct api_context;
 } }
 
-namespace colab { namespace blockchain_statistics {
+namespace knowledgr { namespace blockchain_statistics {
 
 namespace detail
 {
@@ -22,7 +22,7 @@ struct statistics
    uint32_t             operations = 0;                              ///< Operations evaluated
    uint32_t             transactions = 0;                            ///< Transactions processed
    uint32_t             transfers = 0;                               ///< Account to account transfers
-   share_type           clc_transferred = 0;                       ///< CLC transferred from account to account
+   share_type           nlg_transferred = 0;                       ///< NLG transferred from account to account
    share_type           sbd_transferred = 0;                         ///< SBD transferred from account to account
    share_type           sbd_paid_as_interest = 0;                    ///< SBD paid as interest
    uint32_t             accounts_created = 0;                        ///< Total accounts created
@@ -50,20 +50,20 @@ struct statistics
    share_type           sbd_paid_to_authors = 0;                     ///< Ammount of SBD paid to authors
    share_type           vests_paid_to_authors = 0;                   ///< Ammount of VESS paid to authors
    share_type           vests_paid_to_curators = 0;                  ///< Ammount of VESTS paid to curators
-   share_type           liquidity_rewards_paid = 0;                  ///< Ammount of CLC paid to market makers
-   uint32_t             transfers_to_vesting = 0;                    ///< Transfers of CLC into VESTS
-   share_type           clc_vested = 0;                            ///< Ammount of CLC vested
+   share_type           liquidity_rewards_paid = 0;                  ///< Ammount of NLG paid to market makers
+   uint32_t             transfers_to_vesting = 0;                    ///< Transfers of NLG into VESTS
+   share_type           nlg_vested = 0;                            ///< Ammount of NLG vested
    uint32_t             new_vesting_withdrawal_requests = 0;         ///< New vesting withdrawal requests
    uint32_t             modified_vesting_withdrawal_requests = 0;    ///< Changes to vesting withdrawal requests
    share_type           vesting_withdraw_rate_delta = 0;
    uint32_t             vesting_withdrawals_processed = 0;           ///< Number of vesting withdrawals
    uint32_t             finished_vesting_withdrawals = 0;            ///< Processed vesting withdrawals that are now finished
-   share_type           vests_withdrawn = 0;                         ///< Ammount of VESTS withdrawn to CLC
+   share_type           vests_withdrawn = 0;                         ///< Ammount of VESTS withdrawn to NLG
    share_type           vests_transferred = 0;                       ///< Ammount of VESTS transferred to another account
    uint32_t             sbd_conversion_requests_created = 0;         ///< SBD conversion requests created
    share_type           sbd_to_be_converted = 0;                     ///< Amount of SBD to be converted
    uint32_t             sbd_conversion_requests_filled = 0;          ///< SBD conversion requests filled
-   share_type           clc_converted = 0;                         ///< Amount of CLC that was converted
+   share_type           nlg_converted = 0;                         ///< Amount of NLG that was converted
    uint32_t             limit_orders_created = 0;                    ///< Limit orders created
    uint32_t             limit_orders_filled = 0;                     ///< Limit orders filled
    uint32_t             limit_orders_cancelled = 0;                  ///< Limit orders cancelled
@@ -76,7 +76,7 @@ struct statistics
 class blockchain_statistics_api
 {
    public:
-      blockchain_statistics_api( const colab::app::api_context& ctx );
+      blockchain_statistics_api( const knowledgr::app::api_context& ctx );
 
       void on_api_startup();
 
@@ -105,15 +105,15 @@ class blockchain_statistics_api
       std::shared_ptr< detail::blockchain_statistics_api_impl > my;
 };
 
-} } // colab::blockchain_statistics
+} } // knowledgr::blockchain_statistics
 
-FC_REFLECT( colab::blockchain_statistics::statistics,
+FC_REFLECT( knowledgr::blockchain_statistics::statistics,
    (blocks)
    (bandwidth)
    (operations)
    (transactions)
    (transfers)
-   (clc_transferred)
+   (nlg_transferred)
    (sbd_transferred)
    (sbd_paid_as_interest)
    (accounts_created)
@@ -143,7 +143,7 @@ FC_REFLECT( colab::blockchain_statistics::statistics,
    (vests_paid_to_curators)
    (liquidity_rewards_paid)
    (transfers_to_vesting)
-   (clc_vested)
+   (nlg_vested)
    (new_vesting_withdrawal_requests)
    (modified_vesting_withdrawal_requests)
    (vesting_withdraw_rate_delta)
@@ -154,7 +154,7 @@ FC_REFLECT( colab::blockchain_statistics::statistics,
    (sbd_conversion_requests_created)
    (sbd_to_be_converted)
    (sbd_conversion_requests_filled)
-   (clc_converted)
+   (nlg_converted)
    (limit_orders_created)
    (limit_orders_filled)
    (limit_orders_cancelled)
@@ -162,7 +162,7 @@ FC_REFLECT( colab::blockchain_statistics::statistics,
    (estimated_hashpower) )
 
 
-FC_API( colab::blockchain_statistics::blockchain_statistics_api,
+FC_API( knowledgr::blockchain_statistics::blockchain_statistics_api,
    (get_stats_for_time)
    (get_stats_for_interval)
    (get_lifetime_stats)

@@ -1,11 +1,11 @@
-file(GLOB HEADERS "include/colab/plugins/account_history/*.hpp")
+file(GLOB HEADERS "include/knowledgr/plugins/account_history/*.hpp")
 
 add_library( account_history_plugin
              account_history_plugin.cpp
              ${HEADERS}
            )
 
-target_link_libraries( account_history_plugin chain_plugin colab_chain colab_protocol colab_utilities )
+target_link_libraries( account_history_plugin chain_plugin knowledgr_chain knowledgr_protocol knowledgr_utilities )
 target_include_directories( account_history_plugin
                             PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 

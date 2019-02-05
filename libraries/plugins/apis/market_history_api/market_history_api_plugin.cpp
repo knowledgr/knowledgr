@@ -1,8 +1,8 @@
-#include <colab/plugins/market_history_api/market_history_api_plugin.hpp>
-#include <colab/plugins/market_history_api/market_history_api.hpp>
+#include <knowledgr/plugins/market_history_api/market_history_api_plugin.hpp>
+#include <knowledgr/plugins/market_history_api/market_history_api.hpp>
 
 
-namespace colab { namespace plugins { namespace market_history {
+namespace knowledgr { namespace plugins { namespace market_history {
 
 market_history_api_plugin::market_history_api_plugin() {}
 market_history_api_plugin::~market_history_api_plugin() {}
@@ -17,4 +17,4 @@ void market_history_api_plugin::plugin_initialize( const variables_map& options 
 void market_history_api_plugin::plugin_startup() {}
 void market_history_api_plugin::plugin_shutdown() {}
 
-} } } // colab::plugins::market_history
+} } } // knowledgr::plugins::market_history

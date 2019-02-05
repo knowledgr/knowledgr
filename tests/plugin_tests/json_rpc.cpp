@@ -1,15 +1,15 @@
 #ifdef IS_TEST_NET
 #include <boost/test/unit_test.hpp>
 
-#include <colab/chain/account_object.hpp>
-#include <colab/chain/comment_object.hpp>
-#include <colab/protocol/colab_operations.hpp>
-#include <colab/plugins/json_rpc/json_rpc_plugin.hpp>
+#include <knowledgr/chain/account_object.hpp>
+#include <knowledgr/chain/comment_object.hpp>
+#include <knowledgr/protocol/knowledgr_operations.hpp>
+#include <knowledgr/plugins/json_rpc/json_rpc_plugin.hpp>
 
 #include "../db_fixture/database_fixture.hpp"
 
-using namespace colab::chain;
-using namespace colab::protocol;
+using namespace knowledgr::chain;
+using namespace knowledgr::protocol;
 
 BOOST_FIXTURE_TEST_SUITE( json_rpc, json_rpc_database_fixture )
 

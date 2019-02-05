@@ -1,12 +1,12 @@
 #pragma once
 
-#include <colab/plugins/json_rpc/utility.hpp>
+#include <knowledgr/plugins/json_rpc/utility.hpp>
 
-#include <colab/plugins/block_api/block_api_args.hpp>
+#include <knowledgr/plugins/block_api/block_api_args.hpp>
 
 #define BLOCK_API_SINGLE_QUERY_LIMIT 1000
 
-namespace colab { namespace plugins { namespace block_api {
+namespace knowledgr { namespace plugins { namespace block_api {
 
 class block_api_impl;
 
@@ -41,5 +41,5 @@ class block_api
       std::unique_ptr< block_api_impl > my;
 };
 
-} } } //colab::plugins::block_api
+} } } //knowledgr::plugins::block_api
 

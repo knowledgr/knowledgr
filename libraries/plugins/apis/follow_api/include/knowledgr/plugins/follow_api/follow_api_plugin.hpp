@@ -1,13 +1,13 @@
 #pragma once
-#include <colab/plugins/follow/follow_plugin.hpp>
-#include <colab/plugins/json_rpc/json_rpc_plugin.hpp>
+#include <knowledgr/plugins/follow/follow_plugin.hpp>
+#include <knowledgr/plugins/json_rpc/json_rpc_plugin.hpp>
 
 #include <appbase/application.hpp>
 
-#define COLAB_FOLLOW_API_PLUGIN_NAME "follow_api"
+#define KNOWLEDGR_FOLLOW_API_PLUGIN_NAME "follow_api"
 
 
-namespace colab { namespace plugins { namespace follow {
+namespace knowledgr { namespace plugins { namespace follow {
 
 using namespace appbase;
 
@@ -15,14 +15,14 @@ class follow_api_plugin : public appbase::plugin< follow_api_plugin >
 {
 public:
    APPBASE_PLUGIN_REQUIRES(
-      (colab::plugins::follow::follow_plugin)
-      (colab::plugins::json_rpc::json_rpc_plugin)
+      (knowledgr::plugins::follow::follow_plugin)
+      (knowledgr::plugins::json_rpc::json_rpc_plugin)
    )
 
    follow_api_plugin();
    virtual ~follow_api_plugin();
 
-   static const std::string& name() { static std::string name = COLAB_FOLLOW_API_PLUGIN_NAME; return name; }
+   static const std::string& name() { static std::string name = KNOWLEDGR_FOLLOW_API_PLUGIN_NAME; return name; }
 
    virtual void set_program_options( options_description& cli, options_description& cfg ) override;
 
@@ -33,4 +33,4 @@ public:
    std::shared_ptr< class follow_api > api;
 };
 
-} } } // colab::plugins::follow
+} } } // knowledgr::plugins::follow

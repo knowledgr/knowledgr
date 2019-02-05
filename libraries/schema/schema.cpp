@@ -1,9 +1,9 @@
 
-#include <colab/schema/schema.hpp>
+#include <knowledgr/schema/schema.hpp>
 
 #include <set>
 
-namespace colab { namespace schema {
+namespace knowledgr { namespace schema {
 
 namespace detail {
 

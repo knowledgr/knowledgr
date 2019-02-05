@@ -1,9 +1,9 @@
 FROM phusion/baseimage:0.9.19
 
-#ARG COLABD_BLOCKCHAIN=https://example.com/colabd-blockchain.tbz2
+#ARG KNOWLEDGRD_BLOCKCHAIN=https://example.com/knowledgrd-blockchain.tbz2
 
-ARG COLAB_STATIC_BUILD=ON
-ENV COLAB_STATIC_BUILD ${COLAB_STATIC_BUILD}
+ARG KNOWLEDGR_STATIC_BUILD=ON
+ENV KNOWLEDGR_STATIC_BUILD ${KNOWLEDGR_STATIC_BUILD}
 ARG BUILD_STEP
 ENV BUILD_STEP ${BUILD_STEP}
 
@@ -51,17 +51,17 @@ RUN \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     pip3 install gcovr
 
-ADD . /usr/local/src/colab
+ADD . /usr/local/src/knowledgr
 
 RUN \
     if [ "$BUILD_STEP" = "1" ] || [ ! "$BUILD_STEP" ] ; then \
-    cd /usr/local/src/colab && \
+    cd /usr/local/src/knowledgr && \
     git submodule update --init --recursive && \
     mkdir build && \
     cd build && \
     cmake \
         -DCMAKE_BUILD_TYPE=Release \
-        -DBUILD_COLAB_TESTNET=ON \
+        -DBUILD_KNOWLEDGR_TESTNET=ON \
         -DLOW_MEMORY_NODE=OFF \
         -DCLEAR_VOTES=ON \
         -DSKIP_BY_TX_ID=ON \
@@ -70,53 +70,53 @@ RUN \
     ./tests/chain_test && \
     ./tests/plugin_test && \
     ./programs/util/test_fixed_string && \
-    cd /usr/local/src/colab && \
+    cd /usr/local/src/knowledgr && \
     doxygen && \
     PYTHONPATH=programs/build_helpers \
-    python3 -m colab_build_helpers.check_reflect && \
+    python3 -m knowledgr_build_helpers.check_reflect && \
     programs/build_helpers/get_config_check.sh && \
-    rm -rf /usr/local/src/colab/build ; \
+    rm -rf /usr/local/src/knowledgr/build ; \
     fi
 
 RUN \
     if [ "$BUILD_STEP" = "2" ] || [ ! "$BUILD_STEP" ] ; then \
-    cd /usr/local/src/colab && \
+    cd /usr/local/src/knowledgr && \
     git submodule update --init --recursive && \
     mkdir build && \
     cd build && \
     cmake \
-        -DCMAKE_INSTALL_PREFIX=/usr/local/colabd-testnet \
+        -DCMAKE_INSTALL_PREFIX=/usr/local/knowledgrd-testnet \
         -DCMAKE_BUILD_TYPE=Release \
-        -DBUILD_COLAB_TESTNET=ON \
+        -DBUILD_KNOWLEDGR_TESTNET=ON \
         -DLOW_MEMORY_NODE=OFF \
         -DCLEAR_VOTES=ON \
         -DSKIP_BY_TX_ID=ON \
         -DENABLE_SMT_SUPPORT=ON \
-        -DCOLAB_STATIC_BUILD=${COLAB_STATIC_BUILD} \
+        -DKNOWLEDGR_STATIC_BUILD=${KNOWLEDGR_STATIC_BUILD} \
         .. && \
     make -j$(nproc) chain_test test_fixed_string plugin_test && \
     make install && \
     ./tests/chain_test && \
     ./tests/plugin_test && \
     ./programs/util/test_fixed_string && \
-    cd /usr/local/src/colab && \
+    cd /usr/local/src/knowledgr && \
     doxygen && \
     PYTHONPATH=programs/build_helpers \
-    python3 -m colab_build_helpers.check_reflect && \
+    python3 -m knowledgr_build_helpers.check_reflect && \
     programs/build_helpers/get_config_check.sh && \
-    rm -rf /usr/local/src/colab/build ; \
+    rm -rf /usr/local/src/knowledgr/build ; \
     fi
 
 RUN \
     if [ "$BUILD_STEP" = "1" ] || [ ! "$BUILD_STEP" ] ; then \
-    cd /usr/local/src/colab && \
+    cd /usr/local/src/knowledgr && \
     git submodule update --init --recursive && \
     mkdir build && \
     cd build && \
     cmake \
         -DCMAKE_BUILD_TYPE=Debug \
         -DENABLE_COVERAGE_TESTING=ON \
-        -DBUILD_COLAB_TESTNET=ON \
+        -DBUILD_KNOWLEDGR_TESTNET=ON \
         -DLOW_MEMORY_NODE=OFF \
         -DCLEAR_VOTES=ON \
         -DSKIP_BY_TX_ID=ON \
@@ -127,52 +127,52 @@ RUN \
     ./tests/plugin_test && \
     mkdir -p /var/cobertura && \
     gcovr --object-directory="../" --root=../ --xml-pretty --gcov-exclude=".*tests.*" --gcov-exclude=".*fc.*" --gcov-exclude=".*app*" --gcov-exclude=".*net*" --gcov-exclude=".*plugins*" --gcov-exclude=".*schema*" --gcov-exclude=".*time*" --gcov-exclude=".*utilities*" --gcov-exclude=".*wallet*" --gcov-exclude=".*programs*" --gcov-exclude=".*vendor*" --output="/var/cobertura/coverage.xml" && \
-    cd /usr/local/src/colab && \
-    rm -rf /usr/local/src/colab/build ; \
+    cd /usr/local/src/knowledgr && \
+    rm -rf /usr/local/src/knowledgr/build ; \
     fi
 
 RUN \
     if [ "$BUILD_STEP" = "2" ] || [ ! "$BUILD_STEP" ] ; then \
-    cd /usr/local/src/colab && \
+    cd /usr/local/src/knowledgr && \
     git submodule update --init --recursive && \
     mkdir build && \
     cd build && \
     cmake \
-        -DCMAKE_INSTALL_PREFIX=/usr/local/colabd-default \
+        -DCMAKE_INSTALL_PREFIX=/usr/local/knowledgrd-default \
         -DCMAKE_BUILD_TYPE=Release \
         -DLOW_MEMORY_NODE=ON \
         -DCLEAR_VOTES=ON \
         -DSKIP_BY_TX_ID=OFF \
-        -DBUILD_COLAB_TESTNET=OFF \
-        -DCOLAB_STATIC_BUILD=${COLAB_STATIC_BUILD} \
+        -DBUILD_KNOWLEDGR_TESTNET=OFF \
+        -DKNOWLEDGR_STATIC_BUILD=${KNOWLEDGR_STATIC_BUILD} \
         .. \
     && \
     make -j$(nproc) && \
     make install && \
     cd .. && \
-    ( /usr/local/colabd-default/bin/colabd --version \
+    ( /usr/local/knowledgrd-default/bin/knowledgrd --version \
       | grep -o '[0-9]*\.[0-9]*\.[0-9]*' \
       && echo '_' \
       && git rev-parse --short HEAD ) \
       | sed -e ':a' -e 'N' -e '$!ba' -e 's/\n//g' \
-      > /etc/colabdversion && \
-    cat /etc/colabdversion && \
+      > /etc/knowledgrdversion && \
+    cat /etc/knowledgrdversion && \
     rm -rfv build && \
     mkdir build && \
     cd build && \
     cmake \
-        -DCMAKE_INSTALL_PREFIX=/usr/local/colabd-full \
+        -DCMAKE_INSTALL_PREFIX=/usr/local/knowledgrd-full \
         -DCMAKE_BUILD_TYPE=Release \
         -DLOW_MEMORY_NODE=OFF \
         -DCLEAR_VOTES=OFF \
         -DSKIP_BY_TX_ID=ON \
-        -DBUILD_COLAB_TESTNET=OFF \
-        -DCOLAB_STATIC_BUILD=${COLAB_STATIC_BUILD} \
+        -DBUILD_KNOWLEDGR_TESTNET=OFF \
+        -DKNOWLEDGR_STATIC_BUILD=${KNOWLEDGR_STATIC_BUILD} \
         .. \
     && \
     make -j$(nproc) && \
     make install && \
-    rm -rf /usr/local/src/colab ; \
+    rm -rf /usr/local/src/knowledgr ; \
     fi
 
 RUN \
@@ -222,18 +222,18 @@ RUN \
         /usr/include \
         /usr/local/include
 
-RUN useradd -s /bin/bash -m -d /var/lib/colabd colabd
+RUN useradd -s /bin/bash -m -d /var/lib/knowledgrd knowledgrd
 
-RUN mkdir /var/cache/colabd && \
-    chown colabd:colabd -R /var/cache/colabd
+RUN mkdir /var/cache/knowledgrd && \
+    chown knowledgrd:knowledgrd -R /var/cache/knowledgrd
 
 # add blockchain cache to image
-#ADD $COLABD_BLOCKCHAIN /var/cache/colabd/blocks.tbz2
+#ADD $KNOWLEDGRD_BLOCKCHAIN /var/cache/knowledgrd/blocks.tbz2
 
-ENV HOME /var/lib/colabd
-RUN chown colabd:colabd -R /var/lib/colabd
+ENV HOME /var/lib/knowledgrd
+RUN chown knowledgrd:knowledgrd -R /var/lib/knowledgrd
 
-VOLUME ["/var/lib/colabd"]
+VOLUME ["/var/lib/knowledgrd"]
 
 # rpc service:
 EXPOSE 8090
@@ -241,30 +241,30 @@ EXPOSE 8090
 EXPOSE 2001
 
 # add seednodes from documentation to image
-ADD doc/seednodes.txt /etc/colabd/seednodes.txt
+ADD doc/seednodes.txt /etc/knowledgrd/seednodes.txt
 
 # the following adds lots of logging info to stdout
-ADD contrib/config-for-docker.ini /etc/colabd/config.ini
-ADD contrib/fullnode.config.ini /etc/colabd/fullnode.config.ini
-ADD contrib/fullnode.opswhitelist.config.ini /etc/colabd/fullnode.opswhitelist.config.ini
-ADD contrib/config-for-broadcaster.ini /etc/colabd/config-for-broadcaster.ini
-ADD contrib/config-for-ahnode.ini /etc/colabd/config-for-ahnode.ini
+ADD contrib/config-for-docker.ini /etc/knowledgrd/config.ini
+ADD contrib/fullnode.config.ini /etc/knowledgrd/fullnode.config.ini
+ADD contrib/fullnode.opswhitelist.config.ini /etc/knowledgrd/fullnode.opswhitelist.config.ini
+ADD contrib/config-for-broadcaster.ini /etc/knowledgrd/config-for-broadcaster.ini
+ADD contrib/config-for-ahnode.ini /etc/knowledgrd/config-for-ahnode.ini
 
 # add normal startup script that starts via sv
-ADD contrib/colabd.run /usr/local/bin/colab-sv-run.sh
-RUN chmod +x /usr/local/bin/colab-sv-run.sh
+ADD contrib/knowledgrd.run /usr/local/bin/knowledgr-sv-run.sh
+RUN chmod +x /usr/local/bin/knowledgr-sv-run.sh
 
 # add nginx templates
-ADD contrib/colabd.nginx.conf /etc/nginx/colabd.nginx.conf
+ADD contrib/knowledgrd.nginx.conf /etc/nginx/knowledgrd.nginx.conf
 ADD contrib/healthcheck.conf.template /etc/nginx/healthcheck.conf.template
 
 # add PaaS startup script and service script
-ADD contrib/startpaascolabd.sh /usr/local/bin/startpaascolabd.sh
+ADD contrib/startpaasknowledgrd.sh /usr/local/bin/startpaasknowledgrd.sh
 ADD contrib/pulltestnetscripts.sh /usr/local/bin/pulltestnetscripts.sh
 ADD contrib/paas-sv-run.sh /usr/local/bin/paas-sv-run.sh
 ADD contrib/sync-sv-run.sh /usr/local/bin/sync-sv-run.sh
 ADD contrib/healthcheck.sh /usr/local/bin/healthcheck.sh
-RUN chmod +x /usr/local/bin/startpaascolabd.sh
+RUN chmod +x /usr/local/bin/startpaasknowledgrd.sh
 RUN chmod +x /usr/local/bin/pulltestnetscripts.sh
 RUN chmod +x /usr/local/bin/paas-sv-run.sh
 RUN chmod +x /usr/local/bin/sync-sv-run.sh
@@ -274,6 +274,6 @@ RUN chmod +x /usr/local/bin/healthcheck.sh
 # this enables exitting of the container when the writer node dies
 # for PaaS mode (elasticbeanstalk, etc)
 # AWS EB Docker requires a non-daemonized entrypoint
-ADD contrib/colabdentrypoint.sh /usr/local/bin/colabdentrypoint.sh
-RUN chmod +x /usr/local/bin/colabdentrypoint.sh
-CMD /usr/local/bin/colabdentrypoint.sh
+ADD contrib/knowledgrdentrypoint.sh /usr/local/bin/knowledgrdentrypoint.sh
+RUN chmod +x /usr/local/bin/knowledgrdentrypoint.sh
+CMD /usr/local/bin/knowledgrdentrypoint.sh

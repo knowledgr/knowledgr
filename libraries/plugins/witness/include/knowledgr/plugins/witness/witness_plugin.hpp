@@ -1,18 +1,18 @@
 #pragma once
 
-#include <colab/plugins/chain/chain_plugin.hpp>
-#include <colab/plugins/p2p/p2p_plugin.hpp>
-#include <colab/plugins/rc/rc_plugin.hpp>
-#include <colab/plugins/witness/block_producer.hpp>
+#include <knowledgr/plugins/chain/chain_plugin.hpp>
+#include <knowledgr/plugins/p2p/p2p_plugin.hpp>
+#include <knowledgr/plugins/rc/rc_plugin.hpp>
+#include <knowledgr/plugins/witness/block_producer.hpp>
 
 #include <appbase/application.hpp>
 
-#define COLAB_WITNESS_PLUGIN_NAME "witness"
+#define KNOWLEDGR_WITNESS_PLUGIN_NAME "witness"
 
 #define RESERVE_RATIO_PRECISION ((int64_t)10000)
 #define RESERVE_RATIO_MIN_INCREMENT ((int64_t)5000)
 
-namespace colab { namespace plugins { namespace witness {
+namespace knowledgr { namespace plugins { namespace witness {
 
 namespace detail { class witness_plugin_impl; }
 
@@ -37,15 +37,15 @@ class witness_plugin : public appbase::plugin< witness_plugin >
 {
 public:
    APPBASE_PLUGIN_REQUIRES(
-      (colab::plugins::chain::chain_plugin)
-      (colab::plugins::p2p::p2p_plugin)
-      (colab::plugins::rc::rc_plugin)
+      (knowledgr::plugins::chain::chain_plugin)
+      (knowledgr::plugins::p2p::p2p_plugin)
+      (knowledgr::plugins::rc::rc_plugin)
    )
 
    witness_plugin();
    virtual ~witness_plugin();
 
-   static const std::string& name() { static std::string name = COLAB_WITNESS_PLUGIN_NAME; return name; }
+   static const std::string& name() { static std::string name = KNOWLEDGR_WITNESS_PLUGIN_NAME; return name; }
 
    virtual void set_program_options(
       boost::program_options::options_description &command_line_options,
@@ -60,4 +60,4 @@ private:
    std::unique_ptr< detail::witness_plugin_impl > my;
 };
 
-} } } // colab::plugins::witness
+} } } // knowledgr::plugins::witness

@@ -24,7 +24,7 @@
 #pragma once
 
 #include <graphene/net/config.hpp>
-#include <colab/protocol/block.hpp>
+#include <knowledgr/protocol/block.hpp>
 
 #include <fc/crypto/ripemd160.hpp>
 #include <fc/crypto/elliptic.hpp>
@@ -40,10 +40,10 @@
 #include <vector>
 
 namespace graphene { namespace net {
-  using colab::protocol::signed_transaction;
-  using colab::protocol::block_id_type;
-  using colab::protocol::transaction_id_type;
-  using colab::protocol::signed_block;
+  using knowledgr::protocol::signed_transaction;
+  using knowledgr::protocol::block_id_type;
+  using knowledgr::protocol::transaction_id_type;
+  using knowledgr::protocol::signed_block;
 
   typedef fc::ecc::public_key_data node_id_t;
   typedef fc::ripemd160 item_hash_t;

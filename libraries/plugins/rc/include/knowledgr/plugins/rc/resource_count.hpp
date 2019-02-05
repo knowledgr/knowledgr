@@ -1,15 +1,15 @@
 #pragma once
 
-#include <colab/protocol/transaction.hpp>
-#include <colab/protocol/optional_automated_actions.hpp>
+#include <knowledgr/protocol/transaction.hpp>
+#include <knowledgr/protocol/optional_automated_actions.hpp>
 
 #include <fc/int_array.hpp>
 #include <fc/reflect/reflect.hpp>
 #include <vector>
 
-#define COLAB_NUM_RESOURCE_TYPES     5
+#define KNOWLEDGR_NUM_RESOURCE_TYPES     5
 
-namespace colab { namespace plugins { namespace rc {
+namespace knowledgr { namespace plugins { namespace rc {
 
 enum rc_resource_types
 {
@@ -20,7 +20,7 @@ enum rc_resource_types
    resource_execution_time
 };
 
-typedef fc::int_array< int64_t, COLAB_NUM_RESOURCE_TYPES > resource_count_type;
+typedef fc::int_array< int64_t, KNOWLEDGR_NUM_RESOURCE_TYPES > resource_count_type;
 
 struct count_resources_result
 {
@@ -28,16 +28,16 @@ struct count_resources_result
 };
 
 void count_resources(
-   const colab::protocol::signed_transaction& tx,
+   const knowledgr::protocol::signed_transaction& tx,
    count_resources_result& result );
 
 void count_resources(
-   const colab::protocol::optional_automated_action&,
+   const knowledgr::protocol::optional_automated_action&,
    count_resources_result& result );
 
-} } } // colab::plugins::rc
+} } } // knowledgr::plugins::rc
 
-FC_REFLECT_ENUM( colab::plugins::rc::rc_resource_types,
+FC_REFLECT_ENUM( knowledgr::plugins::rc::rc_resource_types,
     (resource_history_bytes)
     (resource_new_accounts)
     (resource_market_bytes)
@@ -45,8 +45,8 @@ FC_REFLECT_ENUM( colab::plugins::rc::rc_resource_types,
     (resource_execution_time)
    )
 
-FC_REFLECT( colab::plugins::rc::count_resources_result,
+FC_REFLECT( knowledgr::plugins::rc::count_resources_result,
    (resource_count)
 )
 
-FC_REFLECT_TYPENAME( colab::plugins::rc::resource_count_type )
+FC_REFLECT_TYPENAME( knowledgr::plugins::rc::resource_count_type )

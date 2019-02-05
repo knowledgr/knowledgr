@@ -1,18 +1,18 @@
 #include <appbase/application.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
 
-#include <colab/manifest/plugins.hpp>
+#include <knowledgr/manifest/plugins.hpp>
 
 {% for plugin in plugins %}
-#include <colab/plugins/{{ plugin["plugin_name"] }}/{{ plugin["plugin_name"] }}_plugin.hpp>
+#include <knowledgr/plugins/{{ plugin["plugin_name"] }}/{{ plugin["plugin_name"] }}_plugin.hpp>
 {% endfor %}
 
-namespace colab { namespace plugins {
+namespace knowledgr { namespace plugins {
 
 void register_plugins()
 {
    {% for plugin in plugins %}
-   appbase::app().register_plugin< colab::plugins::{{ plugin["plugin_namespace"] }}::{{ plugin["plugin_name" ] }}_plugin >();
+   appbase::app().register_plugin< knowledgr::plugins::{{ plugin["plugin_namespace"] }}::{{ plugin["plugin_name" ] }}_plugin >();
    {% endfor %}
 }
 

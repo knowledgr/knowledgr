@@ -1,4 +1,4 @@
-file(GLOB HEADERS "include/colab/plugins/witness/*.hpp")
+file(GLOB HEADERS "include/knowledgr/plugins/witness/*.hpp")
 
 add_library( witness_plugin
              witness_plugin.cpp
@@ -6,7 +6,7 @@ add_library( witness_plugin
              ${HEADERS}
            )
 
-target_link_libraries( witness_plugin p2p_plugin chain_plugin rc_plugin appbase colab_chain colab_utilities colab_utilities )
+target_link_libraries( witness_plugin p2p_plugin chain_plugin rc_plugin appbase knowledgr_chain knowledgr_utilities knowledgr_utilities )
 target_include_directories( witness_plugin
                             PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 

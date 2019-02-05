@@ -22,22 +22,22 @@
  * THE SOFTWARE.
  */
 
-#include <colab/private_message/private_message_evaluators.hpp>
-#include <colab/private_message/private_message_operations.hpp>
-#include <colab/private_message/private_message_plugin.hpp>
+#include <knowledgr/private_message/private_message_evaluators.hpp>
+#include <knowledgr/private_message/private_message_operations.hpp>
+#include <knowledgr/private_message/private_message_plugin.hpp>
 
-#include <colab/app/impacted.hpp>
+#include <knowledgr/app/impacted.hpp>
 
-#include <colab/protocol/config.hpp>
+#include <knowledgr/protocol/config.hpp>
 
-#include <colab/chain/database.hpp>
-#include <colab/chain/index.hpp>
-#include <colab/chain/generic_custom_operation_interpreter.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/index.hpp>
+#include <knowledgr/chain/generic_custom_operation_interpreter.hpp>
 
 #include <fc/smart_ref_impl.hpp>
 #include <fc/thread/thread.hpp>
 
-namespace colab { namespace private_message {
+namespace knowledgr { namespace private_message {
 
 namespace detail
 {
@@ -48,20 +48,20 @@ class private_message_plugin_impl
       private_message_plugin_impl(private_message_plugin& _plugin);
       virtual ~private_message_plugin_impl();
 
-      colab::chain::database& database()
+      knowledgr::chain::database& database()
       {
          return _self.database();
       }
 
       private_message_plugin&                                                             _self;
-      std::shared_ptr< generic_custom_operation_interpreter< colab::private_message::private_message_plugin_operation > >   _custom_operation_interpreter;
+      std::shared_ptr< generic_custom_operation_interpreter< knowledgr::private_message::private_message_plugin_operation > >   _custom_operation_interpreter;
       flat_map<string,string>                                                             _tracked_accounts;
 };
 
 private_message_plugin_impl::private_message_plugin_impl( private_message_plugin& _plugin )
    : _self( _plugin )
 {
-   _custom_operation_interpreter = std::make_shared< generic_custom_operation_interpreter< colab::private_message::private_message_plugin_operation > >( database() );
+   _custom_operation_interpreter = std::make_shared< generic_custom_operation_interpreter< knowledgr::private_message::private_message_plugin_operation > >( database() );
 
    _custom_operation_interpreter->register_evaluator< private_message_evaluator >( &_self );
 
@@ -143,7 +143,7 @@ void private_message_plugin::plugin_initialize(const boost::program_options::var
    app().register_api_factory<private_message_api>("private_message_api");
 
    typedef pair<string,string> pairstring;
-   COLAB_LOAD_VALUE_SET(options, "pm-accounts", my->_tracked_accounts, pairstring);
+   KNOWLEDGR_LOAD_VALUE_SET(options, "pm-accounts", my->_tracked_accounts, pairstring);
 }
 
 vector< message_api_obj > private_message_api::get_inbox( string to, time_point newest, uint16_t limit )const {
@@ -185,6 +185,6 @@ flat_map<string,string> private_message_plugin::tracked_accounts() const
 
 } }
 
-COLAB_DEFINE_PLUGIN( private_message, colab::private_message::private_message_plugin )
+KNOWLEDGR_DEFINE_PLUGIN( private_message, knowledgr::private_message::private_message_plugin )
 
-COLAB_DEFINE_OPERATION_TYPE( colab::private_message::private_message_plugin_operation )
+KNOWLEDGR_DEFINE_OPERATION_TYPE( knowledgr::private_message::private_message_plugin_operation )

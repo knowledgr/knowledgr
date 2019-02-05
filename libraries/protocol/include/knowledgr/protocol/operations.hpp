@@ -1,13 +1,13 @@
 #pragma once
 
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/types.hpp>
 
-#include <colab/protocol/operation_util.hpp>
-#include <colab/protocol/colab_operations.hpp>
-#include <colab/protocol/colab_virtual_operations.hpp>
-#include <colab/protocol/smt_operations.hpp>
+#include <knowledgr/protocol/operation_util.hpp>
+#include <knowledgr/protocol/knowledgr_operations.hpp>
+#include <knowledgr/protocol/knowledgr_virtual_operations.hpp>
+#include <knowledgr/protocol/smt_operations.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
    /** NOTE: do not change the order of any operations prior to the virtual operations
     * or it will trigger a hardfork.
@@ -27,10 +27,10 @@ namespace colab { namespace protocol {
             //convert_operation,
 
 			account_create_operation,
-			account_admin_update_operation,///~~~~~CLC~~~~~
-			account_expertise_update_operation,///~~~~~CLC~~~~~
-			stake_request_operation,///~~~~~CLC~~~~~
-			stake_process_operation,///~~~~~CLC~~~~~
+			account_admin_update_operation,///~~~~~NLG~~~~~
+			account_expertise_update_operation,///~~~~~NLG~~~~~
+			stake_request_operation,///~~~~~NLG~~~~~
+			stake_process_operation,///~~~~~NLG~~~~~
             account_update_operation,
 
             witness_update_operation,
@@ -70,7 +70,7 @@ namespace colab { namespace protocol {
 //            account_create_with_delegation_operation,
             witness_set_properties_operation,
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
             /// SMT operations
             claim_reward_balance2_operation,
 
@@ -93,7 +93,7 @@ namespace colab { namespace protocol {
             fill_order_operation,
             shutdown_witness_operation,
             fill_transfer_from_savings_operation,
-			stake_process_time_operation,///~~~~~CLC~~~~~
+			stake_process_time_operation,///~~~~~NLG~~~~~
             hardfork_operation,
             comment_payout_update_operation,
             return_vesting_delegation_operation,
@@ -114,12 +114,12 @@ namespace colab { namespace protocol {
 
    bool is_virtual_operation( const operation& op );
 
-} } // colab::protocol
+} } // knowledgr::protocol
 
 /*namespace fc {
-    void to_variant( const colab::protocol::operation& var,  fc::variant& vo );
-    void from_variant( const fc::variant& var,  colab::protocol::operation& vo );
+    void to_variant( const knowledgr::protocol::operation& var,  fc::variant& vo );
+    void from_variant( const fc::variant& var,  knowledgr::protocol::operation& vo );
 }*/
 
-COLAB_DECLARE_OPERATION_TYPE( colab::protocol::operation )
-FC_REFLECT_TYPENAME( colab::protocol::operation )
+KNOWLEDGR_DECLARE_OPERATION_TYPE( knowledgr::protocol::operation )
+FC_REFLECT_TYPENAME( knowledgr::protocol::operation )

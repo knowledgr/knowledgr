@@ -1,17 +1,17 @@
 #pragma once
-#include <colab/plugins/json_rpc/utility.hpp>
-#include <colab/plugins/reputation/reputation_objects.hpp>
-#include <colab/plugins/database_api/database_api_objects.hpp>
+#include <knowledgr/plugins/json_rpc/utility.hpp>
+#include <knowledgr/plugins/reputation/reputation_objects.hpp>
+#include <knowledgr/plugins/database_api/database_api_objects.hpp>
 
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/types.hpp>
 
 #include <fc/optional.hpp>
 #include <fc/variant.hpp>
 #include <fc/vector.hpp>
 
-namespace colab { namespace plugins { namespace reputation {
+namespace knowledgr { namespace plugins { namespace reputation {
 
-using colab::protocol::account_name_type;
+using knowledgr::protocol::account_name_type;
 
 namespace detail
 {
@@ -21,7 +21,7 @@ namespace detail
 struct account_reputation
 {
    account_name_type             account;
-   colab::protocol::share_type   reputation;
+   knowledgr::protocol::share_type   reputation;
 };
 
 struct get_account_reputations_args
@@ -49,13 +49,13 @@ class reputation_api
       std::unique_ptr< detail::reputation_api_impl > my;
 };
 
-} } } // colab::plugins::reputation
+} } } // knowledgr::plugins::reputation
 
-FC_REFLECT( colab::plugins::reputation::account_reputation,
+FC_REFLECT( knowledgr::plugins::reputation::account_reputation,
             (account)(reputation) );
 
-FC_REFLECT( colab::plugins::reputation::get_account_reputations_args,
+FC_REFLECT( knowledgr::plugins::reputation::get_account_reputations_args,
             (account_lower_bound)(limit) );
 
-FC_REFLECT( colab::plugins::reputation::get_account_reputations_return,
+FC_REFLECT( knowledgr::plugins::reputation::get_account_reputations_return,
             (reputations) );

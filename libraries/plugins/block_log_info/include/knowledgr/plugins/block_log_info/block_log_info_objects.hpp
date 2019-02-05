@@ -1,23 +1,23 @@
 #pragma once
-#include <colab/chain/colab_object_types.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
 
 #include <boost/multi_index/composite_key.hpp>
 
 #include <fc/crypto/restartable_sha256.hpp>
 
-namespace colab { namespace plugins { namespace block_log_info {
+namespace knowledgr { namespace plugins { namespace block_log_info {
 
 using namespace std;
-using namespace colab::chain;
+using namespace knowledgr::chain;
 
-#ifndef COLAB_BLOCK_LOG_INFO_SPACE_ID
-#define COLAB_BLOCK_LOG_INFO_SPACE_ID 14
+#ifndef KNOWLEDGR_BLOCK_LOG_INFO_SPACE_ID
+#define KNOWLEDGR_BLOCK_LOG_INFO_SPACE_ID 14
 #endif
 
 enum block_log_info_object_types
 {
-   block_log_hash_state_object_type      = ( COLAB_BLOCK_LOG_INFO_SPACE_ID << 8 )    ,
-   block_log_pending_message_object_type = ( COLAB_BLOCK_LOG_INFO_SPACE_ID << 8 ) + 1,
+   block_log_hash_state_object_type      = ( KNOWLEDGR_BLOCK_LOG_INFO_SPACE_ID << 8 )    ,
+   block_log_pending_message_object_type = ( KNOWLEDGR_BLOCK_LOG_INFO_SPACE_ID << 8 ) + 1,
 };
 
 class block_log_hash_state_object : public object< block_log_hash_state_object_type, block_log_hash_state_object >
@@ -79,13 +79,13 @@ typedef multi_index_container<
    allocator< block_log_pending_message_object >
 > block_log_pending_message_index;
 
-} } } // colab::plugins::block_log_info
+} } } // knowledgr::plugins::block_log_info
 
 
-FC_REFLECT( colab::plugins::block_log_info::block_log_hash_state_object, (id)(total_size)(rsha256)(last_interval) )
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::block_log_info::block_log_hash_state_object, colab::plugins::block_log_info::block_log_hash_state_index )
+FC_REFLECT( knowledgr::plugins::block_log_info::block_log_hash_state_object, (id)(total_size)(rsha256)(last_interval) )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::block_log_info::block_log_hash_state_object, knowledgr::plugins::block_log_info::block_log_hash_state_index )
 
-FC_REFLECT( colab::plugins::block_log_info::block_log_message_data, (block_num)(total_size)(current_interval)(rsha256) )
+FC_REFLECT( knowledgr::plugins::block_log_info::block_log_message_data, (block_num)(total_size)(current_interval)(rsha256) )
 
-FC_REFLECT( colab::plugins::block_log_info::block_log_pending_message_object, (id)(data) )
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::block_log_info::block_log_pending_message_object, colab::plugins::block_log_info::block_log_pending_message_index )
+FC_REFLECT( knowledgr::plugins::block_log_info::block_log_pending_message_object, (id)(data) )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::block_log_info::block_log_pending_message_object, knowledgr::plugins::block_log_info::block_log_pending_message_index )

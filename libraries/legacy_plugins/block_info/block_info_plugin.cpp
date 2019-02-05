@@ -1,14 +1,14 @@
 
-#include <colab/chain/database.hpp>
-#include <colab/chain/global_property_object.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/chain/global_property_object.hpp>
 
-#include <colab/plugins/block_info/block_info.hpp>
-#include <colab/plugins/block_info/block_info_api.hpp>
-#include <colab/plugins/block_info/block_info_plugin.hpp>
+#include <knowledgr/plugins/block_info/block_info.hpp>
+#include <knowledgr/plugins/block_info/block_info_api.hpp>
+#include <knowledgr/plugins/block_info/block_info_plugin.hpp>
 
 #include <string>
 
-namespace colab { namespace plugin { namespace block_info {
+namespace knowledgr { namespace plugin { namespace block_info {
 
 block_info_plugin::block_info_plugin( application* app ) : plugin( app ) {}
 block_info_plugin::~block_info_plugin() {}
@@ -53,6 +53,6 @@ void block_info_plugin::on_applied_block( const chain::signed_block& b )
    return;
 }
 
-} } } // colab::plugin::block_info
+} } } // knowledgr::plugin::block_info
 
-COLAB_DEFINE_PLUGIN( block_info, colab::plugin::block_info::block_info_plugin )
+KNOWLEDGR_DEFINE_PLUGIN( block_info, knowledgr::plugin::block_info::block_info_plugin )

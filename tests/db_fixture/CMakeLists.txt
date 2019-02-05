@@ -12,8 +12,8 @@ add_library(db_fixture
             ${HEADERS})
 
 target_link_libraries(db_fixture
-                      colab_chain
-                      colab_protocol
+                      knowledgr_chain
+                      knowledgr_protocol
                       account_history_plugin
                       market_history_plugin
                       block_api_plugin

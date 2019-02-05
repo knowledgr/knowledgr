@@ -1,15 +1,15 @@
 #pragma once
 #include <appbase/application.hpp>
 
-#include <colab/plugins/chain/chain_plugin.hpp>
+#include <knowledgr/plugins/chain/chain_plugin.hpp>
 
-namespace colab { namespace plugins { namespace block_data_export {
+namespace knowledgr { namespace plugins { namespace block_data_export {
 
 namespace detail { class block_data_export_plugin_impl; }
 
 using namespace appbase;
 
-#define COLAB_BLOCK_DATA_EXPORT_PLUGIN_NAME "block_data_export"
+#define KNOWLEDGR_BLOCK_DATA_EXPORT_PLUGIN_NAME "block_data_export"
 
 class exportable_block_data;
 
@@ -19,9 +19,9 @@ class block_data_export_plugin : public appbase::plugin< block_data_export_plugi
       block_data_export_plugin();
       virtual ~block_data_export_plugin();
 
-      APPBASE_PLUGIN_REQUIRES( (colab::plugins::chain::chain_plugin) )
+      APPBASE_PLUGIN_REQUIRES( (knowledgr::plugins::chain::chain_plugin) )
 
-      static const std::string& name() { static std::string name = COLAB_BLOCK_DATA_EXPORT_PLUGIN_NAME; return name; }
+      static const std::string& name() { static std::string name = KNOWLEDGR_BLOCK_DATA_EXPORT_PLUGIN_NAME; return name; }
 
       virtual void set_program_options( options_description& cli, options_description& cfg ) override;
       virtual void plugin_initialize( const variables_map& options ) override;
@@ -82,4 +82,4 @@ std::shared_ptr< T > find_export_data( const std::string& name )
    return export_plugin->find_export_data< T >( name );
 }
 
-} } } // colab::plugins::block_data_export
+} } } // knowledgr::plugins::block_data_export

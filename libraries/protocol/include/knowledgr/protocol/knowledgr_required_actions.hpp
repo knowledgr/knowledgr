@@ -1,13 +1,13 @@
 #pragma once
-#include <colab/protocol/base.hpp>
-#include <colab/protocol/block_header.hpp>
-#include <colab/protocol/asset.hpp>
-#include <colab/protocol/validation.hpp>
-#include <colab/protocol/legacy_asset.hpp>
+#include <knowledgr/protocol/base.hpp>
+#include <knowledgr/protocol/block_header.hpp>
+#include <knowledgr/protocol/asset.hpp>
+#include <knowledgr/protocol/validation.hpp>
+#include <knowledgr/protocol/legacy_asset.hpp>
 
 #include <fc/crypto/equihash.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
    struct example_required_action : public base_operation
    {
@@ -19,6 +19,6 @@ namespace colab { namespace protocol {
       friend bool operator==( const example_required_action& lhs, const example_required_action& rhs );
    };
 
-} } // colab::protocol
+} } // knowledgr::protocol
 
-FC_REFLECT( colab::protocol::example_required_action, (account) )
+FC_REFLECT( knowledgr::protocol::example_required_action, (account) )

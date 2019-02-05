@@ -1,19 +1,19 @@
 #pragma once
 
-#include <colab/protocol/base.hpp>
-#include <colab/protocol/asset.hpp>
-#include <colab/protocol/misc_utilities.hpp>
+#include <knowledgr/protocol/base.hpp>
+#include <knowledgr/protocol/asset.hpp>
+#include <knowledgr/protocol/misc_utilities.hpp>
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
 
 #define SMT_MAX_UNIT_ROUTES            10
 #define SMT_MAX_UNIT_COUNT             20
 #define SMT_MAX_DECIMAL_PLACES         8
-#define SMT_MIN_HARD_CAP_COLAB_UNITS   10000
-#define SMT_MIN_SATURATION_COLAB_UNITS 1000
-#define SMT_MIN_SOFT_CAP_COLAB_UNITS   1000
+#define SMT_MIN_HARD_CAP_KNOWLEDGR_UNITS   10000
+#define SMT_MIN_SATURATION_KNOWLEDGR_UNITS 1000
+#define SMT_MIN_SOFT_CAP_KNOWLEDGR_UNITS   1000
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
 /**
  * Base of all smt operations issued by token creator, holding what's needed by all of them.
@@ -64,10 +64,10 @@ struct smt_create_operation : public smt_base_operation
 
 struct smt_generation_unit
 {
-   flat_map< account_name_type, uint16_t >        colab_unit;
+   flat_map< account_name_type, uint16_t >        knowledgr_unit;
    flat_map< account_name_type, uint16_t >        token_unit;
 
-   uint32_t colab_unit_sum()const;
+   uint32_t knowledgr_unit_sum()const;
    uint32_t token_unit_sum()const;
 
    void validate()const;
@@ -107,8 +107,8 @@ struct smt_capped_generation_policy
    smt_generation_unit pre_soft_cap_unit;
    smt_generation_unit post_soft_cap_unit;
 
-   smt_cap_commitment  min_colab_units_commitment;
-   smt_cap_commitment  hard_cap_colab_units_commitment;
+   smt_cap_commitment  min_knowledgr_units_commitment;
+   smt_cap_commitment  hard_cap_knowledgr_units_commitment;
 
    uint16_t            soft_cap_percent = 0;
 
@@ -127,7 +127,7 @@ typedef static_variant<
 struct smt_setup_operation : public smt_base_operation
 {
    uint8_t                 decimal_places = 0;
-   int64_t                 max_supply = COLAB_MAX_SHARE_SUPPLY;
+   int64_t                 max_supply = KNOWLEDGR_MAX_SHARE_SUPPLY;
 
    smt_generation_policy   initial_generation_policy;
 
@@ -229,13 +229,13 @@ typedef static_variant<
 
 struct smt_param_windows_v1
 {
-   uint32_t cashout_window_seconds = 0;                // COLAB_CASHOUT_WINDOW_SECONDS
-   uint32_t reverse_auction_window_seconds = 0;        // COLAB_REVERSE_AUCTION_WINDOW_SECONDS
+   uint32_t cashout_window_seconds = 0;                // KNOWLEDGR_CASHOUT_WINDOW_SECONDS
+   uint32_t reverse_auction_window_seconds = 0;        // KNOWLEDGR_REVERSE_AUCTION_WINDOW_SECONDS
 };
 
 struct smt_param_vote_regeneration_period_seconds_v1
 {
-   uint32_t vote_regeneration_period_seconds = 0;      // COLAB_VOTE_REGENERATION_SECONDS
+   uint32_t vote_regeneration_period_seconds = 0;      // KNOWLEDGR_VOTE_REGENERATION_SECONDS
    uint32_t votes_per_regeneration_period = 0;
 };
 
@@ -273,27 +273,27 @@ struct smt_set_runtime_parameters_operation : public smt_base_operation
 } }
 
 FC_REFLECT(
-   colab::protocol::smt_base_operation,
+   knowledgr::protocol::smt_base_operation,
    (control_account)
    (symbol)
 )
 
 FC_REFLECT(
-   colab::protocol::smt_executor_base_operation,
+   knowledgr::protocol::smt_executor_base_operation,
    (executor)
    (symbol)
 )
 
 FC_REFLECT_DERIVED(
-   colab::protocol::smt_create_operation,
-   (colab::protocol::smt_base_operation),
+   knowledgr::protocol::smt_create_operation,
+   (knowledgr::protocol::smt_base_operation),
    (smt_creation_fee)
    (extensions)
 )
 
 FC_REFLECT_DERIVED(
-   colab::protocol::smt_setup_operation,
-   (colab::protocol::smt_base_operation),
+   knowledgr::protocol::smt_setup_operation,
+   (knowledgr::protocol::smt_base_operation),
    (decimal_places)
    (max_supply)
    (initial_generation_policy)
@@ -305,37 +305,37 @@ FC_REFLECT_DERIVED(
    )
 
 FC_REFLECT(
-   colab::protocol::smt_generation_unit,
-   (colab_unit)
+   knowledgr::protocol::smt_generation_unit,
+   (knowledgr_unit)
    (token_unit)
    )
 
 FC_REFLECT(
-   colab::protocol::smt_cap_commitment,
+   knowledgr::protocol::smt_cap_commitment,
    (lower_bound)
    (upper_bound)
    (hash)
    )
 
 FC_REFLECT(
-   colab::protocol::smt_revealed_cap,
+   knowledgr::protocol::smt_revealed_cap,
    (amount)
    (nonce)
    )
 
 FC_REFLECT_DERIVED(
-   colab::protocol::smt_cap_reveal_operation,
-   (colab::protocol::smt_base_operation),
+   knowledgr::protocol::smt_cap_reveal_operation,
+   (knowledgr::protocol::smt_base_operation),
    (cap)
    (extensions)
    )
 
 FC_REFLECT(
-   colab::protocol::smt_capped_generation_policy,
+   knowledgr::protocol::smt_capped_generation_policy,
    (pre_soft_cap_unit)
    (post_soft_cap_unit)
-   (min_colab_units_commitment)
-   (hard_cap_colab_units_commitment)
+   (min_knowledgr_units_commitment)
+   (hard_cap_knowledgr_units_commitment)
    (soft_cap_percent)
    (min_unit_ratio)
    (max_unit_ratio)
@@ -343,8 +343,8 @@ FC_REFLECT(
    )
 
 FC_REFLECT_DERIVED(
-   colab::protocol::smt_refund_operation,
-   (colab::protocol::smt_executor_base_operation),
+   knowledgr::protocol::smt_refund_operation,
+   (knowledgr::protocol::smt_executor_base_operation),
    (contributor)
    (contribution_id)
    (amount)
@@ -352,13 +352,13 @@ FC_REFLECT_DERIVED(
    )
 
 FC_REFLECT(
-   colab::protocol::smt_emissions_unit,
+   knowledgr::protocol::smt_emissions_unit,
    (token_unit)
    )
 
 FC_REFLECT_DERIVED(
-   colab::protocol::smt_setup_emissions_operation,
-   (colab::protocol::smt_base_operation),
+   knowledgr::protocol::smt_setup_emissions_operation,
+   (knowledgr::protocol::smt_base_operation),
    (schedule_time)
    (emissions_unit)
    (interval_seconds)
@@ -374,31 +374,31 @@ FC_REFLECT_DERIVED(
    )
 
 FC_REFLECT(
-   colab::protocol::smt_param_allow_vesting,
+   knowledgr::protocol::smt_param_allow_vesting,
    (value)
    )
 
 FC_REFLECT(
-   colab::protocol::smt_param_allow_voting,
+   knowledgr::protocol::smt_param_allow_voting,
    (value)
    )
 
-FC_REFLECT_TYPENAME( colab::protocol::smt_setup_parameter )
+FC_REFLECT_TYPENAME( knowledgr::protocol::smt_setup_parameter )
 
 FC_REFLECT(
-   colab::protocol::smt_param_windows_v1,
+   knowledgr::protocol::smt_param_windows_v1,
    (cashout_window_seconds)
    (reverse_auction_window_seconds)
    )
 
 FC_REFLECT(
-   colab::protocol::smt_param_vote_regeneration_period_seconds_v1,
+   knowledgr::protocol::smt_param_vote_regeneration_period_seconds_v1,
    (vote_regeneration_period_seconds)
    (votes_per_regeneration_period)
    )
 
 FC_REFLECT(
-   colab::protocol::smt_param_rewards_v1,
+   knowledgr::protocol::smt_param_rewards_v1,
    (content_constant)
    (percent_curation_rewards)
    (percent_content_rewards)
@@ -407,19 +407,19 @@ FC_REFLECT(
    )
 
 FC_REFLECT_TYPENAME(
-   colab::protocol::smt_runtime_parameter
+   knowledgr::protocol::smt_runtime_parameter
    )
 
 FC_REFLECT_DERIVED(
-   colab::protocol::smt_set_setup_parameters_operation,
-   (colab::protocol::smt_base_operation),
+   knowledgr::protocol::smt_set_setup_parameters_operation,
+   (knowledgr::protocol::smt_base_operation),
    (setup_parameters)
    (extensions)
    )
 
 FC_REFLECT_DERIVED(
-   colab::protocol::smt_set_runtime_parameters_operation,
-   (colab::protocol::smt_base_operation),
+   knowledgr::protocol::smt_set_runtime_parameters_operation,
+   (knowledgr::protocol::smt_base_operation),
    (runtime_parameters)
    (extensions)
    )

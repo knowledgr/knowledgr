@@ -1,15 +1,15 @@
-file(GLOB HEADERS "include/colab/private_message/*.hpp")
+file(GLOB HEADERS "include/knowledgr/private_message/*.hpp")
 
-add_library( colab_private_message
+add_library( knowledgr_private_message
              private_message_plugin.cpp
            )
 
-target_link_libraries( colab_private_message colab_chain colab_protocol colab_app )
-target_include_directories( colab_private_message
+target_link_libraries( knowledgr_private_message knowledgr_chain knowledgr_protocol knowledgr_app )
+target_include_directories( knowledgr_private_message
                             PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include" )
 
 install( TARGETS
-   colab_private_message
+   knowledgr_private_message
 
    RUNTIME DESTINATION bin
    LIBRARY DESTINATION lib

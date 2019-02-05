@@ -1,6 +1,6 @@
 #pragma once
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
 class database;
 

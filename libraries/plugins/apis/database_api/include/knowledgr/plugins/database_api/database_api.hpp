@@ -1,13 +1,13 @@
 #pragma once
 
-#include <colab/plugins/json_rpc/utility.hpp>
+#include <knowledgr/plugins/json_rpc/utility.hpp>
 
-#include <colab/plugins/database_api/database_api_args.hpp>
-#include <colab/plugins/database_api/database_api_objects.hpp>
+#include <knowledgr/plugins/database_api/database_api_args.hpp>
+#include <knowledgr/plugins/database_api/database_api_objects.hpp>
 
 #define DATABASE_API_SINGLE_QUERY_LIMIT 1000
 
-namespace colab { namespace plugins { namespace database_api {
+namespace knowledgr { namespace plugins { namespace database_api {
 
 class database_api_impl;
 
@@ -60,8 +60,8 @@ class database_api
          *
          */
          (list_accounts)
-		 (list_pending_stakes)///~~~~~CLC~~~~~
-		 (find_pending_stake)///~~~~~CLC~~~~~
+		 (list_pending_stakes)///~~~~~NLG~~~~~
+		 (find_pending_stake)///~~~~~NLG~~~~~
 
          /**
          * @brief Find accounts by primary key (account name)
@@ -135,11 +135,11 @@ class database_api
 
          /*
           * This is a general purpose API that checks signatures against accounts for an arbitrary sha256 hash
-          * using the existing authority structures in Colab
+          * using the existing authority structures in Knowledgr
           */
          (verify_signatures)
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
          /**
          * @return array of Numeric Asset Identifier (NAI) available to be used for new SMT to be created.
          */
@@ -151,5 +151,5 @@ class database_api
       std::unique_ptr< database_api_impl > my;
 };
 
-} } } //colab::plugins::database_api
+} } } //knowledgr::plugins::database_api
 

@@ -146,7 +146,7 @@ bool application::initialize_impl(int argc, char** argv, vector<abstract_plugin*
 
          data_dir = data_dir / app_dir.str();
 
-         #pragma message( "TODO: Remove this check for Colab release 0.20.1+" )
+         #pragma message( "TODO: Remove this check for Knowledgr release 0.20.1+" )
          bfs::path old_dir = bfs::current_path() / "witness_node_data_dir";
          if( bfs::exists( old_dir ) )
          {
@@ -181,14 +181,14 @@ bool application::initialize_impl(int argc, char** argv, vector<abstract_plugin*
             boost::split(names, arg, boost::is_any_of(" \t,"));
             for(const std::string& name : names) {
                get_plugin(name).initialize(my->_args);
-			   std::cerr<<"~~~ [application::initialize_impl()] - plugin from config.ini "<<name<<" initialized.\n";//~~~~~CLC~~~~~
+			   std::cerr<<"~~~ [application::initialize_impl()] - plugin from config.ini "<<name<<" initialized.\n";//~~~~~NLG~~~~~
 			}
          }
       }
       for (const auto& plugin : autostart_plugins)
          if (plugin != nullptr && plugin->get_state() == abstract_plugin::registered) {
 			 plugin->initialize(my->_args);
-			 std::cerr<<"~~~ [application::initialize_impl()] - autostart_plugin "<<plugin->get_name()<<" initialized.\n";//~~~~~CLC~~~~~
+			 std::cerr<<"~~~ [application::initialize_impl()] - autostart_plugin "<<plugin->get_name()<<" initialized.\n";//~~~~~NLG~~~~~
 		 }
 
       bpo::notify(my->_args);
@@ -222,7 +222,7 @@ void application::quit() {
 
 void application::exec() {
    /** To avoid killing process by broken pipe and continue regular app shutdown.
-    *  Useful for usecase: `colabd | tee colabd.log` and pressing Ctrl+C
+    *  Useful for usecase: `knowledgrd | tee knowledgrd.log` and pressing Ctrl+C
     **/
    signal(SIGPIPE, SIG_IGN);
 

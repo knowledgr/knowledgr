@@ -1,6 +1,6 @@
 #pragma once
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
 // TODO:  Rename these curves to match naming in manual.md
 enum curve_id
@@ -11,11 +11,11 @@ enum curve_id
    square_root
 };
 
-} } // colab::utilities
+} } // knowledgr::utilities
 
 
 FC_REFLECT_ENUM(
-   colab::protocol::curve_id,
+   knowledgr::protocol::curve_id,
    (quadratic)
    (quadratic_curation)
    (linear)

@@ -1,7 +1,7 @@
-#include <colab/plugins/chain_api/chain_api_plugin.hpp>
-#include <colab/plugins/chain_api/chain_api.hpp>
+#include <knowledgr/plugins/chain_api/chain_api_plugin.hpp>
+#include <knowledgr/plugins/chain_api/chain_api.hpp>
 
-namespace colab { namespace plugins { namespace chain {
+namespace knowledgr { namespace plugins { namespace chain {
 
 namespace detail {
 
@@ -77,7 +77,7 @@ DEFINE_API_IMPL( chain_api_impl, push_transaction )
 chain_api::chain_api(): my( new detail::chain_api_impl() )
 {
 	std::cerr<<"~~~ [chain_api::chain_api()] -\n";
-   JSON_RPC_REGISTER_API( COLAB_CHAIN_API_PLUGIN_NAME );
+   JSON_RPC_REGISTER_API( KNOWLEDGR_CHAIN_API_PLUGIN_NAME );
 }
 
 chain_api::~chain_api() {}
@@ -87,4 +87,4 @@ DEFINE_LOCKLESS_APIS( chain_api,
    (push_transaction)
 )
 
-} } } //colab::plugins::chain
+} } } //knowledgr::plugins::chain

@@ -31,7 +31,7 @@
 
 #include <fc/exception/exception.hpp>
 
-namespace colab { namespace wallet {
+namespace knowledgr { namespace wallet {
 
    struct method_description
    {
@@ -74,4 +74,4 @@ namespace colab { namespace wallet {
       }
    };
 
-} } // end namespace colab::wallet
+} } // end namespace knowledgr::wallet

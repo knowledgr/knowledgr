@@ -1,8 +1,8 @@
-#include <colab/plugins/account_by_key_api/account_by_key_api_plugin.hpp>
-#include <colab/plugins/account_by_key_api/account_by_key_api.hpp>
+#include <knowledgr/plugins/account_by_key_api/account_by_key_api_plugin.hpp>
+#include <knowledgr/plugins/account_by_key_api/account_by_key_api.hpp>
 
 
-namespace colab { namespace plugins { namespace account_by_key {
+namespace knowledgr { namespace plugins { namespace account_by_key {
 
 account_by_key_api_plugin::account_by_key_api_plugin() {}
 account_by_key_api_plugin::~account_by_key_api_plugin() {}
@@ -17,4 +17,4 @@ void account_by_key_api_plugin::plugin_initialize( const variables_map& options 
 void account_by_key_api_plugin::plugin_startup() {}
 void account_by_key_api_plugin::plugin_shutdown() {}
 
-} } } // colab::plugins::account_by_key
+} } } // knowledgr::plugins::account_by_key

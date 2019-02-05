@@ -1,21 +1,21 @@
 #pragma once
-#include <colab/protocol/transaction.hpp>
-#include <colab/chain/colab_object_types.hpp>
+#include <knowledgr/protocol/transaction.hpp>
+#include <knowledgr/chain/knowledgr_object_types.hpp>
 #include <boost/multi_index/composite_key.hpp>
 #include <boost/multi_index/hashed_index.hpp>
 
-namespace colab { namespace plugins { namespace transaction_status {
+namespace knowledgr { namespace plugins { namespace transaction_status {
 
-using namespace colab::chain;
+using namespace knowledgr::chain;
 using namespace boost::multi_index;
 
-#ifndef COLAB_TRANSACTION_STATUS_SPACE_ID
-#define COLAB_TRANSACTION_STATUS_SPACE_ID 18
+#ifndef KNOWLEDGR_TRANSACTION_STATUS_SPACE_ID
+#define KNOWLEDGR_TRANSACTION_STATUS_SPACE_ID 18
 #endif
 
 enum transaction_status_object_type
 {
-   transaction_status_object_type = ( COLAB_TRANSACTION_STATUS_SPACE_ID << 8 )
+   transaction_status_object_type = ( KNOWLEDGR_TRANSACTION_STATUS_SPACE_ID << 8 )
 };
 
 enum transaction_status
@@ -69,9 +69,9 @@ typedef multi_index_container<
 
 
 
-} } } // colab::plugins::transaction_status
+} } } // knowledgr::plugins::transaction_status
 
-FC_REFLECT_ENUM( colab::plugins::transaction_status::transaction_status,
+FC_REFLECT_ENUM( knowledgr::plugins::transaction_status::transaction_status,
                 (unknown)
                 (within_mempool)
                 (within_reversible_block)
@@ -80,5 +80,5 @@ FC_REFLECT_ENUM( colab::plugins::transaction_status::transaction_status,
                 (expired_irreversible)
                 (too_old) )
 
-FC_REFLECT( colab::plugins::transaction_status::transaction_status_object, (id)(transaction_id)(block_num) )
-CHAINBASE_SET_INDEX_TYPE( colab::plugins::transaction_status::transaction_status_object, colab::plugins::transaction_status::transaction_status_index )
+FC_REFLECT( knowledgr::plugins::transaction_status::transaction_status_object, (id)(transaction_id)(block_num) )
+CHAINBASE_SET_INDEX_TYPE( knowledgr::plugins::transaction_status::transaction_status_object, knowledgr::plugins::transaction_status::transaction_status_index )

@@ -1,14 +1,14 @@
 #pragma once
-#include <colab/chain/database.hpp>
-#include <colab/protocol/asset_symbol.hpp>
+#include <knowledgr/chain/database.hpp>
+#include <knowledgr/protocol/asset_symbol.hpp>
 
-#ifdef COLAB_ENABLE_SMT
+#ifdef KNOWLEDGR_ENABLE_SMT
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
    void replenish_nai_pool( database& db );
    void remove_from_nai_pool( database &db, const asset_symbol_type& a );
 
-} } // colab::chain
+} } // knowledgr::chain
 
 #endif

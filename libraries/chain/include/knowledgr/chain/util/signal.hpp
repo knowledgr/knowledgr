@@ -2,7 +2,7 @@
 
 #include <fc/signals.hpp>
 
-namespace colab { namespace chain { namespace util {
+namespace knowledgr { namespace chain { namespace util {
 
 inline void disconnect_signal( boost::signals2::connection& signal )
 {

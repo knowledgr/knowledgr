@@ -1,11 +1,11 @@
 
-#include <colab/protocol/operations.hpp>
+#include <knowledgr/protocol/operations.hpp>
 
 #include <fc/io/json.hpp>
 
 #include <boost/algorithm/string.hpp>
 
-using namespace colab::protocol;
+using namespace knowledgr::protocol;
 using boost::container::flat_map;
 using std::string;
 using std::vector;

@@ -1,8 +1,8 @@
-#include <colab/plugins/test_api/test_api_plugin.hpp>
+#include <knowledgr/plugins/test_api/test_api_plugin.hpp>
 
 #include <fc/log/logger_config.hpp>
 
-namespace colab { namespace plugins { namespace test_api {
+namespace knowledgr { namespace plugins { namespace test_api {
 
 test_api_plugin::test_api_plugin() {}
 test_api_plugin::~test_api_plugin() {}
@@ -31,4 +31,4 @@ test_api_b_return test_api_plugin::test_api_b( const test_api_b_args& args, bool
    return result;
 }
 
-} } } // colab::plugins::test_api
+} } } // knowledgr::plugins::test_api

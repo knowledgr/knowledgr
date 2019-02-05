@@ -1,8 +1,8 @@
 #pragma once
-#include <colab/plugins/json_rpc/utility.hpp>
-#include <colab/plugins/rc/rc_objects.hpp>
+#include <knowledgr/plugins/json_rpc/utility.hpp>
+#include <knowledgr/plugins/rc/rc_objects.hpp>
 
-#include <colab/protocol/types.hpp>
+#include <knowledgr/protocol/types.hpp>
 
 #include <fc/optional.hpp>
 #include <fc/variant.hpp>
@@ -10,7 +10,7 @@
 
 #define RC_API_SINGLE_QUERY_LIMIT 1000
 
-namespace colab { namespace plugins { namespace rc {
+namespace knowledgr { namespace plugins { namespace rc {
 
 namespace detail
 {
@@ -43,7 +43,7 @@ struct get_resource_pool_return
 struct rc_account_api_object
 {
    account_name_type     account;
-   colab::chain::util::manabar   rc_manabar;
+   knowledgr::chain::util::manabar   rc_manabar;
    asset                 max_rc_creation_adjustment = asset( 0, VESTS_SYMBOL );
    int64_t               max_rc = 0;
 
@@ -85,33 +85,33 @@ class rc_api
       std::unique_ptr< detail::rc_api_impl > my;
 };
 
-} } } // colab::plugins::rc
+} } } // knowledgr::plugins::rc
 
-FC_REFLECT( colab::plugins::rc::get_resource_params_return,
+FC_REFLECT( knowledgr::plugins::rc::get_resource_params_return,
    (resource_names)
    (resource_params)
    (size_info)
    )
 
-FC_REFLECT( colab::plugins::rc::resource_pool_api_object,
+FC_REFLECT( knowledgr::plugins::rc::resource_pool_api_object,
    (pool)
    )
 
-FC_REFLECT( colab::plugins::rc::get_resource_pool_return,
+FC_REFLECT( knowledgr::plugins::rc::get_resource_pool_return,
    (resource_pool)
    )
 
-FC_REFLECT( colab::plugins::rc::rc_account_api_object,
+FC_REFLECT( knowledgr::plugins::rc::rc_account_api_object,
    (account)
    (rc_manabar)
    (max_rc_creation_adjustment)
    (max_rc)
    )
 
-FC_REFLECT( colab::plugins::rc::find_rc_accounts_args,
+FC_REFLECT( knowledgr::plugins::rc::find_rc_accounts_args,
    (accounts)
    )
 
-FC_REFLECT( colab::plugins::rc::find_rc_accounts_return,
+FC_REFLECT( knowledgr::plugins::rc::find_rc_accounts_return,
    (rc_accounts)
    )

@@ -1,7 +1,7 @@
-#include <colab/plugins/debug_node/debug_node_plugin.hpp>
+#include <knowledgr/plugins/debug_node/debug_node_plugin.hpp>
 
-#include <colab/plugins/witness/block_producer.hpp>
-#include <colab/chain/witness_objects.hpp>
+#include <knowledgr/plugins/witness/block_producer.hpp>
+#include <knowledgr/chain/witness_objects.hpp>
 
 #include <fc/io/buffered_iostream.hpp>
 #include <fc/io/fstream.hpp>
@@ -11,12 +11,12 @@
 #include <fc/thread/mutex.hpp>
 #include <fc/thread/scoped_lock.hpp>
 
-#include <colab/utilities/key_conversion.hpp>
+#include <knowledgr/utilities/key_conversion.hpp>
 
 #include <sstream>
 #include <string>
 
-namespace colab { namespace plugins { namespace debug_node {
+namespace knowledgr { namespace plugins { namespace debug_node {
 
 namespace detail {
 class debug_node_plugin_impl
@@ -206,7 +206,7 @@ void debug_node_plugin::debug_generate_blocks(
    chain::public_key_type debug_public_key;
    if( args.debug_key != "" )
    {
-      debug_private_key = colab::utilities::wif_to_key( args.debug_key );
+      debug_private_key = knowledgr::utilities::wif_to_key( args.debug_key );
       FC_ASSERT( debug_private_key.valid() );
       debug_public_key = debug_private_key->get_public_key();
    }
@@ -362,4 +362,4 @@ void debug_node_plugin::plugin_shutdown()
    return;
 }
 
-} } } // colab::plugins::debug_node
+} } } // knowledgr::plugins::debug_node

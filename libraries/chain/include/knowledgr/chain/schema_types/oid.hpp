@@ -1,12 +1,12 @@
 
 #pragma once
 
-#include <colab/schema/abstract_schema.hpp>
-#include <colab/schema/schema_impl.hpp>
+#include <knowledgr/schema/abstract_schema.hpp>
+#include <knowledgr/schema/schema_impl.hpp>
 
 #include <chainbase/util/object_id.hpp>
 
-namespace colab { namespace schema { namespace detail {
+namespace knowledgr { namespace schema { namespace detail {
 
 //////////////////////////////////////////////
 // oid                                      //
@@ -16,7 +16,7 @@ template< typename T >
 struct schema_oid_impl
    : public abstract_schema
 {
-   COLAB_SCHEMA_TEMPLATE_CLASS_BODY( schema_oid_impl )
+   KNOWLEDGR_SCHEMA_TEMPLATE_CLASS_BODY( schema_oid_impl )
 };
 
 template< typename T >

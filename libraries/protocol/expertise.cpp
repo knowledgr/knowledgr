@@ -1,4 +1,4 @@
-#include <colab/protocol/expertise.hpp>
+#include <knowledgr/protocol/expertise.hpp>
 #include <boost/rational.hpp>
 #include <boost/multiprecision/cpp_int.hpp>
 
@@ -7,7 +7,7 @@
 
 */
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
 	static std::map<protocol::expertise_category, std::string> category_str_map;
 
@@ -140,4 +140,4 @@ namespace colab { namespace protocol {
 		FC_CAPTURE_AND_RETHROW( (from) )
 	}
 
-} } // colab::protocol
+} } // knowledgr::protocol

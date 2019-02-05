@@ -1,4 +1,4 @@
-file(GLOB HEADERS "include/colab/plugins/follow/*.hpp")
+file(GLOB HEADERS "include/knowledgr/plugins/follow/*.hpp")
 
 add_library( follow_plugin
              follow_plugin.cpp

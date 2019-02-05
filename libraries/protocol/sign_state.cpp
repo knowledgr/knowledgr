@@ -1,7 +1,7 @@
 
-#include <colab/protocol/sign_state.hpp>
+#include <knowledgr/protocol/sign_state.hpp>
 
-namespace colab { namespace protocol {
+namespace knowledgr { namespace protocol {
 
 bool sign_state::signed_by( const public_key_type& k )
 {
@@ -109,4 +109,4 @@ sign_state::sign_state(
    approved_by.insert( "temp"  );
 }
 
-} } // colab::protocol
+} } // knowledgr::protocol

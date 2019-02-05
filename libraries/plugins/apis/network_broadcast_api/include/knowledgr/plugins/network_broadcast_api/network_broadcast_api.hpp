@@ -1,9 +1,9 @@
 #pragma once
-#include <colab/protocol/block.hpp>
+#include <knowledgr/protocol/block.hpp>
 
-#include <colab/plugins/p2p/p2p_plugin.hpp>
-#include <colab/plugins/chain/chain_plugin.hpp>
-#include <colab/plugins/json_rpc/utility.hpp>
+#include <knowledgr/plugins/p2p/p2p_plugin.hpp>
+#include <knowledgr/plugins/chain/chain_plugin.hpp>
+#include <knowledgr/plugins/json_rpc/utility.hpp>
 
 #include <fc/optional.hpp>
 #include <fc/variant.hpp>
@@ -11,16 +11,16 @@
 
 #include <boost/thread/mutex.hpp>
 
-namespace colab { namespace plugins { namespace network_broadcast_api {
+namespace knowledgr { namespace plugins { namespace network_broadcast_api {
 
 using std::vector;
 using fc::variant;
 using fc::optional;
-using colab::plugins::json_rpc::void_type;
+using knowledgr::plugins::json_rpc::void_type;
 
-using colab::protocol::signed_transaction;
-using colab::protocol::transaction_id_type;
-using colab::protocol::signed_block;
+using knowledgr::protocol::signed_transaction;
+using knowledgr::protocol::transaction_id_type;
+using knowledgr::protocol::signed_block;
 
 struct broadcast_transaction_args
 {
@@ -54,10 +54,10 @@ class network_broadcast_api
       std::unique_ptr< detail::network_broadcast_api_impl > my;
 };
 
-} } } // colab::plugins::network_broadcast_api
+} } } // knowledgr::plugins::network_broadcast_api
 
-FC_REFLECT( colab::plugins::network_broadcast_api::broadcast_transaction_args,
+FC_REFLECT( knowledgr::plugins::network_broadcast_api::broadcast_transaction_args,
    (trx)(max_block_age) )
 
-FC_REFLECT( colab::plugins::network_broadcast_api::broadcast_block_args,
+FC_REFLECT( knowledgr::plugins::network_broadcast_api::broadcast_block_args,
    (block) )

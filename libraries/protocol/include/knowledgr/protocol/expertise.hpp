@@ -1,8 +1,8 @@
 #pragma once
-#include <colab/protocol/types.hpp>
-#include <colab/protocol/config.hpp>
+#include <knowledgr/protocol/types.hpp>
+#include <knowledgr/protocol/config.hpp>
 
-namespace colab { namespace protocol {	
+namespace knowledgr { namespace protocol {	
 
 	typedef uint32_t expertise_category;
 
@@ -54,13 +54,13 @@ namespace colab { namespace protocol {
 		std::string			to_string()const;
 	};
    
-} } // colab::protocol
+} } // knowledgr::protocol
 
 namespace fc {
 
-    inline void to_variant( const colab::protocol::expertise& var,  fc::variant& vo ) { vo = var.to_string(); }
-    inline void from_variant( const fc::variant& var,  colab::protocol::expertise& vo ) { vo = colab::protocol::expertise::from_string( var.as_string() ); }
+    inline void to_variant( const knowledgr::protocol::expertise& var,  fc::variant& vo ) { vo = var.to_string(); }
+    inline void from_variant( const fc::variant& var,  knowledgr::protocol::expertise& vo ) { vo = knowledgr::protocol::expertise::from_string( var.as_string() ); }
 }
 
-//FC_REFLECT_ENUM( colab::protocol::expertise_category,  )
-FC_REFLECT( colab::protocol::expertise, (category)(level) )
+//FC_REFLECT_ENUM( knowledgr::protocol::expertise_category,  )
+FC_REFLECT( knowledgr::protocol::expertise, (category)(level) )

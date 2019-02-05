@@ -23,15 +23,15 @@
  */
 #pragma once
 
-#include <colab/app/plugin.hpp>
-#include <colab/chain/colab_objects.hpp>
+#include <knowledgr/app/plugin.hpp>
+#include <knowledgr/chain/knowledgr_objects.hpp>
 
-namespace colab { namespace delayed_node {
+namespace knowledgr { namespace delayed_node {
 namespace detail { struct delayed_node_plugin_impl; }
 
 using app::application;
 
-class delayed_node_plugin : public colab::app::plugin
+class delayed_node_plugin : public knowledgr::app::plugin
 {
    std::unique_ptr<detail::delayed_node_plugin_impl> my;
 public:
@@ -51,5 +51,5 @@ protected:
    void sync_with_trusted_node();
 };
 
-} } //colab::account_history
+} } //knowledgr::account_history
 

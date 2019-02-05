@@ -1,6 +1,6 @@
-#include <colab/chain/shared_authority.hpp>
+#include <knowledgr/chain/shared_authority.hpp>
 
-namespace colab { namespace chain {
+namespace knowledgr { namespace chain {
 
 shared_authority::operator authority()const
 {
@@ -90,4 +90,4 @@ bool operator == ( const shared_authority& a, const authority& b )
    return authority( a ) == b;
 }
 
-} } // colab::chain
+} } // knowledgr::chain

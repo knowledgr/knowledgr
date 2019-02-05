@@ -1,20 +1,20 @@
-#include <colab/plugins/condenser_api/condenser_api.hpp>
-#include <colab/plugins/condenser_api/condenser_api_plugin.hpp>
+#include <knowledgr/plugins/condenser_api/condenser_api.hpp>
+#include <knowledgr/plugins/condenser_api/condenser_api_plugin.hpp>
 
-#include <colab/plugins/database_api/database_api_plugin.hpp>
-#include <colab/plugins/block_api/block_api_plugin.hpp>
-#include <colab/plugins/account_history_api/account_history_api_plugin.hpp>
-#include <colab/plugins/account_by_key_api/account_by_key_api_plugin.hpp>
-#include <colab/plugins/network_broadcast_api/network_broadcast_api_plugin.hpp>
-#include <colab/plugins/tags_api/tags_api_plugin.hpp>
-#include <colab/plugins/follow_api/follow_api_plugin.hpp>
-#include <colab/plugins/reputation_api/reputation_api_plugin.hpp>
-#include <colab/plugins/market_history_api/market_history_api_plugin.hpp>
+#include <knowledgr/plugins/database_api/database_api_plugin.hpp>
+#include <knowledgr/plugins/block_api/block_api_plugin.hpp>
+#include <knowledgr/plugins/account_history_api/account_history_api_plugin.hpp>
+#include <knowledgr/plugins/account_by_key_api/account_by_key_api_plugin.hpp>
+#include <knowledgr/plugins/network_broadcast_api/network_broadcast_api_plugin.hpp>
+#include <knowledgr/plugins/tags_api/tags_api_plugin.hpp>
+#include <knowledgr/plugins/follow_api/follow_api_plugin.hpp>
+#include <knowledgr/plugins/reputation_api/reputation_api_plugin.hpp>
+#include <knowledgr/plugins/market_history_api/market_history_api_plugin.hpp>
 
-#include <colab/utilities/git_revision.hpp>
+#include <knowledgr/utilities/git_revision.hpp>
 
-#include <colab/chain/util/reward.hpp>
-#include <colab/chain/util/uint256.hpp>
+#include <knowledgr/chain/util/reward.hpp>
+#include <knowledgr/chain/util/uint256.hpp>
 
 #include <fc/git_revision.hpp>
 
@@ -27,7 +27,7 @@
 #define CHECK_ARG_SIZE( s ) \
    FC_ASSERT( args.size() == s, "Expected #s argument(s), was ${n}", ("n", args.size()) );
 
-namespace colab { namespace plugins { namespace condenser_api {
+namespace knowledgr { namespace plugins { namespace condenser_api {
 
 namespace detail
 {
@@ -37,12 +37,12 @@ namespace detail
    {
       public:
          condenser_api_impl() :
-            _chain( appbase::app().get_plugin< colab::plugins::chain::chain_plugin >() ),
+            _chain( appbase::app().get_plugin< knowledgr::plugins::chain::chain_plugin >() ),
             _db( _chain.db() )
          {
             _on_post_apply_block_conn = _db.add_post_apply_block_handler(
                [&]( const block_notification& note ){ on_post_apply_block( note.block ); },
-               appbase::app().get_plugin< colab::plugins::condenser_api::condenser_api_plugin >(),
+               appbase::app().get_plugin< knowledgr::plugins::condenser_api::condenser_api_plugin >(),
                0 );
          }
 
@@ -93,11 +93,11 @@ namespace detail
             (get_active_votes)
             (get_account_votes)
             (get_content)
-			(get_content_count)///~~~~~CLC~~~~~
-			(list_comments)///~~~~~CLC~~~~~
-			(get_content_parent_series)///~~~~~CLC~~~~~
-			(list_pending_stakes)///~~~~~CLC~~~~~
-			(find_pending_stake)///~~~~~CLC~~~~~
+			(get_content_count)///~~~~~NLG~~~~~
+			(list_comments)///~~~~~NLG~~~~~
+			(get_content_parent_series)///~~~~~NLG~~~~~
+			(list_pending_stakes)///~~~~~NLG~~~~~
+			(find_pending_stake)///~~~~~NLG~~~~~
             (get_content_replies)
             (get_tags_used_by_author)
             (get_post_discussions_by_payout)
@@ -143,8 +143,8 @@ namespace detail
          void set_pending_payout( discussion& d );
 
          void on_post_apply_block( const signed_block& b );
-		 void set_url( discussion& d )const;//~~~~~CLC~~~~~
-         colab::plugins::chain::chain_plugin&                              _chain;
+		 void set_url( discussion& d )const;//~~~~~NLG~~~~~
+         knowledgr::plugins::chain::chain_plugin&                              _chain;
 
          chain::database&                                                  _db;
 
@@ -171,8 +171,8 @@ namespace detail
       CHECK_ARG_SIZE( 0 )
       return get_version_return
       (
-         fc::string( COLAB_BLOCKCHAIN_VERSION ),
-         fc::string( colab::utilities::git_revision_sha ),
+         fc::string( KNOWLEDGR_BLOCKCHAIN_VERSION ),
+         fc::string( knowledgr::utilities::git_revision_sha ),
          fc::string( fc::git_revision_sha )
       );
    }
@@ -295,10 +295,10 @@ namespace detail
                            break;
                         case operation::tag<account_create_operation>::value:
 						case operation::tag<account_update_operation>::value:
-						case operation::tag<account_admin_update_operation>::value:///~~~~~CLC~~~~~
-						case operation::tag<account_expertise_update_operation>::value:///~~~~~CLC~~~~~
-						case operation::tag<stake_request_operation>::value:///~~~~~CLC~~~~~
-						case operation::tag<stake_process_operation>::value:///~~~~~CLC~~~~~
+						case operation::tag<account_admin_update_operation>::value:///~~~~~NLG~~~~~
+						case operation::tag<account_expertise_update_operation>::value:///~~~~~NLG~~~~~
+						case operation::tag<stake_request_operation>::value:///~~~~~NLG~~~~~
+						case operation::tag<stake_process_operation>::value:///~~~~~NLG~~~~~
                         case operation::tag<witness_update_operation>::value:
                         case operation::tag<pow_operation>::value:
                         case operation::tag<custom_operation>::value:
@@ -893,7 +893,7 @@ namespace detail
 
    DEFINE_API_IMPL( condenser_api_impl, get_account_references )
    {
-      FC_ASSERT( false, "condenser_api::get_account_references --- Needs to be refactored for Colab." );
+      FC_ASSERT( false, "condenser_api::get_account_references --- Needs to be refactored for Knowledgr." );
    }
 
    DEFINE_API_IMPL( condenser_api_impl, lookup_account_names )
@@ -1212,7 +1212,7 @@ namespace detail
       {
          result.push_back( *itr );
 
-         // if( itr->sell_price.base.symbol == CLC_SYMBOL )
+         // if( itr->sell_price.base.symbol == NLG_SYMBOL )
          //    result.back().real_price = (~result.back().sell_price).to_real();
          // else
          //    result.back().real_price = (result.back().sell_price).to_real();
@@ -1348,7 +1348,7 @@ namespace detail
 
       return content;
    }
-   ///~~~~~CLC~~~~~{
+   ///~~~~~NLG~~~~~{
    DEFINE_API_IMPL( condenser_api_impl, get_content_count )
    {
 	   CHECK_ARG_SIZE( 0 )
@@ -1386,7 +1386,7 @@ namespace detail
 	   const auto& by_permlink_idx = _db.get_index< comment_index >().indices().get< by_permlink >();
 	   string parent_author = author;
 	   string parent_permlink = permlink;
-	   while (parent_author != COLAB_ROOT_POST_PARENT) {
+	   while (parent_author != KNOWLEDGR_ROOT_POST_PARENT) {
 		   auto itr = by_permlink_idx.find( boost::make_tuple( parent_author, parent_permlink ) );
 		   if( itr != by_permlink_idx.end() )
 		   {
@@ -1424,7 +1424,7 @@ namespace detail
 	   }
 	   return result;
    }
-   ///~~~~~CLC~~~~~}
+   ///~~~~~NLG~~~~~}
    DEFINE_API_IMPL( condenser_api_impl, get_content_replies )
    {
       CHECK_ARG_SIZE( 2 )
@@ -2035,7 +2035,7 @@ namespace detail
          auto itr = cidx.lower_bound( d.id );
          if( itr != cidx.end() && itr->comment == d.id )
          {
-            d.promoted = legacy_asset::from_asset( asset( itr->promoted_balance, CLC_SYMBOL/*SBD_SYMBOL*/ ) );
+            d.promoted = legacy_asset::from_asset( asset( itr->promoted_balance, NLG_SYMBOL/*SBD_SYMBOL*/ ) );
          }
       }
 
@@ -2043,15 +2043,15 @@ namespace detail
 //      const auto& hist  = _db.get_feed_history();
 
       asset pot;
-      if( _db.has_hardfork( COLAB_HARDFORK_0_17__774 ) )
+      if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_17__774 ) )
          pot = _db.get_reward_fund( _db.get_comment( d.author, d.permlink ) ).reward_balance;
       else
-         pot = props.total_reward_fund_colab;
+         pot = props.total_reward_fund_knowledgr;
 
       //if( !hist.current_median_history.is_null() ) pot = pot * hist.current_median_history;
 
       u256 total_r2 = 0;
-      if( _db.has_hardfork( COLAB_HARDFORK_0_17__774 ) )
+      if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_17__774 ) )
          total_r2 = chain::util::to256( _db.get_reward_fund( _db.get_comment( d.author, d.permlink ) ).recent_claims );
       else
          total_r2 = chain::util::to256( props.total_reward_shares2 );
@@ -2059,7 +2059,7 @@ namespace detail
       if( total_r2 > 0 )
       {
          uint128_t vshares;
-         if( _db.has_hardfork( COLAB_HARDFORK_0_17__774 ) )
+         if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_17__774 ) )
          {
             const auto& rf = _db.get_reward_fund( _db.get_comment( d.author, d.permlink ) );
             vshares = d.net_rshares.value > 0 ? chain::util::evaluate_reward_curve( d.net_rshares.value, rf.author_reward_curve, rf.content_constant ) : 0;
@@ -2083,7 +2083,7 @@ namespace detail
          }
       }
 
-      if( d.parent_author != COLAB_ROOT_POST_PARENT )
+      if( d.parent_author != KNOWLEDGR_ROOT_POST_PARENT )
          d.cashout_time = _db.calculate_discussion_payout_time( _db.get< chain::comment_object >( d.id ) );
 
       if( d.body.size() > 1024*128 )
@@ -2097,7 +2097,7 @@ namespace detail
       if( root.id != d.id )
          d.url += "#@" + d.author + "/" + d.permlink;
    }
-   //~~~~~CLC~~~~~{
+   //~~~~~NLG~~~~~{
    void condenser_api_impl::set_url( discussion& d )const
    {
 	   const database_api::api_comment_object root( _db.get_comment( d.root_author, d.root_permlink ), _db );
@@ -2106,7 +2106,7 @@ namespace detail
 	   if( root.id != d.id )
 		   d.url += "#@" + d.author + "/" + d.permlink;
    }
-   //~~~~~CLC~~~~~}
+   //~~~~~NLG~~~~~}
    void condenser_api_impl::on_post_apply_block( const signed_block& b )
    { try {
       boost::lock_guard< boost::mutex > guard( _mtx );
@@ -2154,8 +2154,8 @@ namespace detail
 uint16_t api_account_object::_compute_voting_power( const database_api::api_account_object& a )
 {
 	return 0;
-#if 0///~~~~~CLC~~~~~{
-//    if( a.voting_manabar.last_update_time < COLAB_HARDFORK_0_20_TIME )
+#if 0///~~~~~NLG~~~~~{
+//    if( a.voting_manabar.last_update_time < KNOWLEDGR_HARDFORK_0_20_TIME )
 //       return (uint16_t) a.voting_manabar.current_mana;
 // 
 //    auto vests = chain::util::get_effective_vesting_shares( a );
@@ -2164,36 +2164,36 @@ uint16_t api_account_object::_compute_voting_power( const database_api::api_acco
 // 
 //    //
 //    // Let t1 = last_vote_time, t2 = last_update_time
-//    // vp_t2 = COLAB_100_PERCENT * current_mana / vests
-//    // vp_t1 = vp_t2 - COLAB_100_PERCENT * (t2 - t1) / COLAB_VOTING_MANA_REGENERATION_SECONDS
+//    // vp_t2 = KNOWLEDGR_100_PERCENT * current_mana / vests
+//    // vp_t1 = vp_t2 - KNOWLEDGR_100_PERCENT * (t2 - t1) / KNOWLEDGR_VOTING_MANA_REGENERATION_SECONDS
 //    //
 // 
 //    uint32_t t1 = a.last_vote_time.sec_since_epoch();
 //    uint32_t t2 = a.voting_manabar.last_update_time;
 //    uint64_t dt = (t2 > t1) ? (t2 - t1) : 0;
-//    uint64_t vp_dt = COLAB_100_PERCENT * dt / COLAB_VOTING_MANA_REGENERATION_SECONDS;
+//    uint64_t vp_dt = KNOWLEDGR_100_PERCENT * dt / KNOWLEDGR_VOTING_MANA_REGENERATION_SECONDS;
 // 
-//    uint128_t vp_t2 = COLAB_100_PERCENT;
+//    uint128_t vp_t2 = KNOWLEDGR_100_PERCENT;
 //    vp_t2 *= a.voting_manabar.current_mana;
 //    vp_t2 /= vests;
 // 
 //    uint64_t vp_t2u = vp_t2.to_uint64();
-//    if( vp_t2u >= COLAB_100_PERCENT )
+//    if( vp_t2u >= KNOWLEDGR_100_PERCENT )
 //    {
-//       wlog( "Truncated vp_t2u to COLAB_100_PERCENT for account ${a}", ("a", a.name) );
-//       vp_t2u = COLAB_100_PERCENT;
+//       wlog( "Truncated vp_t2u to KNOWLEDGR_100_PERCENT for account ${a}", ("a", a.name) );
+//       vp_t2u = KNOWLEDGR_100_PERCENT;
 //    }
 //    uint16_t vp_t1 = uint16_t( vp_t2u ) - uint16_t( std::min( vp_t2u, vp_dt ) );
 // 
 //    return vp_t1;
-#endif///~~~~~CLC~~~~~}
+#endif///~~~~~NLG~~~~~}
 }
 
 condenser_api::condenser_api()
    : my( new detail::condenser_api_impl() )
 {
 	std::cerr<<"~~~ [condenser_api::condenser_api()] -\n";
-   JSON_RPC_REGISTER_API( COLAB_CONDENSER_API_PLUGIN_NAME );
+   JSON_RPC_REGISTER_API( KNOWLEDGR_CONDENSER_API_PLUGIN_NAME );
 }
 
 condenser_api::~condenser_api() {}
@@ -2316,11 +2316,11 @@ DEFINE_READ_APIS( condenser_api,
    (get_active_votes)
    (get_account_votes)
    (get_content)
-   (get_content_count)///~~~~~CLC~~~~~
-   (list_comments)///~~~~~CLC~~~~~
-   (get_content_parent_series)///~~~~~CLC~~~~~
-   (list_pending_stakes)///~~~~~CLC~~~~~
-   (find_pending_stake)///~~~~~CLC~~~~~
+   (get_content_count)///~~~~~NLG~~~~~
+   (list_comments)///~~~~~NLG~~~~~
+   (get_content_parent_series)///~~~~~NLG~~~~~
+   (list_pending_stakes)///~~~~~NLG~~~~~
+   (find_pending_stake)///~~~~~NLG~~~~~
    (get_content_replies)
    (get_tags_used_by_author)
    (get_post_discussions_by_payout)
@@ -2357,4 +2357,4 @@ DEFINE_READ_APIS( condenser_api,
    (get_market_history)
 )
 
-} } } // colab::plugins::condenser_api
+} } } // knowledgr::plugins::condenser_api
