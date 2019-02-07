@@ -113,8 +113,8 @@ public:
    uint32_t             interval_count = 0;
    time_point_sec       lep_time = KNOWLEDGR_GENESIS_TIME;
    time_point_sec       rep_time = KNOWLEDGR_GENESIS_TIME;
-   asset                lep_abs_amount = asset( 0, NLG_SYMBOL );
-   asset                rep_abs_amount = asset( 0, NLG_SYMBOL );
+   asset                lep_abs_amount = asset( 0, KNLG_SYMBOL );
+   asset                rep_abs_amount = asset( 0, KNLG_SYMBOL );
    uint32_t             lep_rel_amount_numerator = 0;
    uint32_t             rep_rel_amount_numerator = 0;
    uint8_t              rel_amount_denom_bits = 0;

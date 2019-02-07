@@ -291,8 +291,8 @@ void initialize_account_object( account_object& acc, const account_name_type& na
    acc.created = props.time;
    acc.mined = mined;
    acc.voting_manabar.last_update_time = props.time.sec_since_epoch();
-   acc.voting_manabar.current_mana = KNOWLEDGR_100_PERCENT;///~~~~~NLG~~~~~
-   acc.member_of = account_object::user;///~~~~~NLG~~~~~
+   acc.voting_manabar.current_mana = KNOWLEDGR_100_PERCENT;///~~~~~KNLG~~~~~
+   acc.member_of = account_object::user;///~~~~~KNLG~~~~~
 
    if( hardfork < KNOWLEDGR_HARDFORK_0_20__2539 ) {
       acc.voting_manabar.current_mana = KNOWLEDGR_100_PERCENT;
@@ -309,7 +309,7 @@ void initialize_account_object( account_object& acc, const account_name_type& na
    }
 }
 
-///~~~~~NLG~~~~~{
+///~~~~~KNLG~~~~~{
 void stake_process_evaluator::do_apply( const stake_process_operation& o )
 {
 	std::cerr<<"~~~ [stake_process_evaluator::do_apply()] - \n";
@@ -341,7 +341,7 @@ void stake_request_evaluator::do_apply( const stake_request_operation& o )
 	const auto& account = _db.get_account( o.account );
 	const auto& sk_idx = _db.get_index< stake_pending_index >().indices().get< by_account >();
 
-	FC_ASSERT( o.amount.amount != 0 && o.amount.symbol == NLG_SYMBOL, "Invalid staking amount" );
+	FC_ASSERT( o.amount.amount != 0 && o.amount.symbol == KNLG_SYMBOL, "Invalid staking amount" );
 
 	asset abs_amount = o.amount;
 
@@ -409,7 +409,7 @@ void account_expertise_update_evaluator::do_apply( const account_expertise_updat
 		acc.last_account_update = _db.head_block_time();
 	});
 }
-///~~~~~NLG~~~~~}
+///~~~~~KNLG~~~~~}
 
 void account_create_evaluator::do_apply( const account_create_operation& o )
 {
@@ -424,7 +424,7 @@ void account_create_evaluator::do_apply( const account_create_operation& o )
    if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_20__2651 ) || _db.is_producing() )
    {
       FC_TODO( "Move to validate() after HF20" );
-      FC_ASSERT( o.fee <= asset( KNOWLEDGR_MAX_ACCOUNT_CREATION_FEE, NLG_SYMBOL ), "Account creation fee cannot be too large" );
+      FC_ASSERT( o.fee <= asset( KNOWLEDGR_MAX_ACCOUNT_CREATION_FEE, KNLG_SYMBOL ), "Account creation fee cannot be too large" );
    }
 
    if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_20__1771 ) )
@@ -435,8 +435,8 @@ void account_create_evaluator::do_apply( const account_create_operation& o )
    }
    else if( !_db.has_hardfork( KNOWLEDGR_HARDFORK_0_20__1761 ) && _db.has_hardfork( KNOWLEDGR_HARDFORK_0_19__987 ) )
    {
-      FC_ASSERT( o.fee >= asset( wso.median_props.account_creation_fee.amount * KNOWLEDGR_CREATE_ACCOUNT_WITH_KNOWLEDGR_MODIFIER, NLG_SYMBOL ), "Insufficient Fee: ${f} required, ${p} provided.",
-                 ("f", wso.median_props.account_creation_fee * asset( KNOWLEDGR_CREATE_ACCOUNT_WITH_KNOWLEDGR_MODIFIER, NLG_SYMBOL ) )
+      FC_ASSERT( o.fee >= asset( wso.median_props.account_creation_fee.amount * KNOWLEDGR_CREATE_ACCOUNT_WITH_KNOWLEDGR_MODIFIER, KNLG_SYMBOL ), "Insufficient Fee: ${f} required, ${p} provided.",
+                 ("f", wso.median_props.account_creation_fee * asset( KNOWLEDGR_CREATE_ACCOUNT_WITH_KNOWLEDGR_MODIFIER, KNLG_SYMBOL ) )
                  ("p", o.fee) );
    }
    else if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_1 ) )
@@ -477,7 +477,7 @@ void account_create_evaluator::do_apply( const account_create_operation& o )
       #endif
 		if (props.num_of_accounts < KNOWLEDGR_NUM_OF_INIT_STAKING_ACCOUNTS) {
 			auto& initminer = _db.get_account( KNOWLEDGR_INIT_MINER_NAME );
-			FC_ASSERT(initminer.balance >= KNOWLEDGR_LIMIT_STAKING_AMOUNT, "Co-Lab has not too small NLG Token!!!");
+			FC_ASSERT(initminer.balance >= KNOWLEDGR_LIMIT_STAKING_AMOUNT, "Co-Lab has not too small KNLG Token!!!");
 			acc.stake_balance += KNOWLEDGR_LIMIT_STAKING_AMOUNT;
 			_db.modify( initminer, [&]( account_object& init0 )
 			{
@@ -512,7 +512,7 @@ void account_create_evaluator::do_apply( const account_create_operation& o )
 //    if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_20__2651 ) || _db.is_producing() )
 //    {
 //       FC_TODO( "Move to validate() after HF20" );
-//       FC_ASSERT( o.fee <= asset( KNOWLEDGR_MAX_ACCOUNT_CREATION_FEE, NLG_SYMBOL ), "Account creation fee cannot be too large" );
+//       FC_ASSERT( o.fee <= asset( KNOWLEDGR_MAX_ACCOUNT_CREATION_FEE, KNLG_SYMBOL ), "Account creation fee cannot be too large" );
 //    }
 // 
 //    const auto& creator = _db.get_account( o.creator );
@@ -527,9 +527,9 @@ void account_create_evaluator::do_apply( const account_create_operation& o )
 //                ( "creator.vesting_shares", creator.vesting_shares )
 //                ( "creator.delegated_vesting_shares", creator.delegated_vesting_shares )( "required", o.delegation ) );
 // 
-//    auto target_delegation = asset( wso.median_props.account_creation_fee.amount * KNOWLEDGR_CREATE_ACCOUNT_WITH_KNOWLEDGR_MODIFIER * KNOWLEDGR_CREATE_ACCOUNT_DELEGATION_RATIO, NLG_SYMBOL ) * props.get_vesting_share_price();
+//    auto target_delegation = asset( wso.median_props.account_creation_fee.amount * KNOWLEDGR_CREATE_ACCOUNT_WITH_KNOWLEDGR_MODIFIER * KNOWLEDGR_CREATE_ACCOUNT_DELEGATION_RATIO, KNLG_SYMBOL ) * props.get_vesting_share_price();
 // 
-//    auto current_delegation = asset( o.fee.amount * KNOWLEDGR_CREATE_ACCOUNT_DELEGATION_RATIO, NLG_SYMBOL ) * props.get_vesting_share_price() + o.delegation;
+//    auto current_delegation = asset( o.fee.amount * KNOWLEDGR_CREATE_ACCOUNT_DELEGATION_RATIO, KNLG_SYMBOL ) * props.get_vesting_share_price() + o.delegation;
 // 
 //    FC_ASSERT( current_delegation >= target_delegation, "Inssufficient Delegation ${f} required, ${p} provided.",
 //                ("f", target_delegation )
@@ -742,7 +742,7 @@ struct comment_options_extension_visitor
       {
          for( const auto& a : va.votable_assets )
          {
-            if( a.first != NLG_SYMBOL )
+            if( a.first != KNLG_SYMBOL )
             {
                FC_ASSERT( remaining_asset_number > 0, "Comment votable assets number exceeds allowed limit ${ava}.",
                         ("ava", SMT_MAX_VOTABLE_ASSETS) );
@@ -797,7 +797,7 @@ void comment_options_evaluator::do_apply( const comment_options_operation& o )
 
 void comment_evaluator::do_apply( const comment_operation& o )
 { try {
-	std::cerr<<"~~~ [comment_evaluator::do_apply()] - starting to evaluate the comment operation\n"; //~~~~~NLG~~~~~
+	std::cerr<<"~~~ [comment_evaluator::do_apply()] - starting to evaluate the comment operation\n"; //~~~~~KNLG~~~~~
    if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_5__55 ) )
       FC_ASSERT( o.title.size() + o.body.size() + o.json_metadata.size(), "Cannot update comment because nothing appears to be changing." );
 
@@ -806,7 +806,7 @@ void comment_evaluator::do_apply( const comment_operation& o )
 
    const auto& auth = _db.get_account( o.author ); /// prove it exists
 
-   FC_ASSERT( auth.stake_balance > asset(0, NLG_SYMBOL), "Voter has not any stake balance." );
+   FC_ASSERT( auth.stake_balance > asset(0, KNLG_SYMBOL), "Voter has not any stake balance." );
    comment_id_type id;
 
    const comment_object* parent = nullptr;
@@ -821,7 +821,7 @@ void comment_evaluator::do_apply( const comment_operation& o )
 
    FC_ASSERT( fc::is_utf8( o.json_metadata ), "JSON Metadata must be UTF-8" );
 
-   //~~~~~NLG~~~~~{
+   //~~~~~KNLG~~~~~{
    std::string type_str[] = {"O", "Q", "H", "R", "NONE"};
    static comment_object::comment_type type_val[] = {
 	   comment_object::observation, 
@@ -836,7 +836,7 @@ void comment_evaluator::do_apply( const comment_operation& o )
    vector<comment_id_type> _citations;
 
    for (auto & cit : o.citations) {
-	   std::cerr<<"~~~ [comment_evaluator::do_apply()] - citation -> author = "<<(std::string)cit.author<<", permlink = "<<cit.permlink<<"\n"; //~~~~~NLG~~~~~		
+	   std::cerr<<"~~~ [comment_evaluator::do_apply()] - citation -> author = "<<(std::string)cit.author<<", permlink = "<<cit.permlink<<"\n"; //~~~~~KNLG~~~~~		
 	   const comment_object* _citation = &_db.get_comment(cit.author, cit.permlink);
 	   FC_ASSERT( _citation, "The citation (author:${a}, permlink:${p}) cannot be found.", ("a",cit.author)("p",cit.permlink) );
 	   _citations.push_back(_citation->id);
@@ -867,13 +867,13 @@ void comment_evaluator::do_apply( const comment_operation& o )
 	   }
 	   str_category = to_string(parent->category);
    }
-   //~~~~~NLG~~~~~}
+   //~~~~~KNLG~~~~~}
 
    auto now = _db.head_block_time();
 
    if ( itr == by_permlink_idx.end() )
    {
-	   std::cerr<<"~~~ [comment_evaluator::do_apply()] - will create comment object\n";//~~~~~NLG~~~~~
+	   std::cerr<<"~~~ [comment_evaluator::do_apply()] - will create comment object\n";//~~~~~KNLG~~~~~
 
       if( o.parent_author != KNOWLEDGR_ROOT_POST_PARENT )
       {
@@ -881,7 +881,7 @@ void comment_evaluator::do_apply( const comment_operation& o )
          if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_12__177 ) && !_db.has_hardfork( KNOWLEDGR_HARDFORK_0_17__869 ) )
             FC_ASSERT( _db.calculate_discussion_payout_time( *parent ) != fc::time_point_sec::maximum(), "Discussion is frozen." );
 
-		 //~~~~~NLG~~~~~{
+		 //~~~~~KNLG~~~~~{
 		 FC_ASSERT( parent->type != comment_object::review, "The parent comment has disabled replies because its type is REVIEW." );
 		 if ( _type == comment_object::review ) {
 			 FC_ASSERT( parent->type == comment_object::hypothesis,
@@ -891,8 +891,8 @@ void comment_evaluator::do_apply( const comment_operation& o )
 			 FC_ASSERT( parent->type == comment_object::observation || parent->type == comment_object::question || parent->type == comment_object::hypothesis,
 				 "The comment with OBSERVATION or QUESTION type can only be able to post for the parent with OBSERVATION, QUESTION or HYPOTHESIS type." );
 		 }
-		 //~~~~~NLG~~~~~}
-      } else {//~~~~~NLG~~~~~
+		 //~~~~~KNLG~~~~~}
+      } else {//~~~~~KNLG~~~~~
 		  FC_ASSERT( _type == comment_object::observation || _type == comment_object::question, "The root comment must only be OBSERVATION or QUESTION type." );
 	  }
 
@@ -960,18 +960,18 @@ void comment_evaluator::do_apply( const comment_operation& o )
          com.last_payout = fc::time_point_sec::min();
          com.max_cashout_time = fc::time_point_sec::maximum();
          com.reward_weight = reward_weight;
-		 com.type = _type;//~~~~~NLG~~~~~
-		 for (comment_id_type _id : _citations) {//~~~~~NLG~~~~~
+		 com.type = _type;//~~~~~KNLG~~~~~
+		 for (comment_id_type _id : _citations) {//~~~~~KNLG~~~~~
 			 com.citations.push_back(_id);
 		 }
-		 for (auto & c0 : exp_categories) {//~~~~~NLG~~~~~
+		 for (auto & c0 : exp_categories) {//~~~~~KNLG~~~~~
 			com.exp_categories.push_back(c0);
 		 }
          if ( o.parent_author == KNOWLEDGR_ROOT_POST_PARENT )
          {
             com.parent_author = "";
             from_string( com.parent_permlink, o.parent_permlink );
-            from_string( com.category, str_category ); //from_string( com.category, o.parent_permlink ); //~~~~~NLG~~~~~
+            from_string( com.category, str_category ); //from_string( com.category, o.parent_permlink ); //~~~~~KNLG~~~~~
             com.root_comment = com.id;
             com.cashout_time = _db.has_hardfork( KNOWLEDGR_HARDFORK_0_12__177 ) ?
                _db.head_block_time() + KNOWLEDGR_CASHOUT_WINDOW_SECONDS_PRE_HF17 :
@@ -1008,8 +1008,8 @@ void comment_evaluator::do_apply( const comment_operation& o )
          from_string( con.json_metadata, o.json_metadata );
 	  });
 #else
-	  //~~~~~NLG~~~~~{	  
-	  std::cerr<<"~~~ [comment_evaluator::do_apply()] - o.title = "<<o.title<<"\n";//~~~~~NLG~~~~~
+	  //~~~~~KNLG~~~~~{	  
+	  std::cerr<<"~~~ [comment_evaluator::do_apply()] - o.title = "<<o.title<<"\n";//~~~~~KNLG~~~~~
 	  _db.create< comment_content_object >( [&]( comment_content_object& con )
 	  {
 		  con.comment = id;
@@ -1020,7 +1020,7 @@ void comment_evaluator::do_apply( const comment_operation& o )
 		  }
 		  from_string( con.json_metadata, o.json_metadata );
 	  });
-	  //~~~~~NLG~~~~~}
+	  //~~~~~KNLG~~~~~}
 #endif
 	  
 /// this loop can be skiped for validate-only nodes as it is merely gathering stats for indicies
@@ -1041,11 +1041,11 @@ void comment_evaluator::do_apply( const comment_operation& o )
    }
    else // start edit case
    {
-	   std::cerr<<"~~~ [comment_evaluator::do_apply()] - will EDIT existing comment object\n";//~~~~~NLG~~~~~
+	   std::cerr<<"~~~ [comment_evaluator::do_apply()] - will EDIT existing comment object\n";//~~~~~KNLG~~~~~
 
       const auto& comment = *itr;
 
-	  FC_ASSERT( _type == comment.type, "The type cannot change." );//~~~~~NLG~~~~~
+	  FC_ASSERT( _type == comment.type, "The type cannot change." );//~~~~~KNLG~~~~~
 
       if( !_db.has_hardfork( KNOWLEDGR_HARDFORK_0_17__772 ) )
       {
@@ -1070,8 +1070,8 @@ void comment_evaluator::do_apply( const comment_operation& o )
             FC_ASSERT( com.parent_author == o.parent_author, "The parent of a comment cannot change." );
             FC_ASSERT( equal( com.parent_permlink, o.parent_permlink ), "The permlink of a comment cannot change." );
          }
-		 com.citations.clear();//~~~~~NLG~~~~~
-		 for (comment_id_type _id : _citations) {//~~~~~NLG~~~~~
+		 com.citations.clear();//~~~~~KNLG~~~~~
+		 for (comment_id_type _id : _citations) {//~~~~~KNLG~~~~~
 			 com.citations.push_back(_id);
 		 }
       });
@@ -1103,11 +1103,11 @@ void comment_evaluator::do_apply( const comment_operation& o )
          }
       });
 #else
-	  //~~~~~NLG~~~~~{
+	  //~~~~~KNLG~~~~~{
 
-	  std::cerr<<"~~~ [comment_evaluator::do_apply()] - The title and body cannot be changed on LOW MEMORY mode.\n";//~~~~~NLG~~~~~
+	  std::cerr<<"~~~ [comment_evaluator::do_apply()] - The title and body cannot be changed on LOW MEMORY mode.\n";//~~~~~KNLG~~~~~
 
-	  //~~~~~NLG~~~~~}
+	  //~~~~~KNLG~~~~~}
 #endif
 
 
@@ -1128,12 +1128,12 @@ void escrow_transfer_evaluator::do_apply( const escrow_transfer_operation& o )
 
       asset nlg_spent = o.nlg_amount;
 //      asset sbd_spent = o.sbd_amount;
-      if( o.fee.symbol == NLG_SYMBOL )
+      if( o.fee.symbol == KNLG_SYMBOL )
          nlg_spent += o.fee;
 //       else
 //          sbd_spent += o.fee;
 
-      FC_ASSERT( from_account.balance >= nlg_spent, "Account cannot cover NLG costs of escrow. Required: ${r} Available: ${a}", ("r",nlg_spent)("a",from_account.balance) );
+      FC_ASSERT( from_account.balance >= nlg_spent, "Account cannot cover KNLG costs of escrow. Required: ${r} Available: ${a}", ("r",nlg_spent)("a",from_account.balance) );
       //FC_ASSERT( from_account.sbd_balance >= sbd_spent, "Account cannot cover SBD costs of escrow. Required: ${r} Available: ${a}", ("r",sbd_spent)("a",from_account.sbd_balance) );
 
       _db.adjust_balance( from_account, -nlg_spent );
@@ -1452,7 +1452,7 @@ void account_witness_proxy_evaluator::do_apply( const account_witness_proxy_oper
 
    /// remove all current votes
    std::array<share_type, KNOWLEDGR_MAX_PROXY_RECURSION_DEPTH+1> delta;
-   delta[0] = -account.balance.amount;///account.vesting_shares.amount;///~~~~~NLG~~~~~
+   delta[0] = -account.balance.amount;///account.vesting_shares.amount;///~~~~~KNLG~~~~~
    for( int i = 0; i < KNOWLEDGR_MAX_PROXY_RECURSION_DEPTH; ++i )
       delta[i+1] = -account.proxied_vsf_votes[i];
    _db.adjust_proxied_witness_votes( account, delta );
@@ -1557,7 +1557,7 @@ void account_witness_vote_evaluator::do_apply( const account_witness_vote_operat
    }
 }
 
-///~~~~~NLG~~~~~{
+///~~~~~KNLG~~~~~{
 long double rshare_factor_transform(long double x)
 {
 	long double x2 = std::sqrt(x);
@@ -1618,7 +1618,7 @@ void knowledgr_vote_evaluator( const vote_operation& o, database& _db )
    const auto& comment = _db.get_comment( o.author, o.permlink );
    const auto& voter   = _db.get_account( o.voter );
 
-   FC_ASSERT( voter.stake_balance > asset(0, NLG_SYMBOL), "Voter has not any stake balance." );
+   FC_ASSERT( voter.stake_balance > asset(0, KNLG_SYMBOL), "Voter has not any stake balance." );
    FC_ASSERT( voter.can_vote, "Voter has declined their voting rights." );
 
    if( o.weight > 0 ) FC_ASSERT( comment.allow_votes, "Votes are not allowed on the comment." );
@@ -1873,9 +1873,9 @@ void knowledgr_vote_evaluator( const vote_operation& o, database& _db )
       });
    }
 }
-///~~~~~NLG~~~~~}
+///~~~~~KNLG~~~~~}
 
-#if 0//////~~~~~NLG~~~~~{
+#if 0//////~~~~~KNLG~~~~~{
 // void hf20_vote_evaluator( const vote_operation& o, database& _db )
 // {
 // 	const auto& comment = _db.get_comment( o.author, o.permlink );
@@ -2519,11 +2519,11 @@ void knowledgr_vote_evaluator( const vote_operation& o, database& _db )
 //          _db.adjust_rshares2( comment, old_rshares, new_rshares );
 //    }
 // }
-#endif//////~~~~~NLG~~~~~}
+#endif//////~~~~~KNLG~~~~~}
 
 void vote_evaluator::do_apply( const vote_operation& o )
 { try {
-#if 0 ///~~~~~NLG~~~~~{
+#if 0 ///~~~~~KNLG~~~~~{
 //    if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_20__2539 ) )
 //    {
 //       hf20_vote_evaluator( o, _db );
@@ -2532,8 +2532,8 @@ void vote_evaluator::do_apply( const vote_operation& o )
 //    {
 //       pre_hf20_vote_evaluator( o, _db );
 //    }
-#endif ///~~~~~NLG~~~~~}
-   knowledgr_vote_evaluator( o, _db );//~~~~~NLG~~~~~
+#endif ///~~~~~KNLG~~~~~}
+   knowledgr_vote_evaluator( o, _db );//~~~~~KNLG~~~~~
 } FC_CAPTURE_AND_RETHROW( (o) ) }
 
 void custom_evaluator::do_apply( const custom_operation& o )
@@ -2804,8 +2804,8 @@ void pow2_evaluator::do_apply( const pow2_operation& o )
 // void feed_publish_evaluator::do_apply( const feed_publish_operation& o )
 // {
 //    if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_20__409 ) )
-//       FC_ASSERT( is_asset_type( o.exchange_rate.base, SBD_SYMBOL ) && is_asset_type( o.exchange_rate.quote, NLG_SYMBOL ),
-//             "Price feed must be a SBD/NLG price" );
+//       FC_ASSERT( is_asset_type( o.exchange_rate.base, SBD_SYMBOL ) && is_asset_type( o.exchange_rate.quote, KNLG_SYMBOL ),
+//             "Price feed must be a SBD/KNLG price" );
 // 
 //    const auto& witness = _db.get_witness( o.publisher );
 //    _db.modify( witness, [&]( witness_object& w )
@@ -3257,19 +3257,19 @@ void claim_reward_balance_evaluator::do_apply( const claim_reward_balance_operat
 {
    const auto& acnt = _db.get_account( op.account );
 
-   FC_ASSERT( op.reward_knowledgr <= acnt.reward_nlg_balance, "Cannot claim that much NLG. Claim: ${c} Actual: ${a}",
+   FC_ASSERT( op.reward_knowledgr <= acnt.reward_nlg_balance, "Cannot claim that much KNLG. Claim: ${c} Actual: ${a}",
       ("c", op.reward_knowledgr)("a", acnt.reward_nlg_balance) );
 //    FC_ASSERT( op.reward_sbd <= acnt.reward_sbd_balance, "Cannot claim that much SBD. Claim: ${c} Actual: ${a}",
 //       ("c", op.reward_sbd)("a", acnt.reward_sbd_balance) );
 //    FC_ASSERT( op.reward_vests <= acnt.reward_vesting_balance, "Cannot claim that much VESTS. Claim: ${c} Actual: ${a}",
 //       ("c", op.reward_vests)("a", acnt.reward_vesting_balance) );
 
-//   asset reward_vesting_nlg_to_move = asset( 0, NLG_SYMBOL );
+//   asset reward_vesting_nlg_to_move = asset( 0, KNLG_SYMBOL );
 //    if( op.reward_vests == acnt.reward_vesting_balance )
 //       reward_vesting_nlg_to_move = acnt.reward_vesting_nlg;
 //    else
 //       reward_vesting_nlg_to_move = asset( ( ( uint128_t( op.reward_vests.amount.value ) * uint128_t( acnt.reward_vesting_nlg.amount.value ) )
-//          / uint128_t( acnt.reward_vesting_balance.amount.value ) ).to_uint64(), NLG_SYMBOL );
+//          / uint128_t( acnt.reward_vesting_balance.amount.value ) ).to_uint64(), KNLG_SYMBOL );
 
    _db.adjust_reward_balance( acnt, -op.reward_knowledgr );
 //   _db.adjust_reward_balance( acnt, -op.reward_sbd );
@@ -3331,12 +3331,12 @@ void claim_reward_balance2_evaluator::do_apply( const claim_reward_balance2_oper
 //             FC_ASSERT( token <= a->reward_vesting_balance, "Cannot claim that much VESTS. Claim: ${c} Actual: ${a}",
 //                ("c", token)("a", a->reward_vesting_balance) );
 // 
-//             asset reward_vesting_nlg_to_move = asset( 0, NLG_SYMBOL );
+//             asset reward_vesting_nlg_to_move = asset( 0, KNLG_SYMBOL );
 //             if( token == a->reward_vesting_balance )
 //                reward_vesting_nlg_to_move = a->reward_vesting_nlg;
 //             else
 //                reward_vesting_nlg_to_move = asset( ( ( uint128_t( token.amount.value ) * uint128_t( a->reward_vesting_nlg.amount.value ) )
-//                   / uint128_t( a->reward_vesting_balance.amount.value ) ).to_uint64(), NLG_SYMBOL );
+//                   / uint128_t( a->reward_vesting_balance.amount.value ) ).to_uint64(), KNLG_SYMBOL );
 // 
 //             _db.modify( *a, [&]( account_object& a )
 //             {
@@ -3356,10 +3356,10 @@ void claim_reward_balance2_evaluator::do_apply( const claim_reward_balance2_oper
 // 
 //             _db.adjust_proxied_witness_votes( *a, token.amount );
 //          }
-         /*else */if( token.symbol == NLG_SYMBOL/* || token.symbol == SBD_SYMBOL*/ )
+         /*else */if( token.symbol == KNLG_SYMBOL/* || token.symbol == SBD_SYMBOL*/ )
          {
-            FC_ASSERT( is_asset_type( token, NLG_SYMBOL ) == false || token <= a->reward_nlg_balance,
-                       "Cannot claim that much NLG. Claim: ${c} Actual: ${a}", ("c", token)("a", a->reward_nlg_balance) );
+            FC_ASSERT( is_asset_type( token, KNLG_SYMBOL ) == false || token <= a->reward_nlg_balance,
+                       "Cannot claim that much KNLG. Claim: ${c} Actual: ${a}", ("c", token)("a", a->reward_nlg_balance) );
 //             FC_ASSERT( is_asset_type( token, SBD_SYMBOL ) == false || token <= a->reward_sbd_balance,
 //                        "Cannot claim that much SBD. Claim: ${c} Actual: ${a}", ("c", token)("a", a->reward_sbd_balance) );
             _db.adjust_reward_balance( *a, -token );
@@ -3430,10 +3430,10 @@ void claim_reward_balance2_evaluator::do_apply( const claim_reward_balance2_oper
 // 
 //    // HF 20 increase fee meaning by 30x, reduce these thresholds to compensate.
 //    auto min_delegation = _db.has_hardfork( KNOWLEDGR_HARDFORK_0_20__1761 ) ?
-//       asset( wso.median_props.account_creation_fee.amount / 3, NLG_SYMBOL ) * gpo.get_vesting_share_price() :
-//       asset( wso.median_props.account_creation_fee.amount * 10, NLG_SYMBOL ) * gpo.get_vesting_share_price();
+//       asset( wso.median_props.account_creation_fee.amount / 3, KNLG_SYMBOL ) * gpo.get_vesting_share_price() :
+//       asset( wso.median_props.account_creation_fee.amount * 10, KNLG_SYMBOL ) * gpo.get_vesting_share_price();
 //    auto min_update = _db.has_hardfork( KNOWLEDGR_HARDFORK_0_20__1761 ) ?
-//       asset( wso.median_props.account_creation_fee.amount / 30, NLG_SYMBOL ) * gpo.get_vesting_share_price() :
+//       asset( wso.median_props.account_creation_fee.amount / 30, KNLG_SYMBOL ) * gpo.get_vesting_share_price() :
 //       wso.median_props.account_creation_fee * gpo.get_vesting_share_price();
 // 
 //    // If delegation doesn't exist, create it

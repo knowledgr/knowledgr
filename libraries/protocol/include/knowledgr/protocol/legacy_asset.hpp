@@ -2,9 +2,9 @@
 
 #include <knowledgr/protocol/asset.hpp>
 
-#define KNOWLEDGR_SYMBOL_LEGACY_SER_1   (uint64_t(1) | (NLG_SYMBOL_U64 << 8))
-#define KNOWLEDGR_SYMBOL_LEGACY_SER_2   (uint64_t(2) | (NLG_SYMBOL_U64 << 8))
-#define KNOWLEDGR_SYMBOL_LEGACY_SER_3   (uint64_t(5) | (NLG_SYMBOL_U64 << 8))
+#define KNOWLEDGR_SYMBOL_LEGACY_SER_1   (uint64_t(1) | (KNLG_SYMBOL_U64 << 8))
+#define KNOWLEDGR_SYMBOL_LEGACY_SER_2   (uint64_t(2) | (KNLG_SYMBOL_U64 << 8))
+#define KNOWLEDGR_SYMBOL_LEGACY_SER_3   (uint64_t(5) | (KNLG_SYMBOL_U64 << 8))
 #define KNOWLEDGR_SYMBOL_LEGACY_SER_4   (uint64_t(3) | (uint64_t('0') << 8) | (uint64_t('.') << 16) | (uint64_t('0') << 24) | (uint64_t('0') << 32) | (uint64_t('1') << 40))
 #define KNOWLEDGR_SYMBOL_LEGACY_SER_5   (uint64_t(3) | (uint64_t('6') << 8) | (uint64_t('.') << 16) | (uint64_t('0') << 24) | (uint64_t('0') << 32) | (uint64_t('0') << 40))
 
@@ -16,9 +16,9 @@ class legacy_knowledgr_asset_symbol_type
       legacy_knowledgr_asset_symbol_type() {}
 
       bool is_canon()const
-      {   return ( ser == NLG_SYMBOL_SER );    }
+      {   return ( ser == KNLG_SYMBOL_SER );    }
 
-      uint64_t ser = NLG_SYMBOL_SER;
+      uint64_t ser = KNLG_SYMBOL_SER;
 };
 
 struct legacy_knowledgr_asset
@@ -31,9 +31,9 @@ struct legacy_knowledgr_asset
       {
          if( force_canon )
          {
-            FC_ASSERT( symbol.is_canon(), "Must use canonical NLG symbol serialization" );
+            FC_ASSERT( symbol.is_canon(), "Must use canonical KNLG symbol serialization" );
          }
-         return asset( amount, NLG_SYMBOL );
+         return asset( amount, KNLG_SYMBOL );
       }
 
       static legacy_knowledgr_asset from_amount( share_type amount )
@@ -45,7 +45,7 @@ struct legacy_knowledgr_asset
 
       static legacy_knowledgr_asset from_asset( const asset& a )
       {
-         FC_ASSERT( a.symbol == NLG_SYMBOL );
+         FC_ASSERT( a.symbol == KNLG_SYMBOL );
          return from_amount( a.amount );
       }
 
@@ -68,7 +68,7 @@ inline void pack( Stream& s, const knowledgr::protocol::legacy_knowledgr_asset_s
       case KNOWLEDGR_SYMBOL_LEGACY_SER_4:
       case KNOWLEDGR_SYMBOL_LEGACY_SER_5:
          wlog( "pack legacy serialization ${s}", ("s", sym.ser) );
-      case NLG_SYMBOL_SER:
+      case KNLG_SYMBOL_SER:
          pack( s, sym.ser );
          break;
       default:
@@ -79,11 +79,11 @@ inline void pack( Stream& s, const knowledgr::protocol::legacy_knowledgr_asset_s
 template< typename Stream >
 inline void unpack( Stream& s, knowledgr::protocol::legacy_knowledgr_asset_symbol_type& sym )
 {
-   //  994240:        "account_creation_fee": "0.1 NLG"
-   // 1021529:        "account_creation_fee": "10.0 NLG"
-   // 3143833:        "account_creation_fee": "3.00000 NLG"
-   // 3208405:        "account_creation_fee": "2.00000 NLG"
-   // 3695672:        "account_creation_fee": "3.00 NLG"
+   //  994240:        "account_creation_fee": "0.1 KNLG"
+   // 1021529:        "account_creation_fee": "10.0 KNLG"
+   // 3143833:        "account_creation_fee": "3.00000 KNLG"
+   // 3208405:        "account_creation_fee": "2.00000 KNLG"
+   // 3695672:        "account_creation_fee": "3.00 KNLG"
    // 4338089:        "account_creation_fee": "0.001 0.001"
    // 4626205:        "account_creation_fee": "6.000 6.000"
    // 4632595:        "account_creation_fee": "6.000 6.000"
@@ -99,7 +99,7 @@ inline void unpack( Stream& s, knowledgr::protocol::legacy_knowledgr_asset_symbo
       case KNOWLEDGR_SYMBOL_LEGACY_SER_4:
       case KNOWLEDGR_SYMBOL_LEGACY_SER_5:
          wlog( "unpack legacy serialization ${s}", ("s", ser) );
-      case NLG_SYMBOL_SER:
+      case KNLG_SYMBOL_SER:
          sym.ser = ser;
          break;
       default:

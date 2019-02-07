@@ -43,7 +43,7 @@ uint128_t evaluate_reward_curve( const uint128_t& rshares, const protocol::curve
 
 inline bool is_comment_payout_dust( const price& p, uint64_t nlg_payout )
 {
-   return to_sbd( p, asset( nlg_payout, NLG_SYMBOL ) ) < KNOWLEDGR_MIN_PAYOUT_SBD;
+   return to_sbd( p, asset( nlg_payout, KNLG_SYMBOL ) ) < KNOWLEDGR_MIN_PAYOUT_SBD;
 }
 
 } } } // knowledgr::chain::util

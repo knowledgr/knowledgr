@@ -15,38 +15,38 @@
 #define SMT_MAX_NAI_GENERATION_TRIES         100
 
 #define KNOWLEDGR_PRECISION_SBD   (3)
-#define KNOWLEDGR_PRECISION_NLG (3)
+#define KNOWLEDGR_PRECISION_KNLG (3)
 #define KNOWLEDGR_PRECISION_VESTS (6)
 
 // One's place is used for check digit, which means NAI 0-9 all have NAI data of 0 which is invalid
 // This space is safe to use because it would alwasys result in failure to convert from NAI
 #define KNOWLEDGR_NAI_SBD   (1)
-#define KNOWLEDGR_NAI_NLG (2)
+#define KNOWLEDGR_NAI_KNLG (2)
 #define KNOWLEDGR_NAI_VESTS (3)
 
 #define KNOWLEDGR_ASSET_NUM_SBD \
   (uint32_t(((SMT_MAX_NAI + KNOWLEDGR_NAI_SBD)   << KNOWLEDGR_NAI_SHIFT) | KNOWLEDGR_PRECISION_SBD))
-#define KNOWLEDGR_ASSET_NUM_NLG \
-  (uint32_t(((SMT_MAX_NAI + KNOWLEDGR_NAI_NLG) << KNOWLEDGR_NAI_SHIFT) | KNOWLEDGR_PRECISION_NLG))
+#define KNOWLEDGR_ASSET_NUM_KNLG \
+  (uint32_t(((SMT_MAX_NAI + KNOWLEDGR_NAI_KNLG) << KNOWLEDGR_NAI_SHIFT) | KNOWLEDGR_PRECISION_KNLG))
 #define KNOWLEDGR_ASSET_NUM_VESTS \
   (uint32_t(((SMT_MAX_NAI + KNOWLEDGR_NAI_VESTS) << KNOWLEDGR_NAI_SHIFT) | KNOWLEDGR_PRECISION_VESTS))
 
 #ifdef IS_TEST_NET
 
 #define VESTS_SYMBOL_U64  (uint64_t('V') | (uint64_t('E') << 8) | (uint64_t('S') << 16) | (uint64_t('T') << 24) | (uint64_t('S') << 32))
-#define NLG_SYMBOL_U64  (uint64_t('T') | (uint64_t('E') << 8) | (uint64_t('S') << 16) | (uint64_t('T') << 24) | (uint64_t('S') << 32))
+#define KNLG_SYMBOL_U64  (uint64_t('T') | (uint64_t('E') << 8) | (uint64_t('S') << 16) | (uint64_t('T') << 24) | (uint64_t('S') << 32))
 #define SBD_SYMBOL_U64    (uint64_t('T') | (uint64_t('B') << 8) | (uint64_t('D') << 16))
 
 #else
 
 #define VESTS_SYMBOL_U64  (uint64_t('V') | (uint64_t('E') << 8) | (uint64_t('S') << 16) | (uint64_t('T') << 24) | (uint64_t('S') << 32))
-#define NLG_SYMBOL_U64  (uint64_t('C') | (uint64_t('L') << 8) | (uint64_t('C') << 16))
+#define KNLG_SYMBOL_U64  (uint64_t('K') | (uint64_t('N') << 8) | (uint64_t('L') << 16) | (uint64_t('G') << 24))
 #define SBD_SYMBOL_U64    (uint64_t('S') | (uint64_t('B') << 8) | (uint64_t('D') << 16))
 
 #endif
 
 #define VESTS_SYMBOL_SER  (uint64_t(6) | (VESTS_SYMBOL_U64 << 8)) ///< VESTS|VESTS with 6 digits of precision
-#define NLG_SYMBOL_SER  (uint64_t(3) | (NLG_SYMBOL_U64 << 8)) ///< NLG|TESTS with 3 digits of precision
+#define KNLG_SYMBOL_SER  (uint64_t(3) | (KNLG_SYMBOL_U64 << 8)) ///< KNLG|TESTS with 3 digits of precision
 #define SBD_SYMBOL_SER    (uint64_t(3) |   (SBD_SYMBOL_U64 << 8)) ///< SBD|TBD with 3 digits of precision
 
 #define KNOWLEDGR_ASSET_MAX_DECIMALS 12
@@ -157,8 +157,8 @@ inline void pack( Stream& s, const knowledgr::protocol::asset_symbol_type& sym )
          uint64_t ser = 0;
          switch( sym.asset_num )
          {
-            case KNOWLEDGR_ASSET_NUM_NLG:
-               ser = NLG_SYMBOL_SER;
+            case KNOWLEDGR_ASSET_NUM_KNLG:
+               ser = KNLG_SYMBOL_SER;
                break;
             case KNOWLEDGR_ASSET_NUM_SBD:
                ser = SBD_SYMBOL_SER;
@@ -188,10 +188,10 @@ inline void unpack( Stream& s, knowledgr::protocol::asset_symbol_type& sym )
 
    switch( ser )
    {
-      case NLG_SYMBOL_SER & 0xFFFFFFFF:
+      case KNLG_SYMBOL_SER & 0xFFFFFFFF:
          s.read( ((char*) &ser)+4, 4 );
-         FC_ASSERT( ser == NLG_SYMBOL_SER, "invalid asset bits" );
-         sym.asset_num = KNOWLEDGR_ASSET_NUM_NLG;
+         FC_ASSERT( ser == KNLG_SYMBOL_SER, "invalid asset bits" );
+         sym.asset_num = KNOWLEDGR_ASSET_NUM_KNLG;
          break;
       case SBD_SYMBOL_SER & 0xFFFFFFFF:
          s.read( ((char*) &ser)+4, 4 );

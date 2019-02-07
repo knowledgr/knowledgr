@@ -75,7 +75,7 @@ using boost::container::flat_set;
 struct reward_fund_context
 {
    uint128_t   recent_claims = 0;
-   asset       reward_balance = asset( 0, NLG_SYMBOL );
+   asset       reward_balance = asset( 0, KNLG_SYMBOL );
    share_type  knowledgr_awarded = 0;
 };
 
@@ -1050,12 +1050,12 @@ uint32_t database::get_slot_at_time(fc::time_point_sec when)const
 }
 
 // /**
-//  *  Converts NLG into sbd and adds it to to_account while reducing the NLG supply
-//  *  by NLG and increasing the sbd supply by the specified amount.
+//  *  Converts KNLG into sbd and adds it to to_account while reducing the KNLG supply
+//  *  by KNLG and increasing the sbd supply by the specified amount.
 //  */
 // std::pair< asset, asset > database::create_sbd( const account_object& to_account, asset knowledgr, bool to_reward_balance )
 // {
-//    std::pair< asset, asset > assets( asset( 0, SBD_SYMBOL ), asset( 0, NLG_SYMBOL ) );
+//    std::pair< asset, asset > assets( asset( 0, SBD_SYMBOL ), asset( 0, KNLG_SYMBOL ) );
 // 
 //    try
 //    {
@@ -1070,23 +1070,23 @@ uint32_t database::get_slot_at_time(fc::time_point_sec when)const
 //          auto to_sbd = ( gpo.sbd_print_rate * knowledgr.amount ) / KNOWLEDGR_100_PERCENT;
 //          auto to_knowledgr = knowledgr.amount - to_sbd;
 // 
-//          auto sbd = asset( to_sbd, NLG_SYMBOL ) * median_price;
+//          auto sbd = asset( to_sbd, KNLG_SYMBOL ) * median_price;
 // 
 //          if( to_reward_balance )
 //          {
 //             adjust_reward_balance( to_account, sbd );
-//             adjust_reward_balance( to_account, asset( to_knowledgr, NLG_SYMBOL ) );
+//             adjust_reward_balance( to_account, asset( to_knowledgr, KNLG_SYMBOL ) );
 //          }
 //          else
 //          {
 //             adjust_balance( to_account, sbd );
-//             adjust_balance( to_account, asset( to_knowledgr, NLG_SYMBOL ) );
+//             adjust_balance( to_account, asset( to_knowledgr, KNLG_SYMBOL ) );
 //          }
 // 
-//          adjust_supply( asset( -to_sbd, NLG_SYMBOL ) );
+//          adjust_supply( asset( -to_sbd, KNLG_SYMBOL ) );
 //          adjust_supply( sbd );
 //          assets.first = sbd;
-//          assets.second = asset( to_knowledgr, NLG_SYMBOL );
+//          assets.second = asset( to_knowledgr, KNLG_SYMBOL );
 //       }
 //       else
 //       {
@@ -1106,9 +1106,9 @@ asset create_vesting2( database& db, const account_object& to_account, asset liq
 {
    try
    {
-      FC_ASSERT( liquid.symbol == NLG_SYMBOL );
+      FC_ASSERT( liquid.symbol == KNLG_SYMBOL );
 	  auto rep_power_reward = ( ( liquid.amount.value * KNOWLEDGR_RPOWER_REWARD_PERCENT ) / KNOWLEDGR_100_PERCENT );
-      asset new_token = asset(liquid.amount.value - rep_power_reward, NLG_SYMBOL);
+      asset new_token = asset(liquid.amount.value - rep_power_reward, KNLG_SYMBOL);
       before_token_callback( new_token );  
 	  db.adjust_balance( to_account, new_token);
 	  db.modify( to_account, [&]( account_object& acc)
@@ -1134,7 +1134,7 @@ asset create_vesting2( database& db, const account_object& to_account, asset liq
 
 /**
  * @param to_account - the account to receive the new vesting shares
- * @param liquid     - NLG or liquid SMT to be converted to vesting shares
+ * @param liquid     - KNLG or liquid SMT to be converted to vesting shares
  */
 asset database::create_vesting( const account_object& to_account, asset liquid, bool to_reward_balance )
 {
@@ -1279,11 +1279,11 @@ void database::clear_null_account_balance()
    if( !has_hardfork( KNOWLEDGR_HARDFORK_0_14__327 ) ) return;
 
    const auto& null_account = get_account( KNOWLEDGR_NULL_ACCOUNT );
-   asset total_knowledgr( 0, NLG_SYMBOL );
-//   asset total_sbd( 0, SBD_SYMBOL );///~~~~~NLG~~~~~ NO NEED
+   asset total_knowledgr( 0, KNLG_SYMBOL );
+//   asset total_sbd( 0, SBD_SYMBOL );///~~~~~KNLG~~~~~ NO NEED
 //   asset total_vests( 0, VESTS_SYMBOL );
 
-//   asset vesting_shares_knowledgr_value = asset( 0, NLG_SYMBOL );
+//   asset vesting_shares_knowledgr_value = asset( 0, KNLG_SYMBOL );
 
    if( null_account.balance.amount > 0 )
    {
@@ -1294,7 +1294,7 @@ void database::clear_null_account_balance()
    {
       total_knowledgr += null_account.savings_balance;
    }
-///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+///~~~~~KNLG~~~~~{ NO NEED for Knowledgr
 //    if( null_account.sbd_balance.amount > 0 )
 //    {
 //       total_sbd += null_account.sbd_balance;
@@ -1303,7 +1303,7 @@ void database::clear_null_account_balance()
 //    {
 //       total_sbd += null_account.savings_sbd_balance;
 //    }
-///~~~~~NLG~~~~~} NO NEED for Knowledgr
+///~~~~~KNLG~~~~~} NO NEED for Knowledgr
 
 //    if( null_account.vesting_shares.amount > 0 )
 //    {
@@ -1317,7 +1317,7 @@ void database::clear_null_account_balance()
    {
       total_knowledgr += null_account.reward_nlg_balance;
    }
-///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+///~~~~~KNLG~~~~~{ NO NEED for Knowledgr
 //    if( null_account.reward_sbd_balance.amount > 0 )
 //    {
 //       total_sbd += null_account.reward_sbd_balance;
@@ -1328,7 +1328,7 @@ void database::clear_null_account_balance()
 //       total_knowledgr += null_account.reward_vesting_nlg;
 //       total_vests += null_account.reward_vesting_balance;
 //    }
-///~~~~~NLG~~~~~} NO NEED for Knowledgr
+///~~~~~KNLG~~~~~} NO NEED for Knowledgr
 
    if( (total_knowledgr.amount.value == 0)/* && (total_sbd.amount.value == 0) && (total_vests.amount.value == 0)*/ )
       return;
@@ -1339,10 +1339,10 @@ void database::clear_null_account_balance()
       vop.total_cleared.push_back( total_knowledgr );
 //    if( total_vests.amount.value > 0 )
 //       vop.total_cleared.push_back( total_vests );
-///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+///~~~~~KNLG~~~~~{ NO NEED for Knowledgr
 //    if( total_sbd.amount.value > 0 )
 //       vop.total_cleared.push_back( total_sbd );
-///~~~~~NLG~~~~~} NO NEED for Knowledgr
+///~~~~~KNLG~~~~~} NO NEED for Knowledgr
    pre_push_virtual_operation( vop_op );
 
    /////////////////////////////////////////////////////////////////////////////////////
@@ -1357,7 +1357,7 @@ void database::clear_null_account_balance()
       adjust_savings_balance( null_account, -null_account.savings_balance );
    }
 
-///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+///~~~~~KNLG~~~~~{ NO NEED for Knowledgr
 //    if( null_account.sbd_balance.amount > 0 )
 //    {
 //       adjust_balance( null_account, -null_account.sbd_balance );
@@ -1367,7 +1367,7 @@ void database::clear_null_account_balance()
 //    {
 //       adjust_savings_balance( null_account, -null_account.savings_sbd_balance );
 //    }
-///~~~~~NLG~~~~~} NO NEED for Knowledgr
+///~~~~~KNLG~~~~~} NO NEED for Knowledgr
 
 //    if( null_account.vesting_shares.amount > 0 )
 //    {
@@ -1390,7 +1390,7 @@ void database::clear_null_account_balance()
       adjust_reward_balance( null_account, -null_account.reward_nlg_balance );
    }
 
-///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+///~~~~~KNLG~~~~~{ NO NEED for Knowledgr
 //    if( null_account.reward_sbd_balance.amount > 0 )
 //    {
 //       adjust_reward_balance( null_account, -null_account.reward_sbd_balance );
@@ -1412,7 +1412,7 @@ void database::clear_null_account_balance()
 //          a.reward_vesting_balance.amount = 0;
 //       });
 //    }
-///~~~~~NLG~~~~~} NO NEED for Knowledgr
+///~~~~~KNLG~~~~~} NO NEED for Knowledgr
 
    //////////////////////////////////////////////////////////////
 
@@ -1487,7 +1487,7 @@ void database::update_owner_authority( const account_object& account, const auth
 // 
 //       share_type vests_deposited_as_knowledgr = 0;
 //       share_type vests_deposited_as_vests = 0;
-//       asset total_knowledgr_converted = asset( 0, NLG_SYMBOL );
+//       asset total_knowledgr_converted = asset( 0, KNLG_SYMBOL );
 // 
 //       // Do two passes, the first for vests, the second for knowledgr. Try to maintain as much accuracy for vests as possible.
 //       for( auto itr = didx.upper_bound( boost::make_tuple( from_account.name, account_name_type() ) );
@@ -1592,7 +1592,7 @@ void database::update_owner_authority( const account_object& account, const auth
 // }
 
 void database::adjust_total_payout( const comment_object& cur, const asset& sbd_created, const asset& curator_sbd_value, const asset& beneficiary_value )
-{///~~~~~NLG~~~~~ HERE, TOO ~~~:)
+{///~~~~~KNLG~~~~~ HERE, TOO ~~~:)
    modify( cur, [&]( comment_object& c )
    {
       // input assets should be in sbd
@@ -1654,8 +1654,8 @@ share_type database::pay_curators( const comment_object& c, share_type& max_rewa
                unclaimed_rewards -= claim;
 			   const auto& voter = get( item->voter );
 			   std::cerr<<"~~~ [database::pay_curators()] -- claim = "<<claim<<"\n";
-               operation vop = curation_reward_operation( voter.name, asset(0, NLG_SYMBOL), c.author, to_string( c.permlink ) );///~~~~~NLG~~~~~ changed by 'NLG_SYMBOL' instead of 'VESTS_SYMBOL'
-               create_vesting2( *this, voter, asset( claim, NLG_SYMBOL ), 
+               operation vop = curation_reward_operation( voter.name, asset(0, KNLG_SYMBOL), c.author, to_string( c.permlink ) );///~~~~~KNLG~~~~~ changed by 'KNLG_SYMBOL' instead of 'VESTS_SYMBOL'
+               create_vesting2( *this, voter, asset( claim, KNLG_SYMBOL ), 
 				   false/*has_hardfork( KNOWLEDGR_HARDFORK_0_17__659 )*/, ///~~~ WILL REMOVE this param in short days...
                   [&]( const asset& reward )
                   {
@@ -1738,9 +1738,9 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
             for( auto& b : comment.beneficiaries )
             {
                auto benefactor_tokens = ( author_tokens * b.weight ) / KNOWLEDGR_100_PERCENT;
-               auto vop = comment_benefactor_reward_operation( b.account, comment.author, to_string(comment.permlink), asset( 0, NLG_SYMBOL ) );
+               auto vop = comment_benefactor_reward_operation( b.account, comment.author, to_string(comment.permlink), asset( 0, KNLG_SYMBOL ) );
 
-               create_vesting2( *this, get_account( b.account ), asset( benefactor_tokens, NLG_SYMBOL ), false/*has_hardfork( KNOWLEDGR_HARDFORK_0_17__659 )*/,
+               create_vesting2( *this, get_account( b.account ), asset( benefactor_tokens, KNLG_SYMBOL ), false/*has_hardfork( KNOWLEDGR_HARDFORK_0_17__659 )*/,
                [&]( const asset& reward )
                {
                   vop.payout = reward;
@@ -1754,19 +1754,19 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
             author_tokens -= total_beneficiary;
 			
             const auto& author = get_account( comment.author );
-            operation vop = author_reward_operation( comment.author, to_string( comment.permlink ), asset( 0, NLG_SYMBOL ) );
+            operation vop = author_reward_operation( comment.author, to_string( comment.permlink ), asset( 0, KNLG_SYMBOL ) );
 
-            create_vesting2( *this, author, asset( author_tokens, NLG_SYMBOL ), false,
+            create_vesting2( *this, author, asset( author_tokens, KNLG_SYMBOL ), false,
                [&]( const asset& payout )
                {
                   vop.get< author_reward_operation >().payout = payout;
                   pre_push_virtual_operation( vop );
                } );
 
-            adjust_total_payout( comment, asset( author_tokens, NLG_SYMBOL ), asset( curation_tokens, NLG_SYMBOL ), asset( total_beneficiary, NLG_SYMBOL ) );
+            adjust_total_payout( comment, asset( author_tokens, KNLG_SYMBOL ), asset( curation_tokens, KNLG_SYMBOL ), asset( total_beneficiary, KNLG_SYMBOL ) );
 
             post_push_virtual_operation( vop );
-            vop = comment_reward_operation( comment.author, to_string( comment.permlink ), asset( claimed_reward, NLG_SYMBOL ) );
+            vop = comment_reward_operation( comment.author, to_string( comment.permlink ), asset( claimed_reward, KNLG_SYMBOL ) );
             pre_push_virtual_operation( vop );
             post_push_virtual_operation( vop );
 
@@ -1850,7 +1850,7 @@ void database::process_comment_cashout()
    /// and people have had a week to start posting.  The first cashout will be the biggest because it
    /// will represent 2+ months of rewards.
 
-	std::cerr<<"~~~ [database::process_comment_cashout()] -\n";///~~~~~NLG~~~~~
+	std::cerr<<"~~~ [database::process_comment_cashout()] -\n";///~~~~~KNLG~~~~~
    if( !has_hardfork( KNOWLEDGR_FIRST_CASHOUT_TIME ) )
       return;
    std::cerr<<"~~~ [database::process_comment_cashout()] --\n";
@@ -1867,13 +1867,13 @@ void database::process_comment_cashout()
    {
       // Add all reward funds to the local cache and decay their recent rshares
 
-	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->id = "<<(size_t)itr->id._id<<"\n";///~~~~~NLG~~~~~
-	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->name = "<<(std::string)itr->name<<"\n";///~~~~~NLG~~~~~
-	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->reward_balance = "<<(int64_t)itr->reward_balance.amount.value<<"\n";///~~~~~NLG~~~~~
-	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~NLG~~~~~
-	   std::cerr<<"~~~ [database::process_comment_cashout()] - reward_fund_object->percent_curation_rewards = "<<itr->percent_curation_rewards<<"\n";///~~~~~NLG~~~~~
-	   std::cerr<<"~~~ [database::process_comment_cashout()] - reward_fund_object->percent_content_rewards = "<<itr->percent_content_rewards<<"\n";///~~~~~NLG~~~~~
-	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~NLG~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->id = "<<(size_t)itr->id._id<<"\n";///~~~~~KNLG~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->name = "<<(std::string)itr->name<<"\n";///~~~~~KNLG~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->reward_balance = "<<(int64_t)itr->reward_balance.amount.value<<"\n";///~~~~~KNLG~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~KNLG~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] - reward_fund_object->percent_curation_rewards = "<<itr->percent_curation_rewards<<"\n";///~~~~~KNLG~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] - reward_fund_object->percent_content_rewards = "<<itr->percent_content_rewards<<"\n";///~~~~~KNLG~~~~~
+	   std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~KNLG~~~~~
 
       modify( *itr, [&]( reward_fund_object& rfo )
       {
@@ -1887,7 +1887,7 @@ void database::process_comment_cashout()
          rfo.recent_claims -= ( rfo.recent_claims * ( head_block_time() - rfo.last_update ).to_seconds() ) / decay_time.to_seconds();
          rfo.last_update = head_block_time();
       });
-	  std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~NLG~~~~~
+	  std::cerr<<"~~~ [database::process_comment_cashout()] -reward_fund_object->recent_claims = "<<(std::string)itr->recent_claims<<"\n";///~~~~~KNLG~~~~~
 
       reward_fund_context rf_ctx;
       rf_ctx.recent_claims = itr->recent_claims;
@@ -1908,22 +1908,22 @@ void database::process_comment_cashout()
    {
       while( current != cidx.end() && current->cashout_time <= head_block_time() )
 	  {
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->author = "<<(std::string)current->author<<"\n";///~~~~~NLG~~~~~
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->permlink = "<<to_string(current->permlink)<<"\n";///~~~~~NLG~~~~~
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->net_rshares = "<<(int64_t)current->net_rshares.value<<"\n";///~~~~~NLG~~~~~
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->abs_rshares = "<<(int64_t)current->abs_rshares.value<<"\n";///~~~~~NLG~~~~~
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->vote_rshares = "<<(int64_t)current->vote_rshares.value<<"\n";///~~~~~NLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->author = "<<(std::string)current->author<<"\n";///~~~~~KNLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->permlink = "<<to_string(current->permlink)<<"\n";///~~~~~KNLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->net_rshares = "<<(int64_t)current->net_rshares.value<<"\n";///~~~~~KNLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->abs_rshares = "<<(int64_t)current->abs_rshares.value<<"\n";///~~~~~KNLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->vote_rshares = "<<(int64_t)current->vote_rshares.value<<"\n";///~~~~~KNLG~~~~~
 
          if( current->net_rshares > 0 )
          {
             const auto& rf = get_reward_fund( *current );
 
-			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->id = "<<(size_t)rf.id._id<<"\n";///~~~~~NLG~~~~~
-			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->name = "<<(std::string)rf.name<<"\n";///~~~~~NLG~~~~~
-			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->reward_balance = "<<(int64_t)rf.reward_balance.amount.value<<"\n";///~~~~~NLG~~~~~
-			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->percent_curation_rewards = "<<rf.percent_curation_rewards<<"\n";///~~~~~NLG~~~~~
-			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->percent_content_rewards = "<<rf.percent_content_rewards<<"\n";///~~~~~NLG~~~~~
-			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->recent_claims = "<<(std::string)rf.recent_claims<<"\n";///~~~~~NLG~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->id = "<<(size_t)rf.id._id<<"\n";///~~~~~KNLG~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->name = "<<(std::string)rf.name<<"\n";///~~~~~KNLG~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->reward_balance = "<<(int64_t)rf.reward_balance.amount.value<<"\n";///~~~~~KNLG~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->percent_curation_rewards = "<<rf.percent_curation_rewards<<"\n";///~~~~~KNLG~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->percent_content_rewards = "<<rf.percent_content_rewards<<"\n";///~~~~~KNLG~~~~~
+			std::cerr<<"~~~ [database::process_comment_cashout()] - rf->recent_claims = "<<(std::string)rf.recent_claims<<"\n";///~~~~~KNLG~~~~~
 
             funds[ rf.id._id ].recent_claims += util::evaluate_reward_curve( current->net_rshares.value, rf.author_reward_curve, rf.content_constant );
          }
@@ -1951,8 +1951,8 @@ void database::process_comment_cashout()
    {
       if( has_hardfork( KNOWLEDGR_HARDFORK_0_17__771 ) )
 	  {
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->author = "<<(std::string)current->author<<"\n";///~~~~~NLG~~~~~
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->permlink = "<<to_string(current->permlink)<<"\n";///~~~~~NLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->author = "<<(std::string)current->author<<"\n";///~~~~~KNLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->permlink = "<<to_string(current->permlink)<<"\n";///~~~~~KNLG~~~~~
          auto fund_id = get_reward_fund( *current ).id._id;
          ctx.total_reward_shares2 = funds[ fund_id ].recent_claims;
          ctx.total_reward_fund_knowledgr = funds[ fund_id ].reward_balance;
@@ -1963,9 +1963,9 @@ void database::process_comment_cashout()
       }
       else
 	  {
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - --------------- -\n";///~~~~~NLG~~~~~
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->author = "<<(std::string)current->author<<"\n";///~~~~~NLG~~~~~
-		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->permlink = "<<to_string(current->permlink)<<"\n";///~~~~~NLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - --------------- -\n";///~~~~~KNLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->author = "<<(std::string)current->author<<"\n";///~~~~~KNLG~~~~~
+		  std::cerr<<"~~~ [database::process_comment_cashout()] - comment->permlink = "<<to_string(current->permlink)<<"\n";///~~~~~KNLG~~~~~
          auto itr = com_by_root.lower_bound( current->root_comment );
          while( itr != com_by_root.end() && itr->root_comment == current->root_comment )
          {
@@ -1996,7 +1996,7 @@ void database::process_comment_cashout()
          modify( get< reward_fund_object, by_id >( reward_fund_id_type( i ) ), [&]( reward_fund_object& rfo )
          {
             rfo.recent_claims = funds[ i ].recent_claims;
-            rfo.reward_balance -= asset( funds[ i ].knowledgr_awarded, NLG_SYMBOL );
+            rfo.reward_balance -= asset( funds[ i ].knowledgr_awarded, KNLG_SYMBOL );
          });
       }
    }
@@ -2018,7 +2018,7 @@ void database::process_funds()
    const auto& wso = get_witness_schedule_object();
    std::cerr<<"~~~ [database::process_funds()] --\n";
    if( has_hardfork( KNOWLEDGR_HARDFORK_0_16__551) )
-   {///~~~~~NLG~~~~~ All is going with this case...
+   {///~~~~~KNLG~~~~~ All is going with this case...
       /**
        * At block 7,000,000 have a 9.5% instantaneous inflation rate, decreasing to 0.95% at a rate of 0.01%
        * every 250k blocks. This narrowing will take approximately 20.5 years and will complete on block 220,750,000
@@ -2062,15 +2062,15 @@ void database::process_funds()
 
       modify( props, [&]( dynamic_global_property_object& p )
       {
-//         p.total_vesting_fund_nlg += asset( vesting_reward, NLG_SYMBOL );
+//         p.total_vesting_fund_nlg += asset( vesting_reward, KNLG_SYMBOL );
          if( !has_hardfork( KNOWLEDGR_HARDFORK_0_17__774 ) )
-            p.total_reward_fund_knowledgr  += asset( content_reward, NLG_SYMBOL );
-         p.current_supply           += asset( new_knowledgr, NLG_SYMBOL );
-         p.virtual_supply           += asset( new_knowledgr, NLG_SYMBOL );
+            p.total_reward_fund_knowledgr  += asset( content_reward, KNLG_SYMBOL );
+         p.current_supply           += asset( new_knowledgr, KNLG_SYMBOL );
+         p.virtual_supply           += asset( new_knowledgr, KNLG_SYMBOL );
       });
 
-      operation vop = producer_reward_operation( cwit.owner, asset( 0, NLG_SYMBOL ) );
-      create_vesting2( *this, get_account( cwit.owner ), asset( witness_reward, NLG_SYMBOL ), false,
+      operation vop = producer_reward_operation( cwit.owner, asset( 0, KNLG_SYMBOL ) );
+      create_vesting2( *this, get_account( cwit.owner ), asset( witness_reward, KNLG_SYMBOL ), false,
          [&]( const asset& tokens )
          {
             vop.get< producer_reward_operation >().nlg_tokens = tokens;
@@ -2134,7 +2134,7 @@ void database::process_savings_withdraws()
   }
 }
 
-///~~~~~NLG~~~~~{
+///~~~~~KNLG~~~~~{
 void database::process_pending_stakes()
 {
 	const auto& sk_idx = get_index< stake_pending_index >().indices().get<by_account>();
@@ -2159,7 +2159,7 @@ void database::process_pending_stakes()
 		}
 	}
 }
-///~~~~~NLG~~~~~}
+///~~~~~KNLG~~~~~}
 
 void database::process_subsidized_accounts()
 {
@@ -2220,11 +2220,11 @@ void database::process_smt_objects()
 asset database::get_liquidity_reward()const
 {
    if( has_hardfork( KNOWLEDGR_HARDFORK_0_12__178 ) )
-      return asset( 0, NLG_SYMBOL );
+      return asset( 0, KNLG_SYMBOL );
 
    const auto& props = get_dynamic_global_properties();
    static_assert( KNOWLEDGR_LIQUIDITY_REWARD_PERIOD_SEC == 60*60, "this code assumes a 1 hour time interval" );
-   asset percent( protocol::calc_percent_reward_per_hour< KNOWLEDGR_LIQUIDITY_APR_PERCENT >( props.virtual_supply.amount ), NLG_SYMBOL );
+   asset percent( protocol::calc_percent_reward_per_hour< KNOWLEDGR_LIQUIDITY_APR_PERCENT >( props.virtual_supply.amount ), KNLG_SYMBOL );
    return std::max( percent, KNOWLEDGR_MIN_LIQUIDITY_REWARD );
 }
 
@@ -2232,7 +2232,7 @@ asset database::get_content_reward()const
 {
    const auto& props = get_dynamic_global_properties();
    static_assert( KNOWLEDGR_BLOCK_INTERVAL == 3, "this code assumes a 3-second time interval" );
-   asset percent( protocol::calc_percent_reward_per_block< KNOWLEDGR_CONTENT_APR_PERCENT >( props.virtual_supply.amount ), NLG_SYMBOL );
+   asset percent( protocol::calc_percent_reward_per_block< KNOWLEDGR_CONTENT_APR_PERCENT >( props.virtual_supply.amount ), KNLG_SYMBOL );
    return std::max( percent, KNOWLEDGR_MIN_CONTENT_REWARD );
 }
 
@@ -2240,7 +2240,7 @@ asset database::get_curation_reward()const
 {
    const auto& props = get_dynamic_global_properties();
    static_assert( KNOWLEDGR_BLOCK_INTERVAL == 3, "this code assumes a 3-second time interval" );
-   asset percent( protocol::calc_percent_reward_per_block< KNOWLEDGR_CURATE_APR_PERCENT >( props.virtual_supply.amount ), NLG_SYMBOL);
+   asset percent( protocol::calc_percent_reward_per_block< KNOWLEDGR_CURATE_APR_PERCENT >( props.virtual_supply.amount ), KNLG_SYMBOL);
    return std::max( percent, KNOWLEDGR_MIN_CURATE_REWARD );
 }
 
@@ -2248,7 +2248,7 @@ asset database::get_producer_reward()
 {
    const auto& props = get_dynamic_global_properties();
    static_assert( KNOWLEDGR_BLOCK_INTERVAL == 3, "this code assumes a 3-second time interval" );
-   asset percent( protocol::calc_percent_reward_per_block< KNOWLEDGR_PRODUCER_APR_PERCENT >( props.virtual_supply.amount ), NLG_SYMBOL);
+   asset percent( protocol::calc_percent_reward_per_block< KNOWLEDGR_PRODUCER_APR_PERCENT >( props.virtual_supply.amount ), KNLG_SYMBOL);
    auto pay = std::max( percent, KNOWLEDGR_MIN_PRODUCER_REWARD );
    const auto& witness_account = get_account( props.current_witness );
 
@@ -2256,7 +2256,7 @@ asset database::get_producer_reward()
    if( props.head_block_number >= KNOWLEDGR_START_MINER_VOTING_BLOCK/* || (witness_account.vesting_shares.amount.value == 0)*/ )
    {
       // const auto& witness_obj = get_witness( props.current_witness );
-      operation vop = producer_reward_operation( witness_account.name, asset( 0, NLG_SYMBOL ) );
+      operation vop = producer_reward_operation( witness_account.name, asset( 0, KNLG_SYMBOL ) );
       create_vesting2( *this, witness_account, pay, false,
          [&]( const asset& tokens )
          {
@@ -2283,12 +2283,12 @@ asset database::get_pow_reward()const
 #ifndef IS_TEST_NET
    /// 0 block rewards until at least KNOWLEDGR_MAX_WITNESSES have produced a POW
    if( props.num_pow_witnesses < KNOWLEDGR_MAX_WITNESSES && props.head_block_number < KNOWLEDGR_START_VESTING_BLOCK )
-      return asset( 0, NLG_SYMBOL );
+      return asset( 0, KNLG_SYMBOL );
 #endif
 
    static_assert( KNOWLEDGR_BLOCK_INTERVAL == 3, "this code assumes a 3-second time interval" );
    static_assert( KNOWLEDGR_MAX_WITNESSES == 21, "this code assumes 21 per round" );
-   asset percent( calc_percent_reward_per_round< KNOWLEDGR_POW_APR_PERCENT >( props.virtual_supply.amount ), NLG_SYMBOL);
+   asset percent( calc_percent_reward_per_round< KNOWLEDGR_POW_APR_PERCENT >( props.virtual_supply.amount ), KNLG_SYMBOL);
    return std::max( percent, KNOWLEDGR_MIN_POW_REWARD );
 }
 
@@ -2348,12 +2348,12 @@ share_type database::pay_reward_funds( share_type reward )
 
       modify( *itr, [&]( reward_fund_object& rfo )
       {
-         rfo.reward_balance += asset( r, NLG_SYMBOL );
+         rfo.reward_balance += asset( r, KNLG_SYMBOL );
       });
 
       used_rewards += r;
 
-      // Sanity check to ensure we aren't printing more NLG than has been allocated through inflation
+      // Sanity check to ensure we aren't printing more KNLG than has been allocated through inflation
       FC_ASSERT( used_rewards <= reward );
    }
 
@@ -2376,7 +2376,7 @@ share_type database::pay_reward_funds( share_type reward )
 //       return;
 // 
 //    asset net_sbd( 0, SBD_SYMBOL );
-//    asset net_knowledgr( 0, NLG_SYMBOL );
+//    asset net_knowledgr( 0, KNLG_SYMBOL );
 // 
 //    while( itr != request_by_date.end() && itr->conversion_date <= now )
 //    {
@@ -2462,9 +2462,9 @@ void database::expire_escrow_ratification()
       ++escrow_itr;
 
       adjust_balance( old_escrow.from, old_escrow.nlg_balance );
-#if 0///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+#if 0///~~~~~KNLG~~~~~{ NO NEED for Knowledgr
       adjust_balance( old_escrow.from, old_escrow.sbd_balance );
-#endif///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+#endif///~~~~~KNLG~~~~~{ NO NEED for Knowledgr
       adjust_balance( old_escrow.from, old_escrow.pending_fee );
 
       remove( old_escrow );
@@ -2536,10 +2536,10 @@ void database::initialize_evaluators()
 //   _my->_evaluator_registry.register_evaluator< withdraw_vesting_evaluator               >();
 //   _my->_evaluator_registry.register_evaluator< set_withdraw_vesting_route_evaluator     >();
    _my->_evaluator_registry.register_evaluator< account_create_evaluator                 >();
-   _my->_evaluator_registry.register_evaluator< account_admin_update_evaluator			>();///~~~~~NLG~~~~~
-   _my->_evaluator_registry.register_evaluator< account_expertise_update_evaluator      >();///~~~~~NLG~~~~~
-   _my->_evaluator_registry.register_evaluator< stake_request_evaluator					>();///~~~~~NLG~~~~~
-   _my->_evaluator_registry.register_evaluator< stake_process_evaluator					>();///~~~~~NLG~~~~~
+   _my->_evaluator_registry.register_evaluator< account_admin_update_evaluator			>();///~~~~~KNLG~~~~~
+   _my->_evaluator_registry.register_evaluator< account_expertise_update_evaluator      >();///~~~~~KNLG~~~~~
+   _my->_evaluator_registry.register_evaluator< stake_request_evaluator					>();///~~~~~KNLG~~~~~
+   _my->_evaluator_registry.register_evaluator< stake_process_evaluator					>();///~~~~~KNLG~~~~~
    _my->_evaluator_registry.register_evaluator< account_update_evaluator                 >();
    _my->_evaluator_registry.register_evaluator< witness_update_evaluator                 >();
    _my->_evaluator_registry.register_evaluator< account_witness_vote_evaluator           >();
@@ -2687,11 +2687,11 @@ void create_admin_accounts(database& db, std::string name, std::string pub_key_s
 		{
 			a.name = name;
 			a.memo_key = pub_key;
-			a.member_of = account_object::admin;//~~~~~NLG~~~~~
-			a.balance  = asset( 0 , NLG_SYMBOL );
+			a.member_of = account_object::admin;//~~~~~KNLG~~~~~
+			a.balance  = asset( 0 , KNLG_SYMBOL );
 			a.voting_manabar.current_mana = KNOWLEDGR_100_PERCENT;
 
-			FC_ASSERT(creator.balance >= KNOWLEDGR_LIMIT_STAKING_AMOUNT, "admin account creation failed!! Co-Lab has not too small NLG Token!!!");
+			FC_ASSERT(creator.balance >= KNOWLEDGR_LIMIT_STAKING_AMOUNT, "admin account creation failed!! Co-Lab has not too small KNLG Token!!!");
 
 			a.stake_balance = KNOWLEDGR_LIMIT_STAKING_AMOUNT;
 			db.modify( creator, [&]( account_object& c ) {
@@ -2771,8 +2771,8 @@ void database::init_genesis( uint64_t init_supply )
          {
             a.name = KNOWLEDGR_INIT_MINER_NAME + ( i ? fc::to_string( i ) : std::string() );
             a.memo_key = init_public_key;
-			a.member_of = account_object::admin;//~~~~~NLG~~~~~
-            a.balance  = asset( i ? 0 : init_supply, NLG_SYMBOL );
+			a.member_of = account_object::admin;//~~~~~KNLG~~~~~
+            a.balance  = asset( i ? 0 : init_supply, KNLG_SYMBOL );
 			a.voting_manabar.current_mana = KNOWLEDGR_100_PERCENT;
          } );
 
@@ -2799,7 +2799,7 @@ void database::init_genesis( uint64_t init_supply )
          p.time = KNOWLEDGR_GENESIS_TIME;
          p.recent_slots_filled = fc::uint128::max_value();
          p.participation_count = 128;
-         p.current_supply = asset( init_supply, NLG_SYMBOL );
+         p.current_supply = asset( init_supply, KNLG_SYMBOL );
          p.virtual_supply = p.current_supply;
          p.maximum_block_size = KNOWLEDGR_MAX_BLOCK_SIZE;
          p.reverse_auction_seconds = KNOWLEDGR_REVERSE_AUCTION_WINDOW_SECONDS_HF6;
@@ -3138,9 +3138,9 @@ void database::_apply_block( const signed_block& next_block )
 //   clear_expired_delegations();
    update_witness_schedule(*this);
 
-#if 0///~~~~~NLG~~~~~{NO NEED for Knowledgr
+#if 0///~~~~~KNLG~~~~~{NO NEED for Knowledgr
 //   update_median_feed();
-#endif///~~~~~NLG~~~~~}
+#endif///~~~~~KNLG~~~~~}
    update_virtual_supply();
 
    clear_null_account_balance();
@@ -3153,7 +3153,7 @@ void database::_apply_block( const signed_block& next_block )
    pay_liquidity_reward();
    update_virtual_supply();
 
-   process_pending_stakes();///~~~~~NLG~~~~~
+   process_pending_stakes();///~~~~~KNLG~~~~~
 
    account_recovery_processing();
    expire_escrow_ratification();
@@ -3307,10 +3307,10 @@ void database::process_header_extensions( const signed_block& next_block, requir
 //             if( has_hardfork( KNOWLEDGR_HARDFORK_0_14__230 ) )
 //             {
 //                // This block limits the effective median price to force SBD to remain at or
-//                // below 10% of the combined market cap of NLG and SBD.
+//                // below 10% of the combined market cap of KNLG and SBD.
 //                //
-//                // For example, if we have 500 NLG and 100 SBD, the price is limited to
-//                // 900 SBD / 500 NLG which works out to be $1.80.  At this price, 500 Knowledgr
+//                // For example, if we have 500 KNLG and 100 SBD, the price is limited to
+//                // 900 SBD / 500 KNLG which works out to be $1.80.  At this price, 500 Knowledgr
 //                // would be valued at 500 * $1.80 = $900.  100 SBD is by definition always $100,
 //                // so the combined market cap is $900 + $100 = $1000.
 // 
@@ -3812,7 +3812,7 @@ void database::update_virtual_supply()
    modify( get_dynamic_global_properties(), [&]( dynamic_global_property_object& dgp )
    {
       dgp.virtual_supply = dgp.current_supply;
-         //+ ( get_feed_history().current_median_history.is_null() ? asset( 0, NLG_SYMBOL ) : dgp.current_sbd_supply * get_feed_history().current_median_history );
+         //+ ( get_feed_history().current_median_history.is_null() ? asset( 0, KNLG_SYMBOL ) : dgp.current_sbd_supply * get_feed_history().current_median_history );
 
 //       auto median_price = get_feed_history().current_median_history;
 // 
@@ -4039,7 +4039,7 @@ int database::match( const limit_order_object& new_order, const limit_order_obje
        ( (age >= KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC && !has_hardfork( KNOWLEDGR_HARDFORK_0_10__149)) ||
        (age >= KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10 && has_hardfork( KNOWLEDGR_HARDFORK_0_10__149) ) ) )
    {
-      if( old_order_receives.symbol == NLG_SYMBOL )
+      if( old_order_receives.symbol == KNLG_SYMBOL )
       {
          adjust_liquidity_reward( get_account( old_order.seller ), old_order_receives, false );
          adjust_liquidity_reward( get_account( new_order.seller ), -old_order_receives, false );
@@ -4274,15 +4274,15 @@ void database::modify_balance( const account_object& a, const asset& delta, bool
    {
       switch( delta.symbol.asset_num )
       {
-         case KNOWLEDGR_ASSET_NUM_NLG:
+         case KNOWLEDGR_ASSET_NUM_KNLG:
             acnt.balance += delta;
             if( check_balance )
             {
-               FC_ASSERT( acnt.balance.amount.value >= 0, "Insufficient NLG funds" );
+               FC_ASSERT( acnt.balance.amount.value >= 0, "Insufficient KNLG funds" );
             }
             break;
 
-///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+///~~~~~KNLG~~~~~{ NO NEED for Knowledgr
 //          case KNOWLEDGR_ASSET_NUM_SBD:
 //             if( a.sbd_seconds_last_update != head_block_time() )
 //             {
@@ -4323,7 +4323,7 @@ void database::modify_balance( const account_object& a, const asset& delta, bool
 //                FC_ASSERT( acnt.vesting_shares.amount.value >= 0, "Insufficient VESTS funds" );
 //             }
 //             break;
-///~~~~~NLG~~~~~} NO NEED for Knowledgr
+///~~~~~KNLG~~~~~} NO NEED for Knowledgr
          default:
             FC_ASSERT( false, "invalid symbol" );
       }
@@ -4336,16 +4336,16 @@ void database::modify_reward_balance( const account_object& a, const asset& valu
    {
       switch( value_delta.symbol.asset_num )
       {
-         case KNOWLEDGR_ASSET_NUM_NLG:
+         case KNOWLEDGR_ASSET_NUM_KNLG:
             if( share_delta.amount.value == 0 )
             {
                acnt.reward_nlg_balance += value_delta;
                if( check_balance )
                {
-                  FC_ASSERT( acnt.reward_nlg_balance.amount.value >= 0, "Insufficient reward NLG funds" );
+                  FC_ASSERT( acnt.reward_nlg_balance.amount.value >= 0, "Insufficient reward KNLG funds" );
                }
             }
-///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+///~~~~~KNLG~~~~~{ NO NEED for Knowledgr
 //             else
 //             {
 //                acnt.reward_vesting_nlg += value_delta;
@@ -4355,11 +4355,11 @@ void database::modify_reward_balance( const account_object& a, const asset& valu
 //                   FC_ASSERT( acnt.reward_vesting_balance.amount.value >= 0, "Insufficient reward VESTS funds" );
 //                }
 //             }
-///~~~~~NLG~~~~~} NO NEED for Knowledgr
+///~~~~~KNLG~~~~~} NO NEED for Knowledgr
 
             break;
 
-///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+///~~~~~KNLG~~~~~{ NO NEED for Knowledgr
 //          case KNOWLEDGR_ASSET_NUM_SBD:
 //             FC_ASSERT( share_delta.amount.value == 0 );
 //             acnt.reward_sbd_balance += value_delta;
@@ -4368,7 +4368,7 @@ void database::modify_reward_balance( const account_object& a, const asset& valu
 //                FC_ASSERT( acnt.reward_sbd_balance.amount.value >= 0, "Insufficient reward SBD funds" );
 //             }
 //             break;
-///~~~~~NLG~~~~~} NO NEED for Knowledgr
+///~~~~~KNLG~~~~~} NO NEED for Knowledgr
          default:
             FC_ASSERT( false, "invalid symbol" );
       }
@@ -4473,14 +4473,14 @@ void database::adjust_savings_balance( const account_object& a, const asset& del
    {
       switch( delta.symbol.asset_num )
       {
-         case KNOWLEDGR_ASSET_NUM_NLG:
+         case KNOWLEDGR_ASSET_NUM_KNLG:
             acnt.savings_balance += delta;
             if( check_balance )
             {
-               FC_ASSERT( acnt.savings_balance.amount.value >= 0, "Insufficient savings NLG funds" );
+               FC_ASSERT( acnt.savings_balance.amount.value >= 0, "Insufficient savings KNLG funds" );
             }
 			break;
-///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+///~~~~~KNLG~~~~~{ NO NEED for Knowledgr
 //          case KNOWLEDGR_ASSET_NUM_SBD:
 //             if( a.savings_sbd_seconds_last_update != head_block_time() )
 //             {
@@ -4514,7 +4514,7 @@ void database::adjust_savings_balance( const account_object& a, const asset& del
 //                FC_ASSERT( acnt.savings_sbd_balance.amount.value >= 0, "Insufficient savings SBD funds" );
 //             }
 //             break;
-///~~~~~NLG~~~~~} NO NEED for Knowledgr
+///~~~~~KNLG~~~~~} NO NEED for Knowledgr
          default:
             FC_ASSERT( !"invalid symbol" );
       }
@@ -4588,9 +4588,9 @@ void database::adjust_supply( const asset& delta, bool adjust_vesting )
    {
       switch( delta.symbol.asset_num )
       {
-         case KNOWLEDGR_ASSET_NUM_NLG:
+         case KNOWLEDGR_ASSET_NUM_KNLG:
          {
-            asset new_vesting( (adjust_vesting && delta.amount > 0) ? delta.amount * 9 : 0, NLG_SYMBOL );
+            asset new_vesting( (adjust_vesting && delta.amount > 0) ? delta.amount * 9 : 0, KNLG_SYMBOL );
             props.current_supply += delta + new_vesting;
             props.virtual_supply += delta + new_vesting;
 //            props.total_vesting_fund_nlg += new_vesting;
@@ -4619,11 +4619,11 @@ asset database::get_balance( const account_object& a, asset_symbol_type symbol )
 {
    switch( symbol.asset_num )
    {
-      case KNOWLEDGR_ASSET_NUM_NLG:
+      case KNOWLEDGR_ASSET_NUM_KNLG:
          return a.balance;
 	  default:
 		  FC_ASSERT( false, "invalid symbol" );
-///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+///~~~~~KNLG~~~~~{ NO NEED for Knowledgr
 //       case KNOWLEDGR_ASSET_NUM_SBD:
 //          return a.sbd_balance;
 //       default:
@@ -4645,7 +4645,7 @@ asset database::get_balance( const account_object& a, asset_symbol_type symbol )
 //       FC_ASSERT( false, "invalid symbol" );
 // #endif
 //       }
-///~~~~~NLG~~~~~} NO NEED for Knowledgr
+///~~~~~KNLG~~~~~} NO NEED for Knowledgr
    }
 }
 
@@ -4653,12 +4653,12 @@ asset database::get_savings_balance( const account_object& a, asset_symbol_type 
 {
    switch( symbol.asset_num )
    {
-      case KNOWLEDGR_ASSET_NUM_NLG:
+      case KNOWLEDGR_ASSET_NUM_KNLG:
          return a.savings_balance;
-///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+///~~~~~KNLG~~~~~{ NO NEED for Knowledgr
 //       case KNOWLEDGR_ASSET_NUM_SBD:
 //          return a.savings_sbd_balance;
-///~~~~~NLG~~~~~} NO NEED for Knowledgr
+///~~~~~KNLG~~~~~} NO NEED for Knowledgr
       default: // Note no savings balance for SMT per comments in issue 1682.
          FC_ASSERT( !"invalid symbol" );
    }
@@ -4967,11 +4967,11 @@ void database::apply_hardfork( uint32_t hardfork )
                rfo.percent_curation_rewards = KNOWLEDGR_1_PERCENT * 25;
                rfo.percent_content_rewards = KNOWLEDGR_100_PERCENT;
 			   rfo.reward_balance = gpo.total_reward_fund_knowledgr;
-#if 0///~~~~~NLG~~~~~{ NOT NEED for pioneer Knowledgr
+#if 0///~~~~~KNLG~~~~~{ NOT NEED for pioneer Knowledgr
 #ifndef IS_TEST_NET
                rfo.recent_claims = KNOWLEDGR_HF_17_RECENT_CLAIMS;
 #endif
-#endif///~~~~~NLG~~~~~} NOT NEED for pioneer Knowledgr
+#endif///~~~~~KNLG~~~~~} NOT NEED for pioneer Knowledgr
                rfo.author_reward_curve = curve_id::quadratic;
                rfo.curation_reward_curve = curve_id::quadratic_curation;
             });
@@ -4982,7 +4982,7 @@ void database::apply_hardfork( uint32_t hardfork )
 
             modify( gpo, [&]( dynamic_global_property_object& g )
             {
-               g.total_reward_fund_knowledgr = asset( 0, NLG_SYMBOL );
+               g.total_reward_fund_knowledgr = asset( 0, KNLG_SYMBOL );
                g.total_reward_shares2 = 0;
             });
 
@@ -5045,11 +5045,11 @@ void database::apply_hardfork( uint32_t hardfork )
 
             modify( get< reward_fund_object, by_name >( KNOWLEDGR_POST_REWARD_FUND_NAME ), [&]( reward_fund_object &rfo )
             {
-#if 0///~~~~~NLG~~~~~{ NOT NEED for pioneer Knowledgr
+#if 0///~~~~~KNLG~~~~~{ NOT NEED for pioneer Knowledgr
 #ifndef IS_TEST_NET
                rfo.recent_claims = KNOWLEDGR_HF_19_RECENT_CLAIMS;
 #endif
-#endif///~~~~~NLG~~~~~} NOT NEED for pioneer Knowledgr
+#endif///~~~~~KNLG~~~~~} NOT NEED for pioneer Knowledgr
                rfo.author_reward_curve = curve_id::linear;
                rfo.curation_reward_curve = curve_id::square_root;
             });
@@ -5093,14 +5093,14 @@ void database::apply_hardfork( uint32_t hardfork )
                {
                   modify( get< witness_object, by_name >( witness ), [&]( witness_object& w )
                   {
-                     w.props.account_creation_fee = asset( w.props.account_creation_fee.amount * KNOWLEDGR_CREATE_ACCOUNT_WITH_KNOWLEDGR_MODIFIER, NLG_SYMBOL );
+                     w.props.account_creation_fee = asset( w.props.account_creation_fee.amount * KNOWLEDGR_CREATE_ACCOUNT_WITH_KNOWLEDGR_MODIFIER, KNLG_SYMBOL );
                   });
                }
             }
 
             modify( wso, [&]( witness_schedule_object& wso )
             {
-               wso.median_props.account_creation_fee = asset( wso.median_props.account_creation_fee.amount * KNOWLEDGR_CREATE_ACCOUNT_WITH_KNOWLEDGR_MODIFIER, NLG_SYMBOL );
+               wso.median_props.account_creation_fee = asset( wso.median_props.account_creation_fee.amount * KNOWLEDGR_CREATE_ACCOUNT_WITH_KNOWLEDGR_MODIFIER, KNLG_SYMBOL );
             });
          }
          break;
@@ -5151,10 +5151,10 @@ void database::validate_invariants()const
    try
    {
       const auto& account_idx = get_index<account_index>().indices().get<by_name>();
-      asset total_supply = asset( 0, NLG_SYMBOL );
+      asset total_supply = asset( 0, KNLG_SYMBOL );
 //       asset total_sbd = asset( 0, SBD_SYMBOL );
 //       asset total_vesting = asset( 0, VESTS_SYMBOL );
-//      asset pending_vesting_knowledgr = asset( 0, NLG_SYMBOL );
+//      asset pending_vesting_knowledgr = asset( 0, KNLG_SYMBOL );
       share_type total_vsf_votes = share_type( 0 );
 
       auto gpo = get_dynamic_global_properties();
@@ -5169,11 +5169,11 @@ void database::validate_invariants()const
          total_supply += itr->balance;
          total_supply += itr->savings_balance;
          total_supply += itr->reward_nlg_balance;
-///         total_sbd += itr->sbd_balance; ///~~~~~NLG~~~~~ NO NEED for Knowledgr
-///         total_sbd += itr->savings_sbd_balance; ///~~~~~NLG~~~~~ NO NEED for Knowledgr
-///         total_sbd += itr->reward_sbd_balance; ///~~~~~NLG~~~~~ NO NEED for Knowledgr
+///         total_sbd += itr->sbd_balance; ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+///         total_sbd += itr->savings_sbd_balance; ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+///         total_sbd += itr->reward_sbd_balance; ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 ///         total_vesting += itr->vesting_shares;
-///         total_vesting += itr->reward_vesting_balance; ///~~~~~NLG~~~~~ NO NEED for Knowledgr
+///         total_vesting += itr->reward_vesting_balance; ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 ///         pending_vesting_knowledgr += itr->reward_vesting_nlg;
          total_vsf_votes += ( itr->proxy == KNOWLEDGR_PROXY_TO_SELF_ACCOUNT ?
                                  itr->witness_vote_weight() :
@@ -5186,7 +5186,7 @@ void database::validate_invariants()const
 // 
 //       for( auto itr = convert_request_idx.begin(); itr != convert_request_idx.end(); ++itr )
 //       {
-//          if( itr->amount.symbol == NLG_SYMBOL )
+//          if( itr->amount.symbol == KNLG_SYMBOL )
 //             total_supply += itr->amount;
 //          else if( itr->amount.symbol == SBD_SYMBOL )
 //             total_sbd += itr->amount;
@@ -5198,9 +5198,9 @@ void database::validate_invariants()const
 
       for( auto itr = limit_order_idx.begin(); itr != limit_order_idx.end(); ++itr )
       {
-         if( itr->sell_price.base.symbol == NLG_SYMBOL )
+         if( itr->sell_price.base.symbol == KNLG_SYMBOL )
          {
-            total_supply += asset( itr->for_sale, NLG_SYMBOL );
+            total_supply += asset( itr->for_sale, KNLG_SYMBOL );
          }
 //          else if ( itr->sell_price.base.symbol == SBD_SYMBOL )
 //          {
@@ -5213,26 +5213,26 @@ void database::validate_invariants()const
       for( auto itr = escrow_idx.begin(); itr != escrow_idx.end(); ++itr )
       {
          total_supply += itr->nlg_balance;
-//         total_sbd += itr->sbd_balance;///~~~~~NLG~~~~~ NO NEED for KNOWLEDGR
+//         total_sbd += itr->sbd_balance;///~~~~~KNLG~~~~~ NO NEED for KNOWLEDGR
 
-         if( itr->pending_fee.symbol == NLG_SYMBOL )
+         if( itr->pending_fee.symbol == KNLG_SYMBOL )
             total_supply += itr->pending_fee;
 //          else if( itr->pending_fee.symbol == SBD_SYMBOL )
 //             total_sbd += itr->pending_fee;
          else
-            FC_ASSERT( false, "found escrow pending fee that is not SBD or NLG" );
+            FC_ASSERT( false, "found escrow pending fee that is not SBD or KNLG" );
       }
 
       const auto& savings_withdraw_idx = get_index< savings_withdraw_index >().indices().get< by_id >();
 
       for( auto itr = savings_withdraw_idx.begin(); itr != savings_withdraw_idx.end(); ++itr )
       {
-         if( itr->amount.symbol == NLG_SYMBOL )
+         if( itr->amount.symbol == KNLG_SYMBOL )
             total_supply += itr->amount;
 //          else if( itr->amount.symbol == SBD_SYMBOL )
 //             total_sbd += itr->amount;
          else
-            FC_ASSERT( false, "found savings withdraw that is not SBD or NLG" );
+            FC_ASSERT( false, "found savings withdraw that is not SBD or KNLG" );
       }
 
       const auto& reward_idx = get_index< reward_fund_index, by_id >();

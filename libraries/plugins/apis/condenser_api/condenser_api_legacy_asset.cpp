@@ -42,9 +42,9 @@ uint32_t string_to_asset_num( const char* p, uint8_t decimals )
          }
          switch( name_u64 )
          {
-            case NLG_SYMBOL_U64:
+            case KNLG_SYMBOL_U64:
                FC_ASSERT( decimals == 3, "Incorrect decimal places" );
-               asset_num = KNOWLEDGR_ASSET_NUM_NLG;
+               asset_num = KNOWLEDGR_ASSET_NUM_KNLG;
                break;
             case SBD_SYMBOL_U64:
                FC_ASSERT( decimals == 3, "Incorrect decimal places" );
@@ -87,13 +87,13 @@ std::string asset_num_to_string( uint32_t asset_num )
    switch( asset_num )
    {
 #ifdef IS_TEST_NET
-      case KNOWLEDGR_ASSET_NUM_NLG:
+      case KNOWLEDGR_ASSET_NUM_KNLG:
          return "TESTS";
       case KNOWLEDGR_ASSET_NUM_SBD:
          return "TBD";
 #else
-      case KNOWLEDGR_ASSET_NUM_NLG:
-         return "NLG";
+      case KNOWLEDGR_ASSET_NUM_KNLG:
+         return "KNLG";
       case KNOWLEDGR_ASSET_NUM_SBD:
          return "SBD";
 #endif

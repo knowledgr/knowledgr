@@ -118,19 +118,19 @@ struct api_account_object
       voting_manabar( a.voting_manabar ),
       balance( legacy_asset::from_asset( a.balance ) ),
       savings_balance( legacy_asset::from_asset( a.savings_balance ) ),
-      /*sbd_balance( legacy_asset::from_asset( a.sbd_balance ) ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
-      /*sbd_seconds( a.sbd_seconds ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
-      /*sbd_seconds_last_update( a.sbd_seconds_last_update ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
-      /*sbd_last_interest_payment( a.sbd_last_interest_payment ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
-      /*savings_sbd_balance( legacy_asset::from_asset( a.savings_sbd_balance ) ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
-      /*savings_sbd_seconds( a.savings_sbd_seconds ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
-      /*savings_sbd_seconds_last_update( a.savings_sbd_seconds_last_update ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
-      /*savings_sbd_last_interest_payment( a.savings_sbd_last_interest_payment ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+      /*sbd_balance( legacy_asset::from_asset( a.sbd_balance ) ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+      /*sbd_seconds( a.sbd_seconds ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+      /*sbd_seconds_last_update( a.sbd_seconds_last_update ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+      /*sbd_last_interest_payment( a.sbd_last_interest_payment ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+      /*savings_sbd_balance( legacy_asset::from_asset( a.savings_sbd_balance ) ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+      /*savings_sbd_seconds( a.savings_sbd_seconds ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+      /*savings_sbd_seconds_last_update( a.savings_sbd_seconds_last_update ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+      /*savings_sbd_last_interest_payment( a.savings_sbd_last_interest_payment ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
       savings_withdraw_requests( a.savings_withdraw_requests ),
-      /*reward_sbd_balance( legacy_asset::from_asset( a.reward_sbd_balance ) ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+      /*reward_sbd_balance( legacy_asset::from_asset( a.reward_sbd_balance ) ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
       reward_nlg_balance( legacy_asset::from_asset( a.reward_nlg_balance ) ),
-      /*reward_vesting_balance( legacy_asset::from_asset( a.reward_vesting_balance ) ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
-      /*reward_vesting_nlg( legacy_asset::from_asset( a.reward_vesting_nlg ) ),*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+      /*reward_vesting_balance( legacy_asset::from_asset( a.reward_vesting_balance ) ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+      /*reward_vesting_nlg( legacy_asset::from_asset( a.reward_vesting_nlg ) ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
       curation_rewards( a.curation_rewards ),
       posting_rewards( a.posting_rewards ),
 //      vesting_shares( legacy_asset::from_asset( a.vesting_shares ) ),
@@ -147,13 +147,13 @@ struct api_account_object
       last_vote_time( a.last_vote_time ),
       post_bandwidth( a.post_bandwidth ),
       pending_claimed_accounts( a.pending_claimed_accounts ),
-	  member_of(a.member_of), ///~~~~~NLG~~~~~
-	  stake_balance( legacy_asset::from_asset(a.stake_balance) ), ///~~~~~NLG~~~~~
+	  member_of(a.member_of), ///~~~~~KNLG~~~~~
+	  stake_balance( legacy_asset::from_asset(a.stake_balance) ), ///~~~~~KNLG~~~~~
 	  rep_power_rewards(a.rep_power_rewards)
    {
-      //voting_power = _compute_voting_power(a);//////~~~~~NLG~~~~~
+      //voting_power = _compute_voting_power(a);//////~~~~~KNLG~~~~~
 	  proxied_vsf_votes.insert( proxied_vsf_votes.end(), a.proxied_vsf_votes.begin(), a.proxied_vsf_votes.end() );
-	  for (auto& _expertise: a.expertises) {///~~~~~NLG~~~~~
+	  for (auto& _expertise: a.expertises) {///~~~~~KNLG~~~~~
 		  expertises.push_back(_expertise);
 	  }
    }
@@ -186,27 +186,27 @@ struct api_account_object
 
    bool              can_vote = false;
    util::manabar     voting_manabar;
-//   uint16_t          voting_power = 0;///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//   uint16_t          voting_power = 0;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 
    legacy_asset      balance;
    legacy_asset      savings_balance;
 
-//   legacy_asset      sbd_balance;///~~~~~NLG~~~~~ NO NEED for Knowledgr
-//    uint128_t         sbd_seconds;///~~~~~NLG~~~~~ NO NEED for Knowledgr
-//    time_point_sec    sbd_seconds_last_update;///~~~~~NLG~~~~~ NO NEED for Knowledgr
-//    time_point_sec    sbd_last_interest_payment;///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//   legacy_asset      sbd_balance;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+//    uint128_t         sbd_seconds;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+//    time_point_sec    sbd_seconds_last_update;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+//    time_point_sec    sbd_last_interest_payment;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 
-//    legacy_asset      savings_sbd_balance;///~~~~~NLG~~~~~ NO NEED for Knowledgr
-//    uint128_t         savings_sbd_seconds;///~~~~~NLG~~~~~ NO NEED for Knowledgr
-//    time_point_sec    savings_sbd_seconds_last_update;///~~~~~NLG~~~~~ NO NEED for Knowledgr
-//    time_point_sec    savings_sbd_last_interest_payment;///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//    legacy_asset      savings_sbd_balance;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+//    uint128_t         savings_sbd_seconds;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+//    time_point_sec    savings_sbd_seconds_last_update;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+//    time_point_sec    savings_sbd_last_interest_payment;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 
    uint8_t           savings_withdraw_requests = 0;
 
-//   legacy_asset      reward_sbd_balance;///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//   legacy_asset      reward_sbd_balance;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
    legacy_asset      reward_nlg_balance;
-//   legacy_asset      reward_vesting_balance;///~~~~~NLG~~~~~ NO NEED for Knowledgr
-//   legacy_asset      reward_vesting_nlg;///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//   legacy_asset      reward_vesting_balance;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+//   legacy_asset      reward_vesting_nlg;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 
    share_type        curation_rewards;
    share_type        posting_rewards;
@@ -230,9 +230,9 @@ struct api_account_object
    uint32_t          post_bandwidth = 0;
 
    share_type        pending_claimed_accounts = 0;
-   vector<std::string>					expertises; ///~~~~~NLG~~~~~
-   account_object::account_member_of	member_of; ///~~~~~NLG~~~~~
-   legacy_asset							stake_balance; ///~~~~~NLG~~~~~
+   vector<std::string>					expertises; ///~~~~~KNLG~~~~~
+   account_object::account_member_of	member_of; ///~~~~~KNLG~~~~~
+   legacy_asset							stake_balance; ///~~~~~KNLG~~~~~
    share_type		rep_power_rewards = 1;
 };
 
@@ -261,7 +261,7 @@ struct extended_account : public api_account_object
    optional< vector< string > >                             recommended;      /// posts recommened for this user
 };
 
-///~~~~~NLG~~~~~{
+///~~~~~KNLG~~~~~{
 struct api_stake_pending_object
 {
 	api_stake_pending_object(const database_api::api_stake_pending_object& a) : 
@@ -278,7 +278,7 @@ struct api_stake_pending_object
 	time_point_sec		created;
 	stake_pending_object::stake_type type;
 };
-///~~~~~NLG~~~~~}
+///~~~~~KNLG~~~~~}
 
 struct api_comment_object
 {
@@ -317,13 +317,13 @@ struct api_comment_object
       allow_replies( c.allow_replies ),
       allow_votes( c.allow_votes ),
       allow_curation_rewards( c.allow_curation_rewards ),
-	  type(c.type)///~~~~~NLG~~~~~
+	  type(c.type)///~~~~~KNLG~~~~~
    {
       for( auto& route : c.beneficiaries )
       {
          beneficiaries.push_back( route );
 	  }
-	  for (auto& _id : c.citations) { ///~~~~~NLG~~~~~
+	  for (auto& _id : c.citations) { ///~~~~~KNLG~~~~~
 		  citations.push_back(_id);
 	  }
    }
@@ -375,8 +375,8 @@ struct api_comment_object
    bool              allow_votes = false;
    bool              allow_curation_rewards = false;
    vector< beneficiary_route_type > beneficiaries;
-   comment_object::comment_type		 type; //~~~~~NLG~~~~~
-   vector<comment_id_type> citations; //~~~~~NLG~~~~~
+   comment_object::comment_type		 type; //~~~~~KNLG~~~~~
+   vector<comment_id_type> citations; //~~~~~KNLG~~~~~
 };
 
 struct extended_dynamic_global_properties
@@ -481,7 +481,7 @@ struct api_witness_object
       hardfork_version_vote( w.hardfork_version_vote ),
       hardfork_time_vote( w.hardfork_time_vote ),
       available_witness_account_subsidies( w.available_witness_account_subsidies ),
-	  schedule(w.schedule)//~~~~~NLG~~~~~
+	  schedule(w.schedule)//~~~~~KNLG~~~~~
    {}
 
    witness_id_type  id;
@@ -505,7 +505,7 @@ struct api_witness_object
    hardfork_version        hardfork_version_vote;
    time_point_sec          hardfork_time_vote = KNOWLEDGR_GENESIS_TIME;
    int64_t                 available_witness_account_subsidies = 0;
-   witness_object::witness_schedule_type schedule;//~~~~~NLG~~~~~
+   witness_object::witness_schedule_type schedule;//~~~~~KNLG~~~~~
 };
 
 struct api_witness_schedule_object
@@ -610,7 +610,7 @@ struct api_escrow_object
       agent( e.agent ),
       ratification_deadline( e.ratification_deadline ),
       escrow_expiration( e.escrow_expiration ),
-//      sbd_balance( legacy_asset::from_asset( e.sbd_balance ) ),///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//      sbd_balance( legacy_asset::from_asset( e.sbd_balance ) ),///~~~~~KNLG~~~~~ NO NEED for Knowledgr
       nlg_balance( legacy_asset::from_asset( e.nlg_balance ) ),
       pending_fee( legacy_asset::from_asset( e.pending_fee ) ),
       to_approved( e.to_approved ),
@@ -625,7 +625,7 @@ struct api_escrow_object
    account_name_type agent;
    time_point_sec    ratification_deadline;
    time_point_sec    escrow_expiration;
-//   legacy_asset      sbd_balance;///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//   legacy_asset      sbd_balance;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
    legacy_asset      nlg_balance;
    legacy_asset      pending_fee;
    bool              to_approved = false;
@@ -1016,11 +1016,11 @@ DEFINE_API_ARGS( verify_account_authority,               vector< variant >,   bo
 DEFINE_API_ARGS( get_active_votes,                       vector< variant >,   vector< tags::vote_state > )
 DEFINE_API_ARGS( get_account_votes,                      vector< variant >,   vector< account_vote > )
 DEFINE_API_ARGS( get_content,                            vector< variant >,   discussion )
-DEFINE_API_ARGS( get_content_count,                      vector< variant >,   uint64_t )///~~~~~NLG~~~~~
-DEFINE_API_ARGS( list_comments,							 vector< variant >,   vector< discussion > )///~~~~~NLG~~~~~
-DEFINE_API_ARGS( get_content_parent_series,				 vector< variant >,   vector< discussion > )///~~~~~NLG~~~~~
-DEFINE_API_ARGS( list_pending_stakes,					 vector< variant >,   vector< api_stake_pending_object > )///~~~~~NLG~~~~~
-DEFINE_API_ARGS( find_pending_stake,					 vector< variant >,   vector< api_stake_pending_object > )///~~~~~NLG~~~~~
+DEFINE_API_ARGS( get_content_count,                      vector< variant >,   uint64_t )///~~~~~KNLG~~~~~
+DEFINE_API_ARGS( list_comments,							 vector< variant >,   vector< discussion > )///~~~~~KNLG~~~~~
+DEFINE_API_ARGS( get_content_parent_series,				 vector< variant >,   vector< discussion > )///~~~~~KNLG~~~~~
+DEFINE_API_ARGS( list_pending_stakes,					 vector< variant >,   vector< api_stake_pending_object > )///~~~~~KNLG~~~~~
+DEFINE_API_ARGS( find_pending_stake,					 vector< variant >,   vector< api_stake_pending_object > )///~~~~~KNLG~~~~~
 DEFINE_API_ARGS( get_content_replies,                    vector< variant >,   vector< discussion > )
 DEFINE_API_ARGS( get_tags_used_by_author,                vector< variant >,   vector< tags::tag_count_object > )
 DEFINE_API_ARGS( get_post_discussions_by_payout,         vector< variant >,   vector< discussion > )
@@ -1114,11 +1114,11 @@ public:
       (get_active_votes)
       (get_account_votes)
 	  (get_content)
-	  (get_content_count)//~~~~~NLG~~~~~
-	  (list_comments)//~~~~~NLG~~~~~
-	  (get_content_parent_series)//~~~~~NLG~~~~~
-	  (list_pending_stakes)///~~~~~NLG~~~~~
-	  (find_pending_stake)///~~~~~NLG~~~~~
+	  (get_content_count)//~~~~~KNLG~~~~~
+	  (list_comments)//~~~~~KNLG~~~~~
+	  (get_content_parent_series)//~~~~~KNLG~~~~~
+	  (list_pending_stakes)///~~~~~KNLG~~~~~
+	  (find_pending_stake)///~~~~~KNLG~~~~~
       (get_content_replies)
       (get_tags_used_by_author)
       (get_post_discussions_by_payout)
@@ -1188,23 +1188,23 @@ FC_REFLECT( knowledgr::plugins::condenser_api::api_account_object,
              (created)(mined)
              (recovery_account)(last_account_recovery)(reset_account)
              (comment_count)(lifetime_vote_count)(post_count)(can_vote)(voting_manabar)
-			 //(voting_power)///~~~~~NLG~~~~~
+			 //(voting_power)///~~~~~KNLG~~~~~
              (balance)
              (savings_balance)
-             /*(sbd_balance)*////~~~~~NLG~~~~~ NO NEED for Knowledgr
-			 /*(sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)*////~~~~~NLG~~~~~ NO NEED for Knowledgr
-             /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+             /*(sbd_balance)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+			 /*(sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+             /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
 			 (savings_withdraw_requests)
-             (reward_nlg_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_nlg)*/////~~~~~NLG~~~~~ NO NEED for Knowledgr
+             (reward_nlg_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_nlg)*/////~~~~~KNLG~~~~~ NO NEED for Knowledgr
              /*(vesting_shares)(delegated_vesting_shares)(received_vesting_shares)(vesting_withdraw_rate)(next_vesting_withdrawal)*/(withdrawn)(to_withdraw)(withdraw_routes)
              (curation_rewards)
              (posting_rewards)
              (proxied_vsf_votes)(witnesses_voted_for)
              (last_post)(last_root_post)(last_vote_time)
              (post_bandwidth)(pending_claimed_accounts)
-			 (expertises)///~~~~~NLG~~~~~
-			 (member_of)///~~~~~NLG~~~~~
-			 (stake_balance)///~~~~~NLG~~~~~
+			 (expertises)///~~~~~KNLG~~~~~
+			 (member_of)///~~~~~KNLG~~~~~
+			 (stake_balance)///~~~~~KNLG~~~~~
 			 (rep_power_rewards)
           )
 
@@ -1222,7 +1222,7 @@ FC_REFLECT( knowledgr::plugins::condenser_api::api_comment_object,
              (root_author)(root_permlink)
              (max_accepted_payout)(percent_knowledgr_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)
-			 (type)(citations)//~~~~~NLG~~~~~
+			 (type)(citations)//~~~~~KNLG~~~~~
           )
 
 FC_REFLECT( knowledgr::plugins::condenser_api::extended_dynamic_global_properties,
@@ -1247,7 +1247,7 @@ FC_REFLECT( knowledgr::plugins::condenser_api::api_witness_object,
              (running_version)
              (hardfork_version_vote)(hardfork_time_vote)
              (available_witness_account_subsidies)
-			 (schedule)//~~~~~NLG~~~~~
+			 (schedule)//~~~~~KNLG~~~~~
           )
 
 FC_REFLECT( knowledgr::plugins::condenser_api::api_witness_schedule_object,
@@ -1293,7 +1293,7 @@ FC_REFLECT( knowledgr::plugins::condenser_api::api_reward_fund_object,
 FC_REFLECT( knowledgr::plugins::condenser_api::api_escrow_object,
              (id)(escrow_id)(from)(to)(agent)
              (ratification_deadline)(escrow_expiration)
-             /*(sbd_balance)*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+             /*(sbd_balance)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
 			 (nlg_balance)(pending_fee)
              (to_approved)(agent_approved)(disputed) )
 
@@ -1358,7 +1358,7 @@ FC_REFLECT( knowledgr::plugins::condenser_api::order_book,
 
 FC_REFLECT( knowledgr::plugins::condenser_api::market_trade,
             (date)(current_pays)(open_pays) )
-///~~~~~NLG~~~~~{
+///~~~~~KNLG~~~~~{
 FC_REFLECT( knowledgr::plugins::condenser_api::api_stake_pending_object,
 				(id)
 				(account)
@@ -1366,4 +1366,4 @@ FC_REFLECT( knowledgr::plugins::condenser_api::api_stake_pending_object,
 				(created)
 				(type)
 		  )
-///~~~~~NLG~~~~~}
+///~~~~~KNLG~~~~~}

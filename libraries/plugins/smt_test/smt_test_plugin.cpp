@@ -74,7 +74,7 @@ void test_alpha()
    smt_capped_generation_policy gpolicy;
    uint64_t max_supply = KNOWLEDGR_MAX_SHARE_SUPPLY / 6000;
 
-   // set knowledgr unit, total is 100 NLG-satoshis = 0.1 NLG
+   // set knowledgr unit, total is 100 KNLG-satoshis = 0.1 KNLG
    gpolicy.pre_soft_cap_unit.knowledgr_unit.emplace( "founder-a",   7 );
    gpolicy.pre_soft_cap_unit.knowledgr_unit.emplace( "founder-b",  23 );
    gpolicy.pre_soft_cap_unit.knowledgr_unit.emplace( "founder-c",  70 );
@@ -92,7 +92,7 @@ void test_alpha()
 
    gpolicy.soft_cap_percent = KNOWLEDGR_100_PERCENT;
 
-   // .0006 ALPHA / 0.1 NLG -> 1000 token-units / knowledgr-unit
+   // .0006 ALPHA / 0.1 KNLG -> 1000 token-units / knowledgr-unit
    gpolicy.min_unit_ratio = 1000;
    gpolicy.max_unit_ratio = 1000;
 
@@ -133,7 +133,7 @@ void test_beta()
 
    smt_capped_generation_policy gpolicy;
 
-   // set knowledgr unit, total is 100 NLG-satoshis = 0.1 NLG
+   // set knowledgr unit, total is 100 KNLG-satoshis = 0.1 KNLG
    gpolicy.pre_soft_cap_unit.knowledgr_unit.emplace( "fred"  , 3 );
    gpolicy.pre_soft_cap_unit.knowledgr_unit.emplace( "george", 2 );
 
@@ -151,7 +151,7 @@ void test_beta()
 
    gpolicy.soft_cap_percent = KNOWLEDGR_100_PERCENT;
 
-   // .0006 ALPHA / 0.1 NLG -> 1000 token-units / knowledgr-unit
+   // .0006 ALPHA / 0.1 KNLG -> 1000 token-units / knowledgr-unit
    gpolicy.min_unit_ratio = 50;
    gpolicy.max_unit_ratio = 100;
 
@@ -191,7 +191,7 @@ void test_delta()
 
    smt_capped_generation_policy gpolicy;
 
-   // set knowledgr unit, total is 1 NLG-satoshi = 0.001 NLG
+   // set knowledgr unit, total is 1 KNLG-satoshi = 0.001 KNLG
    gpolicy.pre_soft_cap_unit.knowledgr_unit.emplace( "founder", 1 );
 
    // set token unit, total is 10,000 token-satoshis = 0.10000 DELTA
@@ -206,7 +206,7 @@ void test_delta()
 
    gpolicy.soft_cap_percent = KNOWLEDGR_100_PERCENT;
 
-   // .001 NLG / .100000 DELTA -> 100 DELTA / NLG
+   // .001 KNLG / .100000 DELTA -> 100 DELTA / KNLG
    gpolicy.min_unit_ratio = 1000;
    gpolicy.max_unit_ratio = 1000;
 

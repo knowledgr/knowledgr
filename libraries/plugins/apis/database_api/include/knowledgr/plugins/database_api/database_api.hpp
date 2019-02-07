@@ -60,8 +60,8 @@ class database_api
          *
          */
          (list_accounts)
-		 (list_pending_stakes)///~~~~~NLG~~~~~
-		 (find_pending_stake)///~~~~~NLG~~~~~
+		 (list_pending_stakes)///~~~~~KNLG~~~~~
+		 (find_pending_stake)///~~~~~KNLG~~~~~
 
          /**
          * @brief Find accounts by primary key (account name)

@@ -49,25 +49,25 @@ namespace knowledgr { namespace chain {
           */
          uint32_t num_pow_witnesses = 0;
 
-         asset       virtual_supply             = asset( 0, NLG_SYMBOL );
-         asset       current_supply             = asset( 0, NLG_SYMBOL );
-         asset       confidential_supply        = asset( 0, NLG_SYMBOL ); ///< total asset held in confidential balances
+         asset       virtual_supply             = asset( 0, KNLG_SYMBOL );
+         asset       current_supply             = asset( 0, KNLG_SYMBOL );
+         asset       confidential_supply        = asset( 0, KNLG_SYMBOL ); ///< total asset held in confidential balances
 
 //         asset       current_sbd_supply         = asset( 0, SBD_SYMBOL );
 //         asset       confidential_sbd_supply    = asset( 0, SBD_SYMBOL ); ///< total asset held in confidential balances
-//         asset       total_vesting_fund_nlg   = asset( 0, NLG_SYMBOL );
+//         asset       total_vesting_fund_nlg   = asset( 0, KNLG_SYMBOL );
 //         asset       total_vesting_shares       = asset( 0, VESTS_SYMBOL );
 
-         asset       total_reward_fund_knowledgr    = asset( 0, NLG_SYMBOL );
+         asset       total_reward_fund_knowledgr    = asset( 0, KNLG_SYMBOL );
          fc::uint128 total_reward_shares2; ///< the running total of REWARD^2
 
 //         asset       pending_rewarded_vesting_shares = asset( 0, VESTS_SYMBOL );
-//         asset       pending_rewarded_vesting_nlg = asset( 0, NLG_SYMBOL );
+//         asset       pending_rewarded_vesting_nlg = asset( 0, KNLG_SYMBOL );
 
 //          price       get_vesting_share_price() const
 //          {
 //             if ( total_vesting_fund_nlg.amount == 0 || total_vesting_shares.amount == 0 )
-//                return price ( asset( 1000, NLG_SYMBOL ), asset( 1000000, VESTS_SYMBOL ) );
+//                return price ( asset( 1000, KNLG_SYMBOL ), asset( 1000000, VESTS_SYMBOL ) );
 // 
 //             return price( total_vesting_shares, total_vesting_fund_nlg );
 //          }

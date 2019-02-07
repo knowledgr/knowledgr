@@ -56,8 +56,8 @@ namespace knowledgr { namespace chain {
 #ifdef KNOWLEDGR_ENABLE_SMT
             , allowed_vote_assets( a )
 #endif
-			, citations( a ) //~~~~~NLG~~~~~
-			, exp_categories( a ) //~~~~~NLG~~~~~
+			, citations( a ) //~~~~~KNLG~~~~~
+			, exp_categories( a ) //~~~~~KNLG~~~~~
          {
             c( *this );
          }
@@ -68,7 +68,7 @@ namespace knowledgr { namespace chain {
 			 hypothesis,
 			 review,
 			 none
-		 };//~~~~~NLG~~~~~
+		 };//~~~~~KNLG~~~~~
          id_type           id;
 
          shared_string     category;
@@ -99,9 +99,9 @@ namespace knowledgr { namespace chain {
          uint16_t          reward_weight = 0;
 
          /** tracks the total payout this comment has received over time, measured in SBD */
-         asset             total_payout_value = asset(0, NLG_SYMBOL); ///~~~~~NLG~~~~~
-         asset             curator_payout_value = asset(0, NLG_SYMBOL); ///~~~~~NLG~~~~~
-         asset             beneficiary_payout_value = asset( 0, NLG_SYMBOL ); ///~~~~~NLG~~~~~
+         asset             total_payout_value = asset(0, KNLG_SYMBOL); ///~~~~~KNLG~~~~~
+         asset             curator_payout_value = asset(0, KNLG_SYMBOL); ///~~~~~KNLG~~~~~
+         asset             beneficiary_payout_value = asset( 0, KNLG_SYMBOL ); ///~~~~~KNLG~~~~~
 
          share_type        author_rewards = 0;
 
@@ -109,8 +109,8 @@ namespace knowledgr { namespace chain {
 
          id_type           root_comment;
 
-         asset             max_accepted_payout = asset( 100000000/*1000000000*/, NLG_SYMBOL );  ///~~~~~NLG~~~~~      /// NLG value of the maximum payout this post will receive
-         uint16_t          percent_knowledgr_dollars = KNOWLEDGR_100_PERCENT;  ///~~~~~NLG~~~~~ WILL BE IGNORED In Future. /// the percent of Knowledgr Dollars to key, unkept amounts will be received as Knowledgr Power
+         asset             max_accepted_payout = asset( 100000000/*1000000000*/, KNLG_SYMBOL );  ///~~~~~KNLG~~~~~      /// KNLG value of the maximum payout this post will receive
+         uint16_t          percent_knowledgr_dollars = KNOWLEDGR_100_PERCENT;  ///~~~~~KNLG~~~~~ WILL BE IGNORED In Future. /// the percent of Knowledgr Dollars to key, unkept amounts will be received as Knowledgr Power
          bool              allow_replies = true;      /// allows a post to disable replies.
          bool              allow_votes   = true;      /// allows a post to receive votes;
          bool              allow_curation_rewards = true;
@@ -121,11 +121,11 @@ namespace knowledgr { namespace chain {
          using t_votable_assets = t_vector< t_pair< asset_symbol_type, votable_asset_info > >;
          t_votable_assets  allowed_vote_assets;
 #endif
-		 comment_type		type = none; //~~~~~NLG~~~~~
-		 using t_citations = t_vector< id_type >;//~~~~~NLG~~~~~
-		 t_citations citations; //~~~~~NLG~~~~~
-		 using t_exp_categories = t_vector< protocol::expertise_category >;//~~~~~NLG~~~~~
-		 t_exp_categories exp_categories; //~~~~~NLG~~~~~
+		 comment_type		type = none; //~~~~~KNLG~~~~~
+		 using t_citations = t_vector< id_type >;//~~~~~KNLG~~~~~
+		 t_citations citations; //~~~~~KNLG~~~~~
+		 using t_exp_categories = t_vector< protocol::expertise_category >;//~~~~~KNLG~~~~~
+		 t_exp_categories exp_categories; //~~~~~KNLG~~~~~
    };
 
    class comment_content_object : public object< comment_content_object_type, comment_content_object >
@@ -275,7 +275,7 @@ namespace knowledgr { namespace chain {
 
 } } // knowledgr::chain
 
-FC_REFLECT_ENUM( knowledgr::chain::comment_object::comment_type, (observation)(question)(hypothesis)(review)(none) )//~~~~~NLG~~~~~
+FC_REFLECT_ENUM( knowledgr::chain::comment_object::comment_type, (observation)(question)(hypothesis)(review)(none) )//~~~~~KNLG~~~~~
 #ifdef KNOWLEDGR_ENABLE_SMT
 FC_REFLECT( knowledgr::chain::comment_object,
              (id)(author)(permlink)
@@ -287,7 +287,7 @@ FC_REFLECT( knowledgr::chain::comment_object,
              (total_vote_weight)(reward_weight)(total_payout_value)(curator_payout_value)(beneficiary_payout_value)(author_rewards)(net_votes)(root_comment)
              (max_accepted_payout)(percent_knowledgr_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)(allowed_vote_assets)
-			 (type)(citations)(exp_categories)//~~~~~NLG~~~~~
+			 (type)(citations)(exp_categories)//~~~~~KNLG~~~~~
           )
 #else
 FC_REFLECT( knowledgr::chain::comment_object,
@@ -300,7 +300,7 @@ FC_REFLECT( knowledgr::chain::comment_object,
              (total_vote_weight)(reward_weight)(total_payout_value)(curator_payout_value)(beneficiary_payout_value)(author_rewards)(net_votes)(root_comment)
              (max_accepted_payout)(percent_knowledgr_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)
-			 (type)(citations)(exp_categories)//~~~~~NLG~~~~~
+			 (type)(citations)(exp_categories)//~~~~~KNLG~~~~~
           )
 #endif
 CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::comment_object, knowledgr::chain::comment_index )

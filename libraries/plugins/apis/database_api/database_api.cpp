@@ -34,8 +34,8 @@ class database_api_impl
          (list_witness_votes)
          (get_active_witnesses)
 		 (list_accounts)
-		 (list_pending_stakes)///~~~~~NLG~~~~~
-		 (find_pending_stake)///~~~~~NLG~~~~~
+		 (list_pending_stakes)///~~~~~KNLG~~~~~
+		 (find_pending_stake)///~~~~~KNLG~~~~~
          (find_accounts)
          (list_owner_histories)
          (find_owner_histories)
@@ -297,7 +297,7 @@ DEFINE_API_IMPL( database_api_impl, get_active_witnesses )
 }
 
 
-///~~~~~NLG~~~~~{
+///~~~~~KNLG~~~~~{
 //////////////////////////////////////////////////////////////////////
 //                                                                  //
 // Stakes                                                           //
@@ -327,7 +327,7 @@ DEFINE_API_IMPL( database_api_impl, list_pending_stakes )
 	}
 	return result;
 }
-///~~~~~NLG~~~~~}
+///~~~~~KNLG~~~~~}
 
 //////////////////////////////////////////////////////////////////////
 //                                                                  //
@@ -1317,8 +1317,8 @@ DEFINE_API_IMPL( database_api_impl, get_order_book )
    FC_ASSERT( args.limit <= DATABASE_API_SINGLE_QUERY_LIMIT );
    get_order_book_return result;
 
-   auto max_sell = price::max( SBD_SYMBOL, NLG_SYMBOL );
-   auto max_buy = price::max( NLG_SYMBOL, SBD_SYMBOL );
+   auto max_sell = price::max( SBD_SYMBOL, KNLG_SYMBOL );
+   auto max_buy = price::max( KNLG_SYMBOL, SBD_SYMBOL );
 
    const auto& limit_price_idx = _db.get_index< chain::limit_order_index >().indices().get< chain::by_price >();
    auto sell_itr = limit_price_idx.lower_bound( max_sell );
@@ -1338,7 +1338,7 @@ DEFINE_API_IMPL( database_api_impl, get_order_book )
       result.bids.push_back( cur );
       ++sell_itr;
    }
-   while( buy_itr != end && buy_itr->sell_price.base.symbol == NLG_SYMBOL && result.asks.size() < args.limit )
+   while( buy_itr != end && buy_itr->sell_price.base.symbol == KNLG_SYMBOL && result.asks.size() < args.limit )
    {
       auto itr = buy_itr;
       order cur;
@@ -1346,7 +1346,7 @@ DEFINE_API_IMPL( database_api_impl, get_order_book )
       cur.real_price = 0.0;
       // cur.real_price  = (~cur.order_price).to_real();
       cur.knowledgr   = itr->for_sale;
-      cur.sbd     = ( asset( itr->for_sale, NLG_SYMBOL ) * cur.order_price ).amount;
+      cur.sbd     = ( asset( itr->for_sale, KNLG_SYMBOL ) * cur.order_price ).amount;
       cur.created = itr->created;
       result.asks.push_back( cur );
       ++buy_itr;
@@ -1504,8 +1504,8 @@ DEFINE_READ_APIS( database_api,
    (list_witness_votes)
    (get_active_witnesses)
    (list_accounts)
-   (list_pending_stakes)///~~~~~NLG~~~~~
-   (find_pending_stake)///~~~~~NLG~~~~~
+   (list_pending_stakes)///~~~~~KNLG~~~~~
+   (find_pending_stake)///~~~~~KNLG~~~~~
    (find_accounts)
    (list_owner_histories)
    (find_owner_histories)

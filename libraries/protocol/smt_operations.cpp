@@ -29,7 +29,7 @@ void smt_create_operation::validate()const
    smt_base_operation::validate();
    FC_ASSERT( smt_creation_fee.amount >= 0, "fee cannot be negative" );
    FC_ASSERT( smt_creation_fee.amount <= KNOWLEDGR_MAX_SHARE_SUPPLY, "Fee must be smaller than KNOWLEDGR_MAX_SHARE_SUPPLY" );
-   FC_ASSERT( is_asset_type( smt_creation_fee, NLG_SYMBOL ) || is_asset_type( smt_creation_fee, SBD_SYMBOL ), "Fee must be NLG or SBD" );
+   FC_ASSERT( is_asset_type( smt_creation_fee, KNLG_SYMBOL ) || is_asset_type( smt_creation_fee, SBD_SYMBOL ), "Fee must be KNLG or SBD" );
    FC_ASSERT( symbol.decimals() == precision, "Mismatch between redundantly provided precision ${prec1} vs ${prec2}",
       ("prec1",symbol.decimals())("prec2",precision) );
 }
@@ -280,7 +280,7 @@ void smt_refund_operation::validate()const
 {
    smt_executor_base_operation::validate();
    FC_ASSERT( is_valid_account_name( contributor ) );
-   FC_ASSERT( amount.symbol == NLG_SYMBOL );
+   FC_ASSERT( amount.symbol == KNLG_SYMBOL );
 }
 
 void smt_cap_reveal_operation::validate()const

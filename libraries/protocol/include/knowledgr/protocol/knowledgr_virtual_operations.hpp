@@ -7,14 +7,14 @@
 
 namespace knowledgr { namespace protocol {
 
-   struct author_reward_operation : public virtual_operation {///~~~~~NLG~~~~~ I Changed here, remove sbd, vesting tokens...
+   struct author_reward_operation : public virtual_operation {///~~~~~KNLG~~~~~ I Changed here, remove sbd, vesting tokens...
       author_reward_operation(){}
       author_reward_operation( const account_name_type& a, const string& p, const asset& nlg )
          :author(a), permlink(p), payout(nlg) {}
 
       account_name_type author;
       string            permlink;
-      asset             payout; /// Reward by NLG Token
+      asset             payout; /// Reward by KNLG Token
    };
 
 
@@ -25,7 +25,7 @@ namespace knowledgr { namespace protocol {
          :curator(c), reward(r), comment_author(a), comment_permlink(p) {}
 
       account_name_type curator;
-      asset             reward; /// Reward by NLG Token
+      asset             reward; /// Reward by KNLG Token
       account_name_type comment_author;
       string            comment_permlink;
    };
@@ -126,7 +126,7 @@ namespace knowledgr { namespace protocol {
       string            memo;
    };
 
-   ///~~~~~NLG~~~~~}
+   ///~~~~~KNLG~~~~~}
    struct stake_process_time_operation : public virtual_operation
    {
 	   stake_process_time_operation() {}
@@ -138,7 +138,7 @@ namespace knowledgr { namespace protocol {
 	   uint32_t          type;///0-stake, 1-unstake
 	   time_point_sec    created;
    };
-   ///~~~~~NLG~~~~~}
+   ///~~~~~KNLG~~~~~}
 
    struct hardfork_operation : public virtual_operation
    {
@@ -167,7 +167,7 @@ namespace knowledgr { namespace protocol {
    };
 
    struct comment_benefactor_reward_operation : public virtual_operation
-   {///~~~~~NLG~~~~~ HERE, TOO, removed sbd, vesting ...
+   {///~~~~~KNLG~~~~~ HERE, TOO, removed sbd, vesting ...
       comment_benefactor_reward_operation() {}
       comment_benefactor_reward_operation( const account_name_type& b, const account_name_type& a, const string& p, const asset& s )
          : benefactor( b ), author( a ), permlink( p ), payout( s ) {}
@@ -195,7 +195,7 @@ namespace knowledgr { namespace protocol {
 
 } } //knowledgr::protocol
 
-FC_REFLECT( knowledgr::protocol::author_reward_operation, (author)(permlink)(payout) )///~~~~~NLG~~~~~ remove sbd, vesting...
+FC_REFLECT( knowledgr::protocol::author_reward_operation, (author)(permlink)(payout) )///~~~~~KNLG~~~~~ remove sbd, vesting...
 FC_REFLECT( knowledgr::protocol::curation_reward_operation, (curator)(reward)(comment_author)(comment_permlink) )
 FC_REFLECT( knowledgr::protocol::comment_reward_operation, (author)(permlink)(payout) )
 FC_REFLECT( knowledgr::protocol::fill_convert_request_operation, (owner)(requestid)(amount_in)(amount_out) )
@@ -205,10 +205,10 @@ FC_REFLECT( knowledgr::protocol::fill_vesting_withdraw_operation, (from_account)
 FC_REFLECT( knowledgr::protocol::shutdown_witness_operation, (owner) )
 FC_REFLECT( knowledgr::protocol::fill_order_operation, (current_owner)(current_orderid)(current_pays)(open_owner)(open_orderid)(open_pays) )
 FC_REFLECT( knowledgr::protocol::fill_transfer_from_savings_operation, (from)(to)(amount)(request_id)(memo) )
-FC_REFLECT( knowledgr::protocol::stake_process_time_operation, (account)(amount)(type)(created) )///~~~~~NLG~~~~~
+FC_REFLECT( knowledgr::protocol::stake_process_time_operation, (account)(amount)(type)(created) )///~~~~~KNLG~~~~~
 FC_REFLECT( knowledgr::protocol::hardfork_operation, (hardfork_id) )
 FC_REFLECT( knowledgr::protocol::comment_payout_update_operation, (author)(permlink) )
 FC_REFLECT( knowledgr::protocol::return_vesting_delegation_operation, (account)(nlg_tokens/*vesting_shares*/) )
-FC_REFLECT( knowledgr::protocol::comment_benefactor_reward_operation, (benefactor)(author)(permlink)(payout)/*(nlg_payout)(vesting_payout)*/ )///~~~~~NLG~~~~~
+FC_REFLECT( knowledgr::protocol::comment_benefactor_reward_operation, (benefactor)(author)(permlink)(payout)/*(nlg_payout)(vesting_payout)*/ )///~~~~~KNLG~~~~~
 FC_REFLECT( knowledgr::protocol::producer_reward_operation, (producer)(nlg_tokens/*vesting_shares*/) )
 FC_REFLECT( knowledgr::protocol::clear_null_account_balance_operation, (total_cleared) )

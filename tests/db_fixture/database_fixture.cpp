@@ -296,7 +296,7 @@ const account_object& database_fixture::account_create(
       account_create_operation op;
       op.new_account_name = name;
       op.creator = creator;
-      op.fee = asset( actual_fee, NLG_SYMBOL );
+      op.fee = asset( actual_fee, KNLG_SYMBOL );
       op.owner = authority( 1, key, 1 );
       op.active = authority( 1, key, 1 );
       op.posting = authority( 1, post_key, 1 );
@@ -313,7 +313,7 @@ const account_object& database_fixture::account_create(
 
       if( fee_remainder > 0 )
       {
-         //vest( KNOWLEDGR_INIT_MINER_NAME, name, asset( fee_remainder, NLG_SYMBOL ) );
+         //vest( KNOWLEDGR_INIT_MINER_NAME, name, asset( fee_remainder, KNLG_SYMBOL ) );
       }
 
       const account_object& acct = db->get_account( name );
@@ -364,7 +364,7 @@ const witness_object& database_fixture::witness_create(
       op.owner = owner;
       op.url = url;
       op.block_signing_key = signing_key;
-      op.fee = asset( fee, NLG_SYMBOL );
+      op.fee = asset( fee, KNLG_SYMBOL );
 
       trx.operations.push_back( op );
       trx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
@@ -385,7 +385,7 @@ void database_fixture::fund(
 {
    try
    {
-      transfer( KNOWLEDGR_INIT_MINER_NAME, account_name, asset( amount, NLG_SYMBOL ) );
+      transfer( KNOWLEDGR_INIT_MINER_NAME, account_name, asset( amount, KNLG_SYMBOL ) );
 
    } FC_CAPTURE_AND_RETHROW( (account_name)(amount) )
 }
@@ -409,20 +409,20 @@ void database_fixture::fund(
 
          db.modify( db.get_account( account_name ), [&]( account_object& a )
          {
-            if( amount.symbol == NLG_SYMBOL )
+            if( amount.symbol == KNLG_SYMBOL )
                a.balance += amount;
-///~~~~~NLG~~~~~{ NO NEED for Knowledgr
+///~~~~~KNLG~~~~~{ NO NEED for Knowledgr
 //             else if( amount.symbol == SBD_SYMBOL )
 //             {
 //                a.sbd_balance += amount;
 //                a.sbd_seconds_last_update = db.head_block_time();
 //             }
-///~~~~~NLG~~~~~} NO NEED for Knowledgr
+///~~~~~KNLG~~~~~} NO NEED for Knowledgr
          });
 
          db.modify( db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
          {
-            if( amount.symbol == NLG_SYMBOL )
+            if( amount.symbol == KNLG_SYMBOL )
                gpo.current_supply += amount;
 //             else if( amount.symbol == SBD_SYMBOL )
 //                gpo.current_sbd_supply += amount;
@@ -434,7 +434,7 @@ void database_fixture::fund(
 //             if( median_feed.current_median_history.is_null() )
 //                db.modify( median_feed, [&]( feed_history_object& f )
 //                {
-//                   f.current_median_history = price( asset( 1, SBD_SYMBOL ), asset( 1, NLG_SYMBOL ) );
+//                   f.current_median_history = price( asset( 1, SBD_SYMBOL ), asset( 1, KNLG_SYMBOL ) );
 //                });
 //          }
 
@@ -450,7 +450,7 @@ void database_fixture::fund(
 // {
 //    try
 //    {
-//       if ( amount.symbol == NLG_SYMBOL )
+//       if ( amount.symbol == KNLG_SYMBOL )
 //       {
 //          db->adjust_balance( account_name, -amount );
 //          db->adjust_balance( account_name, db->to_sbd( amount ) );
@@ -497,7 +497,7 @@ void database_fixture::transfer(
 // {
 //    try
 //    {
-//       FC_ASSERT( amount.symbol == NLG_SYMBOL, "Can only vest TESTS" );
+//       FC_ASSERT( amount.symbol == KNLG_SYMBOL, "Can only vest TESTS" );
 // 
 //       transfer_to_vesting_operation op;
 //       op.from = from;
@@ -527,7 +527,7 @@ void database_fixture::transfer(
 //       transfer_to_vesting_operation op;
 //       op.from = from;
 //       op.to = "";
-//       op.amount = asset( amount, NLG_SYMBOL );
+//       op.amount = asset( amount, KNLG_SYMBOL );
 // 
 //       trx.operations.push_back( op );
 //       trx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );

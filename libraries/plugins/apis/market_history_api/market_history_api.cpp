@@ -38,9 +38,9 @@ DEFINE_API_IMPL( market_history_api_impl, get_ticker )
 
    if( itr != bucket_idx.end() )
    {
-      auto open = ASSET_TO_REAL( asset( itr->non_knowledgr.open, SBD_SYMBOL ) ) / ASSET_TO_REAL( asset( itr->knowledgr.open, NLG_SYMBOL ) );
+      auto open = ASSET_TO_REAL( asset( itr->non_knowledgr.open, SBD_SYMBOL ) ) / ASSET_TO_REAL( asset( itr->knowledgr.open, KNLG_SYMBOL ) );
       itr = bucket_idx.lower_bound( boost::make_tuple( 0, _db.head_block_time() ) );
-      result.latest = ASSET_TO_REAL( asset( itr->non_knowledgr.close, SBD_SYMBOL ) ) / ASSET_TO_REAL( asset( itr->knowledgr.close, NLG_SYMBOL ) );
+      result.latest = ASSET_TO_REAL( asset( itr->non_knowledgr.close, SBD_SYMBOL ) ) / ASSET_TO_REAL( asset( itr->knowledgr.close, KNLG_SYMBOL ) );
       result.percent_change = ( (result.latest - open ) / open ) * 100;
    }
 
@@ -83,7 +83,7 @@ DEFINE_API_IMPL( market_history_api_impl, get_order_book )
    FC_ASSERT( args.limit <= 500 );
 
    const auto& order_idx = _db.get_index< chain::limit_order_index, chain::by_price >();
-   auto itr = order_idx.lower_bound( price::max( SBD_SYMBOL, NLG_SYMBOL ) );
+   auto itr = order_idx.lower_bound( price::max( SBD_SYMBOL, KNLG_SYMBOL ) );
 
    get_order_book_return result;
 
@@ -99,15 +99,15 @@ DEFINE_API_IMPL( market_history_api_impl, get_order_book )
       ++itr;
    }
 
-   itr = order_idx.lower_bound( price::max( NLG_SYMBOL, SBD_SYMBOL ) );
+   itr = order_idx.lower_bound( price::max( KNLG_SYMBOL, SBD_SYMBOL ) );
 
-   while( itr != order_idx.end() && itr->sell_price.base.symbol == NLG_SYMBOL && result.asks.size() < args.limit )
+   while( itr != order_idx.end() && itr->sell_price.base.symbol == KNLG_SYMBOL && result.asks.size() < args.limit )
    {
       order cur;
       cur.order_price = itr->sell_price;
       cur.real_price = ASSET_TO_REAL( itr->sell_price.quote ) / ASSET_TO_REAL( itr->sell_price.base );
       cur.knowledgr = itr->for_sale;
-      cur.sbd = ( asset( itr->for_sale, NLG_SYMBOL ) * itr->sell_price ).amount;
+      cur.sbd = ( asset( itr->for_sale, KNLG_SYMBOL ) * itr->sell_price ).amount;
       cur.created = itr->created;
       result.asks.push_back( cur );
       ++itr;

@@ -27,10 +27,10 @@ namespace knowledgr { namespace protocol {
             //convert_operation,
 
 			account_create_operation,
-			account_admin_update_operation,///~~~~~NLG~~~~~
-			account_expertise_update_operation,///~~~~~NLG~~~~~
-			stake_request_operation,///~~~~~NLG~~~~~
-			stake_process_operation,///~~~~~NLG~~~~~
+			account_admin_update_operation,///~~~~~KNLG~~~~~
+			account_expertise_update_operation,///~~~~~KNLG~~~~~
+			stake_request_operation,///~~~~~KNLG~~~~~
+			stake_process_operation,///~~~~~KNLG~~~~~
             account_update_operation,
 
             witness_update_operation,
@@ -93,7 +93,7 @@ namespace knowledgr { namespace protocol {
             fill_order_operation,
             shutdown_witness_operation,
             fill_transfer_from_savings_operation,
-			stake_process_time_operation,///~~~~~NLG~~~~~
+			stake_process_time_operation,///~~~~~KNLG~~~~~
             hardfork_operation,
             comment_payout_update_operation,
             return_vesting_delegation_operation,

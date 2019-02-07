@@ -93,11 +93,11 @@ namespace detail
             (get_active_votes)
             (get_account_votes)
             (get_content)
-			(get_content_count)///~~~~~NLG~~~~~
-			(list_comments)///~~~~~NLG~~~~~
-			(get_content_parent_series)///~~~~~NLG~~~~~
-			(list_pending_stakes)///~~~~~NLG~~~~~
-			(find_pending_stake)///~~~~~NLG~~~~~
+			(get_content_count)///~~~~~KNLG~~~~~
+			(list_comments)///~~~~~KNLG~~~~~
+			(get_content_parent_series)///~~~~~KNLG~~~~~
+			(list_pending_stakes)///~~~~~KNLG~~~~~
+			(find_pending_stake)///~~~~~KNLG~~~~~
             (get_content_replies)
             (get_tags_used_by_author)
             (get_post_discussions_by_payout)
@@ -143,7 +143,7 @@ namespace detail
          void set_pending_payout( discussion& d );
 
          void on_post_apply_block( const signed_block& b );
-		 void set_url( discussion& d )const;//~~~~~NLG~~~~~
+		 void set_url( discussion& d )const;//~~~~~KNLG~~~~~
          knowledgr::plugins::chain::chain_plugin&                              _chain;
 
          chain::database&                                                  _db;
@@ -295,10 +295,10 @@ namespace detail
                            break;
                         case operation::tag<account_create_operation>::value:
 						case operation::tag<account_update_operation>::value:
-						case operation::tag<account_admin_update_operation>::value:///~~~~~NLG~~~~~
-						case operation::tag<account_expertise_update_operation>::value:///~~~~~NLG~~~~~
-						case operation::tag<stake_request_operation>::value:///~~~~~NLG~~~~~
-						case operation::tag<stake_process_operation>::value:///~~~~~NLG~~~~~
+						case operation::tag<account_admin_update_operation>::value:///~~~~~KNLG~~~~~
+						case operation::tag<account_expertise_update_operation>::value:///~~~~~KNLG~~~~~
+						case operation::tag<stake_request_operation>::value:///~~~~~KNLG~~~~~
+						case operation::tag<stake_process_operation>::value:///~~~~~KNLG~~~~~
                         case operation::tag<witness_update_operation>::value:
                         case operation::tag<pow_operation>::value:
                         case operation::tag<custom_operation>::value:
@@ -1212,7 +1212,7 @@ namespace detail
       {
          result.push_back( *itr );
 
-         // if( itr->sell_price.base.symbol == NLG_SYMBOL )
+         // if( itr->sell_price.base.symbol == KNLG_SYMBOL )
          //    result.back().real_price = (~result.back().sell_price).to_real();
          // else
          //    result.back().real_price = (result.back().sell_price).to_real();
@@ -1348,7 +1348,7 @@ namespace detail
 
       return content;
    }
-   ///~~~~~NLG~~~~~{
+   ///~~~~~KNLG~~~~~{
    DEFINE_API_IMPL( condenser_api_impl, get_content_count )
    {
 	   CHECK_ARG_SIZE( 0 )
@@ -1424,7 +1424,7 @@ namespace detail
 	   }
 	   return result;
    }
-   ///~~~~~NLG~~~~~}
+   ///~~~~~KNLG~~~~~}
    DEFINE_API_IMPL( condenser_api_impl, get_content_replies )
    {
       CHECK_ARG_SIZE( 2 )
@@ -2035,7 +2035,7 @@ namespace detail
          auto itr = cidx.lower_bound( d.id );
          if( itr != cidx.end() && itr->comment == d.id )
          {
-            d.promoted = legacy_asset::from_asset( asset( itr->promoted_balance, NLG_SYMBOL/*SBD_SYMBOL*/ ) );
+            d.promoted = legacy_asset::from_asset( asset( itr->promoted_balance, KNLG_SYMBOL/*SBD_SYMBOL*/ ) );
          }
       }
 
@@ -2097,7 +2097,7 @@ namespace detail
       if( root.id != d.id )
          d.url += "#@" + d.author + "/" + d.permlink;
    }
-   //~~~~~NLG~~~~~{
+   //~~~~~KNLG~~~~~{
    void condenser_api_impl::set_url( discussion& d )const
    {
 	   const database_api::api_comment_object root( _db.get_comment( d.root_author, d.root_permlink ), _db );
@@ -2106,7 +2106,7 @@ namespace detail
 	   if( root.id != d.id )
 		   d.url += "#@" + d.author + "/" + d.permlink;
    }
-   //~~~~~NLG~~~~~}
+   //~~~~~KNLG~~~~~}
    void condenser_api_impl::on_post_apply_block( const signed_block& b )
    { try {
       boost::lock_guard< boost::mutex > guard( _mtx );
@@ -2154,7 +2154,7 @@ namespace detail
 uint16_t api_account_object::_compute_voting_power( const database_api::api_account_object& a )
 {
 	return 0;
-#if 0///~~~~~NLG~~~~~{
+#if 0///~~~~~KNLG~~~~~{
 //    if( a.voting_manabar.last_update_time < KNOWLEDGR_HARDFORK_0_20_TIME )
 //       return (uint16_t) a.voting_manabar.current_mana;
 // 
@@ -2186,7 +2186,7 @@ uint16_t api_account_object::_compute_voting_power( const database_api::api_acco
 //    uint16_t vp_t1 = uint16_t( vp_t2u ) - uint16_t( std::min( vp_t2u, vp_dt ) );
 // 
 //    return vp_t1;
-#endif///~~~~~NLG~~~~~}
+#endif///~~~~~KNLG~~~~~}
 }
 
 condenser_api::condenser_api()
@@ -2316,11 +2316,11 @@ DEFINE_READ_APIS( condenser_api,
    (get_active_votes)
    (get_account_votes)
    (get_content)
-   (get_content_count)///~~~~~NLG~~~~~
-   (list_comments)///~~~~~NLG~~~~~
-   (get_content_parent_series)///~~~~~NLG~~~~~
-   (list_pending_stakes)///~~~~~NLG~~~~~
-   (find_pending_stake)///~~~~~NLG~~~~~
+   (get_content_count)///~~~~~KNLG~~~~~
+   (list_comments)///~~~~~KNLG~~~~~
+   (get_content_parent_series)///~~~~~KNLG~~~~~
+   (list_pending_stakes)///~~~~~KNLG~~~~~
+   (find_pending_stake)///~~~~~KNLG~~~~~
    (get_content_replies)
    (get_tags_used_by_author)
    (get_post_discussions_by_payout)

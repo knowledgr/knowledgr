@@ -27,7 +27,7 @@ public:
    id_type             id;
    /// Name of the account, the balance is held for.
    account_name_type   owner;
-   asset               liquid;   /// 'balance' for NLG
+   asset               liquid;   /// 'balance' for KNLG
 //   asset               vesting;  /// 'vesting_shares' for VESTS
 
    /** Set of simple methods that allow unification of
@@ -52,7 +52,7 @@ public:
    ///@}
 
    bool validate() const
-   { return liquid.symbol == NLG_SYMBOL/*vesting.symbol.get_paired_symbol()*/; }
+   { return liquid.symbol == KNLG_SYMBOL/*vesting.symbol.get_paired_symbol()*/; }
 };
 
 /**
@@ -75,7 +75,7 @@ public:
    id_type             id;
    /// Name of the account, the balance is held for.
    account_name_type   owner;
-   asset               pending_liquid;          /// 'reward_nlg_balance' for pending NLG
+   asset               pending_liquid;          /// 'reward_nlg_balance' for pending KNLG
 //    asset               pending_vesting_shares;  /// 'reward_vesting_balance' for pending VESTS
 //    asset               pending_vesting_value;   /// 'reward_vesting_nlg' for pending VESTS
 
