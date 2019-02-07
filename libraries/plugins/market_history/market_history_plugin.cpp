@@ -68,11 +68,11 @@ void market_history_plugin_impl::on_post_apply_operation( const operation_notifi
                b.open = open;
                b.seconds = bucket;
 
-               b.knowledgr.fill( ( op.open_pays.symbol == NLG_SYMBOL ) ? op.open_pays.amount : op.current_pays.amount );
+               b.knowledgr.fill( ( op.open_pays.symbol == KNLG_SYMBOL ) ? op.open_pays.amount : op.current_pays.amount );
 #ifdef KNOWLEDGR_ENABLE_SMT
-                  b.symbol = ( op.open_pays.symbol == NLG_SYMBOL ) ? op.current_pays.symbol : op.open_pays.symbol;
+                  b.symbol = ( op.open_pays.symbol == KNLG_SYMBOL ) ? op.current_pays.symbol : op.open_pays.symbol;
 #endif
-                  b.non_knowledgr.fill( ( op.open_pays.symbol == NLG_SYMBOL ) ? op.current_pays.amount : op.open_pays.amount );
+                  b.non_knowledgr.fill( ( op.open_pays.symbol == KNLG_SYMBOL ) ? op.current_pays.amount : op.open_pays.amount );
             });
          }
          else
@@ -80,9 +80,9 @@ void market_history_plugin_impl::on_post_apply_operation( const operation_notifi
             _db.modify( *itr, [&]( bucket_object& b )
             {
 #ifdef KNOWLEDGR_ENABLE_SMT
-               b.symbol = ( op.open_pays.symbol == NLG_SYMBOL ) ? op.current_pays.symbol : op.open_pays.symbol;
+               b.symbol = ( op.open_pays.symbol == KNLG_SYMBOL ) ? op.current_pays.symbol : op.open_pays.symbol;
 #endif
-               if( op.open_pays.symbol == NLG_SYMBOL )
+               if( op.open_pays.symbol == KNLG_SYMBOL )
                {
                   b.knowledgr.volume += op.open_pays.amount;
                   b.knowledgr.close = op.open_pays.amount;

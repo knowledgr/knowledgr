@@ -17,7 +17,7 @@
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
-				Name="VCNLGompilerTool"
+				Name="VCKNLGompilerTool"
 				Optimization="0"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="TRUE"
@@ -65,7 +65,7 @@
 			ConfigurationType="1"
 			CharacterSet="2">
 			<Tool
-				Name="VCNLGompilerTool"
+				Name="VCKNLGompilerTool"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="4"
 				UsePrecompiledHeader="0"

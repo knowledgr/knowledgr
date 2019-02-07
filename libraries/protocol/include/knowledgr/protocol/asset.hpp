@@ -14,7 +14,7 @@ namespace knowledgr { namespace protocol {
          :amount(a),symbol(id){}
 
       asset()
-         :amount(0),symbol(NLG_SYMBOL){}
+         :amount(0),symbol(KNLG_SYMBOL){}
 
       share_type        amount;
       asset_symbol_type symbol;

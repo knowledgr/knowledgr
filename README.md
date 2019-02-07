@@ -33,7 +33,7 @@ Originally, Knowledgr was announced on the [Bitcointalk forum](https://bitcointa
 ## Technical Details
 
 
-* Currency symbol NLG
+* Currency symbol KNLG
 * SBD - Knowledgr's very own stable coin with a one-way peg
 * Delegated Proof-of-Stake Consensus (DPOS)
 * 10% APR inflation narrowing to 1% APR over 20 years

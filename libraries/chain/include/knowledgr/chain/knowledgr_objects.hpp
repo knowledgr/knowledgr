@@ -61,7 +61,7 @@ namespace knowledgr { namespace chain {
          account_name_type agent;
          time_point_sec    ratification_deadline;
          time_point_sec    escrow_expiration;
-///         asset             sbd_balance; ///~~~~~NLG~~~~~ NO NEED for Knowledgr
+///         asset             sbd_balance; ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
          asset             nlg_balance;
          asset             pending_fee;
          bool              to_approved = false;
@@ -102,7 +102,7 @@ namespace knowledgr { namespace chain {
     *  When a user is a taker, their volume decreases
     *
     *  Every 1000 blocks, the account that has the highest volume_weight() is paid the maximum of
-    *  1000 NLG or 1000 * virtual_supply / (100*blocks_per_year) aka 10 * virtual_supply / blocks_per_year
+    *  1000 KNLG or 1000 * virtual_supply / (100*blocks_per_year) aka 10 * virtual_supply / blocks_per_year
     *
     *  After being paid volume gets reset to 0
     */
@@ -267,7 +267,7 @@ namespace knowledgr { namespace chain {
 
          reward_fund_id_type     id;
          reward_fund_name_type   name;
-         asset                   reward_balance = asset( 0, NLG_SYMBOL );
+         asset                   reward_balance = asset( 0, KNLG_SYMBOL );
          fc::uint128_t           recent_claims = 0;
          time_point_sec          last_update;
          uint128_t               content_constant = 0;
@@ -277,7 +277,7 @@ namespace knowledgr { namespace chain {
          protocol::curve_id                curation_reward_curve;
    };
 
-   ///~~~~~NLG~~~~~{
+   ///~~~~~KNLG~~~~~{
    class stake_pending_object : public object< stake_pending_object_type, stake_pending_object >
    {
    public:
@@ -298,7 +298,7 @@ namespace knowledgr { namespace chain {
 	   time_point_sec		created;
 	   stake_type			type;
    };
-   ///~~~~~NLG~~~~~}
+   ///~~~~~KNLG~~~~~}
 
    struct by_price;
    struct by_expiration;
@@ -481,7 +481,7 @@ namespace knowledgr { namespace chain {
       allocator< reward_fund_object >
    > reward_fund_index;
 
-   ///~~~~~NLG~~~~~{
+   ///~~~~~KNLG~~~~~{
    struct by_created_before;
    typedef multi_index_container<
 	   stake_pending_object,
@@ -497,7 +497,7 @@ namespace knowledgr { namespace chain {
 	   >,
 	   allocator< stake_pending_object >
    > stake_pending_index;
-   ///~~~~~NLG~~~~~}
+   ///~~~~~KNLG~~~~~}
 
 } } // knowledgr::chain
 
@@ -531,7 +531,7 @@ CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::savings_withdraw_object, knowledgr::
 FC_REFLECT( knowledgr::chain::escrow_object,
              (id)(escrow_id)(from)(to)(agent)
              (ratification_deadline)(escrow_expiration)
-             /*(sbd_balance)*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+             /*(sbd_balance)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
 			 (nlg_balance)(pending_fee)
              (to_approved)(agent_approved)(disputed) )
 CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::escrow_object, knowledgr::chain::escrow_index )
@@ -554,8 +554,8 @@ FC_REFLECT( knowledgr::chain::reward_fund_object,
          )
 CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::reward_fund_object, knowledgr::chain::reward_fund_index )
 
-///~~~~~NLG~~~~~{
-FC_REFLECT_ENUM( knowledgr::chain::stake_pending_object::stake_type, (staking)(unstaking) )//~~~~~NLG~~~~~
+///~~~~~KNLG~~~~~{
+FC_REFLECT_ENUM( knowledgr::chain::stake_pending_object::stake_type, (staking)(unstaking) )//~~~~~KNLG~~~~~
 FC_REFLECT( knowledgr::chain::stake_pending_object,
 			(id)
 			(account)
@@ -564,5 +564,5 @@ FC_REFLECT( knowledgr::chain::stake_pending_object,
 			(type)
 		)
 CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::stake_pending_object, knowledgr::chain::stake_pending_index)
-///~~~~~NLG~~~~~}
+///~~~~~KNLG~~~~~}
 

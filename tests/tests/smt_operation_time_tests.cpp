@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       int64_t dave_knowledgr_volume = 0;
       time_point_sec dave_reward_last_update = fc::time_point_sec::min();
 
-      BOOST_TEST_MESSAGE( "Creating Limit Order for NLG that will stay on the books for 30 minutes exactly." );
+      BOOST_TEST_MESSAGE( "Creating Limit Order for KNLG that will stay on the books for 30 minutes exactly." );
 
       limit_order_create_operation op;
       op.owner = "alice";
@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       BOOST_TEST_MESSAGE( "Creating Limit Order for SMT that will stay on the books for 60 minutes." );
 
       op.owner = "sam";
-      op.amount_to_sell = asset( ( alice_smt.amount.value / 20 ), NLG_SYMBOL );
+      op.amount_to_sell = asset( ( alice_smt.amount.value / 20 ), KNLG_SYMBOL );
       op.min_to_receive = asset( ( alice_smt.amount.value / 20 ), any_smt_symbol );
       op.orderid = 3;
 
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
 
       op.owner = "bob";
       op.orderid = 4;
-      op.amount_to_sell = asset( ( alice_smt.amount.value / 10 ) * 3 - alice_smt.amount.value / 20, NLG_SYMBOL );
+      op.amount_to_sell = asset( ( alice_smt.amount.value / 10 ) * 3 - alice_smt.amount.value / 20, KNLG_SYMBOL );
       op.min_to_receive = asset( ( alice_smt.amount.value / 10 ) * 3 - alice_smt.amount.value / 20, any_smt_symbol );
 
       tx.signatures.clear();
@@ -186,7 +186,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       op.owner = "alice";
       op.orderid = 5;
       op.amount_to_sell = asset( ( alice_smt.amount.value / 10 ) * 3, any_smt_symbol );
-      op.min_to_receive = asset( ( alice_smt.amount.value / 10 ) * 3, NLG_SYMBOL );
+      op.min_to_receive = asset( ( alice_smt.amount.value / 10 ) * 3, KNLG_SYMBOL );
 
       tx.signatures.clear();
       tx.operations.clear();
@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       fill_order_op = ops[1].get< fill_order_operation >();
       BOOST_REQUIRE( fill_order_op.open_owner == "bob" );
       BOOST_REQUIRE( fill_order_op.open_orderid == 4 );
-      BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( ( alice_smt.amount.value / 10 ) * 3 - alice_smt.amount.value / 20, NLG_SYMBOL ).amount.value );
+      BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( ( alice_smt.amount.value / 10 ) * 3 - alice_smt.amount.value / 20, KNLG_SYMBOL ).amount.value );
       BOOST_REQUIRE( fill_order_op.current_owner == "alice" );
       BOOST_REQUIRE( fill_order_op.current_orderid == 5 );
       BOOST_REQUIRE( fill_order_op.current_pays.amount.value == asset( ( alice_smt.amount.value / 10 ) * 3 - alice_smt.amount.value / 20, any_smt_symbol ).amount.value );
@@ -214,7 +214,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       fill_order_op = ops[3].get< fill_order_operation >();
       BOOST_REQUIRE( fill_order_op.open_owner == "sam" );
       BOOST_REQUIRE( fill_order_op.open_orderid == 3 );
-      BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( alice_smt.amount.value / 20, NLG_SYMBOL ).amount.value );
+      BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( alice_smt.amount.value / 20, KNLG_SYMBOL ).amount.value );
       BOOST_REQUIRE( fill_order_op.current_owner == "alice" );
       BOOST_REQUIRE( fill_order_op.current_orderid == 5 );
       BOOST_REQUIRE( fill_order_op.current_pays.amount.value == asset( alice_smt.amount.value / 20, any_smt_symbol ).amount.value );
@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
 
       op.orderid = 6;
       op.amount_to_sell = asset( alice_smt.amount.value / 20 * 2, any_smt_symbol );
-      op.min_to_receive = asset( alice_smt.amount.value / 20 * 2, NLG_SYMBOL );
+      op.min_to_receive = asset( alice_smt.amount.value / 20 * 2, KNLG_SYMBOL );
 
       tx.signatures.clear();
       tx.operations.clear();
@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
 
       op.owner = "bob";
       op.orderid = 7;
-      op.amount_to_sell = asset( alice_smt.amount.value / 20, NLG_SYMBOL );
+      op.amount_to_sell = asset( alice_smt.amount.value / 20, KNLG_SYMBOL );
       op.min_to_receive = asset( alice_smt.amount.value / 20, any_smt_symbol );
 
       tx.signatures.clear();
@@ -277,7 +277,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( alice_smt.amount.value / 20, any_smt_symbol ).amount.value );
       BOOST_REQUIRE( fill_order_op.current_owner == "bob" );
       BOOST_REQUIRE( fill_order_op.current_orderid == 7 );
-      BOOST_REQUIRE( fill_order_op.current_pays.amount.value == asset( alice_smt.amount.value / 20, NLG_SYMBOL ).amount.value );
+      BOOST_REQUIRE( fill_order_op.current_pays.amount.value == asset( alice_smt.amount.value / 20, KNLG_SYMBOL ).amount.value );
 
       reward = liquidity_idx.find( db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
@@ -325,7 +325,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( alice_smt.amount.value / 20, any_smt_symbol ).amount.value );
       BOOST_REQUIRE( fill_order_op.current_owner == "sam" );
       BOOST_REQUIRE( fill_order_op.current_orderid == 8 );
-      BOOST_REQUIRE( fill_order_op.current_pays.amount.value == asset( alice_smt.amount.value / 20, NLG_SYMBOL ).amount.value );
+      BOOST_REQUIRE( fill_order_op.current_pays.amount.value == asset( alice_smt.amount.value / 20, KNLG_SYMBOL ).amount.value );
 
       reward = liquidity_idx.find( db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
@@ -363,7 +363,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       db->push_transaction( tx, 0 );
 
       op.owner = "alice";
-      op.amount_to_sell = asset( 8 * ( alice_smt.amount.value / 20 ), NLG_SYMBOL );
+      op.amount_to_sell = asset( 8 * ( alice_smt.amount.value / 20 ), KNLG_SYMBOL );
       op.min_to_receive = asset( op.amount_to_sell.amount, any_smt_symbol );
       op.orderid = 9;
       tx.operations.clear();
@@ -376,7 +376,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
 
       op.owner = "dave";
       op.amount_to_sell = asset( 7 * ( alice_smt.amount.value / 20 ), any_smt_symbol );;
-      op.min_to_receive = asset( op.amount_to_sell.amount, NLG_SYMBOL );
+      op.min_to_receive = asset( op.amount_to_sell.amount, KNLG_SYMBOL );
       op.orderid = 10;
       tx.operations.clear();
       tx.signatures.clear();
@@ -494,7 +494,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       op.owner = "bob";
       op.orderid = 12;
       op.amount_to_sell = asset( 3 * ( alice_smt.amount / 40 ), any_smt_symbol );
-      op.min_to_receive = asset( op.amount_to_sell.amount, NLG_SYMBOL );
+      op.min_to_receive = asset( op.amount_to_sell.amount, KNLG_SYMBOL );
       tx.operations.clear();
       tx.signatures.clear();
       tx.operations.push_back( op );
@@ -634,7 +634,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       op.owner = "alice";
       op.orderid = 15;
       op.amount_to_sell.symbol = any_smt_symbol;
-      op.min_to_receive.symbol = NLG_SYMBOL;
+      op.min_to_receive.symbol = KNLG_SYMBOL;
       tx.operations.clear();
       tx.signatures.clear();
       tx.operations.push_back( op );

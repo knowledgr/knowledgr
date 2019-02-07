@@ -50,7 +50,7 @@ struct manabar
 	   return used_mana;
    }
 
-#if 1 ///~~~~~NLG~~~~~{
+#if 1 ///~~~~~KNLG~~~~~{
 
 
 //    template< bool skip_cap_regen = false >
@@ -85,7 +85,7 @@ struct manabar
 //    {
 //       regenerate_mana< skip_cap_regen >( params, now.sec_since_epoch() );
 //    }
-#endif ///~~~~~NLG~~~~~}
+#endif ///~~~~~KNLG~~~~~}
 
    bool has_mana( int64_t mana_needed )const
    {
@@ -115,7 +115,7 @@ struct manabar
    }
 };
 
-///~~~~~NLG~~~~~{
+///~~~~~KNLG~~~~~{
 //	template< typename T >
 // int64_t get_effective_vesting_shares( const T& account )
 // {
@@ -136,7 +136,7 @@ struct manabar
 // 
 //    return effective_vesting_shares;
 // }
-///~~~~~NLG~~~~~}
+///~~~~~KNLG~~~~~}
 
 } } } // knowledgr::chain::util
 

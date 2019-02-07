@@ -25,16 +25,16 @@ namespace knowledgr { namespace chain {
       account_object() = delete;
 
       public:
-		  //~~~~~NLG~~~~~{
+		  //~~~~~KNLG~~~~~{
 		  enum account_member_of {
 			  user = 0,
 			  admin = 1,
 		  };
-		  //~~~~~NLG~~~~~}
+		  //~~~~~KNLG~~~~~}
          template<typename Constructor, typename Allocator>
          account_object( Constructor&& c, allocator< Allocator > a )
             :json_metadata( a ), 
-			expertises(a) //~~~~~NLG~~~~~
+			expertises(a) //~~~~~KNLG~~~~~
          {
             c(*this);
          };
@@ -60,8 +60,8 @@ namespace knowledgr { namespace chain {
          bool              can_vote = true;
          util::manabar     voting_manabar;
 
-         asset             balance = asset( 0, NLG_SYMBOL );  ///< total liquid shares held by this account
-         asset             savings_balance = asset( 0, NLG_SYMBOL );  ///< total liquid shares held by this account
+         asset             balance = asset( 0, KNLG_SYMBOL );  ///< total liquid shares held by this account
+         asset             savings_balance = asset( 0, KNLG_SYMBOL );  ///< total liquid shares held by this account
 
          /**
           *  SBD Deposits pay interest based upon the interest rate set by witnesses. The purpose of these
@@ -77,29 +77,29 @@ namespace knowledgr { namespace chain {
           *  @defgroup sbd_data sbd Balance Data
           */
          ///@{
-///         asset             sbd_balance = asset( 0, SBD_SYMBOL ); /// total sbd balance ///~~~~~NLG~~~~~ NO NEED for Knowledgr
-///         uint128_t         sbd_seconds; ///< total sbd * how long it has been hel ///~~~~~NLG~~~~~ NO NEED for Knowledgr
-///         time_point_sec    sbd_seconds_last_update; ///< the last time the sbd_seconds was updated ///~~~~~NLG~~~~~ NO NEED for Knowledgr
-///         time_point_sec    sbd_last_interest_payment; ///< used to pay interest at most once per month ///~~~~~NLG~~~~~ NO NEED for Knowledgr
+///         asset             sbd_balance = asset( 0, SBD_SYMBOL ); /// total sbd balance ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+///         uint128_t         sbd_seconds; ///< total sbd * how long it has been hel ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+///         time_point_sec    sbd_seconds_last_update; ///< the last time the sbd_seconds was updated ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+///         time_point_sec    sbd_last_interest_payment; ///< used to pay interest at most once per month ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 
 
-//          asset             savings_sbd_balance = asset( 0, SBD_SYMBOL ); /// total sbd balance ///~~~~~NLG~~~~~ NO NEED for Knowledgr
-//          uint128_t         savings_sbd_seconds; ///< total sbd * how long it has been hel ///~~~~~NLG~~~~~ NO NEED for Knowledgr
-//          time_point_sec    savings_sbd_seconds_last_update; ///< the last time the sbd_seconds was updated ///~~~~~NLG~~~~~ NO NEED for Knowledgr
-//          time_point_sec    savings_sbd_last_interest_payment; ///< used to pay interest at most once per month ///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//          asset             savings_sbd_balance = asset( 0, SBD_SYMBOL ); /// total sbd balance ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+//          uint128_t         savings_sbd_seconds; ///< total sbd * how long it has been hel ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+//          time_point_sec    savings_sbd_seconds_last_update; ///< the last time the sbd_seconds was updated ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+//          time_point_sec    savings_sbd_last_interest_payment; ///< used to pay interest at most once per month ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 
          uint8_t           savings_withdraw_requests = 0;
          ///@}
 
-//         asset             reward_sbd_balance = asset( 0, SBD_SYMBOL ); ///~~~~~NLG~~~~~ NO NEED for Knowledgr
-         asset             reward_nlg_balance = asset( 0, NLG_SYMBOL );
-//         asset             reward_vesting_balance = asset( 0, VESTS_SYMBOL ); ///~~~~~NLG~~~~~ NO NEED for Knowledgr
-//         asset             reward_vesting_nlg = asset( 0, NLG_SYMBOL ); ///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//         asset             reward_sbd_balance = asset( 0, SBD_SYMBOL ); ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+         asset             reward_nlg_balance = asset( 0, KNLG_SYMBOL );
+//         asset             reward_vesting_balance = asset( 0, VESTS_SYMBOL ); ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+//         asset             reward_vesting_nlg = asset( 0, KNLG_SYMBOL ); ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 
          share_type        curation_rewards = 0;
          share_type        posting_rewards = 0;
 
-//         asset             vesting_shares = asset( 0, VESTS_SYMBOL ); ///< total vesting shares held by this account, controls its voting power ///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//         asset             vesting_shares = asset( 0, VESTS_SYMBOL ); ///< total vesting shares held by this account, controls its voting power ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 //         asset             delegated_vesting_shares = asset( 0, VESTS_SYMBOL );
 //         asset             received_vesting_shares = asset( 0, VESTS_SYMBOL );
 
@@ -120,11 +120,11 @@ namespace knowledgr { namespace chain {
 
          share_type        pending_claimed_accounts = 0;
 		 
-		 ///~~~~~NLG~~~~~{
+		 ///~~~~~KNLG~~~~~{
 		 using t_expertises =	t_vector< protocol::expertise >;
 		 t_expertises			expertises;
 		 account_member_of		member_of = user;
-		 asset					stake_balance = asset( 0, NLG_SYMBOL );
+		 asset					stake_balance = asset( 0, KNLG_SYMBOL );
 		 share_type				rep_power_rewards = 1;
 
 		 static uint32_t expertise_rate(const account_object& account, protocol::expertise_category _category) { 
@@ -135,13 +135,13 @@ namespace knowledgr { namespace chain {
 			 }
 			 return 1;
 		 };
-		 ///~~~~~NLG~~~~~}
+		 ///~~~~~KNLG~~~~~}
 
          /// This function should be used only when the account votes for a witness directly
          share_type        witness_vote_weight()const {
             return std::accumulate( proxied_vsf_votes.begin(),
                                     proxied_vsf_votes.end(),
-                                    /*vesting_shares*/balance.amount );///~~~~~NLG~~~~~
+                                    /*vesting_shares*/balance.amount );///~~~~~KNLG~~~~~
          }
          share_type        proxied_vsf_votes_total()const {
             return std::accumulate( proxied_vsf_votes.begin(),
@@ -437,11 +437,11 @@ FC_REFLECT( knowledgr::chain::account_object,
              (comment_count)(lifetime_vote_count)(post_count)(can_vote)(voting_manabar)
              (balance)
              (savings_balance)
-             /*(sbd_balance)*////~~~~~NLG~~~~~ NO NEED for Knowledgr
-			 /*(sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)*////~~~~~NLG~~~~~ NO NEED for Knowledgr
-             /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+             /*(sbd_balance)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+			 /*(sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+             /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
 			 (savings_withdraw_requests)
-             (reward_nlg_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_nlg)*////~~~~~NLG~~~~~ NO NEED for Knowledgr
+             (reward_nlg_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_nlg)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
              /*(vesting_shares)(delegated_vesting_shares)(received_vesting_shares)*/
              /*(vesting_withdraw_rate)(next_vesting_withdrawal)*/(withdrawn)(to_withdraw)(withdraw_routes)
              (curation_rewards)
@@ -449,9 +449,9 @@ FC_REFLECT( knowledgr::chain::account_object,
              (proxied_vsf_votes)(witnesses_voted_for)
              (last_post)(last_root_post)(last_vote_time)(post_bandwidth)
              (pending_claimed_accounts)
-			 (expertises)///~~~~~NLG~~~~~
-			 (member_of)///~~~~~NLG~~~~~
-			 (stake_balance)///~~~~~NLG~~~~~
+			 (expertises)///~~~~~KNLG~~~~~
+			 (member_of)///~~~~~KNLG~~~~~
+			 (stake_balance)///~~~~~KNLG~~~~~
 			 (rep_power_rewards)
           )
 

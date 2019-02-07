@@ -384,7 +384,7 @@ struct operation_visitor
 
    void operator()( const transfer_operation& op )const
    {
-      if( _my._db.head_block_time() >= _my._promoted_start_time && op.to == KNOWLEDGR_NULL_ACCOUNT && op.amount.symbol == NLG_SYMBOL/*SBD_SYMBOL*/ )
+      if( _my._db.head_block_time() >= _my._promoted_start_time && op.to == KNOWLEDGR_NULL_ACCOUNT && op.amount.symbol == KNLG_SYMBOL/*SBD_SYMBOL*/ )
       {
          vector<string> part; part.reserve(4);
          auto path = op.memo;

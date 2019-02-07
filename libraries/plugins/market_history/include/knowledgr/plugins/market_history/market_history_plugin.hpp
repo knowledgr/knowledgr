@@ -103,11 +103,11 @@ struct bucket_object : public object< bucket_object_type, bucket_object >
 #ifdef KNOWLEDGR_ENABLE_SMT
    asset_symbol_type symbol = SBD_SYMBOL;
 
-   price high()const { return asset( non_knowledgr.high, symbol ) / asset( knowledgr.high, NLG_SYMBOL ); }
-   price low()const { return asset( non_knowledgr.low, symbol ) / asset( knowledgr.low, NLG_SYMBOL ); }
+   price high()const { return asset( non_knowledgr.high, symbol ) / asset( knowledgr.high, KNLG_SYMBOL ); }
+   price low()const { return asset( non_knowledgr.low, symbol ) / asset( knowledgr.low, KNLG_SYMBOL ); }
 #else
-   price high()const { return asset( non_knowledgr.high, SBD_SYMBOL ) / asset( knowledgr.high, NLG_SYMBOL ); }
-   price low()const { return asset( non_knowledgr.low, SBD_SYMBOL ) / asset( knowledgr.low, NLG_SYMBOL ); }
+   price high()const { return asset( non_knowledgr.high, SBD_SYMBOL ) / asset( knowledgr.high, KNLG_SYMBOL ); }
+   price low()const { return asset( non_knowledgr.low, SBD_SYMBOL ) / asset( knowledgr.low, KNLG_SYMBOL ); }
 #endif
 };
 

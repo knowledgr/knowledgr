@@ -769,13 +769,13 @@ public:
          for( const auto& a : accounts ) {
             total_knowledgr += a.balance.to_asset();
             //total_vest  += a.vesting_shares.to_asset();
-            //total_sbd  += a.sbd_balance.to_asset();///~~~~~NLG~~~~~ NO NEED for Knowledgr
+            //total_sbd  += a.sbd_balance.to_asset();///~~~~~KNLG~~~~~ NO NEED for Knowledgr
             out << std::left << std::setw( 17 ) << std::string(a.name)
                 << std::right << std::setw(18) << fc::variant(a.balance).as_string() <<" "
 				<< std::right << std::setw(18) << fc::variant(a.stake_balance).as_string() <<" "
 				<< std::right << std::setw(18) << a.rep_power_rewards.value <<" "
                 /*<< std::right << std::setw(26) << fc::variant(a.vesting_shares).as_string()*/ <<" "<<"\n";
-                //<< std::right << std::setw(16) << fc::variant(a.sbd_balance).as_string() ///~~~~~NLG~~~~~ NO NEED for Knowledgr
+                //<< std::right << std::setw(16) << fc::variant(a.sbd_balance).as_string() ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
          }
          out << "-------------------------------------------------------------------------\n";
             out << std::left << std::setw( 17 ) << "TOTAL"
@@ -819,7 +819,7 @@ public:
              ss << ' ' << setw( 10 ) << o.orderid;
              ss << ' ' << setw( 10 ) << o.real_price;
              ss << ' ' << setw( 10 ) << fc::variant( asset( o.for_sale, o.sell_price.base.symbol ) ).as_string();
-             ss << ' ' << setw( 10 ) << (o.sell_price.base.symbol == NLG_SYMBOL ? "SELL" : "BUY");
+             ss << ' ' << setw( 10 ) << (o.sell_price.base.symbol == KNLG_SYMBOL ? "SELL" : "BUY");
              ss << "\n";
           }
           return ss.str();
@@ -837,10 +837,10 @@ public:
             << ' '
             << setw( spacing + 3 ) << "Sum(SBD)"
             << setw( spacing + 1) << "SBD"
-            << setw( spacing + 1 ) << "NLG"
+            << setw( spacing + 1 ) << "KNLG"
             << setw( spacing + 1 ) << "Price"
             << setw( spacing + 1 ) << "Price"
-            << setw( spacing + 1 ) << "NLG "
+            << setw( spacing + 1 ) << "KNLG "
             << setw( spacing + 1 ) << "SBD " << "Sum(SBD)"
             << "\n====================================================================================================="
             << "|=====================================================================================================\n";
@@ -853,7 +853,7 @@ public:
                ss
                   << ' ' << setw( spacing ) << legacy_asset::from_asset( bid_sum ).to_string()
                   << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.bids[i].sbd, SBD_SYMBOL ) ).to_string()
-                  << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.bids[i].knowledgr, NLG_SYMBOL ) ).to_string()
+                  << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.bids[i].knowledgr, KNLG_SYMBOL ) ).to_string()
                   << ' ' << setw( spacing ) << orders.bids[i].real_price;
             }
             else
@@ -867,7 +867,7 @@ public:
             {
                ask_sum += asset( orders.asks[i].sbd, SBD_SYMBOL );
                ss << ' ' << setw( spacing ) << orders.asks[i].real_price
-                  << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.asks[i].knowledgr, NLG_SYMBOL ) ).to_string()
+                  << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.asks[i].knowledgr, KNLG_SYMBOL ) ).to_string()
                   << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.asks[i].sbd, SBD_SYMBOL ) ).to_string()
                   << ' ' << setw( spacing ) << legacy_asset::from_asset( ask_sum ).to_string();
             }
@@ -985,7 +985,7 @@ vector< condenser_api::api_account_object > wallet_api::list_my_accounts()
    return result;
 }
 
-//~~~~~NLG~~~~~{
+//~~~~~KNLG~~~~~{
 condenser_api::extended_dynamic_global_properties wallet_api::get_dynamic_global_properties() const
 {
 	return my->_remote_api->get_dynamic_global_properties();
@@ -995,7 +995,7 @@ condenser_api::api_witness_schedule_object	wallet_api::get_witness_schedule() co
 {
 	return my->_remote_api->get_witness_schedule();
 }
-//~~~~~NLG~~~~~}
+//~~~~~KNLG~~~~~}
 vector< account_name_type > wallet_api::list_accounts(const string& lowerbound, uint32_t limit)
 {
    return my->_remote_api->lookup_accounts( lowerbound, limit );
@@ -1050,7 +1050,7 @@ condenser_api::api_account_object wallet_api::get_account( string account_name )
    return my->get_account( account_name );
 }
 
-//~~~~~NLG~~~~~{
+//~~~~~KNLG~~~~~{
 condenser_api::discussion wallet_api::get_comment( string author, string permlink ) const
 {
 	return my->_remote_api->get_content( author, permlink );
@@ -1128,7 +1128,7 @@ vector<condenser_api::api_stake_pending_object> wallet_api::find_pending_stake( 
 {
 	return my->_remote_api->find_pending_stake(account);
 }
-//~~~~~NLG~~~~~}
+//~~~~~KNLG~~~~~}
 
 bool wallet_api::import_key(string wif_key)
 {
@@ -1431,7 +1431,7 @@ vector< database_api::api_owner_authority_history_object > wallet_api::get_owner
    return my->_remote_api->get_owner_history( account );
 }
 
-//~~~~~NLG~~~~~{
+//~~~~~KNLG~~~~~{
 
 condenser_api::legacy_signed_transaction wallet_api::update_account_admin(
 	string admin,
@@ -1479,7 +1479,7 @@ condenser_api::legacy_signed_transaction wallet_api::update_account_expertise(
 	}
 	FC_CAPTURE_AND_RETHROW( (admin)(account)(expertises)(broadcast) )
 }
-//~~~~~NLG~~~~~}
+//~~~~~KNLG~~~~~}
 
 condenser_api::legacy_signed_transaction wallet_api::update_account(
    string account_name,
@@ -2459,9 +2459,9 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
    string permlink,
    string parent_author,
    string parent_permlink,
-   const vector<std::string>& categories, //~~~~~NLG~~~~~
-   string type, //~~~~~NLG~~~~~
-   const vector<citation>& citations, //~~~~~NLG~~~~~
+   const vector<std::string>& categories, //~~~~~KNLG~~~~~
+   string type, //~~~~~KNLG~~~~~
+   const vector<citation>& citations, //~~~~~KNLG~~~~~
    string title,
    string body,
    string json,
@@ -2469,7 +2469,7 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
 {
    FC_ASSERT( !is_locked() );
    comment_operation op;
-   if (type == "O") {//~~~~~NLG~~~~~
+   if (type == "O") {//~~~~~KNLG~~~~~
 	   op.type = 0;
    } else if (type == "Q") {
 	   op.type = 1;
@@ -2480,7 +2480,7 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
    } else {
 	   op.type = 4;
    }
-   for( const citation& cit : citations ) {//~~~~~NLG~~~~~
+   for( const citation& cit : citations ) {//~~~~~KNLG~~~~~
 	   op.citations.push_back(cit);
    }
    op.parent_author =  parent_author;
@@ -2490,15 +2490,15 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
    op.title = title;
    op.body = body;
    op.json_metadata = json;
-   //~~~~~NLG~~~~~{
+   //~~~~~KNLG~~~~~{
    for (auto & cs : categories) {
 	   protocol::expertise_category c = protocol::expertise::category_from_string(cs);
 	   op.categories.push_back(c);
    }
-   //~~~~~NLG~~~~~}
+   //~~~~~KNLG~~~~~}
    signed_transaction tx;
 
-   if (op.type == 3) {//~~~~~NLG~~~~~
+   if (op.type == 3) {//~~~~~KNLG~~~~~
 	   vote_operation op2;
 	   op2.voter = author;
 	   op2.author = parent_author;
@@ -2513,7 +2513,7 @@ condenser_api::legacy_signed_transaction wallet_api::post_comment(
    return my->sign_transaction( tx, broadcast );
 }
 
-///~~~~~NLG~~~~~{
+///~~~~~KNLG~~~~~{
 condenser_api::legacy_signed_transaction wallet_api::post_review( 
 	string author, 
 	string permlink, 
@@ -2614,7 +2614,7 @@ condenser_api::legacy_signed_transaction wallet_api::process_pending_stake(
 	FC_CAPTURE_AND_RETHROW( (admin)(account)(broadcast) )
 }
 
-///~~~~~NLG~~~~~}
+///~~~~~KNLG~~~~~}
 
 condenser_api::legacy_signed_transaction wallet_api::vote(
    string voter,

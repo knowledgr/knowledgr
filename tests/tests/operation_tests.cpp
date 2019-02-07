@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE( account_create_apply )
       op.json_metadata = "{\"foo\":\"bar\"}";
 
       BOOST_TEST_MESSAGE( "--- Test failure paying more than the fee" );
-      op.fee = asset( 101, NLG_SYMBOL );
+      op.fee = asset( 101, KNLG_SYMBOL );
       tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
       tx.operations.push_back( op );
       sign( tx, init_account_priv_key );
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE( account_create_apply )
       KNOWLEDGR_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::assert_exception );
 
       BOOST_TEST_MESSAGE( "--- Test normal account creation" );
-      op.fee = asset( 100, NLG_SYMBOL );
+      op.fee = asset( 100, KNLG_SYMBOL );
       tx.clear();
       tx.operations.push_back( op );
       sign( tx, init_account_priv_key );
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE( account_create_apply )
       BOOST_REQUIRE( acct.proxy == "" );
       BOOST_REQUIRE( acct.created == db->head_block_time() );
       BOOST_REQUIRE( acct.balance.amount.value == ASSET( "0.000 TESTS" ).amount.value );
-      //BOOST_REQUIRE( acct.sbd_balance.amount.value == ASSET( "0.000 TBD" ).amount.value );///~~~~~NLG~~~~~ NO NEED for Knowledgr
+      //BOOST_REQUIRE( acct.sbd_balance.amount.value == ASSET( "0.000 TBD" ).amount.value );///~~~~~KNLG~~~~~ NO NEED for Knowledgr
       BOOST_REQUIRE( acct.id._id == acct_auth.id._id );
 
 //       BOOST_REQUIRE( acct.vesting_shares.amount.value == 0 );
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE( account_create_apply )
       BOOST_REQUIRE( acct.proxy == "" );
       BOOST_REQUIRE( acct.created == db->head_block_time() );
       BOOST_REQUIRE( acct.balance.amount.value == ASSET( "0.000 TESTS " ).amount.value );
-      //BOOST_REQUIRE( acct.sbd_balance.amount.value == ASSET( "0.000 TBD" ).amount.value );///~~~~~NLG~~~~~ NO NEED for Knowledgr
+      //BOOST_REQUIRE( acct.sbd_balance.amount.value == ASSET( "0.000 TBD" ).amount.value );///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 //       BOOST_REQUIRE( acct.vesting_shares.amount.value == 0 );
 //       BOOST_REQUIRE( acct.vesting_withdraw_rate.amount.value == ASSET( "0.000000 VESTS" ).amount.value );
       BOOST_REQUIRE( acct.proxied_vsf_votes_total().value == 0 );
@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE( account_create_apply )
       BOOST_TEST_MESSAGE( "--- Test failure when creator cannot cover fee" );
       tx.signatures.clear();
       tx.operations.clear();
-      op.fee = asset( db->get_account( KNOWLEDGR_INIT_MINER_NAME ).balance.amount + 1, NLG_SYMBOL );
+      op.fee = asset( db->get_account( KNOWLEDGR_INIT_MINER_NAME ).balance.amount + 1, KNLG_SYMBOL );
       op.new_account_name = "bob";
       tx.operations.push_back( op );
       sign( tx, init_account_priv_key );
@@ -1374,7 +1374,7 @@ BOOST_AUTO_TEST_CASE( transfer_apply )
 //       BOOST_REQUIRE( alice.balance == ASSET( "10.000 TESTS" ) );
 // 
 //       auto shares = asset( gpo.total_vesting_shares.amount, VESTS_SYMBOL );
-//       auto vests = asset( gpo.total_vesting_fund_nlg.amount, NLG_SYMBOL );
+//       auto vests = asset( gpo.total_vesting_fund_nlg.amount, KNLG_SYMBOL );
 //       auto alice_shares = alice.vesting_shares;
 //       auto bob_shares = bob.vesting_shares;
 // 
@@ -1401,7 +1401,7 @@ BOOST_AUTO_TEST_CASE( transfer_apply )
 //       validate_database();
 // 
 //       op.to = "bob";
-//       op.amount = asset( 2000, NLG_SYMBOL );
+//       op.amount = asset( 2000, KNLG_SYMBOL );
 //       tx.operations.clear();
 //       tx.signatures.clear();
 //       tx.operations.push_back( op );
@@ -1714,7 +1714,7 @@ BOOST_AUTO_TEST_CASE( witness_update_apply )
       op.url = "foo.bar";
       op.fee = ASSET( "1.000 TESTS" );
       op.block_signing_key = signing_key.get_public_key();
-      op.props.account_creation_fee = legacy_knowledgr_asset::from_asset( asset(KNOWLEDGR_MIN_ACCOUNT_CREATION_FEE + 10, NLG_SYMBOL) );
+      op.props.account_creation_fee = legacy_knowledgr_asset::from_asset( asset(KNOWLEDGR_MIN_ACCOUNT_CREATION_FEE + 10, KNLG_SYMBOL) );
       op.props.maximum_block_size = KNOWLEDGR_MIN_BLOCK_SIZE_LIMIT + 100;
 
       signed_transaction tx;
@@ -2343,7 +2343,7 @@ BOOST_AUTO_TEST_CASE( custom_binary_authorities )
 //       BOOST_TEST_MESSAGE( "--- Test publishing price feed" );
 //       feed_publish_operation op;
 //       op.publisher = "alice";
-//       op.exchange_rate = price( ASSET( "1.000 TBD" ), ASSET( "1000.000 TESTS" ) ); // 1000 NLG : 1 SBD
+//       op.exchange_rate = price( ASSET( "1.000 TBD" ), ASSET( "1000.000 TESTS" ) ); // 1000 KNLG : 1 SBD
 // 
 //       signed_transaction tx;
 //       tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
@@ -2489,7 +2489,7 @@ BOOST_AUTO_TEST_CASE( custom_binary_authorities )
 //       KNOWLEDGR_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
 // 
 //       BOOST_REQUIRE( new_bob.balance.amount.value == ASSET( "3.000 TESTS" ).amount.value );
-//       //BOOST_REQUIRE( new_bob.sbd_balance.amount.value == ASSET( "7.000 TBD" ).amount.value );///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//       //BOOST_REQUIRE( new_bob.sbd_balance.amount.value == ASSET( "7.000 TBD" ).amount.value );///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 //       validate_database();
 // 
 //       BOOST_TEST_MESSAGE( "--- Test failure when account does not have the required TBD" );
@@ -2502,7 +2502,7 @@ BOOST_AUTO_TEST_CASE( custom_binary_authorities )
 //       KNOWLEDGR_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
 // 
 //       BOOST_REQUIRE( new_alice.balance.amount.value == ASSET( "7.500 TESTS" ).amount.value );
-//       //BOOST_REQUIRE( new_alice.sbd_balance.amount.value == ASSET( "2.500 TBD" ).amount.value );///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//       //BOOST_REQUIRE( new_alice.sbd_balance.amount.value == ASSET( "2.500 TBD" ).amount.value );///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 //       validate_database();
 // 
 //       BOOST_TEST_MESSAGE( "--- Test failure when account does not exist" );
@@ -2524,7 +2524,7 @@ BOOST_AUTO_TEST_CASE( custom_binary_authorities )
 //       db->push_transaction( tx, 0 );
 // 
 //       BOOST_REQUIRE( new_bob.balance.amount.value == ASSET( "3.000 TESTS" ).amount.value );
-//       //BOOST_REQUIRE( new_bob.sbd_balance.amount.value == ASSET( "4.000 TBD" ).amount.value );///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//       //BOOST_REQUIRE( new_bob.sbd_balance.amount.value == ASSET( "4.000 TBD" ).amount.value );///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 // 
 //       auto convert_request = convert_request_idx.find( std::make_tuple( op.owner, op.requestid ) );
 //       BOOST_REQUIRE( convert_request != convert_request_idx.end() );
@@ -2543,7 +2543,7 @@ BOOST_AUTO_TEST_CASE( custom_binary_authorities )
 //       KNOWLEDGR_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
 // 
 //       BOOST_REQUIRE( new_bob.balance.amount.value == ASSET( "3.000 TESTS" ).amount.value );
-//       //BOOST_REQUIRE( new_bob.sbd_balance.amount.value == ASSET( "4.000 TBD" ).amount.value );///~~~~~NLG~~~~~ NO NEED for Knowledgr
+//       //BOOST_REQUIRE( new_bob.sbd_balance.amount.value == ASSET( "4.000 TBD" ).amount.value );///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 // 
 //       convert_request = convert_request_idx.find( std::make_tuple( op.owner, op.requestid ) );
 //       BOOST_REQUIRE( convert_request != convert_request_idx.end() );
@@ -2718,7 +2718,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create_apply )
       BOOST_REQUIRE( limit_order->orderid == op.orderid );
       BOOST_REQUIRE( limit_order->for_sale == op.amount_to_sell.amount );
       BOOST_REQUIRE( limit_order->sell_price == price( op.amount_to_sell / op.min_to_receive ) );
-      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, NLG_SYMBOL ) );
+      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, KNLG_SYMBOL ) );
       BOOST_REQUIRE( alice.balance.amount.value == ASSET( "990.000 TESTS" ).amount.value );
       //BOOST_REQUIRE( alice.sbd_balance.amount.value == ASSET( "0.000 TBD" ).amount.value );
       validate_database();
@@ -2738,7 +2738,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create_apply )
       BOOST_REQUIRE( limit_order->orderid == op.orderid );
       BOOST_REQUIRE( limit_order->for_sale == 10000 );
       BOOST_REQUIRE( limit_order->sell_price == price( ASSET( "10.000 TESTS" ), op.min_to_receive ) );
-      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, NLG_SYMBOL ) );
+      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, KNLG_SYMBOL ) );
       BOOST_REQUIRE( alice.balance.amount.value == ASSET( "990.000 TESTS" ).amount.value );
       //BOOST_REQUIRE( alice.sbd_balance.amount.value == ASSET( "0.000 TBD" ).amount.value );
       validate_database();
@@ -2760,7 +2760,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create_apply )
 
       BOOST_TEST_MESSAGE( "--- Test having a partial match to limit order" );
       // Alice has order for 15 SBD at a price of 2:3
-      // Fill 5 NLG for 7.5 SBD
+      // Fill 5 KNLG for 7.5 SBD
 
       op.owner = "bob";
       op.orderid = 1;
@@ -2782,7 +2782,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create_apply )
       BOOST_REQUIRE( limit_order->orderid == op.orderid );
       BOOST_REQUIRE( limit_order->for_sale == 5000 );
       BOOST_REQUIRE( limit_order->sell_price == price( ASSET( "10.000 TESTS" ), ASSET( "15.000 TBD" ) ) );
-      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, NLG_SYMBOL ) );
+      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, KNLG_SYMBOL ) );
       BOOST_REQUIRE( limit_order_idx.find( std::make_tuple( "bob", op.orderid ) ) == limit_order_idx.end() );
       BOOST_REQUIRE( alice.balance.amount.value == ASSET( "990.000 TESTS" ).amount.value );
       //BOOST_REQUIRE( alice.sbd_balance.amount.value == ASSET( "7.500 TBD" ).amount.value );
@@ -2812,7 +2812,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create_apply )
       BOOST_REQUIRE( limit_order->orderid == 1 );
       BOOST_REQUIRE( limit_order->for_sale.value == 7500 );
       BOOST_REQUIRE( limit_order->sell_price == price( ASSET( "15.000 TBD" ), ASSET( "10.000 TESTS" ) ) );
-      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, NLG_SYMBOL ) );
+      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, KNLG_SYMBOL ) );
       BOOST_REQUIRE( limit_order_idx.find( std::make_tuple( "alice", 1 ) ) == limit_order_idx.end() );
       BOOST_REQUIRE( alice.balance.amount.value == ASSET( "990.000 TESTS" ).amount.value );
       //BOOST_REQUIRE( alice.sbd_balance.amount.value == ASSET( "15.000 TBD" ).amount.value );
@@ -2869,7 +2869,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create_apply )
       BOOST_REQUIRE( limit_order->orderid == 4 );
       BOOST_REQUIRE( limit_order->for_sale.value == 1000 );
       BOOST_REQUIRE( limit_order->sell_price == price( ASSET( "12.000 TBD" ), ASSET( "10.000 TESTS" ) ) );
-      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, NLG_SYMBOL ) );
+      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, KNLG_SYMBOL ) );
       BOOST_REQUIRE( alice.balance.amount.value == ASSET( "975.000 TESTS" ).amount.value );
       //BOOST_REQUIRE( alice.sbd_balance.amount.value == ASSET( "33.500 TBD" ).amount.value );
       BOOST_REQUIRE( bob.balance.amount.value == ASSET( "25.000 TESTS" ).amount.value );
@@ -2917,7 +2917,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create_apply )
       BOOST_REQUIRE( limit_order->orderid == 5 );
       BOOST_REQUIRE( limit_order->for_sale.value == 9091 );
       BOOST_REQUIRE( limit_order->sell_price == price( ASSET( "20.000 TESTS" ), ASSET( "22.000 TBD" ) ) );
-      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, NLG_SYMBOL ) );
+      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, KNLG_SYMBOL ) );
       BOOST_REQUIRE( alice.balance.amount.value == ASSET( "955.000 TESTS" ).amount.value );
       //BOOST_REQUIRE( alice.sbd_balance.amount.value == ASSET( "45.500 TBD" ).amount.value );
       BOOST_REQUIRE( bob.balance.amount.value == ASSET( "35.909 TESTS" ).amount.value );
@@ -3083,7 +3083,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create2_apply )
       BOOST_REQUIRE( limit_order->orderid == op.orderid );
       BOOST_REQUIRE( limit_order->for_sale == op.amount_to_sell.amount );
       BOOST_REQUIRE( limit_order->sell_price == op.exchange_rate );
-      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, NLG_SYMBOL ) );
+      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, KNLG_SYMBOL ) );
       BOOST_REQUIRE( alice.balance.amount.value == ASSET( "990.000 TESTS" ).amount.value );
       //BOOST_REQUIRE( alice.sbd_balance.amount.value == ASSET( "0.000 TBD" ).amount.value );
       validate_database();
@@ -3103,7 +3103,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create2_apply )
       BOOST_REQUIRE( limit_order->orderid == op.orderid );
       BOOST_REQUIRE( limit_order->for_sale == 10000 );
       BOOST_REQUIRE( limit_order->sell_price == op.exchange_rate );
-      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, NLG_SYMBOL ) );
+      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, KNLG_SYMBOL ) );
       BOOST_REQUIRE( alice.balance.amount.value == ASSET( "990.000 TESTS" ).amount.value );
       //BOOST_REQUIRE( alice.sbd_balance.amount.value == ASSET( "0.000 TBD" ).amount.value );
       validate_database();
@@ -3125,7 +3125,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create2_apply )
 
       BOOST_TEST_MESSAGE( "--- Test having a partial match to limit order" );
       // Alice has order for 15 SBD at a price of 2:3
-      // Fill 5 NLG for 7.5 SBD
+      // Fill 5 KNLG for 7.5 SBD
 
       op.owner = "bob";
       op.orderid = 1;
@@ -3147,7 +3147,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create2_apply )
       BOOST_REQUIRE( limit_order->orderid == op.orderid );
       BOOST_REQUIRE( limit_order->for_sale == 5000 );
       BOOST_REQUIRE( limit_order->sell_price == price( ASSET( "2.000 TESTS" ), ASSET( "3.000 TBD" ) ) );
-      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, NLG_SYMBOL ) );
+      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, KNLG_SYMBOL ) );
       BOOST_REQUIRE( limit_order_idx.find( std::make_tuple( "bob", op.orderid ) ) == limit_order_idx.end() );
       BOOST_REQUIRE( alice.balance.amount.value == ASSET( "990.000 TESTS" ).amount.value );
       //BOOST_REQUIRE( alice.sbd_balance.amount.value == ASSET( "7.500 TBD" ).amount.value );
@@ -3177,7 +3177,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create2_apply )
       BOOST_REQUIRE( limit_order->orderid == 1 );
       BOOST_REQUIRE( limit_order->for_sale.value == 7500 );
       BOOST_REQUIRE( limit_order->sell_price == price( ASSET( "3.000 TBD" ), ASSET( "2.000 TESTS" ) ) );
-      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, NLG_SYMBOL ) );
+      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, KNLG_SYMBOL ) );
       BOOST_REQUIRE( limit_order_idx.find( std::make_tuple( "alice", 1 ) ) == limit_order_idx.end() );
       BOOST_REQUIRE( alice.balance.amount.value == ASSET( "990.000 TESTS" ).amount.value );
       //BOOST_REQUIRE( alice.sbd_balance.amount.value == ASSET( "15.000 TBD" ).amount.value );
@@ -3234,7 +3234,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create2_apply )
       BOOST_REQUIRE( limit_order->orderid == 4 );
       BOOST_REQUIRE( limit_order->for_sale.value == 1000 );
       BOOST_REQUIRE( limit_order->sell_price == op.exchange_rate );
-      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, NLG_SYMBOL ) );
+      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, KNLG_SYMBOL ) );
       BOOST_REQUIRE( alice.balance.amount.value == ASSET( "975.000 TESTS" ).amount.value );
       //BOOST_REQUIRE( alice.sbd_balance.amount.value == ASSET( "33.500 TBD" ).amount.value );
       BOOST_REQUIRE( bob.balance.amount.value == ASSET( "25.000 TESTS" ).amount.value );
@@ -3283,7 +3283,7 @@ BOOST_AUTO_TEST_CASE( limit_order_create2_apply )
       BOOST_REQUIRE( limit_order->orderid == 5 );
       BOOST_REQUIRE( limit_order->for_sale.value == 9091 );
       BOOST_REQUIRE( limit_order->sell_price == price( ASSET( "1.000 TESTS" ), ASSET( "1.100 TBD" ) ) );
-      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, NLG_SYMBOL ) );
+      BOOST_REQUIRE( limit_order->get_market() == std::make_pair( SBD_SYMBOL, KNLG_SYMBOL ) );
       BOOST_REQUIRE( alice.balance.amount.value == ASSET( "955.000 TESTS" ).amount.value );
       //BOOST_REQUIRE( alice.sbd_balance.amount.value == ASSET( "45.500 TBD" ).amount.value );
       BOOST_REQUIRE( bob.balance.amount.value == ASSET( "35.909 TESTS" ).amount.value );
@@ -3553,7 +3553,7 @@ BOOST_AUTO_TEST_CASE( account_recovery )
       sign( tx, alice_private_key );
       db->push_transaction( tx, 0 );
 
-      vest( KNOWLEDGR_INIT_MINER_NAME, "bob", asset( 1000, NLG_SYMBOL ) );
+      vest( KNOWLEDGR_INIT_MINER_NAME, "bob", asset( 1000, KNLG_SYMBOL ) );
 
       const auto& bob_auth = db->get< account_authority_object, by_account >( "bob" );
       BOOST_REQUIRE( bob_auth.owner == acc_create.owner );
@@ -3891,21 +3891,21 @@ BOOST_AUTO_TEST_CASE( escrow_transfer_validate )
       op.escrow_expiration = db->head_block_time() + 200;
 
       BOOST_TEST_MESSAGE( "--- failure when sbd symbol != SBD" );
-      //op.sbd_amount.symbol = NLG_SYMBOL;
+      //op.sbd_amount.symbol = KNLG_SYMBOL;
       KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      BOOST_TEST_MESSAGE( "--- failure when knowledgr symbol != NLG" );
+      BOOST_TEST_MESSAGE( "--- failure when knowledgr symbol != KNLG" );
       //op.sbd_amount.symbol = SBD_SYMBOL;
       op.nlg_amount.symbol = SBD_SYMBOL;
       KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
-      BOOST_TEST_MESSAGE( "--- failure when fee symbol != SBD and fee symbol != NLG" );
-      op.nlg_amount.symbol = NLG_SYMBOL;
+      BOOST_TEST_MESSAGE( "--- failure when fee symbol != SBD and fee symbol != KNLG" );
+      op.nlg_amount.symbol = KNLG_SYMBOL;
       op.fee.symbol = VESTS_SYMBOL;
       KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
 
       BOOST_TEST_MESSAGE( "--- failure when sbd == 0 and knowledgr == 0" );
-      op.fee.symbol = NLG_SYMBOL;
+      op.fee.symbol = KNLG_SYMBOL;
       //op.sbd_amount.amount = 0;
       op.nlg_amount.amount = 0;
       KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::exception );
@@ -4707,7 +4707,7 @@ BOOST_AUTO_TEST_CASE( escrow_release_validate )
 
 
       BOOST_TEST_MESSAGE( "--- success" );
-      op.nlg_amount.symbol = NLG_SYMBOL;
+      op.nlg_amount.symbol = KNLG_SYMBOL;
       op.validate();
    }
    FC_LOG_AND_RETHROW()
@@ -5253,7 +5253,7 @@ BOOST_AUTO_TEST_CASE( transfer_to_savings_validate )
       op.validate();
 
 
-      BOOST_TEST_MESSAGE( "success when amount is NLG" );
+      BOOST_TEST_MESSAGE( "success when amount is KNLG" );
       op.amount = ASSET( "1.000 TESTS" );
       op.validate();
    }
@@ -5335,7 +5335,7 @@ BOOST_AUTO_TEST_CASE( transfer_to_savings_apply )
       validate_database();
 
 
-      BOOST_TEST_MESSAGE( "--- success transferring NLG to self" );
+      BOOST_TEST_MESSAGE( "--- success transferring KNLG to self" );
       op.to = "alice";
 
       tx.clear();
@@ -5361,7 +5361,7 @@ BOOST_AUTO_TEST_CASE( transfer_to_savings_apply )
       validate_database();
 
 
-      BOOST_TEST_MESSAGE( "--- success transferring NLG to other" );
+      BOOST_TEST_MESSAGE( "--- success transferring KNLG to other" );
       op.to = "bob";
       op.amount = ASSET( "1.000 TESTS" );
 
@@ -5430,7 +5430,7 @@ BOOST_AUTO_TEST_CASE( transfer_from_savings_validate )
       op.validate();
 
 
-      BOOST_TEST_MESSAGE( "success when amount is NLG" );
+      BOOST_TEST_MESSAGE( "success when amount is KNLG" );
       op.amount = ASSET( "1.000 TESTS" );
       op.validate();
    }
@@ -5524,7 +5524,7 @@ BOOST_AUTO_TEST_CASE( transfer_from_savings_apply )
       KNOWLEDGR_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
 
 
-      BOOST_TEST_MESSAGE( "--- success withdrawing NLG to self" );
+      BOOST_TEST_MESSAGE( "--- success withdrawing KNLG to self" );
       op.to = "alice";
 
       tx.clear();
@@ -5574,7 +5574,7 @@ BOOST_AUTO_TEST_CASE( transfer_from_savings_apply )
       KNOWLEDGR_REQUIRE_THROW( db->push_transaction( tx, 0 ), fc::exception );
 
 
-      BOOST_TEST_MESSAGE( "--- success withdrawing NLG to other" );
+      BOOST_TEST_MESSAGE( "--- success withdrawing KNLG to other" );
       op.to = "bob";
       op.amount = ASSET( "1.000 TESTS" );
       op.request_id = 3;
@@ -5990,7 +5990,7 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance_validate )
       //op.reward_vests.amount = 0;
 
 
-      BOOST_TEST_MESSAGE( "Testing wrong NLG symbol" );
+      BOOST_TEST_MESSAGE( "Testing wrong KNLG symbol" );
       op.reward_knowledgr = ASSET( "1.000 TBD" );
       KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::assert_exception );
 
@@ -6075,7 +6075,7 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance_authorities )
 //       BOOST_TEST_MESSAGE( "Testing: account_create_with_delegation_apply" );
 //       signed_transaction tx;
 //       ACTORS( (alice) );
-//       // 150 * fee = ( 5 * NLG ) + SP
+//       // 150 * fee = ( 5 * KNLG ) + SP
 //       //auto gpo = db->get_dynamic_global_properties();
 //       generate_blocks(1);
 //       fund( "alice", ASSET("1510.000 TESTS") );
@@ -6154,7 +6154,7 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance_apply )
       //auto alice_vests = db->get_account( "alice" ).vesting_shares;
 
 
-      BOOST_TEST_MESSAGE( "--- Attempting to claim more NLG than exists in the reward balance." );
+      BOOST_TEST_MESSAGE( "--- Attempting to claim more KNLG than exists in the reward balance." );
 
       claim_reward_balance_operation op;
       signed_transaction tx;
@@ -6220,7 +6220,7 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance_apply )
 // 
 //       op.delegator = "alice";
 //       op.delegatee = "bob";
-//       op.tokens = asset( -1, NLG_SYMBOL );
+//       op.tokens = asset( -1, KNLG_SYMBOL );
 //       KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::assert_exception );
 //    }
 //    FC_LOG_AND_RETHROW()
@@ -6236,7 +6236,7 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance_apply )
 //       vest( KNOWLEDGR_INIT_MINER_NAME, "alice", ASSET( "10000.000 TESTS" ) );
 // 
 //       delegate_vesting_shares_operation op;
-//       op.tokens = ASSET( "300.000000 NLG");
+//       op.tokens = ASSET( "300.000000 KNLG");
 //       op.delegator = "alice";
 //       op.delegatee = "bob";
 // 
@@ -6507,7 +6507,7 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance_apply )
 // 
 //       signed_transaction tx;
 //       delegate_vesting_shares_operation op;
-//       op.tokens = ASSET( "10000000.000 NLG");
+//       op.tokens = ASSET( "10000000.000 KNLG");
 //       op.delegator = "alice";
 //       op.delegatee = "bob";
 // 
@@ -6534,7 +6534,7 @@ BOOST_AUTO_TEST_CASE( claim_reward_balance_apply )
 // 
 //       generate_block();
 // 
-//       op.tokens = ASSET( "0.000 NLG" );
+//       op.tokens = ASSET( "0.000 KNLG" );
 // 
 //       tx.clear();
 //       tx.operations.push_back( op );
@@ -6755,7 +6755,7 @@ BOOST_AUTO_TEST_CASE( witness_set_properties_validate )
       op.url = "foo.bar";
       op.fee = ASSET( "1.000 TESTS" );
       op.block_signing_key = signing_key.get_public_key();
-      op.props.account_creation_fee = legacy_knowledgr_asset::from_asset( asset(KNOWLEDGR_MIN_ACCOUNT_CREATION_FEE + 10, NLG_SYMBOL) );
+      op.props.account_creation_fee = legacy_knowledgr_asset::from_asset( asset(KNOWLEDGR_MIN_ACCOUNT_CREATION_FEE + 10, KNLG_SYMBOL) );
       op.props.maximum_block_size = KNOWLEDGR_MIN_BLOCK_SIZE_LIMIT + 100;
 
       signed_transaction tx;
@@ -6793,7 +6793,7 @@ BOOST_AUTO_TEST_CASE( witness_set_properties_validate )
 //       prop_op.props[ "sbd_interest_rate" ] = fc::raw::pack_to_vector( KNOWLEDGR_100_PERCENT + 1 );
 //       KNOWLEDGR_REQUIRE_THROW( prop_op.validate(), fc::assert_exception );
 // 
-//       BOOST_TEST_MESSAGE( "--- failure when setting new sbd_exchange_rate with SBD / NLG" );
+//       BOOST_TEST_MESSAGE( "--- failure when setting new sbd_exchange_rate with SBD / KNLG" );
 //       prop_op.props.erase( "sbd_interest_rate" );
 //       prop_op.props[ "sbd_exchange_rate" ] = fc::raw::pack_to_vector( price( ASSET( "1.000 TESTS" ), ASSET( "10.000 TBD" ) ) );
 //       KNOWLEDGR_REQUIRE_THROW( prop_op.validate(), fc::assert_exception );
@@ -6929,7 +6929,7 @@ BOOST_AUTO_TEST_CASE( witness_set_properties_apply )
       op.url = "foo.bar";
       op.fee = ASSET( "1.000 TESTS" );
       op.block_signing_key = signing_key.get_public_key();
-      op.props.account_creation_fee = legacy_knowledgr_asset::from_asset( asset(KNOWLEDGR_MIN_ACCOUNT_CREATION_FEE + 10, NLG_SYMBOL) );
+      op.props.account_creation_fee = legacy_knowledgr_asset::from_asset( asset(KNOWLEDGR_MIN_ACCOUNT_CREATION_FEE + 10, KNLG_SYMBOL) );
       op.props.maximum_block_size = KNOWLEDGR_MIN_BLOCK_SIZE_LIMIT + 100;
 
       signed_transaction tx;

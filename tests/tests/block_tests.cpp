@@ -343,7 +343,7 @@ BOOST_AUTO_TEST_CASE( duplicate_transactions )
       transfer_operation t;
       t.from = KNOWLEDGR_INIT_MINER_NAME;
       t.to = "alice";
-      t.amount = asset(500,NLG_SYMBOL);
+      t.amount = asset(500,KNLG_SYMBOL);
       trx.operations.push_back(t);
       trx.set_expiration( db1.head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
       trx.sign( init_account_priv_key, db1.get_chain_id(), fc::ecc::fc_canonical );
@@ -356,8 +356,8 @@ BOOST_AUTO_TEST_CASE( duplicate_transactions )
 
       KNOWLEDGR_CHECK_THROW(PUSH_TX( db1, trx, skip_sigs ), fc::exception);
       KNOWLEDGR_CHECK_THROW(PUSH_TX( db2, trx, skip_sigs ), fc::exception);
-      BOOST_CHECK_EQUAL(db1.get_balance( "alice", NLG_SYMBOL ).amount.value, 500);
-      BOOST_CHECK_EQUAL(db2.get_balance( "alice", NLG_SYMBOL ).amount.value, 500);
+      BOOST_CHECK_EQUAL(db1.get_balance( "alice", KNLG_SYMBOL ).amount.value, 500);
+      BOOST_CHECK_EQUAL(db2.get_balance( "alice", KNLG_SYMBOL ).amount.value, 500);
    } catch (fc::exception& e) {
       edump((e.to_detail_string()));
       throw;
@@ -403,7 +403,7 @@ BOOST_AUTO_TEST_CASE( tapos )
       transfer_operation t;
       t.from = KNOWLEDGR_INIT_MINER_NAME;
       t.to = "alice";
-      t.amount = asset(50,NLG_SYMBOL);
+      t.amount = asset(50,KNLG_SYMBOL);
       trx.operations.push_back(t);
       trx.set_expiration( db1.head_block_time() + fc::seconds(2) );
       trx.sign( init_account_priv_key, db1.get_chain_id(), fc::ecc::fc_canonical );
@@ -431,11 +431,11 @@ BOOST_FIXTURE_TEST_CASE( optional_tapos, clean_database_fixture )
 
       BOOST_TEST_MESSAGE( "Create transaction" );
 
-      transfer( KNOWLEDGR_INIT_MINER_NAME, "alice", asset( 1000000, NLG_SYMBOL ) );
+      transfer( KNOWLEDGR_INIT_MINER_NAME, "alice", asset( 1000000, KNLG_SYMBOL ) );
       transfer_operation op;
       op.from = "alice";
       op.to = "bob";
-      op.amount = asset(1000,NLG_SYMBOL);
+      op.amount = asset(1000,KNLG_SYMBOL);
       signed_transaction tx;
       tx.operations.push_back( op );
 
@@ -498,7 +498,7 @@ BOOST_FIXTURE_TEST_CASE( double_sign_check, clean_database_fixture )
    transfer_operation t;
    t.from = KNOWLEDGR_INIT_MINER_NAME;
    t.to = "bob";
-   t.amount = asset(amount,NLG_SYMBOL);
+   t.amount = asset(amount,KNLG_SYMBOL);
    trx.operations.push_back(t);
    trx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
    trx.validate();
@@ -508,7 +508,7 @@ BOOST_FIXTURE_TEST_CASE( double_sign_check, clean_database_fixture )
    trx.operations.clear();
    t.from = "bob";
    t.to = KNOWLEDGR_INIT_MINER_NAME;
-   t.amount = asset(amount,NLG_SYMBOL);
+   t.amount = asset(amount,KNLG_SYMBOL);
    trx.operations.push_back(t);
    trx.validate();
 
@@ -555,7 +555,7 @@ BOOST_FIXTURE_TEST_CASE( pop_block_twice, clean_database_fixture )
 
       db->get_account( KNOWLEDGR_INIT_MINER_NAME );
       // transfer from committee account to Sam account
-      transfer( KNOWLEDGR_INIT_MINER_NAME, "sam", asset( 100000, NLG_SYMBOL ) );
+      transfer( KNOWLEDGR_INIT_MINER_NAME, "sam", asset( 100000, KNLG_SYMBOL ) );
 
       generate_block(skip_flags);
 
@@ -840,7 +840,7 @@ BOOST_FIXTURE_TEST_CASE( generate_block_size, clean_database_fixture )
       transfer_operation op;
       op.from = KNOWLEDGR_INIT_MINER_NAME;
       op.to = KNOWLEDGR_TEMP_ACCOUNT;
-      op.amount = asset( 1000, NLG_SYMBOL );
+      op.amount = asset( 1000, KNLG_SYMBOL );
 
       // tx minus op is 79 bytes
       // op is 33 bytes (32 for op + 1 byte static variant tag)

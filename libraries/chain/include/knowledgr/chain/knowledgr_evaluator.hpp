@@ -9,10 +9,10 @@ namespace knowledgr { namespace chain {
 using namespace knowledgr::protocol;
 
 KNOWLEDGR_DEFINE_EVALUATOR( account_create )
-KNOWLEDGR_DEFINE_EVALUATOR( account_admin_update ) ///~~~~~NLG~~~~~
-KNOWLEDGR_DEFINE_EVALUATOR( account_expertise_update ) ///~~~~~NLG~~~~~
-KNOWLEDGR_DEFINE_EVALUATOR( stake_request ) ///~~~~~NLG~~~~~
-KNOWLEDGR_DEFINE_EVALUATOR( stake_process ) ///~~~~~NLG~~~~~
+KNOWLEDGR_DEFINE_EVALUATOR( account_admin_update ) ///~~~~~KNLG~~~~~
+KNOWLEDGR_DEFINE_EVALUATOR( account_expertise_update ) ///~~~~~KNLG~~~~~
+KNOWLEDGR_DEFINE_EVALUATOR( stake_request ) ///~~~~~KNLG~~~~~
+KNOWLEDGR_DEFINE_EVALUATOR( stake_process ) ///~~~~~KNLG~~~~~
 //KNOWLEDGR_DEFINE_EVALUATOR( account_create_with_delegation )
 KNOWLEDGR_DEFINE_EVALUATOR( account_update )
 KNOWLEDGR_DEFINE_EVALUATOR( transfer )

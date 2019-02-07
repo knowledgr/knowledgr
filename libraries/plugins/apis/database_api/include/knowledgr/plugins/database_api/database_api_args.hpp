@@ -152,7 +152,7 @@ struct get_active_witnesses_return
    vector< account_name_type > witnesses;
 };
 
-///~~~~~NLG~~~~~{
+///~~~~~KNLG~~~~~{
 /* Stakes */
 struct list_pending_stakes_return {
 	vector<api_stake_pending_object> pending_stakes;
@@ -169,7 +169,7 @@ struct list_pending_stakes_args {
 struct find_pending_stake_args {
 	account_name_type account;
 };
-///~~~~~NLG~~~~~}
+///~~~~~KNLG~~~~~}
 
 /* Account */
 
@@ -825,7 +825,7 @@ FC_REFLECT( knowledgr::plugins::database_api::get_nai_pool_return,
    (nai_pool) )
 #endif
 
-///~~~~~NLG~~~~~{
+///~~~~~KNLG~~~~~{
 FC_REFLECT( knowledgr::plugins::database_api::list_pending_stakes_return,
    (pending_stakes) )
 FC_REFLECT( knowledgr::plugins::database_api::find_pending_stake_return,
@@ -834,4 +834,4 @@ FC_REFLECT( knowledgr::plugins::database_api::list_pending_stakes_args,
    (limit) )
 FC_REFLECT( knowledgr::plugins::database_api::find_pending_stake_args,
    (account) )
-///~~~~~NLG~~~~~}
+///~~~~~KNLG~~~~~}

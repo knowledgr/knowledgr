@@ -26,7 +26,7 @@ struct get_ticker_return
    double      lowest_ask = 0;
    double      highest_bid = 0;
    double      percent_change = 0;
-   asset       nlg_volume = asset( 0 , NLG_SYMBOL );
+   asset       nlg_volume = asset( 0 , KNLG_SYMBOL );
    asset       sbd_volume = asset( 0, SBD_SYMBOL );
 };
 
@@ -34,7 +34,7 @@ typedef void_type get_volume_args;
 
 struct get_volume_return
 {
-   asset       nlg_volume = asset( 0, NLG_SYMBOL );
+   asset       nlg_volume = asset( 0, KNLG_SYMBOL );
    asset       sbd_volume = asset( 0, SBD_SYMBOL );
 };
 

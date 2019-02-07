@@ -16,7 +16,7 @@
 #include <knowledgr/jsonball/jsonball.hpp>
 
 #define KNOWLEDGR_RC_REGEN_TIME   (60*60*24*5)
-// 2020.748973 VESTS == 1.000 NLG when HF20 occurred on mainnet
+// 2020.748973 VESTS == 1.000 KNLG when HF20 occurred on mainnet
 // TODO: What should this value be for testnet?
 #define KNOWLEDGR_HISTORICAL_ACCOUNT_CREATION_ADJUSTMENT      2020748973
 
@@ -94,7 +94,7 @@ class rc_plugin_impl
 template< bool account_may_exist = false >
 void create_rc_account( database& db, uint32_t now, const account_object& account, asset max_rc_creation_adjustment )
 {
-	return; //////~~~~~NLG~~~~~ WILL COME SOON ;-)
+	return; //////~~~~~KNLG~~~~~ WILL COME SOON ;-)
    // ilog( "create_rc_account( ${a} )", ("a", account.name) );
    if( account_may_exist )
    {
@@ -103,7 +103,7 @@ void create_rc_account( database& db, uint32_t now, const account_object& accoun
          return;
    }
 
-//    if( max_rc_creation_adjustment.symbol == NLG_SYMBOL )
+//    if( max_rc_creation_adjustment.symbol == KNLG_SYMBOL )
 //    {
 //       const dynamic_global_property_object& gpo = db.get_dynamic_global_properties();
 //       max_rc_creation_adjustment = max_rc_creation_adjustment * gpo.get_vesting_share_price();
@@ -225,7 +225,7 @@ void use_account_rcs(
    int64_t rc,
    rc_plugin_skip_flags skip )
 {
-///~~~~~NLG~~~~~{ WILL COME SOON ;-)
+///~~~~~KNLG~~~~~{ WILL COME SOON ;-)
 //    if( account_name == account_name_type() )
 //    {
 //       if( db.is_producing() )
@@ -257,7 +257,7 @@ void use_account_rcs(
 //          if( db.is_producing() )
 //          {
 //             KNOWLEDGR_ASSERT( has_mana, plugin_exception,
-//                "Account: ${account} has ${rc_current} RC, needs ${rc_needed} RC. Please wait to transact, or power up NLG.",
+//                "Account: ${account} has ${rc_current} RC, needs ${rc_needed} RC. Please wait to transact, or power up KNLG.",
 //                ("account", account_name)
 //                ("rc_needed", rc)
 //                ("rc_current", rca.rc_manabar.current_mana)
@@ -289,7 +289,7 @@ void use_account_rcs(
 // 
 //       rca.rc_manabar.use_mana( rc, min_mana );
 //    } );
-///~~~~~NLG~~~~~} WILL COME SOON ;-)
+///~~~~~KNLG~~~~~} WILL COME SOON ;-)
 }
 
 void rc_plugin_impl::on_post_apply_transaction( const transaction_notification& note )
@@ -589,7 +589,7 @@ struct pre_apply_operation_visitor
       //
       // TODO:  Issue number
       //
-///~~~~~NLG~~~~~{ WILL COME SOON ;-)
+///~~~~~KNLG~~~~~{ WILL COME SOON ;-)
 //       static_assert( KNOWLEDGR_RC_REGEN_TIME <= KNOWLEDGR_VOTING_MANA_REGENERATION_SECONDS, "RC regen time must be smaller than vote regen time" );
 // 
 //       // ilog( "regenerate(${a})", ("a", account.name) );
@@ -617,7 +617,7 @@ struct pre_apply_operation_visitor
 //       {
 //          rca.rc_manabar.regenerate_mana< true >( mbparams, _current_time );
 //       } );
-///~~~~~NLG~~~~~} WILL COME SOON ;-)
+///~~~~~KNLG~~~~~} WILL COME SOON ;-)
    }
 
    template< bool account_may_not_exist = false >
@@ -798,7 +798,7 @@ struct post_apply_operation_visitor
    void operator()( const pow_operation& op )const
    {
       // ilog( "handling post-apply pow_operation" );
-      create_rc_account< true >( _db, _current_time, op.worker_account, asset( 0, NLG_SYMBOL ) );
+      create_rc_account< true >( _db, _current_time, op.worker_account, asset( 0, KNLG_SYMBOL ) );
       _mod_accounts.emplace_back( op.worker_account );
       _mod_accounts.emplace_back( _current_witness );
    }
@@ -806,7 +806,7 @@ struct post_apply_operation_visitor
    void operator()( const pow2_operation& op )const
    {
       auto worker_name = get_worker_name( op.work );
-      create_rc_account< true >( _db, _current_time, worker_name, asset( 0, NLG_SYMBOL ) );
+      create_rc_account< true >( _db, _current_time, worker_name, asset( 0, KNLG_SYMBOL ) );
       _mod_accounts.emplace_back( worker_name );
       _mod_accounts.emplace_back( _current_witness );
    }
@@ -923,7 +923,7 @@ typedef post_apply_operation_visitor post_apply_optional_action_visitor;
 void rc_plugin_impl::on_pre_apply_operation( const operation_notification& note )
 {
 	return;
-///~~~~~NLG~~~~~{ WILL COME SOON ;-)
+///~~~~~KNLG~~~~~{ WILL COME SOON ;-)
 //    if( before_first_block() )
 //       return;
 // 
@@ -939,7 +939,7 @@ void rc_plugin_impl::on_pre_apply_operation( const operation_notification& note 
 // 
 //    // ilog( "Calling pre-vtor on ${op}", ("op", note.op) );
 //    note.op.visit( vtor );
-///~~~~~NLG~~~~~} WILL COME SOON ;-)
+///~~~~~KNLG~~~~~} WILL COME SOON ;-)
 }
 
 void update_modified_accounts( database& db, const std::vector< account_regen_info >& modified_accounts )
@@ -964,7 +964,7 @@ void update_modified_accounts( database& db, const std::vector< account_regen_in
 void rc_plugin_impl::on_post_apply_operation( const operation_notification& note )
 {
 	return;
-///~~~~~NLG~~~~~{ WILL COME SOON ;-)
+///~~~~~KNLG~~~~~{ WILL COME SOON ;-)
 //    if( before_first_block() )
 //       return;
 // 
@@ -978,13 +978,13 @@ void rc_plugin_impl::on_post_apply_operation( const operation_notification& note
 //    note.op.visit( vtor );
 // 
 //    update_modified_accounts( _db, modified_accounts );
-///~~~~~NLG~~~~~} WILL COME SOON ;-)
+///~~~~~KNLG~~~~~} WILL COME SOON ;-)
 }
 
 void rc_plugin_impl::on_pre_apply_optional_action( const optional_action_notification& note )
 {
 	return;
-///~~~~~NLG~~~~~{ WILL COME SOON ;-)
+///~~~~~KNLG~~~~~{ WILL COME SOON ;-)
 //    if( before_first_block() )
 //       return;
 // 
@@ -995,13 +995,13 @@ void rc_plugin_impl::on_pre_apply_optional_action( const optional_action_notific
 //    vtor._skip = _skip;
 // 
 //    note.action.visit( vtor );
-///~~~~~NLG~~~~~} WILL COME SOON ;-)
+///~~~~~KNLG~~~~~} WILL COME SOON ;-)
 }
 
 void rc_plugin_impl::on_post_apply_optional_action( const optional_action_notification& note )
 {
 	return;
-///~~~~~NLG~~~~~{ WILL COME SOON ;-)
+///~~~~~KNLG~~~~~{ WILL COME SOON ;-)
 //    if( before_first_block() )
 //       return;
 // 
@@ -1055,7 +1055,7 @@ void rc_plugin_impl::on_post_apply_optional_action( const optional_action_notifi
 //    }
 //    if( export_data )
 //       export_data->opt_action_info.push_back( opt_action_info );
-///~~~~~NLG~~~~~} WILL COME SOON ;-)
+///~~~~~KNLG~~~~~} WILL COME SOON ;-)
 }
 
 void rc_plugin_impl::validate_database()
@@ -1184,14 +1184,14 @@ void exp_rc_data::to_variant( fc::variant& v )const
 int64_t get_maximum_rc( const account_object& account, const rc_account_object& rc_account )
 {
 	return 0;
-///~~~~~NLG~~~~~{ WILL COME SOON ;-)
+///~~~~~KNLG~~~~~{ WILL COME SOON ;-)
 //    int64_t result = account.vesting_shares.amount.value;
 //    result = fc::signed_sat_sub( result, account.delegated_vesting_shares.amount.value );
 //    result = fc::signed_sat_add( result, account.received_vesting_shares.amount.value );
 //    result = fc::signed_sat_add( result, rc_account.max_rc_creation_adjustment.amount.value );
 //    result = fc::signed_sat_sub( result, detail::get_next_vesting_withdrawal( account ) );	
 //    return result;
-///~~~~~NLG~~~~~} WILL COME SOON ;-)
+///~~~~~KNLG~~~~~} WILL COME SOON ;-)
 }
 
 } } } // knowledgr::plugins::rc

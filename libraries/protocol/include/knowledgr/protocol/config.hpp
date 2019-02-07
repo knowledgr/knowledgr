@@ -73,7 +73,7 @@
 #endif
 
 #define VESTS_SYMBOL  (knowledgr::protocol::asset_symbol_type::from_asset_num( KNOWLEDGR_ASSET_NUM_VESTS ) )
-#define NLG_SYMBOL  (knowledgr::protocol::asset_symbol_type::from_asset_num( KNOWLEDGR_ASSET_NUM_NLG))
+#define KNLG_SYMBOL  (knowledgr::protocol::asset_symbol_type::from_asset_num( KNOWLEDGR_ASSET_NUM_KNLG))
 #define SBD_SYMBOL    (knowledgr::protocol::asset_symbol_type::from_asset_num( KNOWLEDGR_ASSET_NUM_SBD ) )
 
 #define KNOWLEDGR_BLOCKCHAIN_HARDFORK_VERSION     ( hardfork_version( KNOWLEDGR_BLOCKCHAIN_VERSION ) )
@@ -148,7 +148,7 @@
 #define KNOWLEDGR_CREATE_ACCOUNT_DELEGATION_RATIO    5
 #define KNOWLEDGR_CREATE_ACCOUNT_DELEGATION_TIME     fc::days(30)
 
-#define KNOWLEDGR_MINING_REWARD                   asset( 1000, NLG_SYMBOL )
+#define KNOWLEDGR_MINING_REWARD                   asset( 1000, KNLG_SYMBOL )
 #define KNOWLEDGR_EQUIHASH_N                      140
 #define KNOWLEDGR_EQUIHASH_K                      6
 
@@ -156,14 +156,14 @@
 #define KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC (fc::seconds(60)) // 1 minute required on books to receive volume
 #define KNOWLEDGR_LIQUIDITY_REWARD_PERIOD_SEC     (60*60)
 #define KNOWLEDGR_LIQUIDITY_REWARD_BLOCKS         (KNOWLEDGR_LIQUIDITY_REWARD_PERIOD_SEC/KNOWLEDGR_BLOCK_INTERVAL)
-#define KNOWLEDGR_MIN_LIQUIDITY_REWARD            (asset( 1000*KNOWLEDGR_LIQUIDITY_REWARD_BLOCKS, NLG_SYMBOL )) // Minumum reward to be paid out to liquidity providers
+#define KNOWLEDGR_MIN_LIQUIDITY_REWARD            (asset( 1000*KNOWLEDGR_LIQUIDITY_REWARD_BLOCKS, KNLG_SYMBOL )) // Minumum reward to be paid out to liquidity providers
 #define KNOWLEDGR_MIN_CONTENT_REWARD              KNOWLEDGR_MINING_REWARD
 #define KNOWLEDGR_MIN_CURATE_REWARD               KNOWLEDGR_MINING_REWARD
 #define KNOWLEDGR_MIN_PRODUCER_REWARD             KNOWLEDGR_MINING_REWARD
 #define KNOWLEDGR_MIN_POW_REWARD                  KNOWLEDGR_MINING_REWARD
 
-#define KNOWLEDGR_ACTIVE_CHALLENGE_FEE            asset( 2000, NLG_SYMBOL )
-#define KNOWLEDGR_OWNER_CHALLENGE_FEE             asset( 30000, NLG_SYMBOL )
+#define KNOWLEDGR_ACTIVE_CHALLENGE_FEE            asset( 2000, KNLG_SYMBOL )
+#define KNOWLEDGR_OWNER_CHALLENGE_FEE             asset( 30000, KNLG_SYMBOL )
 #define KNOWLEDGR_ACTIVE_CHALLENGE_COOLDOWN       fc::days(1)
 #define KNOWLEDGR_OWNER_CHALLENGE_COOLDOWN        fc::days(1)
 
@@ -317,8 +317,8 @@
 ///@}
 
 #define KNOWLEDGR_STAKE_PROCESS_DELAY				(10 * 60)
-#define KNOWLEDGR_NUM_OF_INIT_STAKING_ACCOUNTS		1000///~~~~~NLG~~~~~
-#define KNOWLEDGR_LIMIT_STAKING_AMOUNT				asset( 1000000, NLG_SYMBOL )///~~~~~NLG~~~~~
+#define KNOWLEDGR_NUM_OF_INIT_STAKING_ACCOUNTS		1000///~~~~~KNLG~~~~~
+#define KNOWLEDGR_LIMIT_STAKING_AMOUNT				asset( 1000000, KNLG_SYMBOL )///~~~~~KNLG~~~~~
 #define KNOWLEDGR_RPOWER_REWARD_PERCENT          (5 * KNOWLEDGR_1_PERCENT)
 #define KNOWLEDGR_ADMIN_ACCOUNT1				"admin1"
 #define KNOWLEDGR_ADMIN_ACCOUNT2				"admin2"

@@ -181,9 +181,9 @@ uint32_t asset_symbol_type::asset_num_from_nai( uint32_t nai, uint8_t decimal_pl
 
    switch( nai_data_digits )
    {
-      case KNOWLEDGR_NAI_NLG:
-         FC_ASSERT( decimal_places == KNOWLEDGR_PRECISION_NLG );
-         return KNOWLEDGR_ASSET_NUM_NLG;
+      case KNOWLEDGR_NAI_KNLG:
+         FC_ASSERT( decimal_places == KNOWLEDGR_PRECISION_KNLG );
+         return KNOWLEDGR_ASSET_NUM_KNLG;
       case KNOWLEDGR_NAI_SBD:
          FC_ASSERT( decimal_places == KNOWLEDGR_PRECISION_SBD );
          return KNOWLEDGR_ASSET_NUM_SBD;
@@ -203,8 +203,8 @@ uint32_t asset_symbol_type::to_nai()const
    // Can be replaced with some clever bitshifting
    switch( asset_num )
    {
-      case KNOWLEDGR_ASSET_NUM_NLG:
-         nai_data_digits = KNOWLEDGR_NAI_NLG;
+      case KNOWLEDGR_ASSET_NUM_KNLG:
+         nai_data_digits = KNOWLEDGR_NAI_KNLG;
          break;
       case KNOWLEDGR_ASSET_NUM_SBD:
          nai_data_digits = KNOWLEDGR_NAI_SBD;
@@ -229,7 +229,7 @@ bool asset_symbol_type::is_vesting() const
       {
          switch( asset_num )
          {
-            case KNOWLEDGR_ASSET_NUM_NLG:
+            case KNOWLEDGR_ASSET_NUM_KNLG:
                return false;
             case KNOWLEDGR_ASSET_NUM_SBD:
                // SBD is certainly liquid.
@@ -256,12 +256,12 @@ asset_symbol_type asset_symbol_type::get_paired_symbol() const
       {
          switch( asset_num )
          {
-            case KNOWLEDGR_ASSET_NUM_NLG:
+            case KNOWLEDGR_ASSET_NUM_KNLG:
                return from_asset_num( KNOWLEDGR_ASSET_NUM_VESTS );
             case KNOWLEDGR_ASSET_NUM_SBD:
                return *this;
             case KNOWLEDGR_ASSET_NUM_VESTS:
-               return from_asset_num( KNOWLEDGR_ASSET_NUM_NLG );
+               return from_asset_num( KNOWLEDGR_ASSET_NUM_KNLG );
             default:
                FC_ASSERT( false, "Unknown asset symbol" );
          }
@@ -282,7 +282,7 @@ asset_symbol_type::asset_symbol_space asset_symbol_type::space()const
    asset_symbol_type::asset_symbol_space s = legacy_space;
    switch( asset_num )
    {
-      case KNOWLEDGR_ASSET_NUM_NLG:
+      case KNOWLEDGR_ASSET_NUM_KNLG:
       case KNOWLEDGR_ASSET_NUM_SBD:
       case KNOWLEDGR_ASSET_NUM_VESTS:
          s = legacy_space;
@@ -297,7 +297,7 @@ void asset_symbol_type::validate()const
 {
    switch( asset_num )
    {
-      case KNOWLEDGR_ASSET_NUM_NLG:
+      case KNOWLEDGR_ASSET_NUM_KNLG:
       case KNOWLEDGR_ASSET_NUM_SBD:
       case KNOWLEDGR_ASSET_NUM_VESTS:
          break;

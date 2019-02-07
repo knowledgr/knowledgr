@@ -32,7 +32,7 @@ struct legacy_asset
       static legacy_asset from_string( const string& from );
 
       share_type                       amount;
-      asset_symbol_type                symbol = NLG_SYMBOL;
+      asset_symbol_type                symbol = KNLG_SYMBOL;
 };
 
 } } } // knowledgr::plugins::condenser_api

@@ -9,7 +9,7 @@ using knowledgr::protocol::price;
 
 inline asset to_sbd( const price& p, const asset& knowledgr )
 {
-   FC_ASSERT( knowledgr.symbol == NLG_SYMBOL );
+   FC_ASSERT( knowledgr.symbol == KNLG_SYMBOL );
    if( p.is_null() )
       return asset( 0, SBD_SYMBOL );
    return knowledgr * p;
@@ -19,7 +19,7 @@ inline asset to_knowledgr( const price& p, const asset& sbd )
 {
    FC_ASSERT( sbd.symbol == SBD_SYMBOL );
    if( p.is_null() )
-      return asset( 0, NLG_SYMBOL );
+      return asset( 0, KNLG_SYMBOL );
    return sbd * p;
 }
 

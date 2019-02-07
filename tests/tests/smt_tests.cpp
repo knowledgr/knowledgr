@@ -633,11 +633,11 @@ BOOST_AUTO_TEST_CASE( comment_votable_assers_validate )
          op.author = "alice";
          op.permlink = "test";
 
-         BOOST_TEST_MESSAGE( "--- Testing invalid configuration of votable_assets - NLG added to container" );
+         BOOST_TEST_MESSAGE( "--- Testing invalid configuration of votable_assets - KNLG added to container" );
          allowed_vote_assets ava;
          const auto& smt = smts.front();
          ava.add_votable_asset(smt, share_type(20), false);
-         ava.add_votable_asset(NLG_SYMBOL, share_type(20), true);
+         ava.add_votable_asset(KNLG_SYMBOL, share_type(20), true);
          op.extensions.insert( ava );
          KNOWLEDGR_REQUIRE_THROW( op.validate(), fc::assert_exception );
       }
@@ -714,13 +714,13 @@ BOOST_AUTO_TEST_CASE( asset_symbol_vesting_methods )
    {
       BOOST_TEST_MESSAGE( "Test asset_symbol vesting methods" );
 
-      asset_symbol_type Knowledgr = NLG_SYMBOL;
+      asset_symbol_type Knowledgr = KNLG_SYMBOL;
       FC_ASSERT( Knowledgr.is_vesting() == false );
       FC_ASSERT( Knowledgr.get_paired_symbol() == VESTS_SYMBOL );
 
       asset_symbol_type Vests = VESTS_SYMBOL;
       FC_ASSERT( Vests.is_vesting() );
-      FC_ASSERT( Vests.get_paired_symbol() == NLG_SYMBOL );
+      FC_ASSERT( Vests.get_paired_symbol() == KNLG_SYMBOL );
 
       asset_symbol_type Sbd = SBD_SYMBOL;
       FC_ASSERT( Sbd.is_vesting() == false );
@@ -1333,19 +1333,19 @@ BOOST_AUTO_TEST_CASE( smt_create_apply )
       op.precision = op.symbol.decimals();
 
       BOOST_TEST_MESSAGE( " -- SMT create with insufficient SBD balance" );
-      // Fund with NLG, and set fee with SBD.
+      // Fund with KNLG, and set fee with SBD.
       FUND( "alice", test_amount );
       // Declare fee in SBD/TBD though alice has none.
       op.smt_creation_fee = asset( test_amount, SBD_SYMBOL );
       // Throw due to insufficient balance of SBD/TBD.
       FAIL_WITH_OP(op, alice_private_key, fc::assert_exception);
 
-      BOOST_TEST_MESSAGE( " -- SMT create with insufficient NLG balance" );
-      // Now fund with SBD, and set fee with NLG.
-      convert( "alice", asset( test_amount, NLG_SYMBOL ) );
-      // Declare fee in NLG though alice has none.
-      op.smt_creation_fee = asset( test_amount, NLG_SYMBOL );
-      // Throw due to insufficient balance of NLG.
+      BOOST_TEST_MESSAGE( " -- SMT create with insufficient KNLG balance" );
+      // Now fund with SBD, and set fee with KNLG.
+      convert( "alice", asset( test_amount, KNLG_SYMBOL ) );
+      // Declare fee in KNLG though alice has none.
+      op.smt_creation_fee = asset( test_amount, KNLG_SYMBOL );
+      // Throw due to insufficient balance of KNLG.
       FAIL_WITH_OP(op, alice_private_key, fc::assert_exception);
 
       BOOST_TEST_MESSAGE( " -- SMT create with available funds" );
@@ -1375,15 +1375,15 @@ BOOST_AUTO_TEST_CASE( smt_create_apply )
       op.symbol = bob_symbol;
       op.precision = op.symbol.decimals();
 
-      BOOST_TEST_MESSAGE( " -- Check that we cannot create an SMT with an insufficent NLG creation fee" );
-      // Check too low fee in NLG.
+      BOOST_TEST_MESSAGE( " -- Check that we cannot create an SMT with an insufficent KNLG creation fee" );
+      // Check too low fee in KNLG.
       FUND( "bob", too_low_fee_amount );
-      op.smt_creation_fee = asset( too_low_fee_amount, NLG_SYMBOL );
+      op.smt_creation_fee = asset( too_low_fee_amount, KNLG_SYMBOL );
       FAIL_WITH_OP(op, bob_private_key, fc::assert_exception);
 
       BOOST_TEST_MESSAGE( " -- Check that we cannot create an SMT with an insufficent SBD creation fee" );
       // Check too low fee in SBD.
-      convert( "bob", asset( too_low_fee_amount, NLG_SYMBOL ) );
+      convert( "bob", asset( too_low_fee_amount, KNLG_SYMBOL ) );
       op.smt_creation_fee = asset( too_low_fee_amount, SBD_SYMBOL );
       FAIL_WITH_OP(op, bob_private_key, fc::assert_exception);
 

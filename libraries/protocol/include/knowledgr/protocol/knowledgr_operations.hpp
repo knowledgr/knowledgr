@@ -11,7 +11,7 @@
 namespace knowledgr { namespace protocol {
 
    void validate_auth_size( const authority& a );
-   ///~~~~~NLG~~~~~{
+   ///~~~~~KNLG~~~~~{
    struct account_expertise_update_operation : public base_operation
    {
 	   account_name_type             admin;
@@ -49,7 +49,7 @@ namespace knowledgr { namespace protocol {
 	   void validate()const;
 	   void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(admin); }
    };
-   ///~~~~~NLG~~~~~}
+   ///~~~~~KNLG~~~~~}
 
    struct account_create_operation : public base_operation
    {
@@ -106,7 +106,7 @@ namespace knowledgr { namespace protocol {
    struct citation {
 	   account_name_type author;
 	   string permlink;
-   };//~~~~~NLG~~~~~
+   };//~~~~~KNLG~~~~~
 
    struct comment_operation : public base_operation
    {
@@ -119,9 +119,9 @@ namespace knowledgr { namespace protocol {
       string            title;
       string            body;
       string            json_metadata;
-	  uint32_t			type;//~~~~~NLG~~~~~   0-observation, 1-question, 2-hypothesis, 3-review, 4-none
-	  vector<citation>	citations;//~~~~~NLG~~~~~
-	  vector< protocol::expertise_category > categories;//~~~~~NLG~~~~~
+	  uint32_t			type;//~~~~~KNLG~~~~~   0-observation, 1-question, 2-hypothesis, 3-review, 4-none
+	  vector<citation>	citations;//~~~~~KNLG~~~~~
+	  vector< protocol::expertise_category > categories;//~~~~~KNLG~~~~~
 
       void validate()const;
       void get_required_posting_authorities( flat_set<account_name_type>& a )const{ a.insert(author); }
@@ -209,8 +209,8 @@ namespace knowledgr { namespace protocol {
       void validate() const
       {
          FC_ASSERT(votable_assets.size() <= SMT_MAX_VOTABLE_ASSETS, "Too much votable assets specified");
-         FC_ASSERT(is_allowed(NLG_SYMBOL) == false,
-            "NLG can not be explicitly specified as one of allowed_vote_assets");
+         FC_ASSERT(is_allowed(KNLG_SYMBOL) == false,
+            "KNLG can not be explicitly specified as one of allowed_vote_assets");
       }
 
       flat_map< asset_symbol_type, votable_asset_info > votable_assets;
@@ -239,7 +239,7 @@ namespace knowledgr { namespace protocol {
       account_name_type author;
       string            permlink;
 
-      asset             max_accepted_payout    = asset( 100000000/*1000000000*/, NLG_SYMBOL );       /// NLG value of the maximum payout this post will receive
+      asset             max_accepted_payout    = asset( 100000000/*1000000000*/, KNLG_SYMBOL );       /// KNLG value of the maximum payout this post will receive
       uint16_t          percent_knowledgr_dollars  = KNOWLEDGR_100_PERCENT; /// the percent of Knowledgr Dollars to key, unkept amounts will be received as Knowledgr Power
       bool              allow_votes            = true;      /// allows a post to receive votes;
       bool              allow_curation_rewards = true; /// allows voters to recieve curation rewards. Rewards return to reward fund.
@@ -302,7 +302,7 @@ namespace knowledgr { namespace protocol {
    /**
     * @ingroup operations
     *
-    * @brief Transfers NLG from one account to another.
+    * @brief Transfers KNLG from one account to another.
     */
    struct transfer_operation : public base_operation
    {
@@ -347,7 +347,7 @@ namespace knowledgr { namespace protocol {
       uint32_t          escrow_id = 30;
 
 //      asset             sbd_amount = asset( 0, SBD_SYMBOL );
-      asset             nlg_amount = asset( 0, NLG_SYMBOL );
+      asset             nlg_amount = asset( 0, KNLG_SYMBOL );
       asset             fee;
 
       time_point_sec    ratification_deadline;
@@ -419,7 +419,7 @@ namespace knowledgr { namespace protocol {
 
       uint32_t          escrow_id = 30;
 //      asset             sbd_amount = asset( 0, SBD_SYMBOL ); ///< the amount of sbd to release
-      asset             nlg_amount = asset( 0, NLG_SYMBOL ); ///< the amount of knowledgr to release
+      asset             nlg_amount = asset( 0, KNLG_SYMBOL ); ///< the amount of knowledgr to release
 
       void validate()const;
       void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(who); }
@@ -427,7 +427,7 @@ namespace knowledgr { namespace protocol {
 
 
    /**
-    *  This operation converts liquid token (NLG or liquid SMT) into VFS (Vesting Fund Shares,
+    *  This operation converts liquid token (KNLG or liquid SMT) into VFS (Vesting Fund Shares,
     *  VESTS or vesting SMT) at the current exchange rate. With this operation it is possible to
     *  give another account vesting shares so that faucets can pre-fund new accounts with vesting shares.
     */
@@ -435,7 +435,7 @@ namespace knowledgr { namespace protocol {
 //    {
 //       account_name_type from;
 //       account_name_type to;      ///< if null, then same as from
-//       asset             amount;  ///< must be NLG or liquid variant of SMT
+//       asset             amount;  ///< must be KNLG or liquid variant of SMT
 // 
 //       void validate()const;
 //       void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(from); }
@@ -490,7 +490,7 @@ namespace knowledgr { namespace protocol {
    struct legacy_chain_properties
    {
       /**
-       *  This fee, paid in NLG, is converted into VESTING SHARES for the new account. Accounts
+       *  This fee, paid in KNLG, is converted into VESTING SHARES for the new account. Accounts
        *  without vesting shares cannot earn usage rations and therefore are powerless. This minimum
        *  fee requires all accounts to have some kind of commitment to the network that includes the
        *  ability to vote and make transactions.
@@ -659,7 +659,7 @@ namespace knowledgr { namespace protocol {
 
 
    /**
-    *  This operation instructs the blockchain to start a conversion between NLG and SBD,
+    *  This operation instructs the blockchain to start a conversion between KNLG and SBD,
     *  The funds are deposited after KNOWLEDGR_CONVERSION_DELAY
     */
 //    struct convert_operation : public base_operation
@@ -829,7 +829,7 @@ namespace knowledgr { namespace protocol {
     * key getting compromised and being used to produced multiple blocks so
     * the attacker can report it and steel their vesting knowledgr.
     *
-    * The result of the operation is to transfer the full VESTING NLG balance
+    * The result of the operation is to transfer the full VESTING KNLG balance
     * of the block producer to the reporter.
     */
    struct report_over_production_operation : public base_operation
@@ -1123,9 +1123,9 @@ FC_REFLECT_TYPENAME( knowledgr::protocol::pow2_work )
 FC_REFLECT( knowledgr::protocol::pow_operation, (worker_account)(block_id)(nonce)(work)(props) )
 FC_REFLECT( knowledgr::protocol::pow2_operation, (work)(new_owner_key)(props) )
 
-FC_REFLECT( knowledgr::protocol::citation, (author)(permlink) ) ///~~~~~NLG~~~~~
+FC_REFLECT( knowledgr::protocol::citation, (author)(permlink) ) ///~~~~~KNLG~~~~~
 
-///~~~~~NLG~~~~~{
+///~~~~~KNLG~~~~~{
 FC_REFLECT( knowledgr::protocol::account_expertise_update_operation,
             (admin)
             (account)
@@ -1143,7 +1143,7 @@ FC_REFLECT( knowledgr::protocol::stake_request_operation,
 FC_REFLECT( knowledgr::protocol::stake_process_operation,
 			(admin)
 			(account) )
-///~~~~~NLG~~~~~}
+///~~~~~KNLG~~~~~}
 
 FC_REFLECT( knowledgr::protocol::account_create_operation,
             (fee)
@@ -1184,8 +1184,8 @@ FC_REFLECT( knowledgr::protocol::witness_set_properties_operation, (owner)(props
 FC_REFLECT( knowledgr::protocol::account_witness_vote_operation, (account)(witness)(approve) )
 FC_REFLECT( knowledgr::protocol::account_witness_proxy_operation, (account)(proxy) )
 FC_REFLECT( knowledgr::protocol::comment_operation, (parent_author)(parent_permlink)(author)(permlink)(title)(body)(json_metadata)
-			(type)(citations) //~~~~~NLG~~~~~
-			(categories) //~~~~~NLG~~~~~
+			(type)(citations) //~~~~~KNLG~~~~~
+			(categories) //~~~~~KNLG~~~~~
 			)
 FC_REFLECT( knowledgr::protocol::vote_operation, (voter)(author)(permlink)(weight) )
 FC_REFLECT( knowledgr::protocol::custom_operation, (required_auths)(id)(data) )

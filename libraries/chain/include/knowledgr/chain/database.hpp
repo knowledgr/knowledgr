@@ -340,7 +340,7 @@ namespace knowledgr { namespace chain {
           */
          uint32_t get_slot_at_time(fc::time_point_sec when)const;
 
-//          /** @return the sbd created and deposited to_account, may return NLG if there is no median feed */
+//          /** @return the sbd created and deposited to_account, may return KNLG if there is no median feed */
 //          std::pair< asset, asset > create_sbd( const account_object& to_account, asset knowledgr, bool to_reward_balance=false );
          asset create_vesting( const account_object& to_account, asset knowledgr, bool to_reward_balance=false );
          void adjust_total_payout( const comment_object& a, const asset& sbd, const asset& curator_sbd_value, const asset& beneficiary_value );
@@ -391,7 +391,7 @@ namespace knowledgr { namespace chain {
 #ifdef KNOWLEDGR_ENABLE_SMT
          void process_smt_objects();
 #endif
-		 void process_pending_stakes();///~~~~~NLG~~~~~
+		 void process_pending_stakes();///~~~~~KNLG~~~~~
          void account_recovery_processing();
          void expire_escrow_ratification();
          void process_decline_voting_rights();
@@ -411,7 +411,7 @@ namespace knowledgr { namespace chain {
 
 //          /**
 //           * Helper method to return the current sbd value of a given amount of
-//           * NLG.  Return 0 SBD if there isn't a current_median_history
+//           * KNLG.  Return 0 SBD if there isn't a current_median_history
 //           */
 //          asset to_sbd( const asset& knowledgr )const;
 //          asset to_knowledgr( const asset& sbd )const;

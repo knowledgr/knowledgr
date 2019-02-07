@@ -76,7 +76,7 @@ enum object_type
    account_rewards_balance_object_type,
    nai_pool_object_type
 #endif
-   stake_pending_object_type///~~~~~NLG~~~~~
+   stake_pending_object_type///~~~~~KNLG~~~~~
 };
 
 class dynamic_global_property_object;
@@ -119,7 +119,7 @@ class account_rewards_balance_object;
 class nai_pool_object;
 #endif
 
-class stake_pending_object; ///~~~~~NLG~~~~~
+class stake_pending_object; ///~~~~~KNLG~~~~~
 
 typedef oid< dynamic_global_property_object         > dynamic_global_property_id_type;
 typedef oid< account_object                         > account_id_type;
@@ -161,7 +161,7 @@ typedef oid< account_rewards_balance_object         > account_rewards_balance_id
 typedef oid< nai_pool_object                        > nai_pool_id_type;
 #endif
 
-typedef oid< stake_pending_object					> stake_pending_id_type;///~~~~~NLG~~~~~
+typedef oid< stake_pending_object					> stake_pending_id_type;///~~~~~KNLG~~~~~
 
 enum bandwidth_type
 {
@@ -334,7 +334,7 @@ FC_REFLECT_ENUM( knowledgr::chain::object_type,
                  (account_rewards_balance_object_type)
                  (nai_pool_object_type)
 #endif
-				 (stake_pending_object_type) ///~~~~~NLG~~~~~
+				 (stake_pending_object_type) ///~~~~~KNLG~~~~~
                )
 
 #ifndef ENABLE_STD_ALLOCATOR
