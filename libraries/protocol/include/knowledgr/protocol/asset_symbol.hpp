@@ -40,7 +40,7 @@
 #else
 
 #define VESTS_SYMBOL_U64  (uint64_t('V') | (uint64_t('E') << 8) | (uint64_t('S') << 16) | (uint64_t('T') << 24) | (uint64_t('S') << 32))
-#define NLG_SYMBOL_U64  (uint64_t('C') | (uint64_t('L') << 8) | (uint64_t('C') << 16))
+#define NLG_SYMBOL_U64  (uint64_t('N') | (uint64_t('L') << 8) | (uint64_t('G') << 16))
 #define SBD_SYMBOL_U64    (uint64_t('S') | (uint64_t('B') << 8) | (uint64_t('D') << 16))
 
 #endif
