@@ -419,39 +419,39 @@ vector< follow::reblog_count > remote_node_api::get_blog_authors( account_name_t
    FC_ASSERT( false );
 }
 
-condenser_api::get_ticker_return remote_node_api::get_ticker()
-{
-   FC_ASSERT( false );
-}
+// condenser_api::get_ticker_return remote_node_api::get_ticker()
+// {
+//    FC_ASSERT( false );
+// }
 
 condenser_api::get_volume_return remote_node_api::get_volume()
 {
    FC_ASSERT( false );
 }
 
-condenser_api::get_order_book_return remote_node_api::get_order_book( uint32_t )
-{
-   FC_ASSERT( false );
-}
+// condenser_api::get_order_book_return remote_node_api::get_order_book( uint32_t )
+// {
+//    FC_ASSERT( false );
+// }
 
-vector< condenser_api::market_trade > remote_node_api::get_trade_history( time_point_sec, time_point_sec, uint32_t )
-{
-   FC_ASSERT( false );
-}
+// vector< condenser_api::market_trade > remote_node_api::get_trade_history( time_point_sec, time_point_sec, uint32_t )
+// {
+//    FC_ASSERT( false );
+// }
 
-vector< condenser_api::market_trade > remote_node_api::get_recent_trades( uint32_t )
-{
-   FC_ASSERT( false );
-}
+// vector< condenser_api::market_trade > remote_node_api::get_recent_trades( uint32_t )
+// {
+//    FC_ASSERT( false );
+// }
 
-vector< market_history::bucket_object > remote_node_api::get_market_history( uint32_t, time_point_sec, time_point_sec )
-{
-   FC_ASSERT( false );
-}
-
-flat_set< uint32_t > remote_node_api::get_market_history_buckets()
-{
-   FC_ASSERT( false );
-}
+// vector< market_history::bucket_object > remote_node_api::get_market_history( uint32_t, time_point_sec, time_point_sec )
+// {
+//    FC_ASSERT( false );
+// }
+// 
+// flat_set< uint32_t > remote_node_api::get_market_history_buckets()
+// {
+//    FC_ASSERT( false );
+// }
 
 } }

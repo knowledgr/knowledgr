@@ -1011,7 +1011,7 @@ class wallet_api
        *
        * @param limit Maximum number of orders to return for bids and asks. Max is 1000.
        */
-      condenser_api::get_order_book_return get_order_book( uint32_t limit = 1000 );
+//      condenser_api::get_order_book_return get_order_book( uint32_t limit = 1000 );
       vector< condenser_api::api_limit_order_object > get_open_orders( string accountname );
 
       /**
@@ -1317,7 +1317,7 @@ FC_API( knowledgr::wallet::wallet_api,
         //(set_withdraw_vesting_route)
         //(convert_sbd)
         //(publish_feed)
-        (get_order_book)
+        //(get_order_book)
         (get_open_orders)
         (create_order)
         (cancel_order)

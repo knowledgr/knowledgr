@@ -889,36 +889,36 @@ struct comment_blog_entry
    uint32_t             entry_id = 0;
 };
 
-struct ticker
-{
-   ticker() {}
-   ticker( const market_history::get_ticker_return& t ) :
-      latest( t.latest ),
-      lowest_ask( t.lowest_ask ),
-      highest_bid( t.highest_bid ),
-      percent_change( t.percent_change ),
-      nlg_volume( legacy_asset::from_asset( t.nlg_volume ) ),
-      sbd_volume( legacy_asset::from_asset( t.sbd_volume ) )
-   {}
-
-   double         latest = 0;
-   double         lowest_ask = 0;
-   double         highest_bid = 0;
-   double         percent_change = 0;
-   legacy_asset   nlg_volume;
-   legacy_asset   sbd_volume;
-};
+// struct ticker
+// {
+//    ticker() {}
+//    ticker( const market_history::get_ticker_return& t ) :
+//       latest( t.latest ),
+//       lowest_ask( t.lowest_ask ),
+//       highest_bid( t.highest_bid ),
+//       percent_change( t.percent_change ),
+//       knlg_volume( legacy_asset::from_asset( t.knlg_volume ) )//,
+//       sbd_volume( legacy_asset::from_asset( t.sbd_volume ) )
+//    {}
+// 
+//    double         latest = 0;
+//    double         lowest_ask = 0;
+//    double         highest_bid = 0;
+//    double         percent_change = 0;
+//    legacy_asset   knlg_volume;
+//    legacy_asset   sbd_volume;
+// };
 
 struct volume
 {
    volume() {}
    volume( const market_history::get_volume_return& v ) :
-      nlg_volume( legacy_asset::from_asset( v.nlg_volume ) ),
-      sbd_volume( legacy_asset::from_asset( v.sbd_volume ) )
+      knlg_volume( legacy_asset::from_asset( v.knlg_volume ) )//,
+//      sbd_volume( legacy_asset::from_asset( v.sbd_volume ) )
    {}
 
-   legacy_asset   nlg_volume;
-   legacy_asset   sbd_volume;
+   legacy_asset   knlg_volume;
+//   legacy_asset   sbd_volume;
 };
 
 struct order
@@ -927,15 +927,15 @@ struct order
    order( const market_history::order& o ) :
       order_price( o.order_price ),
       real_price( o.real_price ),
-      knowledgr( o.knowledgr ),
-      sbd( o.sbd ),
+      knlg( o.knlg ),
+      //sbd( o.sbd ),
       created( o.created )
    {}
 
    legacy_price   order_price;
    double         real_price;
-   share_type     knowledgr;
-   share_type     sbd;
+   share_type     knlg;
+//   share_type     sbd;
    time_point_sec created;
 };
 
@@ -1051,13 +1051,13 @@ DEFINE_API_ARGS( get_blog,                               vector< variant >,   ve
 DEFINE_API_ARGS( get_account_reputations,                vector< variant >,   vector< reputation::account_reputation > )
 DEFINE_API_ARGS( get_reblogged_by,                       vector< variant >,   vector< account_name_type > )
 DEFINE_API_ARGS( get_blog_authors,                       vector< variant >,   vector< follow::reblog_count > )
-DEFINE_API_ARGS( get_ticker,                             vector< variant >,   ticker )
+//DEFINE_API_ARGS( get_ticker,                             vector< variant >,   ticker )
 DEFINE_API_ARGS( get_volume,                             vector< variant >,   volume )
-DEFINE_API_ARGS( get_order_book,                         vector< variant >,   order_book )
-DEFINE_API_ARGS( get_trade_history,                      vector< variant >,   vector< market_trade > )
-DEFINE_API_ARGS( get_recent_trades,                      vector< variant >,   vector< market_trade > )
-DEFINE_API_ARGS( get_market_history,                     vector< variant >,   vector< market_history::bucket_object > )
-DEFINE_API_ARGS( get_market_history_buckets,             vector< variant >,   flat_set< uint32_t > )
+// DEFINE_API_ARGS( get_order_book,                         vector< variant >,   order_book )
+// DEFINE_API_ARGS( get_trade_history,                      vector< variant >,   vector< market_trade > )
+// DEFINE_API_ARGS( get_recent_trades,                      vector< variant >,   vector< market_trade > )
+// DEFINE_API_ARGS( get_market_history,                     vector< variant >,   vector< market_history::bucket_object > )
+// DEFINE_API_ARGS( get_market_history_buckets,             vector< variant >,   flat_set< uint32_t > )
 
 #undef DEFINE_API_ARGS
 
@@ -1150,13 +1150,13 @@ public:
       (get_account_reputations)
       (get_reblogged_by)
       (get_blog_authors)
-      (get_ticker)
+//      (get_ticker)
       (get_volume)
-      (get_order_book)
-      (get_trade_history)
-      (get_recent_trades)
-      (get_market_history)
-      (get_market_history_buckets)
+//      (get_order_book)
+//      (get_trade_history)
+//      (get_recent_trades)
+//       (get_market_history)
+//       (get_market_history_buckets)
    )
 
    private:
@@ -1344,14 +1344,14 @@ FC_REFLECT( knowledgr::plugins::condenser_api::comment_feed_entry,
 FC_REFLECT( knowledgr::plugins::condenser_api::comment_blog_entry,
             (comment)(blog)(reblog_on)(entry_id) )
 
-FC_REFLECT( knowledgr::plugins::condenser_api::ticker,
-            (latest)(lowest_ask)(highest_bid)(percent_change)(nlg_volume)(sbd_volume) )
+// FC_REFLECT( knowledgr::plugins::condenser_api::ticker,
+//             (latest)(lowest_ask)(highest_bid)(percent_change)(knlg_volume)/*(sbd_volume)*/ )
 
 FC_REFLECT( knowledgr::plugins::condenser_api::volume,
-            (nlg_volume)(sbd_volume) )
+            (knlg_volume)/*(sbd_volume)*/ )
 
 FC_REFLECT( knowledgr::plugins::condenser_api::order,
-            (order_price)(real_price)(knowledgr)(sbd)(created) )
+            (order_price)(real_price)(knlg)/*(sbd)*/(created) )
 
 FC_REFLECT( knowledgr::plugins::condenser_api::order_book,
             (bids)(asks) )

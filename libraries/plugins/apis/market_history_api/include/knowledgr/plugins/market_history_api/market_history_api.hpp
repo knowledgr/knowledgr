@@ -20,30 +20,30 @@ using json_rpc::void_type;
 
 typedef void_type get_ticker_args;
 
-struct get_ticker_return
-{
-   double      latest = 0;
-   double      lowest_ask = 0;
-   double      highest_bid = 0;
-   double      percent_change = 0;
-   asset       nlg_volume = asset( 0 , KNLG_SYMBOL );
-   asset       sbd_volume = asset( 0, SBD_SYMBOL );
-};
+// struct get_ticker_return
+// {
+//    double      latest = 0;
+//    double      lowest_ask = 0;
+//    double      highest_bid = 0;
+//    double      percent_change = 0;
+//    asset       knlg_volume = asset( 0 , KNLG_SYMBOL );
+// //   asset       sbd_volume = asset( 0, SBD_SYMBOL );
+// };
 
 typedef void_type get_volume_args;
 
 struct get_volume_return
 {
-   asset       nlg_volume = asset( 0, KNLG_SYMBOL );
-   asset       sbd_volume = asset( 0, SBD_SYMBOL );
+   asset       knlg_volume = asset( 0, KNLG_SYMBOL );
+//   asset       sbd_volume = asset( 0, SBD_SYMBOL );
 };
 
 struct order
 {
    price          order_price;
    double         real_price;
-   share_type     knowledgr;
-   share_type     sbd;
+   share_type     knlg;
+//   share_type     sbd;
    time_point_sec created;
 };
 
@@ -114,13 +114,13 @@ class market_history_api
       ~market_history_api();
 
       DECLARE_API(
-         (get_ticker)
+//         (get_ticker)
          (get_volume)
-         (get_order_book)
-         (get_trade_history)
-         (get_recent_trades)
-         (get_market_history)
-         (get_market_history_buckets)
+//         (get_order_book)
+//         (get_trade_history)
+//         (get_recent_trades)
+//          (get_market_history)
+//          (get_market_history_buckets)
       )
 
    private:
@@ -129,14 +129,14 @@ class market_history_api
 
 } } } // knowledgr::plugins::market_history
 
-FC_REFLECT( knowledgr::plugins::market_history::get_ticker_return,
-            (latest)(lowest_ask)(highest_bid)(percent_change)(nlg_volume)(sbd_volume) )
+// FC_REFLECT( knowledgr::plugins::market_history::get_ticker_return,
+//             (latest)(lowest_ask)(highest_bid)(percent_change)(knlg_volume)/*(sbd_volume)*/ )
 
 FC_REFLECT( knowledgr::plugins::market_history::get_volume_return,
-            (nlg_volume)(sbd_volume) )
+            (knlg_volume)/*(sbd_volume)*/ )
 
 FC_REFLECT( knowledgr::plugins::market_history::order,
-            (order_price)(real_price)(knowledgr)(sbd)(created) )
+            (order_price)(real_price)(knlg)/*(sbd)*/(created) )
 
 FC_REFLECT( knowledgr::plugins::market_history::get_order_book_args,
             (limit) )

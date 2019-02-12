@@ -104,13 +104,13 @@ struct remote_node_api
    vector< follow::account_reputation > get_account_reputations( account_name_type, uint32_t );
    vector< account_name_type > get_reblogged_by( account_name_type, string );
    vector< follow::reblog_count > get_blog_authors( account_name_type );
-   condenser_api::get_ticker_return get_ticker();
+//   condenser_api::get_ticker_return get_ticker();
    condenser_api::get_volume_return get_volume();
-   condenser_api::get_order_book_return get_order_book( uint32_t );
-   vector< condenser_api::market_trade > get_trade_history( time_point_sec, time_point_sec, uint32_t );
-   vector< condenser_api::market_trade > get_recent_trades( uint32_t );
-   vector< market_history::bucket_object > get_market_history( uint32_t, time_point_sec, time_point_sec );
-   flat_set< uint32_t > get_market_history_buckets();
+//    condenser_api::get_order_book_return get_order_book( uint32_t );
+//    vector< condenser_api::market_trade > get_trade_history( time_point_sec, time_point_sec, uint32_t );
+//    vector< condenser_api::market_trade > get_recent_trades( uint32_t );
+//    vector< market_history::bucket_object > get_market_history( uint32_t, time_point_sec, time_point_sec );
+//    flat_set< uint32_t > get_market_history_buckets();
 };
 
 } }
@@ -199,11 +199,11 @@ FC_API( knowledgr::wallet::remote_node_api,
         (get_account_reputations)
         (get_reblogged_by)
         (get_blog_authors)
-        (get_ticker)
+//        (get_ticker)
         (get_volume)
-        (get_order_book)
-        (get_trade_history)
-        (get_recent_trades)
-        (get_market_history)
-        (get_market_history_buckets)
+//         (get_order_book)
+//         (get_trade_history)
+//         (get_recent_trades)
+//         (get_market_history)
+//         (get_market_history_buckets)
       )

@@ -824,63 +824,63 @@ public:
           }
           return ss.str();
       };
-      m["get_order_book"] = []( variant result, const fc::variants& a ) {
-         auto orders = result.as< condenser_api::get_order_book_return >();
-         std::stringstream ss;
-         asset bid_sum = asset( 0, SBD_SYMBOL );
-         asset ask_sum = asset( 0, SBD_SYMBOL );
-         int spacing = 24;
-
-         ss << setiosflags( ios::fixed ) << setiosflags( ios::left ) ;
-
-         ss << ' ' << setw( ( spacing * 4 ) + 6 ) << "Bids" << "Asks\n"
-            << ' '
-            << setw( spacing + 3 ) << "Sum(SBD)"
-            << setw( spacing + 1) << "SBD"
-            << setw( spacing + 1 ) << "KNLG"
-            << setw( spacing + 1 ) << "Price"
-            << setw( spacing + 1 ) << "Price"
-            << setw( spacing + 1 ) << "KNLG "
-            << setw( spacing + 1 ) << "SBD " << "Sum(SBD)"
-            << "\n====================================================================================================="
-            << "|=====================================================================================================\n";
-
-         for( size_t i = 0; i < orders.bids.size() || i < orders.asks.size(); i++ )
-         {
-            if ( i < orders.bids.size() )
-            {
-               bid_sum += asset( orders.bids[i].sbd, SBD_SYMBOL );
-               ss
-                  << ' ' << setw( spacing ) << legacy_asset::from_asset( bid_sum ).to_string()
-                  << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.bids[i].sbd, SBD_SYMBOL ) ).to_string()
-                  << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.bids[i].knowledgr, KNLG_SYMBOL ) ).to_string()
-                  << ' ' << setw( spacing ) << orders.bids[i].real_price;
-            }
-            else
-            {
-               ss << setw( (spacing * 4 ) + 5 ) << ' ';
-            }
-
-            ss << " |";
-
-            if ( i < orders.asks.size() )
-            {
-               ask_sum += asset( orders.asks[i].sbd, SBD_SYMBOL );
-               ss << ' ' << setw( spacing ) << orders.asks[i].real_price
-                  << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.asks[i].knowledgr, KNLG_SYMBOL ) ).to_string()
-                  << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.asks[i].sbd, SBD_SYMBOL ) ).to_string()
-                  << ' ' << setw( spacing ) << legacy_asset::from_asset( ask_sum ).to_string();
-            }
-
-            ss << endl;
-         }
-
-         ss << endl
-            << "Bid Total: " << legacy_asset::from_asset( bid_sum ).to_string() << endl
-            << "Ask Total: " << legacy_asset::from_asset( ask_sum ).to_string() << endl;
-
-         return ss.str();
-      };
+//       m["get_order_book"] = []( variant result, const fc::variants& a ) {
+//          auto orders = result.as< condenser_api::get_order_book_return >();
+//          std::stringstream ss;
+//          asset bid_sum = asset( 0, SBD_SYMBOL );
+//          asset ask_sum = asset( 0, SBD_SYMBOL );
+//          int spacing = 24;
+// 
+//          ss << setiosflags( ios::fixed ) << setiosflags( ios::left ) ;
+// 
+//          ss << ' ' << setw( ( spacing * 4 ) + 6 ) << "Bids" << "Asks\n"
+//             << ' '
+//             << setw( spacing + 3 ) << "Sum(SBD)"
+//             << setw( spacing + 1) << "SBD"
+//             << setw( spacing + 1 ) << "KNLG"
+//             << setw( spacing + 1 ) << "Price"
+//             << setw( spacing + 1 ) << "Price"
+//             << setw( spacing + 1 ) << "KNLG "
+//             << setw( spacing + 1 ) << "SBD " << "Sum(SBD)"
+//             << "\n====================================================================================================="
+//             << "|=====================================================================================================\n";
+// 
+//          for( size_t i = 0; i < orders.bids.size() || i < orders.asks.size(); i++ )
+//          {
+//             if ( i < orders.bids.size() )
+//             {
+//                bid_sum += asset( orders.bids[i].sbd, SBD_SYMBOL );
+//                ss
+//                   << ' ' << setw( spacing ) << legacy_asset::from_asset( bid_sum ).to_string()
+//                   << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.bids[i].sbd, SBD_SYMBOL ) ).to_string()
+//                   << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.bids[i].knowledgr, KNLG_SYMBOL ) ).to_string()
+//                   << ' ' << setw( spacing ) << orders.bids[i].real_price;
+//             }
+//             else
+//             {
+//                ss << setw( (spacing * 4 ) + 5 ) << ' ';
+//             }
+// 
+//             ss << " |";
+// 
+//             if ( i < orders.asks.size() )
+//             {
+//                ask_sum += asset( orders.asks[i].sbd, SBD_SYMBOL );
+//                ss << ' ' << setw( spacing ) << orders.asks[i].real_price
+//                   << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.asks[i].knowledgr, KNLG_SYMBOL ) ).to_string()
+//                   << ' ' << setw( spacing ) << legacy_asset::from_asset( asset( orders.asks[i].sbd, SBD_SYMBOL ) ).to_string()
+//                   << ' ' << setw( spacing ) << legacy_asset::from_asset( ask_sum ).to_string();
+//             }
+// 
+//             ss << endl;
+//          }
+// 
+//          ss << endl
+//             << "Bid Total: " << legacy_asset::from_asset( bid_sum ).to_string() << endl
+//             << "Ask Total: " << legacy_asset::from_asset( ask_sum ).to_string() << endl;
+// 
+//          return ss.str();
+//       };
       m["get_withdraw_routes"] = []( variant result, const fc::variants& a )
       {
          auto routes = result.as< vector< database_api::api_withdraw_vesting_route_object > >();
@@ -2401,11 +2401,11 @@ vector< database_api::api_withdraw_vesting_route_object > wallet_api::get_withdr
    return my->_remote_api->get_withdraw_routes( account, type );
 }
 
-condenser_api::get_order_book_return wallet_api::get_order_book( uint32_t limit )
-{
-   FC_ASSERT( limit <= 1000 );
-   return my->_remote_api->get_order_book( limit );
-}
+// condenser_api::get_order_book_return wallet_api::get_order_book( uint32_t limit )
+// {
+//    FC_ASSERT( limit <= 1000 );
+//    return my->_remote_api->get_order_book( limit );
+// }
 
 vector< condenser_api::api_limit_order_object > wallet_api::get_open_orders( string owner )
 {
