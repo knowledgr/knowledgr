@@ -24,10 +24,10 @@ struct comment_reward_context
 {
    share_type rshares;
    uint16_t   reward_weight = 0;
-   asset      max_nlg;
+   asset      max_knlg;
    uint128_t  total_reward_shares2;
    asset      total_reward_fund_knowledgr;
-//   price      current_nlg_price;
+//   price      current_knlg_price;
    protocol::curve_id   reward_curve = protocol::quadratic;
    uint128_t  content_constant = KNOWLEDGR_CONTENT_CONSTANT_HF0;
 };
@@ -41,9 +41,9 @@ inline uint128_t get_content_constant_s()
 
 uint128_t evaluate_reward_curve( const uint128_t& rshares, const protocol::curve_id& curve = protocol::quadratic, const uint128_t& content_constant = KNOWLEDGR_CONTENT_CONSTANT_HF0 );
 
-inline bool is_comment_payout_dust( const price& p, uint64_t nlg_payout )
+inline bool is_comment_payout_dust( const price& p, uint64_t knlg_payout )
 {
-   return to_sbd( p, asset( nlg_payout, KNLG_SYMBOL ) ) < KNOWLEDGR_MIN_PAYOUT_SBD;
+   return true; //to_sbd( p, asset( knlg_payout, KNLG_SYMBOL ) ) < KNOWLEDGR_MIN_PAYOUT_SBD;
 }
 
 } } } // knowledgr::chain::util
@@ -51,10 +51,10 @@ inline bool is_comment_payout_dust( const price& p, uint64_t nlg_payout )
 FC_REFLECT( knowledgr::chain::util::comment_reward_context,
    (rshares)
    (reward_weight)
-   (max_nlg)
+   (max_knlg)
    (total_reward_shares2)
    (total_reward_fund_knowledgr)
-//   (current_nlg_price)
+//   (current_knlg_price)
    (reward_curve)
    (content_constant)
    )

@@ -1126,17 +1126,17 @@ void escrow_transfer_evaluator::do_apply( const escrow_transfer_operation& o )
       FC_ASSERT( o.ratification_deadline > _db.head_block_time(), "The escorw ratification deadline must be after head block time." );
       FC_ASSERT( o.escrow_expiration > _db.head_block_time(), "The escrow expiration must be after head block time." );
 
-      asset nlg_spent = o.nlg_amount;
+      asset knlg_spent = o.knlg_amount;
 //      asset sbd_spent = o.sbd_amount;
       if( o.fee.symbol == KNLG_SYMBOL )
-         nlg_spent += o.fee;
+         knlg_spent += o.fee;
 //       else
 //          sbd_spent += o.fee;
 
-      FC_ASSERT( from_account.balance >= nlg_spent, "Account cannot cover KNLG costs of escrow. Required: ${r} Available: ${a}", ("r",nlg_spent)("a",from_account.balance) );
+      FC_ASSERT( from_account.balance >= knlg_spent, "Account cannot cover KNLG costs of escrow. Required: ${r} Available: ${a}", ("r",knlg_spent)("a",from_account.balance) );
       //FC_ASSERT( from_account.sbd_balance >= sbd_spent, "Account cannot cover SBD costs of escrow. Required: ${r} Available: ${a}", ("r",sbd_spent)("a",from_account.sbd_balance) );
 
-      _db.adjust_balance( from_account, -nlg_spent );
+      _db.adjust_balance( from_account, -knlg_spent );
       //_db.adjust_balance( from_account, -sbd_spent );
 
       _db.create<escrow_object>([&]( escrow_object& esc )
@@ -1148,7 +1148,7 @@ void escrow_transfer_evaluator::do_apply( const escrow_transfer_operation& o )
          esc.ratification_deadline  = o.ratification_deadline;
          esc.escrow_expiration      = o.escrow_expiration;
          //esc.sbd_balance            = o.sbd_amount;
-         esc.nlg_balance          = o.nlg_amount;
+         esc.knlg_balance          = o.knlg_amount;
          esc.pending_fee            = o.fee;
       });
    }
@@ -1195,7 +1195,7 @@ void escrow_approve_evaluator::do_apply( const escrow_approve_operation& o )
 
       if( reject_escrow )
       {
-         _db.adjust_balance( o.from, escrow.nlg_balance );
+         _db.adjust_balance( o.from, escrow.knlg_balance );
          //_db.adjust_balance( o.from, escrow.sbd_balance );
          _db.adjust_balance( o.from, escrow.pending_fee );
 
@@ -1242,7 +1242,7 @@ void escrow_release_evaluator::do_apply( const escrow_release_operation& o )
       _db.get_account(o.from); // Verify from account exists
 
       const auto& e = _db.get_escrow( o.from, o.escrow_id );
-      FC_ASSERT( e.nlg_balance >= o.nlg_amount, "Release amount exceeds escrow balance. Amount: ${a}, Balance: ${b}", ("a", o.nlg_amount)("b", e.nlg_balance) );
+      FC_ASSERT( e.knlg_balance >= o.knlg_amount, "Release amount exceeds escrow balance. Amount: ${a}, Balance: ${b}", ("a", o.knlg_amount)("b", e.knlg_balance) );
       //FC_ASSERT( e.sbd_balance >= o.sbd_amount, "Release amount exceeds escrow balance. Amount: ${a}, Balance: ${b}", ("a", o.sbd_amount)("b", e.sbd_balance) );
       FC_ASSERT( e.to == o.to, "Operation 'to' (${o}) does not match escrow 'to' (${e}).", ("o", o.to)("e", e.to) );
       FC_ASSERT( e.agent == o.agent, "Operation 'agent' (${a}) does not match escrow 'agent' (${e}).", ("o", o.agent)("e", e.agent) );
@@ -1273,16 +1273,16 @@ void escrow_release_evaluator::do_apply( const escrow_release_operation& o )
       }
       // If escrow expires and there is no dispute, either party can release funds to either party.
 
-      _db.adjust_balance( o.receiver, o.nlg_amount );
+      _db.adjust_balance( o.receiver, o.knlg_amount );
       //_db.adjust_balance( o.receiver, o.sbd_amount );
 
       _db.modify( e, [&]( escrow_object& esc )
       {
-         esc.nlg_balance -= o.nlg_amount;
+         esc.knlg_balance -= o.knlg_amount;
          //esc.sbd_balance -= o.sbd_amount;
       });
 
-      if( e.nlg_balance.amount == 0 /*&& e.sbd_balance.amount == 0 */)
+      if( e.knlg_balance.amount == 0 /*&& e.sbd_balance.amount == 0 */)
       {
          _db.remove( e );
       }
@@ -3257,18 +3257,18 @@ void claim_reward_balance_evaluator::do_apply( const claim_reward_balance_operat
 {
    const auto& acnt = _db.get_account( op.account );
 
-   FC_ASSERT( op.reward_knowledgr <= acnt.reward_nlg_balance, "Cannot claim that much KNLG. Claim: ${c} Actual: ${a}",
-      ("c", op.reward_knowledgr)("a", acnt.reward_nlg_balance) );
+   FC_ASSERT( op.reward_knowledgr <= acnt.reward_knlg_balance, "Cannot claim that much KNLG. Claim: ${c} Actual: ${a}",
+      ("c", op.reward_knowledgr)("a", acnt.reward_knlg_balance) );
 //    FC_ASSERT( op.reward_sbd <= acnt.reward_sbd_balance, "Cannot claim that much SBD. Claim: ${c} Actual: ${a}",
 //       ("c", op.reward_sbd)("a", acnt.reward_sbd_balance) );
 //    FC_ASSERT( op.reward_vests <= acnt.reward_vesting_balance, "Cannot claim that much VESTS. Claim: ${c} Actual: ${a}",
 //       ("c", op.reward_vests)("a", acnt.reward_vesting_balance) );
 
-//   asset reward_vesting_nlg_to_move = asset( 0, KNLG_SYMBOL );
+//   asset reward_vesting_knlg_to_move = asset( 0, KNLG_SYMBOL );
 //    if( op.reward_vests == acnt.reward_vesting_balance )
-//       reward_vesting_nlg_to_move = acnt.reward_vesting_nlg;
+//       reward_vesting_knlg_to_move = acnt.reward_vesting_knlg;
 //    else
-//       reward_vesting_nlg_to_move = asset( ( ( uint128_t( op.reward_vests.amount.value ) * uint128_t( acnt.reward_vesting_nlg.amount.value ) )
+//       reward_vesting_knlg_to_move = asset( ( ( uint128_t( op.reward_vests.amount.value ) * uint128_t( acnt.reward_vesting_knlg.amount.value ) )
 //          / uint128_t( acnt.reward_vesting_balance.amount.value ) ).to_uint64(), KNLG_SYMBOL );
 
    _db.adjust_reward_balance( acnt, -op.reward_knowledgr );
@@ -3287,16 +3287,16 @@ void claim_reward_balance_evaluator::do_apply( const claim_reward_balance_operat
 // 
 //       a.vesting_shares += op.reward_vests;
 //      a.reward_vesting_balance -= op.reward_vests;
-//      a.reward_vesting_nlg -= reward_vesting_nlg_to_move;
+//      a.reward_vesting_knlg -= reward_vesting_knlg_to_move;
 //   });
 
 //    _db.modify( _db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
 //    {
 //       //gpo.total_vesting_shares += op.reward_vests;
-//       //gpo.total_vesting_fund_nlg += reward_vesting_nlg_to_move;
+//       //gpo.total_vesting_fund_knlg += reward_vesting_knlg_to_move;
 // 
 //       //gpo.pending_rewarded_vesting_shares -= op.reward_vests;
-//       //gpo.pending_rewarded_vesting_nlg -= reward_vesting_nlg_to_move;
+//       //gpo.pending_rewarded_vesting_knlg -= reward_vesting_knlg_to_move;
 //    });
 
    _db.adjust_proxied_witness_votes( acnt, op.reward_knowledgr.amount );
@@ -3331,35 +3331,35 @@ void claim_reward_balance2_evaluator::do_apply( const claim_reward_balance2_oper
 //             FC_ASSERT( token <= a->reward_vesting_balance, "Cannot claim that much VESTS. Claim: ${c} Actual: ${a}",
 //                ("c", token)("a", a->reward_vesting_balance) );
 // 
-//             asset reward_vesting_nlg_to_move = asset( 0, KNLG_SYMBOL );
+//             asset reward_vesting_knlg_to_move = asset( 0, KNLG_SYMBOL );
 //             if( token == a->reward_vesting_balance )
-//                reward_vesting_nlg_to_move = a->reward_vesting_nlg;
+//                reward_vesting_knlg_to_move = a->reward_vesting_knlg;
 //             else
-//                reward_vesting_nlg_to_move = asset( ( ( uint128_t( token.amount.value ) * uint128_t( a->reward_vesting_nlg.amount.value ) )
+//                reward_vesting_knlg_to_move = asset( ( ( uint128_t( token.amount.value ) * uint128_t( a->reward_vesting_knlg.amount.value ) )
 //                   / uint128_t( a->reward_vesting_balance.amount.value ) ).to_uint64(), KNLG_SYMBOL );
 // 
 //             _db.modify( *a, [&]( account_object& a )
 //             {
 //                a.vesting_shares += token;
 //                a.reward_vesting_balance -= token;
-//                a.reward_vesting_nlg -= reward_vesting_nlg_to_move;
+//                a.reward_vesting_knlg -= reward_vesting_knlg_to_move;
 //             });
 // 
 //             _db.modify( _db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
 //             {
 //                gpo.total_vesting_shares += token;
-//                gpo.total_vesting_fund_nlg += reward_vesting_nlg_to_move;
+//                gpo.total_vesting_fund_knlg += reward_vesting_knlg_to_move;
 // 
 //                gpo.pending_rewarded_vesting_shares -= token;
-//                gpo.pending_rewarded_vesting_nlg -= reward_vesting_nlg_to_move;
+//                gpo.pending_rewarded_vesting_knlg -= reward_vesting_knlg_to_move;
 //             });
 // 
 //             _db.adjust_proxied_witness_votes( *a, token.amount );
 //          }
          /*else */if( token.symbol == KNLG_SYMBOL/* || token.symbol == SBD_SYMBOL*/ )
          {
-            FC_ASSERT( is_asset_type( token, KNLG_SYMBOL ) == false || token <= a->reward_nlg_balance,
-                       "Cannot claim that much KNLG. Claim: ${c} Actual: ${a}", ("c", token)("a", a->reward_nlg_balance) );
+            FC_ASSERT( is_asset_type( token, KNLG_SYMBOL ) == false || token <= a->reward_knlg_balance,
+                       "Cannot claim that much KNLG. Claim: ${c} Actual: ${a}", ("c", token)("a", a->reward_knlg_balance) );
 //             FC_ASSERT( is_asset_type( token, SBD_SYMBOL ) == false || token <= a->reward_sbd_balance,
 //                        "Cannot claim that much SBD. Claim: ${c} Actual: ${a}", ("c", token)("a", a->reward_sbd_balance) );
             _db.adjust_reward_balance( *a, -token );

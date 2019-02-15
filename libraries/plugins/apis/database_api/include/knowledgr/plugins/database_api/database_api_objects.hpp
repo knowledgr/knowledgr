@@ -195,9 +195,9 @@ struct api_account_object
       //savings_sbd_last_interest_payment( a.savings_sbd_last_interest_payment ),///~~~~~KNLG~~~~~ NO NEED for Knowledgr
       savings_withdraw_requests( a.savings_withdraw_requests ),
       //reward_sbd_balance( a.reward_sbd_balance ),///~~~~~KNLG~~~~~ NO NEED for Knowledgr
-      reward_nlg_balance( a.reward_nlg_balance ),
+      reward_knlg_balance( a.reward_knlg_balance ),
 //       reward_vesting_balance( a.reward_vesting_balance ),///~~~~~KNLG~~~~~ NO NEED for Knowledgr
-//       reward_vesting_nlg( a.reward_vesting_nlg ),///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+//       reward_vesting_knlg( a.reward_vesting_knlg ),///~~~~~KNLG~~~~~ NO NEED for Knowledgr
       curation_rewards( a.curation_rewards ),
       posting_rewards( a.posting_rewards ),
 //      vesting_shares( a.vesting_shares ),
@@ -282,9 +282,9 @@ struct api_account_object
    uint8_t           savings_withdraw_requests = 0;
 
 //   asset             reward_sbd_balance;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
-   asset             reward_nlg_balance;
+   asset             reward_knlg_balance;
 //    asset             reward_vesting_balance;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
-//    asset             reward_vesting_nlg;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+//    asset             reward_vesting_knlg;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 
    share_type        curation_rewards;
    share_type        posting_rewards;
@@ -612,7 +612,7 @@ FC_REFLECT( knowledgr::plugins::database_api::api_account_object,
 			 /*(sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
              /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
 			 (savings_withdraw_requests)
-             (reward_nlg_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_nlg)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+             (reward_knlg_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_knlg)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
              /*(vesting_shares)(delegated_vesting_shares)(received_vesting_shares)(vesting_withdraw_rate)(next_vesting_withdrawal)*/(withdrawn)(to_withdraw)(withdraw_routes)
              (curation_rewards)
              (posting_rewards)

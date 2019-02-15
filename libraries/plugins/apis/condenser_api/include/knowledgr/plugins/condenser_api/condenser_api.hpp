@@ -128,9 +128,9 @@ struct api_account_object
       /*savings_sbd_last_interest_payment( a.savings_sbd_last_interest_payment ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
       savings_withdraw_requests( a.savings_withdraw_requests ),
       /*reward_sbd_balance( legacy_asset::from_asset( a.reward_sbd_balance ) ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
-      reward_nlg_balance( legacy_asset::from_asset( a.reward_nlg_balance ) ),
+      reward_knlg_balance( legacy_asset::from_asset( a.reward_knlg_balance ) ),
       /*reward_vesting_balance( legacy_asset::from_asset( a.reward_vesting_balance ) ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
-      /*reward_vesting_nlg( legacy_asset::from_asset( a.reward_vesting_nlg ) ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+      /*reward_vesting_knlg( legacy_asset::from_asset( a.reward_vesting_knlg ) ),*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
       curation_rewards( a.curation_rewards ),
       posting_rewards( a.posting_rewards ),
 //      vesting_shares( legacy_asset::from_asset( a.vesting_shares ) ),
@@ -204,9 +204,9 @@ struct api_account_object
    uint8_t           savings_withdraw_requests = 0;
 
 //   legacy_asset      reward_sbd_balance;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
-   legacy_asset      reward_nlg_balance;
+   legacy_asset      reward_knlg_balance;
 //   legacy_asset      reward_vesting_balance;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
-//   legacy_asset      reward_vesting_nlg;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+//   legacy_asset      reward_vesting_knlg;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 
    share_type        curation_rewards;
    share_type        posting_rewards;
@@ -394,12 +394,12 @@ struct extended_dynamic_global_properties
       confidential_supply( legacy_asset::from_asset( o.confidential_supply ) ),
 //      current_sbd_supply( legacy_asset::from_asset( o.current_sbd_supply ) ),
 //      confidential_sbd_supply( legacy_asset::from_asset( o.confidential_sbd_supply ) ),
-//      total_vesting_fund_nlg( legacy_asset::from_asset( o.total_vesting_fund_nlg ) ),
+//      total_vesting_fund_knlg( legacy_asset::from_asset( o.total_vesting_fund_knlg ) ),
 //      total_vesting_shares( legacy_asset::from_asset( o.total_vesting_shares ) ),
       total_reward_fund_knowledgr( legacy_asset::from_asset( o.total_reward_fund_knowledgr ) ),
       total_reward_shares2( o.total_reward_shares2 ),
 //      pending_rewarded_vesting_shares( legacy_asset::from_asset( o.pending_rewarded_vesting_shares ) ),
-//      pending_rewarded_vesting_nlg( legacy_asset::from_asset( o.pending_rewarded_vesting_nlg ) ),
+//      pending_rewarded_vesting_knlg( legacy_asset::from_asset( o.pending_rewarded_vesting_knlg ) ),
 //      sbd_interest_rate( o.sbd_interest_rate ),
 //      sbd_print_rate( o.sbd_print_rate ),
       maximum_block_size( o.maximum_block_size ),
@@ -429,12 +429,12 @@ struct extended_dynamic_global_properties
    legacy_asset      confidential_supply;
 //   legacy_asset      current_sbd_supply;
 //   legacy_asset      confidential_sbd_supply;
-//   legacy_asset      total_vesting_fund_nlg;
+//   legacy_asset      total_vesting_fund_knlg;
 //   legacy_asset      total_vesting_shares;
    legacy_asset      total_reward_fund_knowledgr;
    fc::uint128       total_reward_shares2;
 //   legacy_asset      pending_rewarded_vesting_shares;
-//   legacy_asset      pending_rewarded_vesting_nlg;
+//   legacy_asset      pending_rewarded_vesting_knlg;
 
 //   uint16_t          sbd_interest_rate = 0;
 //   uint16_t          sbd_print_rate = KNOWLEDGR_100_PERCENT;
@@ -611,7 +611,7 @@ struct api_escrow_object
       ratification_deadline( e.ratification_deadline ),
       escrow_expiration( e.escrow_expiration ),
 //      sbd_balance( legacy_asset::from_asset( e.sbd_balance ) ),///~~~~~KNLG~~~~~ NO NEED for Knowledgr
-      nlg_balance( legacy_asset::from_asset( e.nlg_balance ) ),
+      knlg_balance( legacy_asset::from_asset( e.knlg_balance ) ),
       pending_fee( legacy_asset::from_asset( e.pending_fee ) ),
       to_approved( e.to_approved ),
       disputed( e.disputed ),
@@ -626,7 +626,7 @@ struct api_escrow_object
    time_point_sec    ratification_deadline;
    time_point_sec    escrow_expiration;
 //   legacy_asset      sbd_balance;///~~~~~KNLG~~~~~ NO NEED for Knowledgr
-   legacy_asset      nlg_balance;
+   legacy_asset      knlg_balance;
    legacy_asset      pending_fee;
    bool              to_approved = false;
    bool              disputed = false;
@@ -1195,7 +1195,7 @@ FC_REFLECT( knowledgr::plugins::condenser_api::api_account_object,
 			 /*(sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
              /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
 			 (savings_withdraw_requests)
-             (reward_nlg_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_nlg)*/////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+             (reward_knlg_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_knlg)*/////~~~~~KNLG~~~~~ NO NEED for Knowledgr
              /*(vesting_shares)(delegated_vesting_shares)(received_vesting_shares)(vesting_withdraw_rate)(next_vesting_withdrawal)*/(withdrawn)(to_withdraw)(withdraw_routes)
              (curation_rewards)
              (posting_rewards)
@@ -1229,8 +1229,8 @@ FC_REFLECT( knowledgr::plugins::condenser_api::extended_dynamic_global_propertie
             (head_block_number)(head_block_id)(time)
             (current_witness)(total_pow)(num_pow_witnesses)
             (virtual_supply)(current_supply)(confidential_supply)/*(current_sbd_supply)(confidential_sbd_supply)*/
-            /*(total_vesting_fund_nlg)(total_vesting_shares)*/
-            (total_reward_fund_knowledgr)(total_reward_shares2)/*(pending_rewarded_vesting_shares)(pending_rewarded_vesting_nlg)*/
+            /*(total_vesting_fund_knlg)(total_vesting_shares)*/
+            (total_reward_fund_knowledgr)(total_reward_shares2)/*(pending_rewarded_vesting_shares)(pending_rewarded_vesting_knlg)*/
             /*(sbd_interest_rate)(sbd_print_rate)*/
             (maximum_block_size)(current_aslot)(recent_slots_filled)(participation_count)(last_irreversible_block_num)(vote_power_reserve_rate)
             (delegation_return_period)(reverse_auction_seconds)/*(sbd_stop_percent)(sbd_start_percent)*/(num_of_accounts) )
@@ -1294,7 +1294,7 @@ FC_REFLECT( knowledgr::plugins::condenser_api::api_escrow_object,
              (id)(escrow_id)(from)(to)(agent)
              (ratification_deadline)(escrow_expiration)
              /*(sbd_balance)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
-			 (nlg_balance)(pending_fee)
+			 (knlg_balance)(pending_fee)
              (to_approved)(agent_approved)(disputed) )
 
 FC_REFLECT( knowledgr::plugins::condenser_api::api_savings_withdraw_object,

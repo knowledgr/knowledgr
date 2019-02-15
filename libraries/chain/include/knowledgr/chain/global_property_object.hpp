@@ -55,27 +55,27 @@ namespace knowledgr { namespace chain {
 
 //         asset       current_sbd_supply         = asset( 0, SBD_SYMBOL );
 //         asset       confidential_sbd_supply    = asset( 0, SBD_SYMBOL ); ///< total asset held in confidential balances
-//         asset       total_vesting_fund_nlg   = asset( 0, KNLG_SYMBOL );
+//         asset       total_vesting_fund_knlg   = asset( 0, KNLG_SYMBOL );
 //         asset       total_vesting_shares       = asset( 0, VESTS_SYMBOL );
 
          asset       total_reward_fund_knowledgr    = asset( 0, KNLG_SYMBOL );
          fc::uint128 total_reward_shares2; ///< the running total of REWARD^2
 
 //         asset       pending_rewarded_vesting_shares = asset( 0, VESTS_SYMBOL );
-//         asset       pending_rewarded_vesting_nlg = asset( 0, KNLG_SYMBOL );
+//         asset       pending_rewarded_vesting_knlg = asset( 0, KNLG_SYMBOL );
 
 //          price       get_vesting_share_price() const
 //          {
-//             if ( total_vesting_fund_nlg.amount == 0 || total_vesting_shares.amount == 0 )
+//             if ( total_vesting_fund_knlg.amount == 0 || total_vesting_shares.amount == 0 )
 //                return price ( asset( 1000, KNLG_SYMBOL ), asset( 1000000, VESTS_SYMBOL ) );
 // 
-//             return price( total_vesting_shares, total_vesting_fund_nlg );
+//             return price( total_vesting_shares, total_vesting_fund_knlg );
 //          }
 
 //          price get_reward_vesting_share_price() const
 //          {
 //             return price( total_vesting_shares + pending_rewarded_vesting_shares,
-//                total_vesting_fund_nlg + pending_rewarded_vesting_nlg );
+//                total_vesting_fund_knlg + pending_rewarded_vesting_knlg );
 //          }
 
 //          /**
@@ -136,9 +136,9 @@ namespace knowledgr { namespace chain {
 //          uint16_t sbd_start_percent = 0;
 
 		 uint64_t num_of_accounts = 0;
-#ifdef KNOWLEDGR_ENABLE_SMT
-         asset smt_creation_fee = asset( 1000, SBD_SYMBOL );
-#endif
+// #ifdef KNOWLEDGR_ENABLE_SMT
+//          asset smt_creation_fee = asset( 1000, SBD_SYMBOL );
+// #endif
    };
 
    typedef multi_index_container<
@@ -165,12 +165,12 @@ FC_REFLECT( knowledgr::chain::dynamic_global_property_object,
              (confidential_supply)
 //             (current_sbd_supply)
 //             (confidential_sbd_supply)
-//             (total_vesting_fund_nlg)
+//             (total_vesting_fund_knlg)
 //             (total_vesting_shares)
              (total_reward_fund_knowledgr)
              (total_reward_shares2)
 //             (pending_rewarded_vesting_shares)
-//             (pending_rewarded_vesting_nlg)
+//             (pending_rewarded_vesting_knlg)
 //             (sbd_interest_rate)
 //             (sbd_print_rate)
              (maximum_block_size)
@@ -185,9 +185,9 @@ FC_REFLECT( knowledgr::chain::dynamic_global_property_object,
              (available_account_subsidies)
 //              (sbd_stop_percent)
 //              (sbd_start_percent)
-#ifdef KNOWLEDGR_ENABLE_SMT
-             (smt_creation_fee)
-#endif
+// #ifdef KNOWLEDGR_ENABLE_SMT
+//              (smt_creation_fee)
+// #endif
 			 (num_of_accounts)
           )
 CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::dynamic_global_property_object, knowledgr::chain::dynamic_global_property_index )

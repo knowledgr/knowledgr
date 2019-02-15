@@ -51,14 +51,14 @@
 
 #define KNOWLEDGR_GENESIS_TIME                    (fc::time_point_sec(1458835200))
 #define KNOWLEDGR_MINING_TIME                     (fc::time_point_sec(1458838800))
-#define KNOWLEDGR_CASHOUT_WINDOW_SECONDS_PRE_HF12 300///(60*60*24)    /// 1 day
-#define KNOWLEDGR_CASHOUT_WINDOW_SECONDS_PRE_HF17 300///(60*60*12)    /// 12 hours
-#define KNOWLEDGR_CASHOUT_WINDOW_SECONDS          300///(60*60*24*7)  /// 7 days
-#define KNOWLEDGR_SECOND_CASHOUT_WINDOW           300///(60*60*24*30) /// 30 days
-#define KNOWLEDGR_MAX_CASHOUT_WINDOW_SECONDS      600///(60*60*24*14) /// 2 weeks
-#define KNOWLEDGR_UPVOTE_LOCKOUT_HF7              90///(fc::minutes(1))
-#define KNOWLEDGR_UPVOTE_LOCKOUT_SECONDS          90///(60*60*12)    /// 12 hours
-#define KNOWLEDGR_UPVOTE_LOCKOUT_HF17             90///(fc::hours(12))
+#define KNOWLEDGR_CASHOUT_WINDOW_SECONDS_PRE_HF12 (60*60*24)    /// 1 day		   //300
+#define KNOWLEDGR_CASHOUT_WINDOW_SECONDS_PRE_HF17 (60*60*12)    /// 12 hours	   //300
+#define KNOWLEDGR_CASHOUT_WINDOW_SECONDS          (60*60*24*7)  /// 7 days		   //300
+#define KNOWLEDGR_SECOND_CASHOUT_WINDOW           (60*60*24*30) /// 30 days		   //300
+#define KNOWLEDGR_MAX_CASHOUT_WINDOW_SECONDS      (60*60*24*14) /// 2 weeks		   //600
+#define KNOWLEDGR_UPVOTE_LOCKOUT_HF7              (fc::minutes(1))				   //90
+#define KNOWLEDGR_UPVOTE_LOCKOUT_SECONDS          (60*60*12)    /// 12 hours	//	 90
+#define KNOWLEDGR_UPVOTE_LOCKOUT_HF17             (fc::hours(12))				   //90
 
 #define KNOWLEDGR_MIN_ACCOUNT_CREATION_FEE           1
 #define KNOWLEDGR_MAX_ACCOUNT_CREATION_FEE           int64_t(1000000000)
@@ -316,7 +316,7 @@
 #define KNOWLEDGR_ROOT_POST_PARENT                (account_name_type())
 ///@}
 
-#define KNOWLEDGR_STAKE_PROCESS_DELAY				(10 * 60)
+#define KNOWLEDGR_STAKE_PROCESS_DELAY				(30 * 60)
 #define KNOWLEDGR_NUM_OF_INIT_STAKING_ACCOUNTS		1000///~~~~~KNLG~~~~~
 #define KNOWLEDGR_LIMIT_STAKING_AMOUNT				asset( 1000000, KNLG_SYMBOL )///~~~~~KNLG~~~~~
 #define KNOWLEDGR_RPOWER_REWARD_PERCENT          (5 * KNOWLEDGR_1_PERCENT)

@@ -92,9 +92,9 @@ namespace knowledgr { namespace chain {
          ///@}
 
 //         asset             reward_sbd_balance = asset( 0, SBD_SYMBOL ); ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
-         asset             reward_nlg_balance = asset( 0, KNLG_SYMBOL );
+         asset             reward_knlg_balance = asset( 0, KNLG_SYMBOL );
 //         asset             reward_vesting_balance = asset( 0, VESTS_SYMBOL ); ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
-//         asset             reward_vesting_nlg = asset( 0, KNLG_SYMBOL ); ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
+//         asset             reward_vesting_knlg = asset( 0, KNLG_SYMBOL ); ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
 
          share_type        curation_rewards = 0;
          share_type        posting_rewards = 0;
@@ -441,7 +441,7 @@ FC_REFLECT( knowledgr::chain::account_object,
 			 /*(sbd_seconds)(sbd_seconds_last_update)(sbd_last_interest_payment)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
              /*(savings_sbd_balance)(savings_sbd_seconds)(savings_sbd_seconds_last_update)(savings_sbd_last_interest_payment)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
 			 (savings_withdraw_requests)
-             (reward_nlg_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_nlg)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
+             (reward_knlg_balance)/*(reward_sbd_balance)(reward_vesting_balance)(reward_vesting_knlg)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
              /*(vesting_shares)(delegated_vesting_shares)(received_vesting_shares)*/
              /*(vesting_withdraw_rate)(next_vesting_withdrawal)*/(withdrawn)(to_withdraw)(withdraw_routes)
              (curation_rewards)
