@@ -62,7 +62,7 @@ namespace knowledgr { namespace chain {
          time_point_sec    ratification_deadline;
          time_point_sec    escrow_expiration;
 ///         asset             sbd_balance; ///~~~~~KNLG~~~~~ NO NEED for Knowledgr
-         asset             nlg_balance;
+         asset             knlg_balance;
          asset             pending_fee;
          bool              to_approved = false;
          bool              agent_approved = false;
@@ -120,8 +120,8 @@ namespace knowledgr { namespace chain {
          id_type           id;
 
          account_id_type   owner;
-         int64_t           nlg_volume = 0;
-         int64_t           sbd_volume = 0;
+         int64_t           knlg_volume = 0;
+//         int64_t           sbd_volume = 0;
          uint128_t         weight = 0;
 
          time_point_sec    last_update = fc::time_point_sec::min(); /// used to decay negative liquidity balances. block num
@@ -129,12 +129,12 @@ namespace knowledgr { namespace chain {
          /// this is the sort index
          uint128_t volume_weight()const
          {
-            return nlg_volume * sbd_volume * is_positive();
+            return knlg_volume /** sbd_volume*/ * is_positive();
          }
 
          uint128_t min_volume_weight()const
          {
-            return std::min(nlg_volume,sbd_volume) * is_positive();
+            return knlg_volume * is_positive(); //std::min(knlg_volume,sbd_volume) * is_positive();
          }
 
          void update_weight( bool hf9 )
@@ -144,7 +144,7 @@ namespace knowledgr { namespace chain {
 
          inline int is_positive()const
          {
-            return ( nlg_volume > 0 && sbd_volume > 0 ) ? 1 : 0;
+            return ( knlg_volume > 0/* && sbd_volume > 0*/ ) ? 1 : 0;
          }
    };
 
@@ -517,7 +517,7 @@ CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::limit_order_object, knowledgr::chain
 // CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::convert_request_object, knowledgr::chain::convert_request_index )
 
 FC_REFLECT( knowledgr::chain::liquidity_reward_balance_object,
-             (id)(owner)(nlg_volume)(sbd_volume)(weight)(last_update) )
+             (id)(owner)(knlg_volume)/*(sbd_volume)*/(weight)(last_update) )
 CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::liquidity_reward_balance_object, knowledgr::chain::liquidity_reward_balance_index )
 
 FC_REFLECT( knowledgr::chain::withdraw_vesting_route_object,
@@ -532,7 +532,7 @@ FC_REFLECT( knowledgr::chain::escrow_object,
              (id)(escrow_id)(from)(to)(agent)
              (ratification_deadline)(escrow_expiration)
              /*(sbd_balance)*////~~~~~KNLG~~~~~ NO NEED for Knowledgr
-			 (nlg_balance)(pending_fee)
+			 (knlg_balance)(pending_fee)
              (to_approved)(agent_approved)(disputed) )
 CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::escrow_object, knowledgr::chain::escrow_index )
 

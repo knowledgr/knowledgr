@@ -54,9 +54,9 @@ struct operation_process
          b.transfers++;
 
          if( op.amount.symbol == KNLG_SYMBOL )
-            b.nlg_transferred += op.amount.amount;
-         else
-            b.sbd_transferred += op.amount.amount;
+            b.knlg_transferred += op.amount.amount;
+//          else
+//             b.sbd_transferred += op.amount.amount;
       });
    }
 
@@ -180,7 +180,7 @@ struct operation_process
 //       _db.modify( _bucket, [&]( bucket_object& b )
 //       {
 //          b.transfers_to_vesting++;
-//          b.nlg_vested += op.amount.amount;
+//          b.knlg_vested += op.amount.amount;
 //       });
 //    }
 
@@ -239,7 +239,7 @@ struct operation_process
       _db.modify( _bucket, [&]( bucket_object& b )
       {
          b.sbd_conversion_requests_filled++;
-         b.nlg_converted += op.amount_out.amount;
+         b.knlg_converted += op.amount_out.amount;
       });
    }
 };

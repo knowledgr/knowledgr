@@ -572,12 +572,12 @@ namespace knowledgr { namespace protocol {
       validate_account_name( agent );
       FC_ASSERT( fee.amount >= 0, "fee cannot be negative" );
 //      FC_ASSERT( sbd_amount.amount >= 0, "sbd amount cannot be negative" );
-      FC_ASSERT( nlg_amount.amount >= 0, "nlg amount cannot be negative" );
-      FC_ASSERT( /*sbd_amount.amount > 0 || */nlg_amount.amount > 0, "escrow must transfer a non-zero amount" );
+      FC_ASSERT( knlg_amount.amount >= 0, "knlg amount cannot be negative" );
+      FC_ASSERT( /*sbd_amount.amount > 0 || */knlg_amount.amount > 0, "escrow must transfer a non-zero amount" );
       FC_ASSERT( from != agent && to != agent, "agent must be a third party" );
       FC_ASSERT( (fee.symbol == KNLG_SYMBOL) || (fee.symbol == SBD_SYMBOL), "fee must be KNLG or SBD" );
 //      FC_ASSERT( sbd_amount.symbol == SBD_SYMBOL, "sbd amount must contain SBD" );
-      FC_ASSERT( nlg_amount.symbol == KNLG_SYMBOL, "nlg amount must contain KNLG" );
+      FC_ASSERT( knlg_amount.symbol == KNLG_SYMBOL, "knlg amount must contain KNLG" );
       FC_ASSERT( ratification_deadline < escrow_expiration, "ratification deadline must be before escrow expiration" );
       if ( json_meta.size() > 0 )
       {
@@ -614,10 +614,10 @@ namespace knowledgr { namespace protocol {
       FC_ASSERT( who == from || who == to || who == agent, "who must be from or to or agent" );
       FC_ASSERT( receiver == from || receiver == to, "receiver must be from or to" );
 //      FC_ASSERT( sbd_amount.amount >= 0, "sbd amount cannot be negative" );
-      FC_ASSERT( nlg_amount.amount >= 0, "knowledgr amount cannot be negative" );
-      FC_ASSERT( /*sbd_amount.amount > 0 ||*/ nlg_amount.amount > 0, "escrow must release a non-zero amount" );
+      FC_ASSERT( knlg_amount.amount >= 0, "knowledgr amount cannot be negative" );
+      FC_ASSERT( /*sbd_amount.amount > 0 ||*/ knlg_amount.amount > 0, "escrow must release a non-zero amount" );
 //      FC_ASSERT( sbd_amount.symbol == SBD_SYMBOL, "sbd amount must contain SBD" );
-      FC_ASSERT( nlg_amount.symbol == KNLG_SYMBOL, "knowledgr amount must contain KNLG" );
+      FC_ASSERT( knlg_amount.symbol == KNLG_SYMBOL, "knowledgr amount must contain KNLG" );
    }
 
    void request_account_recovery_operation::validate()const

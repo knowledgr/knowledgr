@@ -124,14 +124,14 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward->sbd_volume == alice_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == alice_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward->sbd_volume == bob_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == bob_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
 
       auto fill_order_op = ops[0].get< fill_order_operation >();
@@ -223,21 +223,21 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward->sbd_volume == alice_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == alice_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward->sbd_volume == bob_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == bob_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
 
       BOOST_TEST_MESSAGE( "Testing a partial fill before minimum time and full fill after minimum time" );
@@ -283,21 +283,21 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward->sbd_volume == alice_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == alice_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward->sbd_volume == bob_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == bob_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
 
       generate_blocks( db->head_block_time() + KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10, true );
@@ -331,21 +331,21 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward->sbd_volume == alice_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == alice_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward->sbd_volume == bob_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == bob_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
 
       BOOST_TEST_MESSAGE( "Trading to give Alice and Bob positive volumes to receive rewards" );
@@ -404,28 +404,28 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward->sbd_volume == alice_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == alice_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward->sbd_volume == bob_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == bob_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "dave" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "dave" ).id );
       BOOST_REQUIRE( reward->sbd_volume == dave_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == dave_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == dave_knowledgr_volume );
       BOOST_CHECK( reward->last_update == dave_reward_last_update );*/
 
       op.owner = "bob";
@@ -457,28 +457,28 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward->sbd_volume == alice_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == alice_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward->sbd_volume == bob_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == bob_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "dave" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "dave" ).id );
       BOOST_REQUIRE( reward->sbd_volume == dave_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == dave_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == dave_knowledgr_volume );
       BOOST_CHECK( reward->last_update == dave_reward_last_update );*/
 
       transfer.to = "bob";
@@ -532,28 +532,28 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward->sbd_volume == alice_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == alice_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward->sbd_volume == bob_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == bob_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "dave" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "dave" ).id );
       BOOST_REQUIRE( reward->sbd_volume == dave_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == dave_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == dave_knowledgr_volume );
       BOOST_CHECK( reward->last_update == dave_reward_last_update );*/
 
       auto alice_balance = db->get_account( "alice" ).balance;
@@ -626,7 +626,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       /*BOOST_REQUIRE( reward == liquidity_idx.end() );
       BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
 
       generate_block();
@@ -650,7 +650,7 @@ BOOST_AUTO_TEST_CASE( smt_liquidity_rewards )
       /*BOOST_REQUIRE( reward == liquidity_idx.end() );
       BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_smt_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
 
       validate_database();

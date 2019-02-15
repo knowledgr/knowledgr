@@ -1353,8 +1353,8 @@ condenser_api::legacy_signed_transaction wallet_api::create_account_with_keys(
  */
 // condenser_api::legacy_signed_transaction wallet_api::create_account_with_keys_delegated(
 //    string creator,
-//    condenser_api::legacy_asset nlg_fee,
-//    condenser_api::legacy_asset delegated_nlg,
+//    condenser_api::legacy_asset knlg_fee,
+//    condenser_api::legacy_asset delegated_knlg,
 //    string new_account_name,
 //    string json_meta,
 //    public_key_type owner,
@@ -1372,8 +1372,8 @@ condenser_api::legacy_signed_transaction wallet_api::create_account_with_keys(
 //    op.posting = authority( 1, posting, 1 );
 //    op.memo_key = memo;
 //    op.json_metadata = json_meta;
-//    op.fee = nlg_fee.to_asset();
-//    op.delegation = delegated_nlg.to_asset();
+//    op.fee = knlg_fee.to_asset();
+//    op.delegation = delegated_knlg.to_asset();
 // 
 //    signed_transaction tx;
 //    tx.operations.push_back(op);
@@ -1819,8 +1819,8 @@ condenser_api::legacy_signed_transaction wallet_api::create_account(
  */
 // condenser_api::legacy_signed_transaction wallet_api::create_account_delegated(
 //    string creator,
-//    condenser_api::legacy_asset nlg_fee,
-//    condenser_api::legacy_asset delegated_nlg,
+//    condenser_api::legacy_asset knlg_fee,
+//    condenser_api::legacy_asset delegated_knlg,
 //    string new_account_name,
 //    string json_meta,
 //    bool broadcast )
@@ -1834,7 +1834,7 @@ condenser_api::legacy_signed_transaction wallet_api::create_account(
 //    import_key( active.wif_priv_key );
 //    import_key( posting.wif_priv_key );
 //    import_key( memo.wif_priv_key );
-//    return create_account_with_keys_delegated( creator, nlg_fee, delegated_nlg, new_account_name, json_meta,  owner.pub_key, active.pub_key, posting.pub_key, memo.pub_key, broadcast );
+//    return create_account_with_keys_delegated( creator, knlg_fee, delegated_knlg, new_account_name, json_meta,  owner.pub_key, active.pub_key, posting.pub_key, memo.pub_key, broadcast );
 // } FC_CAPTURE_AND_RETHROW( (creator)(new_account_name)(json_meta) ) }
 
 
@@ -2013,7 +2013,7 @@ condenser_api::legacy_signed_transaction wallet_api::escrow_transfer(
    string agent,
    uint32_t escrow_id,
 //   condenser_api::legacy_asset sbd_amount,
-   condenser_api::legacy_asset nlg_amount,
+   condenser_api::legacy_asset knlg_amount,
    condenser_api::legacy_asset fee,
    time_point_sec ratification_deadline,
    time_point_sec escrow_expiration,
@@ -2027,7 +2027,7 @@ condenser_api::legacy_signed_transaction wallet_api::escrow_transfer(
    op.agent = agent;
    op.escrow_id = escrow_id;
 //   op.sbd_amount = sbd_amount.to_asset();
-   op.nlg_amount = nlg_amount.to_asset();
+   op.knlg_amount = knlg_amount.to_asset();
    op.fee = fee.to_asset();
    op.ratification_deadline = ratification_deadline;
    op.escrow_expiration = escrow_expiration;
@@ -2095,7 +2095,7 @@ condenser_api::legacy_signed_transaction wallet_api::escrow_release(
    string receiver,
    uint32_t escrow_id,
 //   condenser_api::legacy_asset sbd_amount,
-   condenser_api::legacy_asset nlg_amount,
+   condenser_api::legacy_asset knlg_amount,
    bool broadcast )
 {
    FC_ASSERT( !is_locked() );
@@ -2107,7 +2107,7 @@ condenser_api::legacy_signed_transaction wallet_api::escrow_release(
    op.receiver = receiver;
    op.escrow_id = escrow_id;
 //   op.sbd_amount = sbd_amount.to_asset();
-   op.nlg_amount = nlg_amount.to_asset();
+   op.knlg_amount = knlg_amount.to_asset();
 
    signed_transaction tx;
    tx.operations.push_back( op );

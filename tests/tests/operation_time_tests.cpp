@@ -135,12 +135,12 @@ BOOST_AUTO_TEST_CASE( comment_payout_equalize )
       for( const auto& author : authors )
       {
          const account_object& a = db->get_account(author.name);
-         ilog( "${n} : ${knowledgr} ${sbd}", ("n", author.name)("knowledgr", a.reward_nlg_balance)("sbd", a.reward_sbd_balance) );
+         ilog( "${n} : ${knowledgr} ${sbd}", ("n", author.name)("knowledgr", a.reward_knlg_balance)("sbd", a.reward_sbd_balance) );
       }
       for( const auto& voter : voters )
       {
          const account_object& a = db->get_account(voter.name);
-         ilog( "${n} : ${knowledgr} ${sbd}", ("n", voter.name)("knowledgr", a.reward_nlg_balance)("sbd", a.reward_sbd_balance) );
+         ilog( "${n} : ${knowledgr} ${sbd}", ("n", voter.name)("knowledgr", a.reward_knlg_balance)("sbd", a.reward_sbd_balance) );
       }
       */
 
@@ -1612,12 +1612,12 @@ BOOST_AUTO_TEST_CASE( knowledgr_inflation )
       if ( db->get_account( witness_name ).vesting_shares.amount.value == 0 )
       {
          new_vesting_knowledgr += witness_pay;
-         new_vesting_shares += witness_pay * ( gpo.total_vesting_shares / gpo.total_vesting_fund_nlg );
+         new_vesting_shares += witness_pay * ( gpo.total_vesting_shares / gpo.total_vesting_fund_knlg );
       }
 
       auto new_supply = gpo.current_supply + new_rewards + witness_pay + new_vesting_knowledgr;
       new_rewards += gpo.total_reward_fund_knowledgr;
-      new_vesting_knowledgr += gpo.total_vesting_fund_nlg;
+      new_vesting_knowledgr += gpo.total_vesting_fund_knlg;
 
       generate_block();
 
@@ -1626,7 +1626,7 @@ BOOST_AUTO_TEST_CASE( knowledgr_inflation )
       BOOST_REQUIRE( gpo.current_supply.amount.value == new_supply.amount.value );
       BOOST_REQUIRE( gpo.virtual_supply.amount.value == new_supply.amount.value );
       BOOST_REQUIRE( gpo.total_reward_fund_knowledgr.amount.value == new_rewards.amount.value );
-      BOOST_REQUIRE( gpo.total_vesting_fund_nlg.amount.value == new_vesting_knowledgr.amount.value );
+      BOOST_REQUIRE( gpo.total_vesting_fund_knlg.amount.value == new_vesting_knowledgr.amount.value );
       BOOST_REQUIRE( gpo.total_vesting_shares.amount.value == new_vesting_shares.amount.value );
       BOOST_REQUIRE( db->get_account( witness_name ).balance.amount.value == ( old_witness_balance + witness_pay ).amount.value );
 
@@ -1657,7 +1657,7 @@ BOOST_AUTO_TEST_CASE( knowledgr_inflation )
 
          new_supply = gpo.current_supply + new_rewards + witness_pay + new_vesting_knowledgr;
          new_rewards += gpo.total_reward_fund_knowledgr;
-         new_vesting_knowledgr += gpo.total_vesting_fund_nlg;
+         new_vesting_knowledgr += gpo.total_vesting_fund_knlg;
 
          generate_block();
 
@@ -1666,7 +1666,7 @@ BOOST_AUTO_TEST_CASE( knowledgr_inflation )
          BOOST_REQUIRE( gpo.current_supply.amount.value == new_supply.amount.value );
          BOOST_REQUIRE( gpo.virtual_supply.amount.value == new_supply.amount.value );
          BOOST_REQUIRE( gpo.total_reward_fund_knowledgr.amount.value == new_rewards.amount.value );
-         BOOST_REQUIRE( gpo.total_vesting_fund_nlg.amount.value == new_vesting_knowledgr.amount.value );
+         BOOST_REQUIRE( gpo.total_vesting_fund_knlg.amount.value == new_vesting_knowledgr.amount.value );
          BOOST_REQUIRE( gpo.total_vesting_shares.amount.value == new_vesting_shares.amount.value );
          BOOST_REQUIRE( db->get_account( witness_name ).balance.amount.value == ( old_witness_balance + witness_pay ).amount.value );
          BOOST_REQUIRE( db->get_account( witness_name ).vesting_shares.amount.value == ( old_witness_shares + witness_pay_shares ).amount.value );
@@ -1700,7 +1700,7 @@ BOOST_AUTO_TEST_CASE( knowledgr_inflation )
 
          new_supply = gpo.current_supply + new_rewards + witness_pay + new_vesting_knowledgr;
          new_rewards += gpo.total_reward_fund_knowledgr;
-         new_vesting_knowledgr += gpo.total_vesting_fund_nlg;
+         new_vesting_knowledgr += gpo.total_vesting_fund_knlg;
 
          generate_block();
 
@@ -1709,7 +1709,7 @@ BOOST_AUTO_TEST_CASE( knowledgr_inflation )
          BOOST_REQUIRE( gpo.current_supply.amount.value == new_supply.amount.value );
          BOOST_REQUIRE( gpo.virtual_supply.amount.value == new_supply.amount.value );
          BOOST_REQUIRE( gpo.total_reward_fund_knowledgr.amount.value == new_rewards.amount.value );
-         BOOST_REQUIRE( gpo.total_vesting_fund_nlg.amount.value == new_vesting_knowledgr.amount.value );
+         BOOST_REQUIRE( gpo.total_vesting_fund_knlg.amount.value == new_vesting_knowledgr.amount.value );
          BOOST_REQUIRE( gpo.total_vesting_shares.amount.value == new_vesting_shares.amount.value );
          BOOST_REQUIRE( db->get_account( witness_name ).balance.amount.value == ( old_witness_balance + witness_pay ).amount.value );
          BOOST_REQUIRE( db->get_account( witness_name ).vesting_shares.amount.value == ( old_witness_shares + witness_pay_shares ).amount.value );
@@ -1731,7 +1731,7 @@ BOOST_AUTO_TEST_CASE( knowledgr_inflation )
          new_vesting_shares = gpo.total_vesting_shares + witness_pay_shares;
          new_supply = gpo.current_supply + new_rewards + new_vesting_knowledgr;
          new_rewards += gpo.total_reward_fund_knowledgr;
-         new_vesting_knowledgr += gpo.total_vesting_fund_nlg;
+         new_vesting_knowledgr += gpo.total_vesting_fund_knlg;
 
          generate_block();
 
@@ -1740,7 +1740,7 @@ BOOST_AUTO_TEST_CASE( knowledgr_inflation )
          BOOST_REQUIRE( gpo.current_supply.amount.value == new_supply.amount.value );
          BOOST_REQUIRE( gpo.virtual_supply.amount.value == new_supply.amount.value );
          BOOST_REQUIRE( gpo.total_reward_fund_knowledgr.amount.value == new_rewards.amount.value );
-         BOOST_REQUIRE( gpo.total_vesting_fund_nlg.amount.value == new_vesting_knowledgr.amount.value );
+         BOOST_REQUIRE( gpo.total_vesting_fund_knlg.amount.value == new_vesting_knowledgr.amount.value );
          BOOST_REQUIRE( gpo.total_vesting_shares.amount.value == new_vesting_shares.amount.value );
          BOOST_REQUIRE( db->get_account( witness_name ).vesting_shares.amount.value == ( old_witness_shares + witness_pay_shares ).amount.value );
 
@@ -1749,7 +1749,7 @@ BOOST_AUTO_TEST_CASE( knowledgr_inflation )
 
       virtual_supply = gpo.virtual_supply;
       vesting_shares = gpo.total_vesting_shares;
-      vesting_knowledgr = gpo.total_vesting_fund_nlg;
+      vesting_knowledgr = gpo.total_vesting_fund_knlg;
       reward_knowledgr = gpo.total_reward_fund_knowledgr;
 
       witness_name = db->get_scheduled_witness(1);
@@ -1759,7 +1759,7 @@ BOOST_AUTO_TEST_CASE( knowledgr_inflation )
 
       gpo = db->get_dynamic_global_properties();
 
-      BOOST_REQUIRE_EQUAL( gpo.total_vesting_fund_nlg.amount.value,
+      BOOST_REQUIRE_EQUAL( gpo.total_vesting_fund_knlg.amount.value,
          ( vesting_knowledgr.amount.value
             + ( ( ( uint128_t( virtual_supply.amount.value ) / 10 ) / KNOWLEDGR_BLOCKS_PER_YEAR ) * 9 )
             + ( uint128_t( virtual_supply.amount.value ) / 100 / KNOWLEDGR_BLOCKS_PER_YEAR ) ).to_uint64() );
@@ -1947,14 +1947,14 @@ BOOST_AUTO_TEST_CASE( liquidity_rewards )
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == alice_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == bob_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
 
       auto fill_order_op = ops[0].get< fill_order_operation >();
@@ -2046,21 +2046,21 @@ BOOST_AUTO_TEST_CASE( liquidity_rewards )
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == alice_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == bob_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
 
       BOOST_TEST_MESSAGE( "Testing a partial fill before minimum time and full fill after minimum time" );
@@ -2106,21 +2106,21 @@ BOOST_AUTO_TEST_CASE( liquidity_rewards )
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == alice_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == bob_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
 
       generate_blocks( db->head_block_time() + KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10, true );
@@ -2154,21 +2154,21 @@ BOOST_AUTO_TEST_CASE( liquidity_rewards )
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == alice_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == bob_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
 
       BOOST_TEST_MESSAGE( "Trading to give Alice and Bob positive volumes to receive rewards" );
@@ -2227,28 +2227,28 @@ BOOST_AUTO_TEST_CASE( liquidity_rewards )
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == alice_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == bob_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "dave" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "dave" ).id );
       BOOST_REQUIRE( reward->sbd_volume == dave_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == dave_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == dave_knowledgr_volume );
       BOOST_CHECK( reward->last_update == dave_reward_last_update );*/
 
       op.owner = "bob";
@@ -2280,28 +2280,28 @@ BOOST_AUTO_TEST_CASE( liquidity_rewards )
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == alice_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == bob_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "dave" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "dave" ).id );
       BOOST_REQUIRE( reward->sbd_volume == dave_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == dave_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == dave_knowledgr_volume );
       BOOST_CHECK( reward->last_update == dave_reward_last_update );*/
 
       transfer.to = "bob";
@@ -2355,28 +2355,28 @@ BOOST_AUTO_TEST_CASE( liquidity_rewards )
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
       BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == alice_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
       BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == bob_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
 
       reward = liquidity_idx.find( db->get_account( "dave" ).id );
       BOOST_REQUIRE( reward == liquidity_idx.end() );
       /*BOOST_REQUIRE( reward->owner == db->get_account( "dave" ).id );
       BOOST_REQUIRE( reward->sbd_volume == dave_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == dave_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == dave_knowledgr_volume );
       BOOST_CHECK( reward->last_update == dave_reward_last_update );*/
 
       auto alice_balance = db->get_account( "alice" ).balance;
@@ -2449,7 +2449,7 @@ BOOST_AUTO_TEST_CASE( liquidity_rewards )
       /*BOOST_REQUIRE( reward == liquidity_idx.end() );
       BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
 
       generate_block();
@@ -2473,7 +2473,7 @@ BOOST_AUTO_TEST_CASE( liquidity_rewards )
       /*BOOST_REQUIRE( reward == liquidity_idx.end() );
       BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->nlg_volume == sam_knowledgr_volume );
+      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
    }
    FC_LOG_AND_RETHROW();
@@ -2761,7 +2761,7 @@ BOOST_AUTO_TEST_CASE( comment_freeze )
 //       comment_reward /= 2;
 //       auto sbd_reward = ( comment_reward * gpo.sbd_print_rate ) / KNOWLEDGR_100_PERCENT;
 //       //auto alice_sbd = db->get_account( "alice" ).sbd_balance + db->get_account( "alice" ).reward_sbd_balance + asset( sbd_reward, KNLG_SYMBOL ) * exchange_rate;
-//       auto alice_knowledgr = db->get_account( "alice" ).balance + db->get_account( "alice" ).reward_nlg_balance ;
+//       auto alice_knowledgr = db->get_account( "alice" ).balance + db->get_account( "alice" ).reward_knlg_balance ;
 // 
 //       BOOST_TEST_MESSAGE( "Checking printing SBD has slowed" );
 //       BOOST_REQUIRE( db->get_dynamic_global_properties().sbd_print_rate < KNOWLEDGR_100_PERCENT );
@@ -2772,7 +2772,7 @@ BOOST_AUTO_TEST_CASE( comment_freeze )
 //       validate_database();
 // 
 //       //BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance + db->get_account( "alice" ).reward_sbd_balance == alice_sbd );
-//       BOOST_REQUIRE( db->get_account( "alice" ).balance + db->get_account( "alice" ).reward_nlg_balance > alice_knowledgr );
+//       BOOST_REQUIRE( db->get_account( "alice" ).balance + db->get_account( "alice" ).reward_knlg_balance > alice_knowledgr );
 // 
 //       BOOST_TEST_MESSAGE( "Letting percent market cap fall to sbd_start_percent to verify printing of SBD turns back on" );
 // 
@@ -2920,10 +2920,10 @@ BOOST_AUTO_TEST_CASE( clear_null_account )
       {
          db.modify( db.get_account( KNOWLEDGR_NULL_ACCOUNT ), [&]( account_object& a )
          {
-            a.reward_nlg_balance = ASSET( "1.000 TESTS" );
+            a.reward_knlg_balance = ASSET( "1.000 TESTS" );
 //             a.reward_sbd_balance = ASSET( "1.000 TBD" );
 //             a.reward_vesting_balance = ASSET( "1.000000 VESTS" );
-//            a.reward_vesting_nlg = ASSET( "1.000 TESTS" );
+//            a.reward_vesting_knlg = ASSET( "1.000 TESTS" );
          });
 
          db.modify( db.get_dynamic_global_properties(), [&]( dynamic_global_property_object& gpo )
@@ -2932,7 +2932,7 @@ BOOST_AUTO_TEST_CASE( clear_null_account )
             gpo.virtual_supply += ASSET( "3.000 TESTS" );
 //             gpo.current_sbd_supply += ASSET( "1.000 TBD" );
 //             gpo.pending_rewarded_vesting_shares += ASSET( "1.000000 VESTS" );
-//             gpo.pending_rewarded_vesting_nlg += ASSET( "1.000 TESTS" );
+//             gpo.pending_rewarded_vesting_knlg += ASSET( "1.000 TESTS" );
          });
       });
 
@@ -2944,9 +2944,9 @@ BOOST_AUTO_TEST_CASE( clear_null_account )
       BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).savings_balance == ASSET( "4.000 TESTS" ) );
       //BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).savings_sbd_balance == ASSET( "5.000 TBD" ) );
       //BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).reward_sbd_balance == ASSET( "1.000 TBD" ) );
-      BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).reward_nlg_balance == ASSET( "1.000 TESTS" ) );
+      BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).reward_knlg_balance == ASSET( "1.000 TESTS" ) );
 //       BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).reward_vesting_balance == ASSET( "1.000000 VESTS" ) );
-//       BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).reward_vesting_nlg == ASSET( "1.000 TESTS" ) );
+//       BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).reward_vesting_knlg == ASSET( "1.000 TESTS" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).balance == ASSET( "2.000 TESTS" ) );
       //BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == ASSET( "3.000 TBD" ) );
 
@@ -2960,9 +2960,9 @@ BOOST_AUTO_TEST_CASE( clear_null_account )
       BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).savings_balance == ASSET( "0.000 TESTS" ) );
       //BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).savings_sbd_balance == ASSET( "0.000 TBD" ) );
       //BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).reward_sbd_balance == ASSET( "0.000 TBD" ) );
-      BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).reward_nlg_balance == ASSET( "0.000 TESTS" ) );
+      BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).reward_knlg_balance == ASSET( "0.000 TESTS" ) );
 //       BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).reward_vesting_balance == ASSET( "0.000000 VESTS" ) );
-//       BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).reward_vesting_nlg == ASSET( "0.000 TESTS" ) );
+//       BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).reward_vesting_knlg == ASSET( "0.000 TESTS" ) );
       BOOST_REQUIRE( db->get_account( "alice" ).balance == ASSET( "2.000 TESTS" ) );
       //BOOST_REQUIRE( db->get_account( "alice" ).sbd_balance == ASSET( "3.000 TBD" ) );
    }

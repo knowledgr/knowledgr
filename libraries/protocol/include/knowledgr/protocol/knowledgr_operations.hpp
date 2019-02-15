@@ -347,7 +347,7 @@ namespace knowledgr { namespace protocol {
       uint32_t          escrow_id = 30;
 
 //      asset             sbd_amount = asset( 0, SBD_SYMBOL );
-      asset             nlg_amount = asset( 0, KNLG_SYMBOL );
+      asset             knlg_amount = asset( 0, KNLG_SYMBOL );
       asset             fee;
 
       time_point_sec    ratification_deadline;
@@ -419,7 +419,7 @@ namespace knowledgr { namespace protocol {
 
       uint32_t          escrow_id = 30;
 //      asset             sbd_amount = asset( 0, SBD_SYMBOL ); ///< the amount of sbd to release
-      asset             nlg_amount = asset( 0, KNLG_SYMBOL ); ///< the amount of knowledgr to release
+      asset             knlg_amount = asset( 0, KNLG_SYMBOL ); ///< the amount of knowledgr to release
 
       void validate()const;
       void get_required_active_authorities( flat_set<account_name_type>& a )const{ a.insert(who); }
@@ -1208,10 +1208,10 @@ FC_REFLECT( knowledgr::protocol::allowed_vote_assets, (votable_assets) )
 FC_REFLECT_TYPENAME( knowledgr::protocol::comment_options_extension )
 FC_REFLECT( knowledgr::protocol::comment_options_operation, (author)(permlink)(max_accepted_payout)(percent_knowledgr_dollars)(allow_votes)(allow_curation_rewards)(extensions) )
 
-FC_REFLECT( knowledgr::protocol::escrow_transfer_operation, (from)(to)/*(sbd_amount)*/(nlg_amount)(escrow_id)(agent)(fee)(json_meta)(ratification_deadline)(escrow_expiration) );
+FC_REFLECT( knowledgr::protocol::escrow_transfer_operation, (from)(to)/*(sbd_amount)*/(knlg_amount)(escrow_id)(agent)(fee)(json_meta)(ratification_deadline)(escrow_expiration) );
 FC_REFLECT( knowledgr::protocol::escrow_approve_operation, (from)(to)(agent)(who)(escrow_id)(approve) );
 FC_REFLECT( knowledgr::protocol::escrow_dispute_operation, (from)(to)(agent)(who)(escrow_id) );
-FC_REFLECT( knowledgr::protocol::escrow_release_operation, (from)(to)(agent)(who)(receiver)(escrow_id)/*(sbd_amount)*/(nlg_amount) );
+FC_REFLECT( knowledgr::protocol::escrow_release_operation, (from)(to)(agent)(who)(receiver)(escrow_id)/*(sbd_amount)*/(knlg_amount) );
 FC_REFLECT( knowledgr::protocol::claim_account_operation, (creator)(fee)(extensions) );
 FC_REFLECT( knowledgr::protocol::create_claimed_account_operation, (creator)(new_account_name)(owner)(active)(posting)(memo_key)(json_metadata)(extensions) );
 FC_REFLECT( knowledgr::protocol::request_account_recovery_operation, (recovery_account)(account_to_recover)(new_owner_authority)(extensions) );

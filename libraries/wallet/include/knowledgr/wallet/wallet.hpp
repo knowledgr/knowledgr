@@ -443,16 +443,16 @@ class wallet_api
        *  These accounts are created with combination of KNLG and delegated SP
        *
        *  @param creator The account creating the new account
-       *  @param nlg_fee The amount of the fee to be paid with KNLG
-       *  @param delegated_nlg The amount of the fee to be paid with delegation
+       *  @param knlg_fee The amount of the fee to be paid with KNLG
+       *  @param delegated_knlg The amount of the fee to be paid with delegation
        *  @param new_account_name The name of the new account
        *  @param json_meta JSON Metadata associated with the new account
        *  @param broadcast true if you wish to broadcast the transaction
        */
 //       condenser_api::legacy_signed_transaction create_account_delegated(
 //          string creator,
-//          condenser_api::legacy_asset nlg_fee,
-//          condenser_api::legacy_asset delegated_nlg,
+//          condenser_api::legacy_asset knlg_fee,
+//          condenser_api::legacy_asset delegated_knlg,
 //          string new_account_name,
 //          string json_meta,
 //          bool broadcast );
@@ -466,8 +466,8 @@ class wallet_api
        * These accounts are created with combination of KNLG and delegated SP
        *
        * @param creator The account creating the new account
-       * @param nlg_fee The amount of the fee to be paid with KNLG
-       * @param delegated_nlg The amount of the fee to be paid with delegation
+       * @param knlg_fee The amount of the fee to be paid with KNLG
+       * @param delegated_knlg The amount of the fee to be paid with delegation
        * @param newname The name of the new account
        * @param json_meta JSON Metadata associated with the new account
        * @param owner public owner key of the new account
@@ -478,8 +478,8 @@ class wallet_api
        */
 //       condenser_api::legacy_signed_transaction create_account_with_keys_delegated(
 //          string creator,
-//          condenser_api::legacy_asset nlg_fee,
-//          condenser_api::legacy_asset delegated_nlg,
+//          condenser_api::legacy_asset knlg_fee,
+//          condenser_api::legacy_asset delegated_knlg,
 //          string newname,
 //          string json_meta,
 //          public_key_type owner,
@@ -780,7 +780,7 @@ class wallet_api
        * @param to The account the funds are going to
        * @param agent The account acting as the agent in case of dispute
        * @param escrow_id A unique id for the escrow transfer. (from, escrow_id) must be a unique pair
-       * @param nlg_amount The amount of KNLG to transfer
+       * @param knlg_amount The amount of KNLG to transfer
        * @param fee The fee paid to the agent
        * @param ratification_deadline The deadline for 'to' and 'agent' to approve the escrow transfer
        * @param escrow_expiration The expiration of the escrow transfer, after which either party can claim the funds
@@ -793,7 +793,7 @@ class wallet_api
          string agent,
          uint32_t escrow_id,
 //         condenser_api::legacy_asset sbd_amount,
-         condenser_api::legacy_asset nlg_amount,
+         condenser_api::legacy_asset knlg_amount,
          condenser_api::legacy_asset fee,
          time_point_sec ratification_deadline,
          time_point_sec escrow_expiration,
@@ -851,7 +851,7 @@ class wallet_api
        * @param who The account authorizing the release
        * @param receiver The account that will receive funds being released
        * @param escrow_id A unique id for the escrow transfer
-       * @param nlg_amount The amount of KNLG that will be released
+       * @param knlg_amount The amount of KNLG that will be released
        * @param broadcast true if you wish to broadcast the transaction
        */
       condenser_api::legacy_signed_transaction escrow_release(
@@ -862,7 +862,7 @@ class wallet_api
          string receiver,
          uint32_t escrow_id,
 //         condenser_api::legacy_asset sbd_amount,
-         condenser_api::legacy_asset nlg_amount,
+         condenser_api::legacy_asset knlg_amount,
          bool broadcast = false
       );
 

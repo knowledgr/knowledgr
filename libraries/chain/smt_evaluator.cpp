@@ -66,20 +66,20 @@ const smt_token_object& common_pre_setup_evaluation(
 
 void smt_create_evaluator::do_apply( const smt_create_operation& o )
 {
-   FC_ASSERT( _db.has_hardfork( KNOWLEDGR_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", KNOWLEDGR_SMT_HARDFORK) );
-   const dynamic_global_property_object& dgpo = _db.get_dynamic_global_properties();
-
-   FC_ASSERT( util::find_smt_token( _db, o.symbol, true ) == nullptr, "SMT ${nai} has already been created.", ("nai", o.symbol.to_nai() ) );
-   FC_ASSERT(  _db.get< nai_pool_object >().contains( o.symbol ), "Cannot create an SMT that didn't come from the NAI pool." );
-
-   asset creation_fee;
-
-   if( o.smt_creation_fee.symbol == dgpo.smt_creation_fee.symbol )
-   {
-      creation_fee = o.smt_creation_fee;
-   }
-   else
-   {
+//    FC_ASSERT( _db.has_hardfork( KNOWLEDGR_SMT_HARDFORK ), "SMT functionality not enabled until hardfork ${hf}", ("hf", KNOWLEDGR_SMT_HARDFORK) );
+//    const dynamic_global_property_object& dgpo = _db.get_dynamic_global_properties();
+// 
+//    FC_ASSERT( util::find_smt_token( _db, o.symbol, true ) == nullptr, "SMT ${nai} has already been created.", ("nai", o.symbol.to_nai() ) );
+//    FC_ASSERT(  _db.get< nai_pool_object >().contains( o.symbol ), "Cannot create an SMT that didn't come from the NAI pool." );
+// 
+//    asset creation_fee;
+// 
+//    if( o.smt_creation_fee.symbol == dgpo.smt_creation_fee.symbol )
+//    {
+//       creation_fee = o.smt_creation_fee;
+//    }
+//    else
+//    {
 //       const auto& fhistory = _db.get_feed_history();
 //       FC_ASSERT( !fhistory.current_median_history.is_null(), "Cannot pay the fee using different asset symbol because there is no price feed." );
 // 
@@ -87,29 +87,29 @@ void smt_create_evaluator::do_apply( const smt_create_operation& o )
 //          creation_fee = _db.to_knowledgr( o.smt_creation_fee );
 //       else
 //          creation_fee = _db.to_sbd( o.smt_creation_fee );
-   }
-
-   FC_ASSERT( creation_fee == dgpo.smt_creation_fee,
-      "Fee of ${ef} does not match the creation fee of ${sf}", ("ef", creation_fee)("sf", dgpo.smt_creation_fee) );
-
-   FC_ASSERT( _db.get_balance( o.control_account, o.smt_creation_fee.symbol ) >= o.smt_creation_fee,
-      "Account does not have sufficient funds for specified fee of ${of}", ("of", o.smt_creation_fee) );
-
-   _db.adjust_balance( o.control_account , -o.smt_creation_fee );
-   _db.adjust_balance( KNOWLEDGR_NULL_ACCOUNT,  o.smt_creation_fee );
-
-   // Create SMT object common to both liquid and vesting variants of SMT.
-   _db.create< smt_token_object >( [&]( smt_token_object& token )
-   {
-      token.liquid_symbol = o.symbol;
-      token.control_account = o.control_account;
-      token.market_maker.token_balance = asset( 0, token.liquid_symbol );
-   });
-
-   remove_from_nai_pool( _db, o.symbol );
-
-   if ( !_db.is_pending_tx() )
-      replenish_nai_pool( _db );
+//    }
+// 
+//    FC_ASSERT( creation_fee == dgpo.smt_creation_fee,
+//       "Fee of ${ef} does not match the creation fee of ${sf}", ("ef", creation_fee)("sf", dgpo.smt_creation_fee) );
+// 
+//    FC_ASSERT( _db.get_balance( o.control_account, o.smt_creation_fee.symbol ) >= o.smt_creation_fee,
+//       "Account does not have sufficient funds for specified fee of ${of}", ("of", o.smt_creation_fee) );
+// 
+//    _db.adjust_balance( o.control_account , -o.smt_creation_fee );
+//    _db.adjust_balance( KNOWLEDGR_NULL_ACCOUNT,  o.smt_creation_fee );
+// 
+//    // Create SMT object common to both liquid and vesting variants of SMT.
+//    _db.create< smt_token_object >( [&]( smt_token_object& token )
+//    {
+//       token.liquid_symbol = o.symbol;
+//       token.control_account = o.control_account;
+//       token.market_maker.token_balance = asset( 0, token.liquid_symbol );
+//    });
+// 
+//    remove_from_nai_pool( _db, o.symbol );
+// 
+//    if ( !_db.is_pending_tx() )
+//       replenish_nai_pool( _db );
 }
 
 struct smt_setup_evaluator_visitor

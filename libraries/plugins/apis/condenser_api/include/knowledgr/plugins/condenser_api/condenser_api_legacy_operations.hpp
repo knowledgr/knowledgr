@@ -360,7 +360,7 @@ namespace knowledgr { namespace plugins { namespace condenser_api {
          agent( op.agent ),
          escrow_id( op.escrow_id ),
 //         sbd_amount( legacy_asset::from_asset( op.sbd_amount ) ),
-         nlg_amount( legacy_asset::from_asset( op.nlg_amount ) ),
+         knlg_amount( legacy_asset::from_asset( op.knlg_amount ) ),
          fee( legacy_asset::from_asset( op.fee ) ),
          ratification_deadline( op.ratification_deadline ),
          escrow_expiration( op.escrow_expiration ),
@@ -375,7 +375,7 @@ namespace knowledgr { namespace plugins { namespace condenser_api {
          op.agent = agent;
          op.escrow_id = escrow_id;
 //         op.sbd_amount = sbd_amount;
-         op.nlg_amount = nlg_amount;
+         op.knlg_amount = knlg_amount;
          op.fee = fee;
          op.ratification_deadline = ratification_deadline;
          op.escrow_expiration = escrow_expiration;
@@ -389,7 +389,7 @@ namespace knowledgr { namespace plugins { namespace condenser_api {
       uint32_t          escrow_id;
 
 //      legacy_asset      sbd_amount;
-      legacy_asset      nlg_amount;
+      legacy_asset      knlg_amount;
       legacy_asset      fee;
 
       time_point_sec    ratification_deadline;
@@ -409,7 +409,7 @@ namespace knowledgr { namespace plugins { namespace condenser_api {
          receiver( op.receiver ),
          escrow_id( op.escrow_id ),
 //         sbd_amount( legacy_asset::from_asset( op.sbd_amount ) ),
-         nlg_amount( legacy_asset::from_asset( op.nlg_amount ) )
+         knlg_amount( legacy_asset::from_asset( op.knlg_amount ) )
       {}
 
       operator escrow_release_operation()const
@@ -422,7 +422,7 @@ namespace knowledgr { namespace plugins { namespace condenser_api {
          op.receiver = receiver;
          op.escrow_id = escrow_id;
 //         op.sbd_amount = sbd_amount;
-         op.nlg_amount = nlg_amount;
+         op.knlg_amount = knlg_amount;
          return op;
       }
 
@@ -434,7 +434,7 @@ namespace knowledgr { namespace plugins { namespace condenser_api {
 
       uint32_t          escrow_id;
 //      legacy_asset      sbd_amount;
-      legacy_asset      nlg_amount;
+      legacy_asset      knlg_amount;
    };
 
    struct legacy_pow2_operation
@@ -1006,19 +1006,19 @@ namespace knowledgr { namespace plugins { namespace condenser_api {
       legacy_return_vesting_delegation_operation() {}
       legacy_return_vesting_delegation_operation( const return_vesting_delegation_operation& op ) :
          account( op.account ),
-         nlg_tokens( legacy_asset::from_asset( op.nlg_tokens ) )
+         knlg_tokens( legacy_asset::from_asset( op.knlg_tokens ) )
       {}
 
       operator return_vesting_delegation_operation()const
       {
          return_vesting_delegation_operation op;
          op.account = account;
-         op.nlg_tokens = nlg_tokens;
+         op.knlg_tokens = knlg_tokens;
          return op;
       }
 
       account_name_type account;
-      legacy_asset      nlg_tokens;
+      legacy_asset      knlg_tokens;
    };
 
    struct legacy_comment_benefactor_reward_operation
@@ -1052,19 +1052,19 @@ namespace knowledgr { namespace plugins { namespace condenser_api {
       legacy_producer_reward_operation() {}
       legacy_producer_reward_operation( const producer_reward_operation& op ) :
          producer( op.producer ),
-         nlg_tokens( legacy_asset::from_asset( op.nlg_tokens ) )
+         knlg_tokens( legacy_asset::from_asset( op.knlg_tokens ) )
       {}
 
       operator producer_reward_operation()const
       {
          producer_reward_operation op;
          op.producer = producer;
-         op.nlg_tokens = nlg_tokens;
+         op.knlg_tokens = knlg_tokens;
          return op;
       }
 
       account_name_type producer;
-      legacy_asset      nlg_tokens;
+      legacy_asset      knlg_tokens;
    };
 
    struct legacy_claim_account_operation
@@ -1733,12 +1733,12 @@ FC_REFLECT( knowledgr::plugins::condenser_api::legacy_witness_update_operation, 
 FC_REFLECT( knowledgr::plugins::condenser_api::legacy_limit_order_create_operation, (owner)(orderid)(amount_to_sell)(min_to_receive)(fill_or_kill)(expiration) )
 FC_REFLECT( knowledgr::plugins::condenser_api::legacy_limit_order_create2_operation, (owner)(orderid)(amount_to_sell)(exchange_rate)(fill_or_kill)(expiration) )
 FC_REFLECT( knowledgr::plugins::condenser_api::legacy_comment_options_operation, (author)(permlink)(max_accepted_payout)(percent_knowledgr_dollars)(allow_votes)(allow_curation_rewards)(extensions) )
-FC_REFLECT( knowledgr::plugins::condenser_api::legacy_escrow_transfer_operation, (from)(to)/*(sbd_amount)*/(nlg_amount)(escrow_id)(agent)(fee)(json_meta)(ratification_deadline)(escrow_expiration) );
-FC_REFLECT( knowledgr::plugins::condenser_api::legacy_escrow_release_operation, (from)(to)(agent)(who)(receiver)(escrow_id)/*(sbd_amount)*/(nlg_amount) );
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_escrow_transfer_operation, (from)(to)/*(sbd_amount)*/(knlg_amount)(escrow_id)(agent)(fee)(json_meta)(ratification_deadline)(escrow_expiration) );
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_escrow_release_operation, (from)(to)(agent)(who)(receiver)(escrow_id)/*(sbd_amount)*/(knlg_amount) );
 FC_REFLECT( knowledgr::plugins::condenser_api::legacy_pow2_operation, (work)(new_owner_key)(props) )
 FC_REFLECT( knowledgr::plugins::condenser_api::legacy_claim_reward_balance_operation, (account)(reward_knowledgr)/*(reward_sbd)(reward_vests)*/ )
 //FC_REFLECT( knowledgr::plugins::condenser_api::legacy_delegate_vesting_shares_operation, (delegator)(delegatee)(vesting_shares) );
-FC_REFLECT( knowledgr::plugins::condenser_api::legacy_author_reward_operation, (author)(permlink)(payout)/*(nlg_payout)(vesting_payout)*/ )///~~~~~KNLG~~~~~
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_author_reward_operation, (author)(permlink)(payout)/*(knlg_payout)(vesting_payout)*/ )///~~~~~KNLG~~~~~
 FC_REFLECT( knowledgr::plugins::condenser_api::legacy_curation_reward_operation, (curator)(reward)(comment_author)(comment_permlink) )
 FC_REFLECT( knowledgr::plugins::condenser_api::legacy_comment_reward_operation, (author)(permlink)(payout) )
 FC_REFLECT( knowledgr::plugins::condenser_api::legacy_fill_convert_request_operation, (owner)(requestid)(amount_in)(amount_out) )
@@ -1748,9 +1748,9 @@ FC_REFLECT( knowledgr::plugins::condenser_api::legacy_fill_vesting_withdraw_oper
 FC_REFLECT( knowledgr::plugins::condenser_api::legacy_fill_order_operation, (current_owner)(current_orderid)(current_pays)(open_owner)(open_orderid)(open_pays) )
 FC_REFLECT( knowledgr::plugins::condenser_api::legacy_fill_transfer_from_savings_operation, (from)(to)(amount)(request_id)(memo) )
 FC_REFLECT( knowledgr::plugins::condenser_api::legacy_stake_process_time_operation, (account)(amount)(type)(created) )///~~~~~KNLG~~~~~
-FC_REFLECT( knowledgr::plugins::condenser_api::legacy_return_vesting_delegation_operation, (account)(nlg_tokens/*vesting_shares*/) )
-FC_REFLECT( knowledgr::plugins::condenser_api::legacy_comment_benefactor_reward_operation, (benefactor)(author)(permlink)(payout)/*(nlg_payout)(vesting_payout)*/ )///~~~~~KNLG~~~~~
-FC_REFLECT( knowledgr::plugins::condenser_api::legacy_producer_reward_operation, (producer)(nlg_tokens/*vesting_shares*/) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_return_vesting_delegation_operation, (account)(knlg_tokens/*vesting_shares*/) )
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_comment_benefactor_reward_operation, (benefactor)(author)(permlink)(payout)/*(knlg_payout)(vesting_payout)*/ )///~~~~~KNLG~~~~~
+FC_REFLECT( knowledgr::plugins::condenser_api::legacy_producer_reward_operation, (producer)(knlg_tokens/*vesting_shares*/) )
 FC_REFLECT( knowledgr::plugins::condenser_api::legacy_claim_account_operation, (creator)(fee)(extensions) )
 
 FC_REFLECT_TYPENAME( knowledgr::plugins::condenser_api::legacy_operation )

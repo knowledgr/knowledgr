@@ -56,12 +56,12 @@ uint64_t get_rshare_reward( const comment_reward_context& ctx )
    std::cerr<<"~~~ [get_rshare_reward()] - payout = "<<payout<<"\n";
 
 ///~~~~~KNLG~~~~~{ NOT NEED for Knowledgr
-//    if( is_comment_payout_dust( ctx.current_nlg_price, payout ) )
+//    if( is_comment_payout_dust( ctx.current_knlg_price, payout ) )
 //       payout = 0;
-//    asset max_knowledgr = to_knowledgr( ctx.current_nlg_price, ctx.max_nlg );
+//    asset max_knowledgr = to_knowledgr( ctx.current_knlg_price, ctx.max_knlg );
 ///~~~~~KNLG~~~~~} NOT NEED for Knowledgr
 
-   asset max_knowledgr = ctx.max_nlg;/// asset( 100000000, KNLG_SYMBOL );///~~~~~KNLG~~~~~
+   asset max_knowledgr = ctx.max_knlg;/// asset( 100000000, KNLG_SYMBOL );///~~~~~KNLG~~~~~
    
    payout = std::min( payout, uint64_t( max_knowledgr.amount.value ) );
 

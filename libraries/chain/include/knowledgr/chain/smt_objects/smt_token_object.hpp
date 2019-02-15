@@ -30,7 +30,7 @@ public:
 
    struct smt_market_maker_state
    {
-      asset    nlg_balance;
+      asset    knlg_balance;
       asset    token_balance;
       uint32_t reserve_ratio = 0;
    };
@@ -224,7 +224,7 @@ FC_REFLECT_ENUM( knowledgr::chain::smt_phase,
 )
 
 FC_REFLECT( knowledgr::chain::smt_token_object::smt_market_maker_state,
-   (nlg_balance)
+   (knlg_balance)
    (token_balance)
    (reserve_ratio)
 )
