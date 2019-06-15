@@ -9,6 +9,8 @@
 #include <knowledgr/chain/transaction_object.hpp>
 #include <knowledgr/chain/witness_objects.hpp>
 #include <knowledgr/chain/database.hpp>
+#include <knowledgr/protocol/knowledgr_operations.hpp>
+#include <iostream>
 
 namespace knowledgr { namespace plugins { namespace database_api {
 
@@ -67,6 +69,10 @@ struct api_comment_object
          beneficiaries.push_back( route );
       }
 
+       for( auto& cit : o.citations ) { //~~~~~KNLG~~~~~
+           citations.push_back(cit);
+       }
+
       const auto root = db.find( o.root_comment );
 
       if( root != nullptr )
@@ -80,9 +86,6 @@ struct api_comment_object
       body = to_string( con.body );
       json_metadata = to_string( con.json_metadata );
 #endif
-	  for (auto& _id : o.citations) { //~~~~~KNLG~~~~~
-		  citations.push_back(_id);
-	  }
    }
 
    api_comment_object(){}
@@ -133,7 +136,7 @@ struct api_comment_object
    bool              allow_curation_rewards = false;
    vector<beneficiary_route_type> beneficiaries;
    comment_object::comment_type		 type; //~~~~~KNLG~~~~~
-   vector<comment_id_type> citations; //~~~~~KNLG~~~~~
+   vector<citation> citations; //~~~~~KNLG~~~~~
 };
 
 struct api_comment_vote_object

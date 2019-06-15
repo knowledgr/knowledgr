@@ -104,8 +104,14 @@ namespace knowledgr { namespace protocol {
    };
    
    struct citation {
+      citation() {}
+      citation( const account_name_type& a, const permlink_type& p ) : author( a ), permlink( p ){}
+
 	   account_name_type author;
-	   string permlink;
+	   permlink_type permlink;
+
+      // For use by std::sort such that the route is sorted first by name (ascending)
+      bool operator < ( const citation& o )const { return author < o.author; }
    };//~~~~~KNLG~~~~~
 
    struct comment_operation : public base_operation

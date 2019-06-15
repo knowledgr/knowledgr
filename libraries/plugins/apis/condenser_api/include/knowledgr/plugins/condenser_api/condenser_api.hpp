@@ -323,8 +323,8 @@ struct api_comment_object
       {
          beneficiaries.push_back( route );
 	  }
-	  for (auto& _id : c.citations) { ///~~~~~KNLG~~~~~
-		  citations.push_back(_id);
+	  for (auto& cit : c.citations) { ///~~~~~KNLG~~~~~
+		  citations.push_back(cit);
 	  }
    }
 
@@ -376,7 +376,7 @@ struct api_comment_object
    bool              allow_curation_rewards = false;
    vector< beneficiary_route_type > beneficiaries;
    comment_object::comment_type		 type; //~~~~~KNLG~~~~~
-   vector<comment_id_type> citations; //~~~~~KNLG~~~~~
+   vector< citation > citations; //~~~~~KNLG~~~~~
 };
 
 struct extended_dynamic_global_properties
