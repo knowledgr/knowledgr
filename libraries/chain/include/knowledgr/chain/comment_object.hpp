@@ -15,6 +15,8 @@ namespace knowledgr { namespace chain {
    using protocol::beneficiary_route_type;
    using chainbase::t_vector;
    using chainbase::t_pair;
+   using protocol::citation;
+   
 #ifdef KNOWLEDGR_ENABLE_SMT
    using protocol::votable_asset_info;
 #endif
@@ -122,7 +124,7 @@ namespace knowledgr { namespace chain {
          t_votable_assets  allowed_vote_assets;
 #endif
 		 comment_type		type = none; //~~~~~KNLG~~~~~
-		 using t_citations = t_vector< id_type >;//~~~~~KNLG~~~~~
+		 using t_citations = t_vector< citation >;//~~~~~KNLG~~~~~
 		 t_citations citations; //~~~~~KNLG~~~~~
 		 using t_exp_categories = t_vector< protocol::expertise_category >;//~~~~~KNLG~~~~~
 		 t_exp_categories exp_categories; //~~~~~KNLG~~~~~
@@ -327,6 +329,8 @@ namespace helpers
 #ifdef KNOWLEDGR_ENABLE_SMT
       typedef typename knowledgr::chain::comment_object::t_votable_assets t_votable_assets;
 #endif
+      typedef typename knowledgr::chain::comment_object::t_citations t_citations;//~~~~~KNLG~~~~~
+      
       index_statistic_info gather_statistics(const IndexType& index, bool onlyStaticInfo) const
       {
          index_statistic_info info;
@@ -343,6 +347,7 @@ namespace helpers
 #ifdef KNOWLEDGR_ENABLE_SMT
                info._item_additional_allocation += o.allowed_vote_assets.capacity()*sizeof(t_votable_assets::value_type);
 #endif
+               info._item_additional_allocation += o.citations.capacity()*sizeof(t_citations::value_type);//~~~~~KNLG~~~~~
             }
          }
 

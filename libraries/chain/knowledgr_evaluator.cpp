@@ -7,7 +7,7 @@
 
 #include <knowledgr/chain/util/reward.hpp>
 #include <knowledgr/chain/util/manabar.hpp>
-
+#include <knowledgr/protocol/knowledgr_operations.hpp>
 #include <fc/macros.hpp>
 
 #ifndef IS_LOW_MEM
@@ -44,6 +44,7 @@ std::string wstring_to_utf8(const std::wstring& str)
 
 namespace knowledgr { namespace chain {
    using fc::uint128_t;
+   using knowledgr::protocol::citation;
 
 inline void validate_permlink_0_1( const string& permlink )
 {
@@ -833,13 +834,17 @@ void comment_evaluator::do_apply( const comment_operation& o )
    comment_object::comment_type _type = type_val[o.type];
    std::string _type_str = type_str[o.type];
 
-   vector<comment_id_type> _citations;
+   vector< citation > citations;
 
-   for (auto & cit : o.citations) {
-	   std::cerr<<"~~~ [comment_evaluator::do_apply()] - citation -> author = "<<(std::string)cit.author<<", permlink = "<<cit.permlink<<"\n"; //~~~~~KNLG~~~~~		
-	   const comment_object* _citation = &_db.get_comment(cit.author, cit.permlink);
-	   FC_ASSERT( _citation, "The citation (author:${a}, permlink:${p}) cannot be found.", ("a",cit.author)("p",cit.permlink) );
-	   _citations.push_back(_citation->id);
+   for (auto & pcit : o.citations) {
+	   std::cerr<<"~~~ [comment_evaluator::do_apply()] - citation -> author = "<<(std::string)pcit.author<<", permlink = "<<(std::string)pcit.permlink<<"\n"; //~~~~~KNLG~~~~~
+	   FC_ASSERT( pcit.permlink.size() <= 32, "The citation permlink should be less than 32 bytes.");
+	   const comment_object* citation = &_db.get_comment(pcit.author, pcit.permlink);
+	   FC_ASSERT( citation, "The citation (author:${a}, permlink:${p}) cannot be found.", ("a",pcit.author)("p",pcit.permlink) );
+      // citation cit;
+      // cit.author = pcit.author;
+      // from_string( cit.permlink, pcit.permlink );
+	   citations.push_back(pcit);
    }
    vector<protocol::expertise_category> exp_categories;
    std::string str_category;
@@ -961,8 +966,8 @@ void comment_evaluator::do_apply( const comment_operation& o )
          com.max_cashout_time = fc::time_point_sec::maximum();
          com.reward_weight = reward_weight;
 		 com.type = _type;//~~~~~KNLG~~~~~
-		 for (comment_id_type _id : _citations) {//~~~~~KNLG~~~~~
-			 com.citations.push_back(_id);
+		 for (auto &cit : citations) {//~~~~~KNLG~~~~~
+			 com.citations.push_back(cit);
 		 }
 		 for (auto & c0 : exp_categories) {//~~~~~KNLG~~~~~
 			com.exp_categories.push_back(c0);
@@ -1070,10 +1075,11 @@ void comment_evaluator::do_apply( const comment_operation& o )
             FC_ASSERT( com.parent_author == o.parent_author, "The parent of a comment cannot change." );
             FC_ASSERT( equal( com.parent_permlink, o.parent_permlink ), "The permlink of a comment cannot change." );
          }
-		 com.citations.clear();//~~~~~KNLG~~~~~
-		 for (comment_id_type _id : _citations) {//~~~~~KNLG~~~~~
-			 com.citations.push_back(_id);
-		 }
+         // 000000000000000000000000000000000000000000000
+         com.citations.clear();//~~~~~KNLG~~~~~
+         for (auto& cit : citations) {//~~~~~KNLG~~~~~
+            com.citations.push_back(cit);
+         }
       });
 #ifndef IS_LOW_MEM
       _db.modify( _db.get< comment_content_object, by_comment >( comment.id ), [&]( comment_content_object& con )
