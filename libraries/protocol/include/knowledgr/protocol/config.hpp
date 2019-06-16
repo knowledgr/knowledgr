@@ -115,7 +115,7 @@
 #define KNOWLEDGR_MIN_VOTE_INTERVAL_SEC           3
 #define KNOWLEDGR_VOTE_DUST_THRESHOLD             (50000000)
 
-#define KNOWLEDGR_MIN_ROOT_COMMENT_INTERVAL       (fc::seconds(60*5)) // 5 minutes
+#define KNOWLEDGR_MIN_ROOT_COMMENT_INTERVAL       (fc::seconds(60*1)) // 5 minutes ~~~~~ KNLG Update
 #define KNOWLEDGR_MIN_REPLY_INTERVAL              (fc::seconds(20)) // 20 seconds
 #define KNOWLEDGR_MIN_REPLY_INTERVAL_HF20         (fc::seconds(3)) // 3 seconds
 #define KNOWLEDGR_POST_AVERAGE_WINDOW             (60*60*24u) // 1 day

@@ -838,7 +838,7 @@ void comment_evaluator::do_apply( const comment_operation& o )
 
    for (auto & pcit : o.citations) {
 	   std::cerr<<"~~~ [comment_evaluator::do_apply()] - citation -> author = "<<(std::string)pcit.author<<", permlink = "<<(std::string)pcit.permlink<<"\n"; //~~~~~KNLG~~~~~
-	   FC_ASSERT( pcit.permlink.size() <= 32, "The citation permlink should be less than 32 bytes.");
+	   FC_ASSERT( pcit.permlink.size() <= 32, "The citation permlink should be less than 32 bytes."); // ~~~~~ KNLG Update ~~~~~
 	   const comment_object* citation = &_db.get_comment(pcit.author, pcit.permlink);
 	   FC_ASSERT( citation, "The citation (author:${a}, permlink:${p}) cannot be found.", ("a",pcit.author)("p",pcit.permlink) );
       // citation cit;
@@ -851,6 +851,7 @@ void comment_evaluator::do_apply( const comment_operation& o )
    if (o.parent_author == KNOWLEDGR_ROOT_POST_PARENT) {
 	   FC_ASSERT( o.parent_permlink == "knowledgr", "The permlink of root comment must be \"knowledgr\"");
 	   FC_ASSERT( o.categories.size() > 0, "The expertise category must be specified." );
+       FC_ASSERT( o.categories.size() < 2, "The expertise category must be specified one category." ); // ~~~~~ KNLG Update ~~~~~
 	   for (auto & c0 : o.categories) {
 		   if (c0 != protocol::expctgry_unknown) {
 			   exp_categories.push_back(c0);
@@ -905,21 +906,24 @@ void comment_evaluator::do_apply( const comment_operation& o )
       if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_20__2019 ) )
       {
          if( o.parent_author == KNOWLEDGR_ROOT_POST_PARENT )
-             FC_ASSERT( ( now - auth.last_root_post ) > KNOWLEDGR_MIN_ROOT_COMMENT_INTERVAL, "You may only post once every 5 minutes.", ("now",now)("last_root_post", auth.last_root_post) );
+             // ~~~~~ KNLG Update ~~~~~
+             FC_ASSERT( ( now - auth.last_root_post ) > KNOWLEDGR_MIN_ROOT_COMMENT_INTERVAL, "You may only post once every 1 minutes.", ("now",now)("last_root_post", auth.last_root_post) );
          else
              FC_ASSERT( (now - auth.last_post) >= KNOWLEDGR_MIN_REPLY_INTERVAL_HF20, "You may only comment once every 3 seconds.", ("now",now)("auth.last_post",auth.last_post) );
       }
       else if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_12__176 ) )
       {
          if( o.parent_author == KNOWLEDGR_ROOT_POST_PARENT )
-             FC_ASSERT( ( now - auth.last_root_post ) > KNOWLEDGR_MIN_ROOT_COMMENT_INTERVAL, "You may only post once every 5 minutes.", ("now",now)("last_root_post", auth.last_root_post) );
+             // ~~~~~ KNLG Update ~~~~~
+             FC_ASSERT( ( now - auth.last_root_post ) > KNOWLEDGR_MIN_ROOT_COMMENT_INTERVAL, "You may only post once every 1 minutes.", ("now",now)("last_root_post", auth.last_root_post) );
          else
              FC_ASSERT( (now - auth.last_post) > KNOWLEDGR_MIN_REPLY_INTERVAL, "You may only comment once every 20 seconds.", ("now",now)("auth.last_post",auth.last_post) );
       }
       else if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_6__113 ) )
       {
          if( o.parent_author == KNOWLEDGR_ROOT_POST_PARENT )
-             FC_ASSERT( (now - auth.last_post) > KNOWLEDGR_MIN_ROOT_COMMENT_INTERVAL, "You may only post once every 5 minutes.", ("now",now)("auth.last_post",auth.last_post) );
+             // ~~~~~ KNLG Update ~~~~~
+             FC_ASSERT( (now - auth.last_post) > KNOWLEDGR_MIN_ROOT_COMMENT_INTERVAL, "You may only post once every 1 minutes.", ("now",now)("auth.last_post",auth.last_post) );
          else
              FC_ASSERT( (now - auth.last_post) > KNOWLEDGR_MIN_REPLY_INTERVAL, "You may only comment once every 20 seconds.", ("now",now)("auth.last_post",auth.last_post) );
       }
