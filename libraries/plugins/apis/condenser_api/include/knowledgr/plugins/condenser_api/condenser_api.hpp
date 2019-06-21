@@ -317,7 +317,8 @@ struct api_comment_object
       allow_replies( c.allow_replies ),
       allow_votes( c.allow_votes ),
       allow_curation_rewards( c.allow_curation_rewards ),
-	  type(c.type)///~~~~~KNLG~~~~~
+      type(c.type),///~~~~~KNLG~~~~~
+      reviews(c.reviews)///~~~~~KNLG~~~~~~~
    {
       for( auto& route : c.beneficiaries )
       {
@@ -377,6 +378,7 @@ struct api_comment_object
    vector< beneficiary_route_type > beneficiaries;
    comment_object::comment_type		 type; //~~~~~KNLG~~~~~
    vector< citation > citations; //~~~~~KNLG~~~~~
+   uint32_t          reviews = 0; //~~~~~KNLG~~~~~~
 };
 
 struct extended_dynamic_global_properties
@@ -1223,6 +1225,7 @@ FC_REFLECT( knowledgr::plugins::condenser_api::api_comment_object,
              (max_accepted_payout)(percent_knowledgr_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)
 			 (type)(citations)//~~~~~KNLG~~~~~
+          (reviews)//~~~~~KNLG~~~~~~~
           )
 
 FC_REFLECT( knowledgr::plugins::condenser_api::extended_dynamic_global_properties,

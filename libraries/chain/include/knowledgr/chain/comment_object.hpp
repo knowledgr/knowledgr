@@ -128,6 +128,7 @@ namespace knowledgr { namespace chain {
 		 t_citations citations; //~~~~~KNLG~~~~~
 		 using t_exp_categories = t_vector< protocol::expertise_category >;//~~~~~KNLG~~~~~
 		 t_exp_categories exp_categories; //~~~~~KNLG~~~~~
+		 uint32_t          reviews = 0; ///< used to track the total reviews of children
    };
 
    class comment_content_object : public object< comment_content_object_type, comment_content_object >
@@ -290,6 +291,7 @@ FC_REFLECT( knowledgr::chain::comment_object,
              (max_accepted_payout)(percent_knowledgr_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)(allowed_vote_assets)
 			 (type)(citations)(exp_categories)//~~~~~KNLG~~~~~
+			 (reviews) //~~~~~~KNLG~~~~~~~~
           )
 #else
 FC_REFLECT( knowledgr::chain::comment_object,
@@ -303,6 +305,7 @@ FC_REFLECT( knowledgr::chain::comment_object,
              (max_accepted_payout)(percent_knowledgr_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)
 			 (type)(citations)(exp_categories)//~~~~~KNLG~~~~~
+			 (reviews) //~~~~~~KNLG~~~~~~~~
           )
 #endif
 CHAINBASE_SET_INDEX_TYPE( knowledgr::chain::comment_object, knowledgr::chain::comment_index )
