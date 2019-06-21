@@ -889,10 +889,10 @@ void comment_evaluator::do_apply( const comment_operation& o )
 
 		 //~~~~~KNLG~~~~~{
 		 FC_ASSERT( parent->type != comment_object::review, "The parent comment has disabled replies because its type is REVIEW." );
-		 if ( _type == comment_object::review ) {
-			 FC_ASSERT( parent->type == comment_object::hypothesis,
-				 "The comment with REVIEW can only be able to post for the parent with HYPOTHESIS type." );
-		 }
+		//  if ( _type == comment_object::review ) {
+		// 	 FC_ASSERT( parent->type == comment_object::hypothesis,
+		// 		 "The comment with REVIEW can only be able to post for the parent with HYPOTHESIS type." );
+		//  }
 		 if ( _type == comment_object::observation || _type == comment_object::question ) {
 			 FC_ASSERT( parent->type == comment_object::observation || parent->type == comment_object::question || parent->type == comment_object::hypothesis,
 				 "The comment with OBSERVATION or QUESTION type can only be able to post for the parent with OBSERVATION, QUESTION or HYPOTHESIS type." );
@@ -1007,7 +1007,7 @@ void comment_evaluator::do_apply( const comment_operation& o )
 
       id = new_comment.id;
       std::cerr<<"~~~ [comment_evaluator::do_apply()] - o.id = "<<id<<"\n";//~~~~~KNLG~~~~~
-      
+
 #ifndef IS_LOW_MEM
       _db.create< comment_content_object >( [&]( comment_content_object& con )
       {
