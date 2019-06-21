@@ -994,6 +994,9 @@ void comment_evaluator::do_apply( const comment_operation& o )
             com.category = parent->category;
             com.root_comment = parent->root_comment;
             com.cashout_time = fc::time_point_sec::maximum();
+            _db.modify( *parent, [&]( comment_object& p ){
+               p.reviews++;
+            });
          }
 
          if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_17__769 ) )
@@ -1003,7 +1006,8 @@ void comment_evaluator::do_apply( const comment_operation& o )
       });
 
       id = new_comment.id;
-
+      std::cerr<<"~~~ [comment_evaluator::do_apply()] - o.id = "<<id<<"\n";//~~~~~KNLG~~~~~
+      
 #ifndef IS_LOW_MEM
       _db.create< comment_content_object >( [&]( comment_content_object& con )
       {
