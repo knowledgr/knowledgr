@@ -994,9 +994,11 @@ void comment_evaluator::do_apply( const comment_operation& o )
             com.category = parent->category;
             com.root_comment = parent->root_comment;
             com.cashout_time = fc::time_point_sec::maximum();
-            _db.modify( *parent, [&]( comment_object& p ){
-               p.reviews++;
-            });
+            if ( _type == comment_object::review ) {
+               _db.modify( *parent, [&]( comment_object& p ){
+                  p.reviews++;
+               });
+            }
          }
 
          if( _db.has_hardfork( KNOWLEDGR_HARDFORK_0_17__769 ) )
