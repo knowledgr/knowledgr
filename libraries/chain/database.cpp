@@ -1052,52 +1052,53 @@ uint32_t database::get_slot_at_time(fc::time_point_sec when)const
 // /**
 //  *  Converts KNLG into sbd and adds it to to_account while reducing the KNLG supply
 //  *  by KNLG and increasing the sbd supply by the specified amount.
+//  *  ~~~~~~~~~~KNLG Update~~~~~~~~~~~~
 //  */
-// std::pair< asset, asset > database::create_sbd( const account_object& to_account, asset knowledgr, bool to_reward_balance )
-// {
-//    std::pair< asset, asset > assets( asset( 0, SBD_SYMBOL ), asset( 0, KNLG_SYMBOL ) );
-// 
-//    try
-//    {
-//       if( knowledgr.amount == 0 )
-//          return assets;
-// 
-//       const auto& median_price = get_feed_history().current_median_history;
-//       const auto& gpo = get_dynamic_global_properties();
-// 
-//       if( !median_price.is_null() )
-//       {
-//          auto to_sbd = ( gpo.sbd_print_rate * knowledgr.amount ) / KNOWLEDGR_100_PERCENT;
-//          auto to_knowledgr = knowledgr.amount - to_sbd;
-// 
-//          auto sbd = asset( to_sbd, KNLG_SYMBOL ) * median_price;
-// 
-//          if( to_reward_balance )
-//          {
-//             adjust_reward_balance( to_account, sbd );
-//             adjust_reward_balance( to_account, asset( to_knowledgr, KNLG_SYMBOL ) );
-//          }
-//          else
-//          {
-//             adjust_balance( to_account, sbd );
-//             adjust_balance( to_account, asset( to_knowledgr, KNLG_SYMBOL ) );
-//          }
-// 
-//          adjust_supply( asset( -to_sbd, KNLG_SYMBOL ) );
-//          adjust_supply( sbd );
-//          assets.first = sbd;
-//          assets.second = asset( to_knowledgr, KNLG_SYMBOL );
-//       }
-//       else
-//       {
-//          adjust_balance( to_account, knowledgr );
-//          assets.second = knowledgr;
-//       }
-//    }
-//    FC_CAPTURE_LOG_AND_RETHROW( (to_account.name)(knowledgr) )
-// 
-//    return assets;
-// }
+std::pair< asset, asset > database::create_reward_balance( const account_object& to_account, asset knowledgr, bool to_reward_balance )
+{
+   std::pair< asset, asset > assets( asset( 0, KNLG_SYMBOL ), asset( 0, KNLG_SYMBOL ) );
+
+   try
+   {
+      if( knowledgr.amount == 0 )
+         return assets;
+
+      // const auto& median_price = get_feed_history().current_median_history;
+      // const auto& gpo = get_dynamic_global_properties();
+
+      // if( !median_price.is_null() )
+      // {
+         // auto to_sbd = ( gpo.sbd_print_rate * knowledgr.amount ) / KNOWLEDGR_100_PERCENT;
+         auto to_knowledgr = knowledgr.amount;
+
+         // auto sbd = asset( to_sbd, KNLG_SYMBOL ) * median_price;
+
+         if( to_reward_balance )
+         {
+            // adjust_reward_balance( to_account, sbd );
+            adjust_reward_balance( to_account, asset( to_knowledgr, KNLG_SYMBOL ) );
+         }
+         else
+         {
+            // adjust_balance( to_account, sbd );
+            adjust_balance( to_account, asset( to_knowledgr, KNLG_SYMBOL ) );
+         }
+
+         // adjust_supply( asset( -to_sbd, KNLG_SYMBOL ) );
+         // adjust_supply( sbd );
+         assets.first = asset( to_knowledgr, KNLG_SYMBOL );
+         assets.second = asset( to_knowledgr, KNLG_SYMBOL );
+      // }
+      // else
+      // {
+         // adjust_balance( to_account, knowledgr );
+         // assets.second = knowledgr;
+      // }
+   }
+   FC_CAPTURE_LOG_AND_RETHROW( (to_account.name)(knowledgr) )
+
+   return assets;
+}
 // pay to_account new token(liquid), then a caller-supplied callback after determining how many shares to create, but before
 // we modify the database.
 // This allows us to implement virtual op pre-notifications in the Before function.
@@ -1754,6 +1755,7 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
             author_tokens -= total_beneficiary;
 			
             const auto& author = get_account( comment.author );
+            auto reward_payout = create_reward_balance( author, asset(author_tokens, KNLG_SYMBOL), true );
             operation vop = author_reward_operation( comment.author, to_string( comment.permlink ), asset( 0, KNLG_SYMBOL ) );
 
             create_vesting2( *this, author, asset( author_tokens, KNLG_SYMBOL ), false,
@@ -1763,7 +1765,7 @@ share_type database::cashout_comment_helper( util::comment_reward_context& ctx, 
                   pre_push_virtual_operation( vop );
                } );
 
-            adjust_total_payout( comment, asset( author_tokens, KNLG_SYMBOL ), asset( curation_tokens, KNLG_SYMBOL ), asset( total_beneficiary, KNLG_SYMBOL ) );
+            adjust_total_payout( comment, asset( reward_payout.second, KNLG_SYMBOL ), asset( curation_tokens, KNLG_SYMBOL ), asset( total_beneficiary, KNLG_SYMBOL ) );
 
             post_push_virtual_operation( vop );
             vop = comment_reward_operation( comment.author, to_string( comment.permlink ), asset( claimed_reward, KNLG_SYMBOL ) );
