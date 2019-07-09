@@ -32,14 +32,13 @@ namespace knowledgr { namespace protocol {
 	static const expertise_category expctgry_ethics						= (23);
 	static const expertise_category expctgry_philosophy					= (24);
 
-	class expertise
+	struct expertise
 	{
-	private:	
+		expertise() : category(expctgry_unknown), level(1){}
+
 		static void set_expertise_category_str_map();
 
-	public:
-
-		expertise( expertise_category _c = expctgry_unknown, uint32_t _r = 1 ) : category(_c), level(_r){}
+		expertise( expertise_category _c, uint32_t _r = 1 ) : category(_c), level(_r){}
 
 		expertise_category	category;
 		uint32_t			level;
@@ -53,14 +52,15 @@ namespace knowledgr { namespace protocol {
 		static expertise	from_string( const std::string& from );
 		std::string			to_string()const;
 	};
-   
+
+	bool operator == ( const expertise& a, const expertise& b );
 } } // knowledgr::protocol
 
-namespace fc {
+// namespace fc {
 
-    inline void to_variant( const knowledgr::protocol::expertise& var,  fc::variant& vo ) { vo = var.to_string(); }
-    inline void from_variant( const fc::variant& var,  knowledgr::protocol::expertise& vo ) { vo = knowledgr::protocol::expertise::from_string( var.as_string() ); }
-}
+//     inline void to_variant( const knowledgr::protocol::expertise& var,  fc::variant& vo ) { vo = var.to_string(); }
+//     inline void from_variant( const fc::variant& var,  knowledgr::protocol::expertise& vo ) { vo = knowledgr::protocol::expertise::from_string( var.as_string() ); }
+// }
 
 //FC_REFLECT_ENUM( knowledgr::protocol::expertise_category,  )
 FC_REFLECT( knowledgr::protocol::expertise, (category)(level) )
