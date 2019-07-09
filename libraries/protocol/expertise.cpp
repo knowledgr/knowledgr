@@ -140,4 +140,9 @@ namespace knowledgr { namespace protocol {
 		FC_CAPTURE_AND_RETHROW( (from) )
 	}
 
+	bool operator == ( const expertise& a, const expertise& b )
+	{
+		return ( a.category == b.category ) &&
+					( a.level  == b.level );
+	}
 } } // knowledgr::protocol
