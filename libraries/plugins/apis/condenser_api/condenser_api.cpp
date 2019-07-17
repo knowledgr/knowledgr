@@ -366,7 +366,12 @@ namespace detail
             {
                if( _follow_api )
                {
-                  auto blog = _follow_api->get_blog_entries( { eacnt.name, 0, 20 } ).blog;
+                  // ~~~~~ KNLG Update Begin ~~~~~~
+                  // auto blog = _follow_api->get_blog_entries( { eacnt.name, 0, 20 } ).blog;
+                  tags::get_discussions_by_comments_args args;
+                  args.start_author = eacnt.name;
+                  args.limit = 50;
+                  auto blog = _tags_api->get_discussions_by_comments(args).discussions;
                   eacnt.blog = vector<string>();
                   eacnt.blog->reserve(blog.size());
 
@@ -374,15 +379,16 @@ namespace detail
                   {
                      const auto link = b.author + "/" + b.permlink;
                      eacnt.blog->push_back( link );
-                     _state.content[ link ] = tags::discussion( _db.get_comment( b.author, b.permlink ), _db );
+                     _state.content[ link ] = tags::discussion( b );
 
                      set_pending_payout( _state.content[ link ] );
 
-                     if( b.reblog_on > time_point_sec() )
-                     {
-                        _state.content[ link ].first_reblogged_on = b.reblog_on;
-                     }
+                     // if( b.reblog_on > time_point_sec() )
+                     // {
+                     //    _state.content[ link ].first_reblogged_on = b.reblog_on;
+                     // }
                   }
+                  // ~~~~~ KNLG Update End ~~~~~~
                }
             }
             else if( part[1].size() == 0 || part[1] == "feed" )
