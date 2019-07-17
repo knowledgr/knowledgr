@@ -186,8 +186,8 @@ DEFINE_API_IMPL( tags_api_impl, get_discussions_by_created )
    auto tag = fc::to_lower( args.tag );
    auto parent = get_parent( args );
 
-   const auto& tidx = _db.get_index< tags::tag_index, tags::by_parent_created >();
-   auto tidx_itr = tidx.lower_bound( boost::make_tuple( tag, parent, fc::time_point_sec::maximum() )  );
+   const auto& tidx = _db.get_index< tags::tag_index, tags::by_parent_children >();
+   auto tidx_itr = tidx.lower_bound( boost::make_tuple( tag, parent ) );
 
    return get_discussions( args, tag, parent, tidx, tidx_itr, args.truncate_body, filter_default, exit_default, tag_exit_default, true ); //~~~~~~ KNLG Update ~~~~~~~
 }
@@ -373,7 +373,7 @@ DEFINE_API_IMPL( tags_api_impl, get_discussions_by_blog )
 DEFINE_API_IMPL( tags_api_impl, get_discussions_by_comments )
 {
    get_discussions_by_comments_return result;
-#ifndef IS_LOW_MEM
+// #ifndef IS_LOW_MEM
    args.validate();
    FC_ASSERT( args.start_author, "Must get comments for a specific author" );
    auto start_author = *( args.start_author );
@@ -396,21 +396,21 @@ DEFINE_API_IMPL( tags_api_impl, get_discussions_by_comments )
    {
       if( comment_itr->author != start_author )
          break;
-      if( comment_itr->parent_author.size() > 0 )
+      // if( comment_itr->parent_author.size() > 0 )
+      // {
+      try
       {
-         try
-         {
-            result.discussions.push_back( lookup_discussion( comment_itr->id ) );
-         }
-         catch( const fc::exception& e )
-         {
-            edump( (e.to_detail_string() ) );
-         }
+         result.discussions.push_back( lookup_discussion( comment_itr->id ) );
       }
+      catch( const fc::exception& e )
+      {
+         edump( (e.to_detail_string() ) );
+      }
+      // }
 
       ++comment_itr;
    }
-#endif
+// #endif
    return result;
 }
 
@@ -470,7 +470,7 @@ DEFINE_API_IMPL( tags_api_impl, get_discussions_by_author_before_date )
       FC_ASSERT( args.limit <= 100 );
       result.discussions.reserve( args.limit );
       uint32_t count = 0;
-      const auto& didx = _db.get_index< comment_index, by_author_last_update >();
+      const auto& didx = _db.get_index< comment_index, by_permlink >();
 
       auto before_date = args.before_date;
 
@@ -666,25 +666,31 @@ discussion_query_result tags_api_impl::get_discussions( const discussion_query& 
                ("count", count)("itr_count", itr_count)("filter_count", filter_count)("exc_count", exc_count) );
          break;
       }
+      
       if( tidx_itr->tag != tag || ( !ignore_parent && tidx_itr->parent != parent ) )
          break;
       try
       {
          result.discussions.push_back( lookup_discussion( tidx_itr->comment, truncate_body ) );
          result.discussions.back().promoted = asset(tidx_itr->promoted_balance, KNLG_SYMBOL/*SBD_SYMBOL*/ );
-
+         std::cerr<<"~~~ ################ tags api - tag2: "<<tag<<"\n";//~~~~~KNLG~~~~~
+         
          if( filter( result.discussions.back() ) )
          {
             result.discussions.pop_back();
             ++filter_count;
          }
-         else if( exit( result.discussions.back() ) || tag_exit( *tidx_itr )  )
+         else if( bool extflag = exit( result.discussions.back() ) || tag_exit( *tidx_itr )  )
          {
+            std::cerr<<"~~~ ################ tags api - tag3: "<<tag_exit( *tidx_itr )<<"\n";//~~~~~KNLG~~~~~
             result.discussions.pop_back();
             break;
          }
          else
+         {
             --count;
+            std::cerr<<"~~~ ################ tags api - tag4: "<<count<<"\n";//~~~~~KNLG~~~~~
+         }
       }
       catch ( const fc::exception& e )
       {
