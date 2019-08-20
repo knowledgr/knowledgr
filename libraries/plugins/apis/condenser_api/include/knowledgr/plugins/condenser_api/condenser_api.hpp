@@ -327,6 +327,9 @@ struct api_comment_object
 	  for (auto& cit : c.citations) { ///~~~~~KNLG~~~~~
 		  citations.push_back(cit);
 	  }
+     for (auto& cited : c.by_citations) { ///~~~~~KNLG~~~~~
+		  by_citations.push_back(cited);
+	  }
    }
 
    api_comment_object(){}
@@ -378,6 +381,7 @@ struct api_comment_object
    vector< beneficiary_route_type > beneficiaries;
    comment_object::comment_type		 type; //~~~~~KNLG~~~~~
    vector< citation > citations; //~~~~~KNLG~~~~~
+   vector< citation > by_citations; //~~~~~KNLG~~~~~
    uint32_t          reviews = 0; //~~~~~KNLG~~~~~~
 };
 
@@ -1224,7 +1228,7 @@ FC_REFLECT( knowledgr::plugins::condenser_api::api_comment_object,
              (root_author)(root_permlink)
              (max_accepted_payout)(percent_knowledgr_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)
-			 (type)(citations)//~~~~~KNLG~~~~~
+			 (type)(citations)(by_citations)//~~~~~KNLG~~~~~
           (reviews)//~~~~~KNLG~~~~~~~
           )
 

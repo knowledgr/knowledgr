@@ -59,6 +59,7 @@ namespace knowledgr { namespace chain {
             , allowed_vote_assets( a )
 #endif
 			, citations( a ) //~~~~~KNLG~~~~~
+         , by_citations( a ) //~~~~~KNLG~~~~~
 			, exp_categories( a ) //~~~~~KNLG~~~~~
          {
             c( *this );
@@ -126,6 +127,7 @@ namespace knowledgr { namespace chain {
 		 comment_type		type = none; //~~~~~KNLG~~~~~
 		 using t_citations = t_vector< citation >;//~~~~~KNLG~~~~~
 		 t_citations citations; //~~~~~KNLG~~~~~
+       t_citations by_citations; //~~~~~KNLG~~~~~~~
 		 using t_exp_categories = t_vector< protocol::expertise_category >;//~~~~~KNLG~~~~~
 		 t_exp_categories exp_categories; //~~~~~KNLG~~~~~
 		 uint32_t          reviews = 0; ///< used to track the total reviews of children
@@ -290,7 +292,7 @@ FC_REFLECT( knowledgr::chain::comment_object,
              (total_vote_weight)(reward_weight)(total_payout_value)(curator_payout_value)(beneficiary_payout_value)(author_rewards)(net_votes)(root_comment)
              (max_accepted_payout)(percent_knowledgr_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)(allowed_vote_assets)
-			 (type)(citations)(exp_categories)//~~~~~KNLG~~~~~
+			 (type)(citations)(by_citations)(exp_categories)//~~~~~KNLG~~~~~
 			 (reviews) //~~~~~~KNLG~~~~~~~~
           )
 #else
@@ -304,7 +306,7 @@ FC_REFLECT( knowledgr::chain::comment_object,
              (total_vote_weight)(reward_weight)(total_payout_value)(curator_payout_value)(beneficiary_payout_value)(author_rewards)(net_votes)(root_comment)
              (max_accepted_payout)(percent_knowledgr_dollars)(allow_replies)(allow_votes)(allow_curation_rewards)
              (beneficiaries)
-			 (type)(citations)(exp_categories)//~~~~~KNLG~~~~~
+			 (type)(citations)(by_citations)(exp_categories)//~~~~~KNLG~~~~~
 			 (reviews) //~~~~~~KNLG~~~~~~~~
           )
 #endif
@@ -351,6 +353,7 @@ namespace helpers
                info._item_additional_allocation += o.allowed_vote_assets.capacity()*sizeof(t_votable_assets::value_type);
 #endif
                info._item_additional_allocation += o.citations.capacity()*sizeof(t_citations::value_type);//~~~~~KNLG~~~~~
+               info._item_additional_allocation += o.by_citations.capacity()*sizeof(t_citations::value_type);//~~~~~KNLG~~~~~
             }
          }
 
