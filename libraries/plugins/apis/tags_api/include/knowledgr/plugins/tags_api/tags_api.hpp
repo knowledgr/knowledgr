@@ -133,6 +133,9 @@ struct discussion_query_result
 typedef get_discussion_args      get_content_replies_args;
 typedef discussion_query_result  get_content_replies_return;
 
+typedef get_discussion_args      get_content_citations_args;
+typedef discussion_query_result  get_content_citations_return;
+
 typedef discussion_query         get_post_discussions_by_payout_args;
 typedef discussion_query_result  get_post_discussions_by_payout_return;
 
@@ -209,6 +212,7 @@ class tags_api
       (get_tags_used_by_author)
       (get_discussion)
       (get_content_replies)
+      (get_content_citations)
       (get_post_discussions_by_payout)
       (get_comment_discussions_by_payout)
       (get_discussions_by_trending)

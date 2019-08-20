@@ -839,11 +839,13 @@ void comment_evaluator::do_apply( const comment_operation& o )
    for (auto & pcit : o.citations) {
 	   std::cerr<<"~~~ [comment_evaluator::do_apply()] - citation -> author = "<<(std::string)pcit.author<<", permlink = "<<(std::string)pcit.permlink<<"\n"; //~~~~~KNLG~~~~~
 	   FC_ASSERT( pcit.permlink.size() <= 32, "The citation permlink should be less than 32 bytes."); // ~~~~~ KNLG Update ~~~~~
-	   const comment_object* citation = &_db.get_comment(pcit.author, pcit.permlink);
-	   FC_ASSERT( citation, "The citation (author:${a}, permlink:${p}) cannot be found.", ("a",pcit.author)("p",pcit.permlink) );
-      // citation cit;
-      // cit.author = pcit.author;
-      // from_string( cit.permlink, pcit.permlink );
+	   const comment_object* cited_comment = &_db.get_comment(pcit.author, pcit.permlink);
+	   FC_ASSERT( cited_comment, "The citation (author:${a}, permlink:${p}) cannot be found.", ("a",pcit.author)("p",pcit.permlink) );
+      // add cited by citation to descending comment
+      // citation cited;
+      // cited.author = o.author;
+      // cited.permlink = o.permlink;
+      // cited_comment.by_citations.push_back(cited);
 	   citations.push_back(pcit);
    }
    vector<protocol::expertise_category> exp_categories;
@@ -972,6 +974,14 @@ void comment_evaluator::do_apply( const comment_operation& o )
 		 com.type = _type;//~~~~~KNLG~~~~~
 		 for (auto &cit : citations) {//~~~~~KNLG~~~~~
 			 com.citations.push_back(cit);
+          citation cited_by;
+          cited_by.author = o.author;
+          cited_by.permlink = o.permlink;
+
+          const comment_object* cited = &_db.get_comment( cit.author, cit.permlink );
+          _db.modify( *cited, [&]( comment_object& cc){
+             cc.by_citations.push_back(cited_by);
+          });
 		 }
 		 for (auto & c0 : exp_categories) {//~~~~~KNLG~~~~~
 			com.exp_categories.push_back(c0);
@@ -1089,6 +1099,14 @@ void comment_evaluator::do_apply( const comment_operation& o )
          com.citations.clear();//~~~~~KNLG~~~~~
          for (auto& cit : citations) {//~~~~~KNLG~~~~~
             com.citations.push_back(cit);
+            citation cited_by;
+            cited_by.author = o.author;
+            cited_by.permlink = o.permlink;
+
+            const comment_object* cited = &_db.get_comment( cit.author, cit.permlink );
+            _db.modify( *cited, [&]( comment_object& cc){
+               cc.by_citations.push_back(cited_by);
+            });
          }
       });
 #ifndef IS_LOW_MEM

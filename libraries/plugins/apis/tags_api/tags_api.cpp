@@ -22,6 +22,7 @@ class tags_api_impl
          (get_tags_used_by_author)
          (get_discussion)
          (get_content_replies)
+         (get_content_citations)
          (get_post_discussions_by_payout)
          (get_comment_discussions_by_payout)
          (get_discussions_by_trending)
@@ -137,6 +138,33 @@ DEFINE_API_IMPL( tags_api_impl, get_content_replies )
 
    while( itr != by_permlink_idx.end() && itr->parent_author == args.author && chain::to_string( itr->parent_permlink ) == args.permlink )
    {
+      result.discussions.push_back( discussion( *itr, _db ) );
+      set_pending_payout( result.discussions.back() );
+      ++itr;
+   }
+   return result;
+}
+
+DEFINE_API_IMPL( tags_api_impl, get_content_citations )
+{
+   const auto& by_permlink_idx = _db.get_index< chain::comment_index, chain::by_parent >();
+   auto itr = by_permlink_idx.find( boost::make_tuple( args.author, args.permlink ) );
+
+   get_content_citations_return result;
+
+   while( itr != by_permlink_idx.end() )
+   {
+      bool citation_exist = false;
+      // bool by_citation_exist = false;
+
+      for (auto &cit : itr->citations) {
+         if (cit.author == args.author && cit.permlink == args.permlink) {
+            citation_exist = true;
+            break;
+         }
+      }
+
+      if ( !citation_exist ) break;
       result.discussions.push_back( discussion( *itr, _db ) );
       set_pending_payout( result.discussions.back() );
       ++itr;
@@ -725,6 +753,7 @@ DEFINE_READ_APIS( tags_api,
    (get_tags_used_by_author)
    (get_discussion)
    (get_content_replies)
+   (get_content_citations)
    (get_post_discussions_by_payout)
    (get_comment_discussions_by_payout)
    (get_discussions_by_trending)

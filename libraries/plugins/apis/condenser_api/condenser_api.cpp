@@ -2028,6 +2028,23 @@ namespace detail
                   edump( (e.to_detail_string()) );
                }
             }
+
+            auto citations = _tags_api->get_content_citations( { root.author, root.permlink } ).discussions;
+            for( auto& c : citations )
+            {
+               try
+               {
+                  recursively_fetch_content( _state, c, referenced_accounts );
+                  _state.content[c.author + "/" + c.permlink] = std::move( c );
+
+                  if( c.author.size() )
+                     referenced_accounts.insert( c.author );
+               }
+               catch( const fc::exception& e )
+               {
+                  edump( (e.to_detail_string()) );
+               }
+            }
          }
       }
       FC_CAPTURE_AND_RETHROW( (root.author)(root.permlink) )
