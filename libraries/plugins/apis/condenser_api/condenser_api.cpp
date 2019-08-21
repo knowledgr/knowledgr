@@ -428,6 +428,7 @@ namespace detail
             {
                auto dis = _tags_api->get_discussion( { account, slug } );
 
+               std::cerr<<"******************** [condenser_api::content recursive for citations()] -\n";
                recursively_fetch_content( _state, dis, accounts );
                _state.content[key] = std::move(dis);
             }
@@ -2029,16 +2030,36 @@ namespace detail
                }
             }
 
-            auto citations = _tags_api->get_content_citations( { root.author, root.permlink } ).discussions;
+            // auto citations = _tags_api->get_content_citations( { root.author, root.permlink } ).discussions;
+            auto citations = _db.get_comment( root.author, root.permlink ).citations;
             for( auto& c : citations )
             {
                try
                {
-                  recursively_fetch_content( _state, c, referenced_accounts );
-                  _state.content[c.author + "/" + c.permlink] = std::move( c );
+                  auto dis = _tags_api->get_discussion( { c.author, c.permlink } );
+                  // recursively_fetch_content( _state, dis, referenced_accounts );
+                  _state.content[c.author + "/" + c.permlink] = std::move( dis );
 
                   if( c.author.size() )
                      referenced_accounts.insert( c.author );
+               }
+               catch( const fc::exception& e )
+               {
+                  edump( (e.to_detail_string()) );
+               }
+            }
+
+            auto by_citations = _db.get_comment( root.author, root.permlink ).by_citations;
+            for( auto& bc : by_citations )
+            {
+               try
+               {
+                  auto dis = _tags_api->get_discussion( { bc.author, bc.permlink } );
+                  // recursively_fetch_content( _state, dis, referenced_accounts );
+                  _state.content[bc.author + "/" + bc.permlink] = std::move( dis );
+
+                  if( bc.author.size() )
+                     referenced_accounts.insert( bc.author );
                }
                catch( const fc::exception& e )
                {
