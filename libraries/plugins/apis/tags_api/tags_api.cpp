@@ -147,9 +147,9 @@ DEFINE_API_IMPL( tags_api_impl, get_content_replies )
 
 DEFINE_API_IMPL( tags_api_impl, get_content_citations )
 {
-   const auto& by_permlink_idx = _db.get_index< chain::comment_index, chain::by_parent >();
+   const auto& by_permlink_idx = _db.get_index< chain::comment_index, chain::by_permlink >();
    auto itr = by_permlink_idx.find( boost::make_tuple( args.author, args.permlink ) );
-
+   
    get_content_citations_return result;
 
    while( itr != by_permlink_idx.end() )
@@ -166,7 +166,6 @@ DEFINE_API_IMPL( tags_api_impl, get_content_citations )
 
       if ( !citation_exist ) break;
       result.discussions.push_back( discussion( *itr, _db ) );
-      set_pending_payout( result.discussions.back() );
       ++itr;
    }
    return result;
