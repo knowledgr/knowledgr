@@ -2066,6 +2066,20 @@ namespace detail
                   edump( (e.to_detail_string()) );
                }
             }
+
+            // Add parent content
+            try
+            {
+               if( root.parent_author.size() ) {
+                  auto parent_dis = _tags_api->get_discussion( { root.parent_author, root.parent_permlink } );
+                  _state.content[root.parent_author + "/" + root.parent_permlink] = std::move( parent_dis );
+                  referenced_accounts.insert( root.parent_author );
+               }
+            }
+            catch( const fc::exception& e )
+            {
+               edump( (e.to_detail_string()) );
+            }
          }
       }
       FC_CAPTURE_AND_RETHROW( (root.author)(root.permlink) )
