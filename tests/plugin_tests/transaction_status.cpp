@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE( transaction_status_test )
       db->set_hardfork( KNOWLEDGR_NUM_HARDFORKS );
       generate_block();
 
-      vest( "initminer", 10000 );
+      //vest( "initminer", 10000 );
 
       // Fill up the rest of the required miners
       for( int i = KNOWLEDGR_NUM_INIT_MINERS; i < KNOWLEDGR_MAX_WITNESSES; i++ )

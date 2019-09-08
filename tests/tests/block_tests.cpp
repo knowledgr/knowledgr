@@ -764,7 +764,7 @@ BOOST_FIXTURE_TEST_CASE( hardfork_test, database_fixture )
 
       generate_blocks( 2 );
 
-      vest( "initminer", 10000 );
+      //vest( "initminer", 10000 );
 
       // Fill up the rest of the required miners
       for( int i = KNOWLEDGR_NUM_INIT_MINERS; i < KNOWLEDGR_MAX_WITNESSES; i++ )

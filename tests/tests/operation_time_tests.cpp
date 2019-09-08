@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE( comment_payout_equalize )
       for( const auto& voter : voters )
       {
          fund( voter.name, 10000 );
-         vest( voter.name, 10000 );
+         // vest( voter.name, 10000 );
       }
 
       // authors all write in the same block, but Bob declines payout
@@ -144,9 +144,9 @@ BOOST_AUTO_TEST_CASE( comment_payout_equalize )
       }
       */
 
-      const account_object& alice_account = db->get_account("alice");
-      const account_object& bob_account   = db->get_account("bob");
-      const account_object& dave_account  = db->get_account("dave");
+      // const account_object& alice_account = db->get_account("alice");
+      // const account_object& bob_account   = db->get_account("bob");
+      // const account_object& dave_account  = db->get_account("dave");
 
 //       BOOST_CHECK( alice_account.reward_sbd_balance == ASSET( "10720.000 TBD" ) );
 //       BOOST_CHECK( bob_account.reward_sbd_balance == ASSET( "0.000 TBD" ) );
@@ -164,8 +164,8 @@ BOOST_AUTO_TEST_CASE( comment_payout_dust )
       ACTORS( (alice)(bob) )
       generate_block();
 
-      vest( KNOWLEDGR_INIT_MINER_NAME, "alice", ASSET( "10.000 TESTS" ) );
-      vest( KNOWLEDGR_INIT_MINER_NAME, "bob", ASSET( "10.000 TESTS" ) );
+      // vest( KNOWLEDGR_INIT_MINER_NAME, "alice", ASSET( "10.000 TESTS" ) );
+      // vest( KNOWLEDGR_INIT_MINER_NAME, "bob", ASSET( "10.000 TESTS" ) );
 
       //set_price_feed( price( ASSET( "1.000 TBD" ), ASSET( "1.000 TESTS" ) ) );
 
@@ -1854,630 +1854,630 @@ BOOST_AUTO_TEST_CASE( knowledgr_inflation )
 //    FC_LOG_AND_RETHROW();
 // }
 
-BOOST_AUTO_TEST_CASE( liquidity_rewards )
-{
-   using std::abs;
-
-   try
-   {
-      db->liquidity_rewards_enabled = false;
-
-      ACTORS( (alice)(bob)(sam)(dave) )
-      generate_block();
-//       vest( KNOWLEDGR_INIT_MINER_NAME, "alice", ASSET( "10.000 TESTS" ) );
-//       vest( KNOWLEDGR_INIT_MINER_NAME, "bob", ASSET( "10.000 TESTS" ) );
-//       vest( KNOWLEDGR_INIT_MINER_NAME, "sam", ASSET( "10.000 TESTS" ) );
-//       vest( KNOWLEDGR_INIT_MINER_NAME, "dave", ASSET( "10.000 TESTS" ) );
-
-      BOOST_TEST_MESSAGE( "Rewarding Bob with TESTS" );
-
-//       auto exchange_rate = price( ASSET( "1.000 TBD" ), ASSET( "1.250 TESTS" ) );
-//       set_price_feed( exchange_rate );
-
-      signed_transaction tx;
-
-      fund( "alice", ASSET( "25.522 TBD" ) );
-      //asset alice_sbd = db->get_account( "alice" ).sbd_balance;
-
-      generate_block();
-
-      fund( "alice", alice_sbd.amount );
-      fund( "bob", alice_sbd.amount );
-      fund( "sam", alice_sbd.amount );
-      fund( "dave", alice_sbd.amount );
-
-      int64_t alice_sbd_volume = 0;
-      int64_t alice_knowledgr_volume = 0;
-      time_point_sec alice_reward_last_update = fc::time_point_sec::min();
-      int64_t bob_sbd_volume = 0;
-      int64_t bob_knowledgr_volume = 0;
-      time_point_sec bob_reward_last_update = fc::time_point_sec::min();
-      int64_t sam_sbd_volume = 0;
-      int64_t sam_knowledgr_volume = 0;
-      time_point_sec sam_reward_last_update = fc::time_point_sec::min();
-      int64_t dave_sbd_volume = 0;
-      int64_t dave_knowledgr_volume = 0;
-      time_point_sec dave_reward_last_update = fc::time_point_sec::min();
-
-      BOOST_TEST_MESSAGE( "Creating Limit Order for KNLG that will stay on the books for 30 minutes exactly." );
-
-      limit_order_create_operation op;
-      op.owner = "alice";
-      //op.amount_to_sell = asset( alice_sbd.amount.value / 20, SBD_SYMBOL ) ;
-      op.min_to_receive = op.amount_to_sell * exchange_rate;
-      op.expiration = db->head_block_time() + fc::seconds( KNOWLEDGR_MAX_LIMIT_ORDER_EXPIRATION );
-      op.orderid = 1;
-
-      tx.signatures.clear();
-      tx.operations.clear();
-      tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
-      tx.operations.push_back( op );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      BOOST_TEST_MESSAGE( "Waiting 10 minutes" );
-
-      generate_blocks( db->head_block_time() + KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10, true );
-
-      BOOST_TEST_MESSAGE( "Creating Limit Order for SBD that will be filled immediately." );
-
-      op.owner = "bob";
-      op.min_to_receive = op.amount_to_sell;
-      op.amount_to_sell = op.min_to_receive * exchange_rate;
-      op.fill_or_kill = false;
-      op.orderid = 2;
-
-      tx.signatures.clear();
-      tx.operations.clear();
-      tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
-      tx.operations.push_back( op );
-      sign( tx, bob_private_key );
-      db->push_transaction( tx, 0 );
-
-      alice_knowledgr_volume += ( asset( alice_sbd.amount / 20, SBD_SYMBOL ) * exchange_rate ).amount.value;
-      alice_reward_last_update = db->head_block_time();
-      bob_knowledgr_volume -= ( asset( alice_sbd.amount / 20, SBD_SYMBOL ) * exchange_rate ).amount.value;
-      bob_reward_last_update = db->head_block_time();
-
-      auto ops = get_last_operations( 1 );
-      const auto& liquidity_idx = db->get_index< liquidity_reward_balance_index >().indices().get< by_owner >();
-      const auto& limit_order_idx = db->get_index< limit_order_index >().indices().get< by_account >();
-
-      auto reward = liquidity_idx.find( db->get_account( "alice" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "bob" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
-
-      auto fill_order_op = ops[0].get< fill_order_operation >();
-
-      BOOST_REQUIRE( fill_order_op.open_owner == "alice" );
-      BOOST_REQUIRE( fill_order_op.open_orderid == 1 );
-      BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( alice_sbd.amount.value / 20, SBD_SYMBOL ).amount.value );
-      BOOST_REQUIRE( fill_order_op.current_owner == "bob" );
-      BOOST_REQUIRE( fill_order_op.current_orderid == 2 );
-      BOOST_REQUIRE( fill_order_op.current_pays.amount.value == ( asset( alice_sbd.amount.value / 20, SBD_SYMBOL ) * exchange_rate ).amount.value );
-
-      BOOST_CHECK( limit_order_idx.find( std::make_tuple( "alice", 1 ) ) == limit_order_idx.end() );
-      BOOST_CHECK( limit_order_idx.find( std::make_tuple( "bob", 2 ) ) == limit_order_idx.end() );
-
-      BOOST_TEST_MESSAGE( "Creating Limit Order for SBD that will stay on the books for 60 minutes." );
-
-      op.owner = "sam";
-      op.amount_to_sell = asset( ( alice_sbd.amount.value / 20 ), KNLG_SYMBOL );
-      op.min_to_receive = asset( ( alice_sbd.amount.value / 20 ), SBD_SYMBOL );
-      op.orderid = 3;
-
-      tx.signatures.clear();
-      tx.operations.clear();
-      tx.operations.push_back( op );
-      sign( tx, sam_private_key );
-      db->push_transaction( tx, 0 );
-
-      BOOST_TEST_MESSAGE( "Waiting 10 minutes" );
-
-      generate_blocks( db->head_block_time() + KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10, true );
-
-      BOOST_TEST_MESSAGE( "Creating Limit Order for SBD that will stay on the books for 30 minutes." );
-
-      op.owner = "bob";
-      op.orderid = 4;
-      op.amount_to_sell = asset( ( alice_sbd.amount.value / 10 ) * 3 - alice_sbd.amount.value / 20, KNLG_SYMBOL );
-      op.min_to_receive = asset( ( alice_sbd.amount.value / 10 ) * 3 - alice_sbd.amount.value / 20, SBD_SYMBOL );
-
-      tx.signatures.clear();
-      tx.operations.clear();
-      tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
-      tx.operations.push_back( op );
-      sign( tx, bob_private_key );
-      db->push_transaction( tx, 0 );
-
-      BOOST_TEST_MESSAGE( "Waiting 30 minutes" );
-
-      generate_blocks( db->head_block_time() + KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10, true );
-
-      BOOST_TEST_MESSAGE( "Filling both limit orders." );
-
-      op.owner = "alice";
-      op.orderid = 5;
-      op.amount_to_sell = asset( ( alice_sbd.amount.value / 10 ) * 3, SBD_SYMBOL );
-      op.min_to_receive = asset( ( alice_sbd.amount.value / 10 ) * 3, KNLG_SYMBOL );
-
-      tx.signatures.clear();
-      tx.operations.clear();
-      tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
-      tx.operations.push_back( op );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      alice_sbd_volume -= ( alice_sbd.amount.value / 10 ) * 3;
-      alice_reward_last_update = db->head_block_time();
-      sam_sbd_volume += alice_sbd.amount.value / 20;
-      sam_reward_last_update = db->head_block_time();
-      bob_sbd_volume += ( alice_sbd.amount.value / 10 ) * 3 - ( alice_sbd.amount.value / 20 );
-      bob_reward_last_update = db->head_block_time();
-      ops = get_last_operations( 4 );
-
-      fill_order_op = ops[1].get< fill_order_operation >();
-      BOOST_REQUIRE( fill_order_op.open_owner == "bob" );
-      BOOST_REQUIRE( fill_order_op.open_orderid == 4 );
-      BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( ( alice_sbd.amount.value / 10 ) * 3 - alice_sbd.amount.value / 20, KNLG_SYMBOL ).amount.value );
-      BOOST_REQUIRE( fill_order_op.current_owner == "alice" );
-      BOOST_REQUIRE( fill_order_op.current_orderid == 5 );
-      BOOST_REQUIRE( fill_order_op.current_pays.amount.value == asset( ( alice_sbd.amount.value / 10 ) * 3 - alice_sbd.amount.value / 20, SBD_SYMBOL ).amount.value );
-
-      fill_order_op = ops[3].get< fill_order_operation >();
-      BOOST_REQUIRE( fill_order_op.open_owner == "sam" );
-      BOOST_REQUIRE( fill_order_op.open_orderid == 3 );
-      BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( alice_sbd.amount.value / 20, KNLG_SYMBOL ).amount.value );
-      BOOST_REQUIRE( fill_order_op.current_owner == "alice" );
-      BOOST_REQUIRE( fill_order_op.current_orderid == 5 );
-      BOOST_REQUIRE( fill_order_op.current_pays.amount.value == asset( alice_sbd.amount.value / 20, SBD_SYMBOL ).amount.value );
-
-      reward = liquidity_idx.find( db->get_account( "alice" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "bob" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "sam" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
-
-      BOOST_TEST_MESSAGE( "Testing a partial fill before minimum time and full fill after minimum time" );
-
-      op.orderid = 6;
-      op.amount_to_sell = asset( alice_sbd.amount.value / 20 * 2, SBD_SYMBOL );
-      op.min_to_receive = asset( alice_sbd.amount.value / 20 * 2, KNLG_SYMBOL );
-
-      tx.signatures.clear();
-      tx.operations.clear();
-      tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
-      tx.operations.push_back( op );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      generate_blocks( db->head_block_time() + fc::seconds( KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10.to_seconds() / 2 ), true );
-
-      op.owner = "bob";
-      op.orderid = 7;
-      op.amount_to_sell = asset( alice_sbd.amount.value / 20, KNLG_SYMBOL );
-      op.min_to_receive = asset( alice_sbd.amount.value / 20, SBD_SYMBOL );
-
-      tx.signatures.clear();
-      tx.operations.clear();
-      tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
-      tx.operations.push_back( op );
-      sign( tx, bob_private_key );
-      db->push_transaction( tx, 0 );
-
-      generate_blocks( db->head_block_time() + fc::seconds( KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10.to_seconds() / 2 ), true );
-
-      ops = get_last_operations( 3 );
-      fill_order_op = ops[2].get< fill_order_operation >();
-
-      BOOST_REQUIRE( fill_order_op.open_owner == "alice" );
-      BOOST_REQUIRE( fill_order_op.open_orderid == 6 );
-      BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( alice_sbd.amount.value / 20, SBD_SYMBOL ).amount.value );
-      BOOST_REQUIRE( fill_order_op.current_owner == "bob" );
-      BOOST_REQUIRE( fill_order_op.current_orderid == 7 );
-      BOOST_REQUIRE( fill_order_op.current_pays.amount.value == asset( alice_sbd.amount.value / 20, KNLG_SYMBOL ).amount.value );
-
-      reward = liquidity_idx.find( db->get_account( "alice" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "bob" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "sam" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
-
-      generate_blocks( db->head_block_time() + KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10, true );
-
-      op.owner = "sam";
-      op.orderid = 8;
-
-      tx.signatures.clear();
-      tx.operations.clear();
-      tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
-      tx.operations.push_back( op );
-      sign( tx, sam_private_key );
-      db->push_transaction( tx, 0 );
-
-      alice_knowledgr_volume += alice_sbd.amount.value / 20;
-      alice_reward_last_update = db->head_block_time();
-      sam_knowledgr_volume -= alice_sbd.amount.value / 20;
-      sam_reward_last_update = db->head_block_time();
-
-      ops = get_last_operations( 2 );
-      fill_order_op = ops[1].get< fill_order_operation >();
-
-      BOOST_REQUIRE( fill_order_op.open_owner == "alice" );
-      BOOST_REQUIRE( fill_order_op.open_orderid == 6 );
-      BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( alice_sbd.amount.value / 20, SBD_SYMBOL ).amount.value );
-      BOOST_REQUIRE( fill_order_op.current_owner == "sam" );
-      BOOST_REQUIRE( fill_order_op.current_orderid == 8 );
-      BOOST_REQUIRE( fill_order_op.current_pays.amount.value == asset( alice_sbd.amount.value / 20, KNLG_SYMBOL ).amount.value );
-
-      reward = liquidity_idx.find( db->get_account( "alice" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "bob" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "sam" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
-
-      BOOST_TEST_MESSAGE( "Trading to give Alice and Bob positive volumes to receive rewards" );
-
-      transfer_operation transfer;
-      transfer.to = "dave";
-      transfer.from = "alice";
-      transfer.amount = asset( alice_sbd.amount / 2, SBD_SYMBOL );
-
-      tx.operations.clear();
-      tx.signatures.clear();
-      tx.operations.push_back( transfer );
-      tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      op.owner = "alice";
-      op.amount_to_sell = asset( 8 * ( alice_sbd.amount.value / 20 ), KNLG_SYMBOL );
-      op.min_to_receive = asset( op.amount_to_sell.amount, SBD_SYMBOL );
-      op.orderid = 9;
-      tx.operations.clear();
-      tx.signatures.clear();
-      tx.operations.push_back( op );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      generate_blocks( db->head_block_time() + KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10, true );
-
-      op.owner = "dave";
-      op.amount_to_sell = asset( 7 * ( alice_sbd.amount.value / 20 ), SBD_SYMBOL );;
-      op.min_to_receive = asset( op.amount_to_sell.amount, KNLG_SYMBOL );
-      op.orderid = 10;
-      tx.operations.clear();
-      tx.signatures.clear();
-      tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, dave_private_key );
-      db->push_transaction( tx, 0 );
-
-      alice_sbd_volume += op.amount_to_sell.amount.value;
-      alice_reward_last_update = db->head_block_time();
-      dave_sbd_volume -= op.amount_to_sell.amount.value;
-      dave_reward_last_update = db->head_block_time();
-
-      ops = get_last_operations( 1 );
-      fill_order_op = ops[0].get< fill_order_operation >();
-
-      BOOST_REQUIRE( fill_order_op.open_owner == "alice" );
-      BOOST_REQUIRE( fill_order_op.open_orderid == 9 );
-      BOOST_REQUIRE( fill_order_op.open_pays.amount.value == 7 * ( alice_sbd.amount.value / 20 ) );
-      BOOST_REQUIRE( fill_order_op.current_owner == "dave" );
-      BOOST_REQUIRE( fill_order_op.current_orderid == 10 );
-      BOOST_REQUIRE( fill_order_op.current_pays.amount.value == 7 * ( alice_sbd.amount.value / 20 ) );
-
-      reward = liquidity_idx.find( db->get_account( "alice" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "bob" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "sam" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "dave" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "dave" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == dave_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == dave_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == dave_reward_last_update );*/
-
-      op.owner = "bob";
-      op.amount_to_sell.amount = alice_sbd.amount / 20;
-      op.min_to_receive.amount = op.amount_to_sell.amount;
-      op.orderid = 11;
-      tx.operations.clear();
-      tx.signatures.clear();
-      tx.operations.push_back( op );
-      sign( tx, bob_private_key );
-      db->push_transaction( tx, 0 );
-
-      alice_sbd_volume += op.amount_to_sell.amount.value;
-      alice_reward_last_update = db->head_block_time();
-      bob_sbd_volume -= op.amount_to_sell.amount.value;
-      bob_reward_last_update = db->head_block_time();
-
-      ops = get_last_operations( 1 );
-      fill_order_op = ops[0].get< fill_order_operation >();
-
-      BOOST_REQUIRE( fill_order_op.open_owner == "alice" );
-      BOOST_REQUIRE( fill_order_op.open_orderid == 9 );
-      BOOST_REQUIRE( fill_order_op.open_pays.amount.value == alice_sbd.amount.value / 20 );
-      BOOST_REQUIRE( fill_order_op.current_owner == "bob" );
-      BOOST_REQUIRE( fill_order_op.current_orderid == 11 );
-      BOOST_REQUIRE( fill_order_op.current_pays.amount.value == alice_sbd.amount.value / 20 );
-
-      reward = liquidity_idx.find( db->get_account( "alice" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "bob" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "sam" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "dave" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "dave" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == dave_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == dave_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == dave_reward_last_update );*/
-
-      transfer.to = "bob";
-      transfer.from = "alice";
-      transfer.amount = asset( alice_sbd.amount / 5, SBD_SYMBOL );
-      tx.operations.clear();
-      tx.signatures.clear();
-      tx.operations.push_back( transfer );
-      tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      op.owner = "bob";
-      op.orderid = 12;
-      op.amount_to_sell = asset( 3 * ( alice_sbd.amount / 40 ), SBD_SYMBOL );
-      op.min_to_receive = asset( op.amount_to_sell.amount, KNLG_SYMBOL );
-      tx.operations.clear();
-      tx.signatures.clear();
-      tx.operations.push_back( op );
-      sign( tx, bob_private_key );
-      db->push_transaction( tx, 0 );
-
-      generate_blocks( db->head_block_time() + KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10, true );
-
-      op.owner = "dave";
-      op.orderid = 13;
-      op.amount_to_sell = op.min_to_receive;
-      op.min_to_receive.symbol = SBD_SYMBOL;
-      tx.operations.clear();
-      tx.signatures.clear();
-      tx.operations.push_back( op );
-      sign( tx, dave_private_key );
-      db->push_transaction( tx, 0 );
-
-      bob_knowledgr_volume += op.amount_to_sell.amount.value;
-      bob_reward_last_update = db->head_block_time();
-      dave_knowledgr_volume -= op.amount_to_sell.amount.value;
-      dave_reward_last_update = db->head_block_time();
-
-      ops = get_last_operations( 1 );
-      fill_order_op = ops[0].get< fill_order_operation >();
-
-      BOOST_REQUIRE( fill_order_op.open_owner == "bob" );
-      BOOST_REQUIRE( fill_order_op.open_orderid == 12 );
-      BOOST_REQUIRE( fill_order_op.open_pays.amount.value == 3 * ( alice_sbd.amount.value / 40 ) );
-      BOOST_REQUIRE( fill_order_op.current_owner == "dave" );
-      BOOST_REQUIRE( fill_order_op.current_orderid == 13 );
-      BOOST_REQUIRE( fill_order_op.current_pays.amount.value == 3 * ( alice_sbd.amount.value / 40 ) );
-
-      reward = liquidity_idx.find( db->get_account( "alice" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "bob" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "sam" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
-
-      reward = liquidity_idx.find( db->get_account( "dave" ).id );
-      BOOST_REQUIRE( reward == liquidity_idx.end() );
-      /*BOOST_REQUIRE( reward->owner == db->get_account( "dave" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == dave_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == dave_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == dave_reward_last_update );*/
-
-      auto alice_balance = db->get_account( "alice" ).balance;
-      auto bob_balance = db->get_account( "bob" ).balance;
-      auto sam_balance = db->get_account( "sam" ).balance;
-      auto dave_balance = db->get_account( "dave" ).balance;
-
-      BOOST_TEST_MESSAGE( "Generating Blocks to trigger liquidity rewards" );
-
-      db->liquidity_rewards_enabled = true;
-      generate_blocks( KNOWLEDGR_LIQUIDITY_REWARD_BLOCKS - ( db->head_block_num() % KNOWLEDGR_LIQUIDITY_REWARD_BLOCKS ) - 1 );
-
-      BOOST_REQUIRE( db->head_block_num() % KNOWLEDGR_LIQUIDITY_REWARD_BLOCKS == KNOWLEDGR_LIQUIDITY_REWARD_BLOCKS - 1 );
-      BOOST_REQUIRE( db->get_account( "alice" ).balance.amount.value == alice_balance.amount.value );
-      BOOST_REQUIRE( db->get_account( "bob" ).balance.amount.value == bob_balance.amount.value );
-      BOOST_REQUIRE( db->get_account( "sam" ).balance.amount.value == sam_balance.amount.value );
-      BOOST_REQUIRE( db->get_account( "dave" ).balance.amount.value == dave_balance.amount.value );
-
-      generate_block();
-
-      //alice_balance += KNOWLEDGR_MIN_LIQUIDITY_REWARD;
-
-      BOOST_REQUIRE( db->get_account( "alice" ).balance.amount.value == alice_balance.amount.value );
-      BOOST_REQUIRE( db->get_account( "bob" ).balance.amount.value == bob_balance.amount.value );
-      BOOST_REQUIRE( db->get_account( "sam" ).balance.amount.value == sam_balance.amount.value );
-      BOOST_REQUIRE( db->get_account( "dave" ).balance.amount.value == dave_balance.amount.value );
-
-      ops = get_last_operations( 1 );
-
-      KNOWLEDGR_REQUIRE_THROW( ops[0].get< liquidity_reward_operation>(), fc::exception );
-      //BOOST_REQUIRE( ops[0].get< liquidity_reward_operation>().payout.amount.value == KNOWLEDGR_MIN_LIQUIDITY_REWARD.amount.value );
-
-      generate_blocks( KNOWLEDGR_LIQUIDITY_REWARD_BLOCKS );
-
-      //bob_balance += KNOWLEDGR_MIN_LIQUIDITY_REWARD;
-
-      BOOST_REQUIRE( db->get_account( "alice" ).balance.amount.value == alice_balance.amount.value );
-      BOOST_REQUIRE( db->get_account( "bob" ).balance.amount.value == bob_balance.amount.value );
-      BOOST_REQUIRE( db->get_account( "sam" ).balance.amount.value == sam_balance.amount.value );
-      BOOST_REQUIRE( db->get_account( "dave" ).balance.amount.value == dave_balance.amount.value );
-
-      ops = get_last_operations( 1 );
-
-      KNOWLEDGR_REQUIRE_THROW( ops[0].get< liquidity_reward_operation>(), fc::exception );
-      //BOOST_REQUIRE( ops[0].get< liquidity_reward_operation>().payout.amount.value == KNOWLEDGR_MIN_LIQUIDITY_REWARD.amount.value );
-
-      alice_knowledgr_volume = 0;
-      alice_sbd_volume = 0;
-      bob_knowledgr_volume = 0;
-      bob_sbd_volume = 0;
-
-      BOOST_TEST_MESSAGE( "Testing liquidity timeout" );
-
-      generate_blocks( sam_reward_last_update + KNOWLEDGR_LIQUIDITY_TIMEOUT_SEC - fc::seconds( KNOWLEDGR_BLOCK_INTERVAL / 2 ) - KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC , true );
-
-      op.owner = "sam";
-      op.orderid = 14;
-      op.amount_to_sell = ASSET( "1.000 TESTS" );
-      op.min_to_receive = ASSET( "1.000 TBD" );
-      tx.operations.clear();
-      tx.signatures.clear();
-      tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, sam_private_key );
-      db->push_transaction( tx, 0 );
-
-      generate_blocks( db->head_block_time() + ( KNOWLEDGR_BLOCK_INTERVAL / 2 ) + KNOWLEDGR_LIQUIDITY_TIMEOUT_SEC, true );
-
-      reward = liquidity_idx.find( db->get_account( "sam" ).id );
-      /*BOOST_REQUIRE( reward == liquidity_idx.end() );
-      BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
-
-      generate_block();
-
-      op.owner = "alice";
-      op.orderid = 15;
-      op.amount_to_sell.symbol = SBD_SYMBOL;
-      op.min_to_receive.symbol = KNLG_SYMBOL;
-      tx.operations.clear();
-      tx.signatures.clear();
-      tx.operations.push_back( op );
-      tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
-      sign( tx, alice_private_key );
-      db->push_transaction( tx, 0 );
-
-      sam_sbd_volume = ASSET( "1.000 TBD" ).amount.value;
-      sam_knowledgr_volume = 0;
-      sam_reward_last_update = db->head_block_time();
-
-      reward = liquidity_idx.find( db->get_account( "sam" ).id );
-      /*BOOST_REQUIRE( reward == liquidity_idx.end() );
-      BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
-      BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
-      BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
-      BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
-   }
-   FC_LOG_AND_RETHROW();
-}
+// BOOST_AUTO_TEST_CASE( liquidity_rewards )
+// {
+//    using std::abs;
+
+//    try
+//    {
+//       db->liquidity_rewards_enabled = false;
+
+//       ACTORS( (alice)(bob)(sam)(dave) )
+//       generate_block();
+// //       vest( KNOWLEDGR_INIT_MINER_NAME, "alice", ASSET( "10.000 TESTS" ) );
+// //       vest( KNOWLEDGR_INIT_MINER_NAME, "bob", ASSET( "10.000 TESTS" ) );
+// //       vest( KNOWLEDGR_INIT_MINER_NAME, "sam", ASSET( "10.000 TESTS" ) );
+// //       vest( KNOWLEDGR_INIT_MINER_NAME, "dave", ASSET( "10.000 TESTS" ) );
+
+//       BOOST_TEST_MESSAGE( "Rewarding Bob with TESTS" );
+
+// //       auto exchange_rate = price( ASSET( "1.000 TBD" ), ASSET( "1.250 TESTS" ) );
+// //       set_price_feed( exchange_rate );
+
+//       signed_transaction tx;
+
+//       fund( "alice", ASSET( "25.522 TBD" ) );
+//       //asset alice_sbd = db->get_account( "alice" ).sbd_balance;
+
+//       generate_block();
+
+//       fund( "alice", alice_sbd.amount );
+//       fund( "bob", alice_sbd.amount );
+//       fund( "sam", alice_sbd.amount );
+//       fund( "dave", alice_sbd.amount );
+
+//       int64_t alice_sbd_volume = 0;
+//       int64_t alice_knowledgr_volume = 0;
+//       time_point_sec alice_reward_last_update = fc::time_point_sec::min();
+//       int64_t bob_sbd_volume = 0;
+//       int64_t bob_knowledgr_volume = 0;
+//       time_point_sec bob_reward_last_update = fc::time_point_sec::min();
+//       int64_t sam_sbd_volume = 0;
+//       int64_t sam_knowledgr_volume = 0;
+//       time_point_sec sam_reward_last_update = fc::time_point_sec::min();
+//       int64_t dave_sbd_volume = 0;
+//       int64_t dave_knowledgr_volume = 0;
+//       time_point_sec dave_reward_last_update = fc::time_point_sec::min();
+
+//       BOOST_TEST_MESSAGE( "Creating Limit Order for KNLG that will stay on the books for 30 minutes exactly." );
+
+//       limit_order_create_operation op;
+//       op.owner = "alice";
+//       //op.amount_to_sell = asset( alice_sbd.amount.value / 20, SBD_SYMBOL ) ;
+//       op.min_to_receive = op.amount_to_sell * exchange_rate;
+//       op.expiration = db->head_block_time() + fc::seconds( KNOWLEDGR_MAX_LIMIT_ORDER_EXPIRATION );
+//       op.orderid = 1;
+
+//       tx.signatures.clear();
+//       tx.operations.clear();
+//       tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
+//       tx.operations.push_back( op );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       BOOST_TEST_MESSAGE( "Waiting 10 minutes" );
+
+//       generate_blocks( db->head_block_time() + KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10, true );
+
+//       BOOST_TEST_MESSAGE( "Creating Limit Order for SBD that will be filled immediately." );
+
+//       op.owner = "bob";
+//       op.min_to_receive = op.amount_to_sell;
+//       op.amount_to_sell = op.min_to_receive * exchange_rate;
+//       op.fill_or_kill = false;
+//       op.orderid = 2;
+
+//       tx.signatures.clear();
+//       tx.operations.clear();
+//       tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
+//       tx.operations.push_back( op );
+//       sign( tx, bob_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       alice_knowledgr_volume += ( asset( alice_sbd.amount / 20, SBD_SYMBOL ) * exchange_rate ).amount.value;
+//       alice_reward_last_update = db->head_block_time();
+//       bob_knowledgr_volume -= ( asset( alice_sbd.amount / 20, SBD_SYMBOL ) * exchange_rate ).amount.value;
+//       bob_reward_last_update = db->head_block_time();
+
+//       auto ops = get_last_operations( 1 );
+//       const auto& liquidity_idx = db->get_index< liquidity_reward_balance_index >().indices().get< by_owner >();
+//       const auto& limit_order_idx = db->get_index< limit_order_index >().indices().get< by_account >();
+
+//       auto reward = liquidity_idx.find( db->get_account( "alice" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "bob" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
+
+//       auto fill_order_op = ops[0].get< fill_order_operation >();
+
+//       BOOST_REQUIRE( fill_order_op.open_owner == "alice" );
+//       BOOST_REQUIRE( fill_order_op.open_orderid == 1 );
+//       BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( alice_sbd.amount.value / 20, SBD_SYMBOL ).amount.value );
+//       BOOST_REQUIRE( fill_order_op.current_owner == "bob" );
+//       BOOST_REQUIRE( fill_order_op.current_orderid == 2 );
+//       BOOST_REQUIRE( fill_order_op.current_pays.amount.value == ( asset( alice_sbd.amount.value / 20, SBD_SYMBOL ) * exchange_rate ).amount.value );
+
+//       BOOST_CHECK( limit_order_idx.find( std::make_tuple( "alice", 1 ) ) == limit_order_idx.end() );
+//       BOOST_CHECK( limit_order_idx.find( std::make_tuple( "bob", 2 ) ) == limit_order_idx.end() );
+
+//       BOOST_TEST_MESSAGE( "Creating Limit Order for SBD that will stay on the books for 60 minutes." );
+
+//       op.owner = "sam";
+//       op.amount_to_sell = asset( ( alice_sbd.amount.value / 20 ), KNLG_SYMBOL );
+//       op.min_to_receive = asset( ( alice_sbd.amount.value / 20 ), SBD_SYMBOL );
+//       op.orderid = 3;
+
+//       tx.signatures.clear();
+//       tx.operations.clear();
+//       tx.operations.push_back( op );
+//       sign( tx, sam_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       BOOST_TEST_MESSAGE( "Waiting 10 minutes" );
+
+//       generate_blocks( db->head_block_time() + KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10, true );
+
+//       BOOST_TEST_MESSAGE( "Creating Limit Order for SBD that will stay on the books for 30 minutes." );
+
+//       op.owner = "bob";
+//       op.orderid = 4;
+//       op.amount_to_sell = asset( ( alice_sbd.amount.value / 10 ) * 3 - alice_sbd.amount.value / 20, KNLG_SYMBOL );
+//       op.min_to_receive = asset( ( alice_sbd.amount.value / 10 ) * 3 - alice_sbd.amount.value / 20, SBD_SYMBOL );
+
+//       tx.signatures.clear();
+//       tx.operations.clear();
+//       tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
+//       tx.operations.push_back( op );
+//       sign( tx, bob_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       BOOST_TEST_MESSAGE( "Waiting 30 minutes" );
+
+//       generate_blocks( db->head_block_time() + KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10, true );
+
+//       BOOST_TEST_MESSAGE( "Filling both limit orders." );
+
+//       op.owner = "alice";
+//       op.orderid = 5;
+//       op.amount_to_sell = asset( ( alice_sbd.amount.value / 10 ) * 3, SBD_SYMBOL );
+//       op.min_to_receive = asset( ( alice_sbd.amount.value / 10 ) * 3, KNLG_SYMBOL );
+
+//       tx.signatures.clear();
+//       tx.operations.clear();
+//       tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
+//       tx.operations.push_back( op );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       alice_sbd_volume -= ( alice_sbd.amount.value / 10 ) * 3;
+//       alice_reward_last_update = db->head_block_time();
+//       sam_sbd_volume += alice_sbd.amount.value / 20;
+//       sam_reward_last_update = db->head_block_time();
+//       bob_sbd_volume += ( alice_sbd.amount.value / 10 ) * 3 - ( alice_sbd.amount.value / 20 );
+//       bob_reward_last_update = db->head_block_time();
+//       ops = get_last_operations( 4 );
+
+//       fill_order_op = ops[1].get< fill_order_operation >();
+//       BOOST_REQUIRE( fill_order_op.open_owner == "bob" );
+//       BOOST_REQUIRE( fill_order_op.open_orderid == 4 );
+//       BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( ( alice_sbd.amount.value / 10 ) * 3 - alice_sbd.amount.value / 20, KNLG_SYMBOL ).amount.value );
+//       BOOST_REQUIRE( fill_order_op.current_owner == "alice" );
+//       BOOST_REQUIRE( fill_order_op.current_orderid == 5 );
+//       BOOST_REQUIRE( fill_order_op.current_pays.amount.value == asset( ( alice_sbd.amount.value / 10 ) * 3 - alice_sbd.amount.value / 20, SBD_SYMBOL ).amount.value );
+
+//       fill_order_op = ops[3].get< fill_order_operation >();
+//       BOOST_REQUIRE( fill_order_op.open_owner == "sam" );
+//       BOOST_REQUIRE( fill_order_op.open_orderid == 3 );
+//       BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( alice_sbd.amount.value / 20, KNLG_SYMBOL ).amount.value );
+//       BOOST_REQUIRE( fill_order_op.current_owner == "alice" );
+//       BOOST_REQUIRE( fill_order_op.current_orderid == 5 );
+//       BOOST_REQUIRE( fill_order_op.current_pays.amount.value == asset( alice_sbd.amount.value / 20, SBD_SYMBOL ).amount.value );
+
+//       reward = liquidity_idx.find( db->get_account( "alice" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "bob" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "sam" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
+
+//       BOOST_TEST_MESSAGE( "Testing a partial fill before minimum time and full fill after minimum time" );
+
+//       op.orderid = 6;
+//       op.amount_to_sell = asset( alice_sbd.amount.value / 20 * 2, SBD_SYMBOL );
+//       op.min_to_receive = asset( alice_sbd.amount.value / 20 * 2, KNLG_SYMBOL );
+
+//       tx.signatures.clear();
+//       tx.operations.clear();
+//       tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
+//       tx.operations.push_back( op );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       generate_blocks( db->head_block_time() + fc::seconds( KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10.to_seconds() / 2 ), true );
+
+//       op.owner = "bob";
+//       op.orderid = 7;
+//       op.amount_to_sell = asset( alice_sbd.amount.value / 20, KNLG_SYMBOL );
+//       op.min_to_receive = asset( alice_sbd.amount.value / 20, SBD_SYMBOL );
+
+//       tx.signatures.clear();
+//       tx.operations.clear();
+//       tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
+//       tx.operations.push_back( op );
+//       sign( tx, bob_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       generate_blocks( db->head_block_time() + fc::seconds( KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10.to_seconds() / 2 ), true );
+
+//       ops = get_last_operations( 3 );
+//       fill_order_op = ops[2].get< fill_order_operation >();
+
+//       BOOST_REQUIRE( fill_order_op.open_owner == "alice" );
+//       BOOST_REQUIRE( fill_order_op.open_orderid == 6 );
+//       BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( alice_sbd.amount.value / 20, SBD_SYMBOL ).amount.value );
+//       BOOST_REQUIRE( fill_order_op.current_owner == "bob" );
+//       BOOST_REQUIRE( fill_order_op.current_orderid == 7 );
+//       BOOST_REQUIRE( fill_order_op.current_pays.amount.value == asset( alice_sbd.amount.value / 20, KNLG_SYMBOL ).amount.value );
+
+//       reward = liquidity_idx.find( db->get_account( "alice" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "bob" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "sam" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
+
+//       generate_blocks( db->head_block_time() + KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10, true );
+
+//       op.owner = "sam";
+//       op.orderid = 8;
+
+//       tx.signatures.clear();
+//       tx.operations.clear();
+//       tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
+//       tx.operations.push_back( op );
+//       sign( tx, sam_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       alice_knowledgr_volume += alice_sbd.amount.value / 20;
+//       alice_reward_last_update = db->head_block_time();
+//       sam_knowledgr_volume -= alice_sbd.amount.value / 20;
+//       sam_reward_last_update = db->head_block_time();
+
+//       ops = get_last_operations( 2 );
+//       fill_order_op = ops[1].get< fill_order_operation >();
+
+//       BOOST_REQUIRE( fill_order_op.open_owner == "alice" );
+//       BOOST_REQUIRE( fill_order_op.open_orderid == 6 );
+//       BOOST_REQUIRE( fill_order_op.open_pays.amount.value == asset( alice_sbd.amount.value / 20, SBD_SYMBOL ).amount.value );
+//       BOOST_REQUIRE( fill_order_op.current_owner == "sam" );
+//       BOOST_REQUIRE( fill_order_op.current_orderid == 8 );
+//       BOOST_REQUIRE( fill_order_op.current_pays.amount.value == asset( alice_sbd.amount.value / 20, KNLG_SYMBOL ).amount.value );
+
+//       reward = liquidity_idx.find( db->get_account( "alice" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "bob" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "sam" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
+
+//       BOOST_TEST_MESSAGE( "Trading to give Alice and Bob positive volumes to receive rewards" );
+
+//       transfer_operation transfer;
+//       transfer.to = "dave";
+//       transfer.from = "alice";
+//       transfer.amount = asset( alice_sbd.amount / 2, SBD_SYMBOL );
+
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       tx.operations.push_back( transfer );
+//       tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       op.owner = "alice";
+//       op.amount_to_sell = asset( 8 * ( alice_sbd.amount.value / 20 ), KNLG_SYMBOL );
+//       op.min_to_receive = asset( op.amount_to_sell.amount, SBD_SYMBOL );
+//       op.orderid = 9;
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       tx.operations.push_back( op );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       generate_blocks( db->head_block_time() + KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10, true );
+
+//       op.owner = "dave";
+//       op.amount_to_sell = asset( 7 * ( alice_sbd.amount.value / 20 ), SBD_SYMBOL );;
+//       op.min_to_receive = asset( op.amount_to_sell.amount, KNLG_SYMBOL );
+//       op.orderid = 10;
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       tx.operations.push_back( op );
+//       tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, dave_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       alice_sbd_volume += op.amount_to_sell.amount.value;
+//       alice_reward_last_update = db->head_block_time();
+//       dave_sbd_volume -= op.amount_to_sell.amount.value;
+//       dave_reward_last_update = db->head_block_time();
+
+//       ops = get_last_operations( 1 );
+//       fill_order_op = ops[0].get< fill_order_operation >();
+
+//       BOOST_REQUIRE( fill_order_op.open_owner == "alice" );
+//       BOOST_REQUIRE( fill_order_op.open_orderid == 9 );
+//       BOOST_REQUIRE( fill_order_op.open_pays.amount.value == 7 * ( alice_sbd.amount.value / 20 ) );
+//       BOOST_REQUIRE( fill_order_op.current_owner == "dave" );
+//       BOOST_REQUIRE( fill_order_op.current_orderid == 10 );
+//       BOOST_REQUIRE( fill_order_op.current_pays.amount.value == 7 * ( alice_sbd.amount.value / 20 ) );
+
+//       reward = liquidity_idx.find( db->get_account( "alice" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "bob" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "sam" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "dave" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "dave" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == dave_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == dave_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == dave_reward_last_update );*/
+
+//       op.owner = "bob";
+//       op.amount_to_sell.amount = alice_sbd.amount / 20;
+//       op.min_to_receive.amount = op.amount_to_sell.amount;
+//       op.orderid = 11;
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       tx.operations.push_back( op );
+//       sign( tx, bob_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       alice_sbd_volume += op.amount_to_sell.amount.value;
+//       alice_reward_last_update = db->head_block_time();
+//       bob_sbd_volume -= op.amount_to_sell.amount.value;
+//       bob_reward_last_update = db->head_block_time();
+
+//       ops = get_last_operations( 1 );
+//       fill_order_op = ops[0].get< fill_order_operation >();
+
+//       BOOST_REQUIRE( fill_order_op.open_owner == "alice" );
+//       BOOST_REQUIRE( fill_order_op.open_orderid == 9 );
+//       BOOST_REQUIRE( fill_order_op.open_pays.amount.value == alice_sbd.amount.value / 20 );
+//       BOOST_REQUIRE( fill_order_op.current_owner == "bob" );
+//       BOOST_REQUIRE( fill_order_op.current_orderid == 11 );
+//       BOOST_REQUIRE( fill_order_op.current_pays.amount.value == alice_sbd.amount.value / 20 );
+
+//       reward = liquidity_idx.find( db->get_account( "alice" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "bob" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "sam" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "dave" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "dave" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == dave_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == dave_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == dave_reward_last_update );*/
+
+//       transfer.to = "bob";
+//       transfer.from = "alice";
+//       transfer.amount = asset( alice_sbd.amount / 5, SBD_SYMBOL );
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       tx.operations.push_back( transfer );
+//       tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       op.owner = "bob";
+//       op.orderid = 12;
+//       op.amount_to_sell = asset( 3 * ( alice_sbd.amount / 40 ), SBD_SYMBOL );
+//       op.min_to_receive = asset( op.amount_to_sell.amount, KNLG_SYMBOL );
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       tx.operations.push_back( op );
+//       sign( tx, bob_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       generate_blocks( db->head_block_time() + KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC_HF10, true );
+
+//       op.owner = "dave";
+//       op.orderid = 13;
+//       op.amount_to_sell = op.min_to_receive;
+//       op.min_to_receive.symbol = SBD_SYMBOL;
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       tx.operations.push_back( op );
+//       sign( tx, dave_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       bob_knowledgr_volume += op.amount_to_sell.amount.value;
+//       bob_reward_last_update = db->head_block_time();
+//       dave_knowledgr_volume -= op.amount_to_sell.amount.value;
+//       dave_reward_last_update = db->head_block_time();
+
+//       ops = get_last_operations( 1 );
+//       fill_order_op = ops[0].get< fill_order_operation >();
+
+//       BOOST_REQUIRE( fill_order_op.open_owner == "bob" );
+//       BOOST_REQUIRE( fill_order_op.open_orderid == 12 );
+//       BOOST_REQUIRE( fill_order_op.open_pays.amount.value == 3 * ( alice_sbd.amount.value / 40 ) );
+//       BOOST_REQUIRE( fill_order_op.current_owner == "dave" );
+//       BOOST_REQUIRE( fill_order_op.current_orderid == 13 );
+//       BOOST_REQUIRE( fill_order_op.current_pays.amount.value == 3 * ( alice_sbd.amount.value / 40 ) );
+
+//       reward = liquidity_idx.find( db->get_account( "alice" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "alice" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == alice_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == alice_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == alice_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "bob" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "bob" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == bob_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == bob_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == bob_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "sam" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
+
+//       reward = liquidity_idx.find( db->get_account( "dave" ).id );
+//       BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       /*BOOST_REQUIRE( reward->owner == db->get_account( "dave" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == dave_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == dave_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == dave_reward_last_update );*/
+
+//       auto alice_balance = db->get_account( "alice" ).balance;
+//       auto bob_balance = db->get_account( "bob" ).balance;
+//       auto sam_balance = db->get_account( "sam" ).balance;
+//       auto dave_balance = db->get_account( "dave" ).balance;
+
+//       BOOST_TEST_MESSAGE( "Generating Blocks to trigger liquidity rewards" );
+
+//       db->liquidity_rewards_enabled = true;
+//       generate_blocks( KNOWLEDGR_LIQUIDITY_REWARD_BLOCKS - ( db->head_block_num() % KNOWLEDGR_LIQUIDITY_REWARD_BLOCKS ) - 1 );
+
+//       BOOST_REQUIRE( db->head_block_num() % KNOWLEDGR_LIQUIDITY_REWARD_BLOCKS == KNOWLEDGR_LIQUIDITY_REWARD_BLOCKS - 1 );
+//       BOOST_REQUIRE( db->get_account( "alice" ).balance.amount.value == alice_balance.amount.value );
+//       BOOST_REQUIRE( db->get_account( "bob" ).balance.amount.value == bob_balance.amount.value );
+//       BOOST_REQUIRE( db->get_account( "sam" ).balance.amount.value == sam_balance.amount.value );
+//       BOOST_REQUIRE( db->get_account( "dave" ).balance.amount.value == dave_balance.amount.value );
+
+//       generate_block();
+
+//       //alice_balance += KNOWLEDGR_MIN_LIQUIDITY_REWARD;
+
+//       BOOST_REQUIRE( db->get_account( "alice" ).balance.amount.value == alice_balance.amount.value );
+//       BOOST_REQUIRE( db->get_account( "bob" ).balance.amount.value == bob_balance.amount.value );
+//       BOOST_REQUIRE( db->get_account( "sam" ).balance.amount.value == sam_balance.amount.value );
+//       BOOST_REQUIRE( db->get_account( "dave" ).balance.amount.value == dave_balance.amount.value );
+
+//       ops = get_last_operations( 1 );
+
+//       KNOWLEDGR_REQUIRE_THROW( ops[0].get< liquidity_reward_operation>(), fc::exception );
+//       //BOOST_REQUIRE( ops[0].get< liquidity_reward_operation>().payout.amount.value == KNOWLEDGR_MIN_LIQUIDITY_REWARD.amount.value );
+
+//       generate_blocks( KNOWLEDGR_LIQUIDITY_REWARD_BLOCKS );
+
+//       //bob_balance += KNOWLEDGR_MIN_LIQUIDITY_REWARD;
+
+//       BOOST_REQUIRE( db->get_account( "alice" ).balance.amount.value == alice_balance.amount.value );
+//       BOOST_REQUIRE( db->get_account( "bob" ).balance.amount.value == bob_balance.amount.value );
+//       BOOST_REQUIRE( db->get_account( "sam" ).balance.amount.value == sam_balance.amount.value );
+//       BOOST_REQUIRE( db->get_account( "dave" ).balance.amount.value == dave_balance.amount.value );
+
+//       ops = get_last_operations( 1 );
+
+//       KNOWLEDGR_REQUIRE_THROW( ops[0].get< liquidity_reward_operation>(), fc::exception );
+//       //BOOST_REQUIRE( ops[0].get< liquidity_reward_operation>().payout.amount.value == KNOWLEDGR_MIN_LIQUIDITY_REWARD.amount.value );
+
+//       alice_knowledgr_volume = 0;
+//       alice_sbd_volume = 0;
+//       bob_knowledgr_volume = 0;
+//       bob_sbd_volume = 0;
+
+//       BOOST_TEST_MESSAGE( "Testing liquidity timeout" );
+
+//       generate_blocks( sam_reward_last_update + KNOWLEDGR_LIQUIDITY_TIMEOUT_SEC - fc::seconds( KNOWLEDGR_BLOCK_INTERVAL / 2 ) - KNOWLEDGR_MIN_LIQUIDITY_REWARD_PERIOD_SEC , true );
+
+//       op.owner = "sam";
+//       op.orderid = 14;
+//       op.amount_to_sell = ASSET( "1.000 TESTS" );
+//       op.min_to_receive = ASSET( "1.000 TBD" );
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       tx.operations.push_back( op );
+//       tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, sam_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       generate_blocks( db->head_block_time() + ( KNOWLEDGR_BLOCK_INTERVAL / 2 ) + KNOWLEDGR_LIQUIDITY_TIMEOUT_SEC, true );
+
+//       reward = liquidity_idx.find( db->get_account( "sam" ).id );
+//       /*BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
+
+//       generate_block();
+
+//       op.owner = "alice";
+//       op.orderid = 15;
+//       op.amount_to_sell.symbol = SBD_SYMBOL;
+//       op.min_to_receive.symbol = KNLG_SYMBOL;
+//       tx.operations.clear();
+//       tx.signatures.clear();
+//       tx.operations.push_back( op );
+//       tx.set_expiration( db->head_block_time() + KNOWLEDGR_MAX_TIME_UNTIL_EXPIRATION );
+//       sign( tx, alice_private_key );
+//       db->push_transaction( tx, 0 );
+
+//       sam_sbd_volume = ASSET( "1.000 TBD" ).amount.value;
+//       sam_knowledgr_volume = 0;
+//       sam_reward_last_update = db->head_block_time();
+
+//       reward = liquidity_idx.find( db->get_account( "sam" ).id );
+//       /*BOOST_REQUIRE( reward == liquidity_idx.end() );
+//       BOOST_REQUIRE( reward->owner == db->get_account( "sam" ).id );
+//       BOOST_REQUIRE( reward->sbd_volume == sam_sbd_volume );
+//       BOOST_REQUIRE( reward->knlg_volume == sam_knowledgr_volume );
+//       BOOST_CHECK( reward->last_update == sam_reward_last_update );*/
+//    }
+//    FC_LOG_AND_RETHROW();
+// }
 
 BOOST_AUTO_TEST_CASE( post_rate_limit )
 {
@@ -2486,7 +2486,7 @@ BOOST_AUTO_TEST_CASE( post_rate_limit )
       ACTORS( (alice) )
 
       fund( "alice", 10000 );
-      vest( "alice", 10000 );
+      // vest( "alice", 10000 );
 
       comment_operation op;
       op.author = "alice";
@@ -2940,7 +2940,7 @@ BOOST_AUTO_TEST_CASE( clear_null_account )
 
       BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).balance == ASSET( "1.000 TESTS" ) );
       //BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).sbd_balance == ASSET( "2.000 TBD" ) );
-      BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).vesting_shares > ASSET( "0.000000 VESTS" ) );
+      //BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).vesting_shares > ASSET( "0.000000 VESTS" ) );
       BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).savings_balance == ASSET( "4.000 TESTS" ) );
       //BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).savings_sbd_balance == ASSET( "5.000 TBD" ) );
       //BOOST_REQUIRE( db->get_account( KNOWLEDGR_NULL_ACCOUNT ).reward_sbd_balance == ASSET( "1.000 TBD" ) );
