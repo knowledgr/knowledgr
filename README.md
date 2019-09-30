@@ -1,92 +1,34 @@
-# Knowledgr - The Blockchain That Will Tokenize The Web
+# Knowledgr - The Scientific Blockchain
 
-Welcome to the official repository for Knowledgr, the blockchain that will revolutionize the web, and soon the blockchain for Smart Media Tokens!
+Welcome to Knowledgr, a distributed academic network. It allows for micropublications of academic research, breaking down the scientific method into 4 interactions sent from users:
 
+* Question - Asking a question or asking for additional insight on one user's work
+* Observation - Posting a dataset or scientific observation
+* Hypothesis - Making a claim (Based off of a previous observation)
+* Review - Leaving a peer review in support of or raising comments about another researcher's work
 
+All of these interactions receive votes, and users' voting power comes from an equation made from a few different terms:
 
-Knowledgr is the first blockchain which introduced the "Proof of Brain" social consensus algorithm for token allocation.
+- Sigmoid of token stake - this helps reduce spam in the system, while not allowing users to convert wealth into credibility
+- Expertise Rating - Voting power scales exponentially with expertise, scores which users have a collection of (integer 1 - 10 in a field of scientific research)
+- "Manabar" - This is a decay function that is reduces exponentially, and recovers after a cooldown period. It helps reduce voting spam
 
-Being one of the most actively developed blockchain projects currently in existence, it's become fertile soil for entrepreneurial pursuits. It has also become home for many cryptocurrency centric projects.
-
-Knowledgr aims to be the preferred blockchain for dApp development with Smart Media Tokens at its core. With SMTs, everyone can leverage the power of Knowledgr.
-
-Originally, Knowledgr was announced on the [Bitcointalk forum](https://bitcointalk.org/index.php?topic=1410943.new) prior to the start of any mining. (Knowledgr is currently not mineable)
-
-## Documents
-
-* Whitepaper: [knowledgr.io/KnowledgrWhitepaper.pdf](https://knowledgr.io/KnowledgrWhitePaper.pdf)
-* Bluepaper: [knowledgr.io/KnowledgrBluepaper.pdf](https://knowledgr.io/knowledgr-bluepaper.pdf)
-* SMT Whitepaper: [knowledgr.io/SMTWhitepaper.pdf](https://smt.knowledgr.io/smt-whitepaper.pdf) (*not final*)
-* Developer Portal: https://developers.knowledgr.io/
-
-## Advantages
-
-* Free Transactions (Resource Credits = Freemium Model)
-* Fast Block Confirmations (3 seconds)
-* Time Delay Security (Vested Knowledgr & Savings)
-* Hierarchical Role Based Permissions (Keys)
-* Integrated Token Allocation
-* Smart Media Tokens (**soon**)
-* Lowest Entry-Barrier for User Adoption in the market
-* Dozens of dApps already built on Knowledgr and many more to come
-
-## Technical Details
-
-
-* Currency symbol KNLG
-* SBD - Knowledgr's very own stable coin with a one-way peg
-* Delegated Proof-of-Stake Consensus (DPOS)
-* 10% APR inflation narrowing to 1% APR over 20 years
-    * 75% of inflation to "Proof of Brain" social consensus algorithm.
-    * 15% of inflation to stakeholders.
-    * 10% of inflation to block producers.
+Votes are rewarded with a token KNLG. This asset does not have a value currently in a beta network, but in a future version of a network this will act as a currency, rewarding researchers for valuable publications & comments. Additionally, it will allow for a transparent network in a grant system.
 
 # Installation
 
-Getting started with Knowledgr is fairly simple. You can either choose to use docker-images, build with docker manually or build from source directly. All steps have been documented and while many different OS are supported, the easiest one is Ubuntu 16.04.
-
-## Quickstart
-
-Just want to get up and running quickly? We have pre-built Docker images for your convenience. More details are in our [Quickstart Guide](https://github.com/norestlabs/knowledgr/blob/master/doc/exchangequickstart.md).
+Getting started with Knowledgr is fairly simple. We recommend using the Ubuntu 18.04 Installation instructions.
 
 ## Building
 
-We **strongly** recommend using one of our pre-built Docker images or using Docker to build Knowledgr. Both of these processes are described in the [Quickstart Guide](https://github.com/norestlabs/knowledgr/blob/master/doc/exchangequickstart.md).
+Build from source using these instructions:
 
-But if you would still like to build from source, we also have [build instructions](https://github.com/norestlabs/knowledgr/blob/master/doc/building.md) for Linux (Ubuntu LTS) and macOS.
-
-## Dockerized P2P Node
-
-To run a p2p node (ca. 2GB of memory is required at the moment):
-
-    docker run \
-        -d -p 2001:2001 -p 8090:8090 --name knowledgrd-default \
-        knowledgrit/knowledgr
-
-    docker logs -f knowledgrd-default  # follow along
-
-## Dockerized Full Node
-
-To run a node with *all* the data (e.g. for supporting a content website)
-ca. 14GB of memory, and growing, is required:
-
-    docker run \
-        --env USE_WAY_TOO_MUCH_RAM=1 --env USE_FULL_WEB_NODE=1 \
-        -d -p 2001:2001 -p 8090:8090 --name knowledgrd-full \
-        knowledgrit/knowledgr
-
-    docker logs -f knowledgrd-full
+https://github.com/norestlabs/knowledgr/blob/master/doc/building.md) for Linux (Ubuntu LTS) and macOS.
 
 ## CLI Wallet
 
 We provide a basic cli wallet for interfacing with `knowledgrd`. The wallet is self-documented via command line help. The node you connect to via the cli wallet needs to be running the `account_by_key_api`, `condenser_api`, and needs to be configured to accept WebSocket connections via `webserver-ws-endpoint`.
 
-## Testing
-
-See [doc/testing.md](doc/testing.md) for test build targets and info
-on how to use lcov to check code test coverage.
-
-# Configuration
 
 ## Config File
 
@@ -97,11 +39,6 @@ Run `knowledgrd` once to generate a data directory and config file. The default 
 A list of some seed nodes to get you started can be found in
 [doc/seednodes.txt](doc/seednodes.txt).
 
-This same file is baked into the docker images and can be overridden by
-setting `KNOWLEDGRD_SEED_NODES` in the container environment at `docker run`
-time to a whitespace delimited list of seed nodes (with port).
-
-
 ## Environment variables
 
 There are quite a few environment variables that can be set to run knowledgrd in different ways:
@@ -111,15 +48,6 @@ There are quite a few environment variables that can be set to run knowledgrd in
 * `USE_NGINX_FRONTEND` - if set to true, this will enable an NGINX reverse proxy in front of knowledgrd that proxies WebSocket requests to knowledgrd. This will also enable a custom healthcheck at the path '/health' that lists how many seconds away from current blockchain time your node is. It will return a '200' if it's less than 60 seconds away from being synced.
 * `USE_MULTICORE_READONLY` - if set to true, this will enable knowledgrd in multiple reader mode to take advantage of multiple cores (if available). Read requests are handled by the read-only nodes and write requests are forwarded back to the single 'writer' node automatically. NGINX load balances all requests to the reader nodes, 4 per available core. This setting is still considered experimental and may have trouble with some API calls until further development is completed.
 * `HOME` - set this to the path where you want knowledgrd to store it's data files (block log, shared memory, config file, etc). By default `/var/lib/knowledgrd` is used and exists inside the docker container. If you want to use a different mount point (like a ramdisk, or a different drive) then you may want to set this variable to map the volume to your docker container.
-
-## PaaS mode
-
-Knowledgrd now supports a PaaS mode (platform as a service) that currently works with Amazon's Elastic Beanstalk service. It can be launched using the following environment variables:
-
-* `USE_PAAS` - if set to true, knowledgrd will launch in a format that works with AWS EB. Containers will exit upon failure so that they can be relaunched automatically by ECS. This mode assumes `USE_WAY_TOO_MUCH_RAM` and `USE_FULL_WEB_NODE`, they do not need to be also set.
-* `S3_BUCKET` - set this to the name of the S3 bucket where you will store shared memory files for knowledgrd in Amazon S3. They will be stored compressed in bz2 format with the file name `blockchain-$VERSION-latest.tar.bz2`, where $VERSION is the release number followed by the git short commit hash stored in each docker image at `/etc/knowledgrdversion`.
-* `SYNC_TO_S3` - if set to true, the node will function to only generate shared memory files and upload them to the specified S3 bucket. This makes fast deployments and autoscaling for knowledgrd possible.
-
 
 ## System Requirements
 
