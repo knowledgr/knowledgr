@@ -1,7 +1,6 @@
-Copyright (c) 2018 MouseBelt Labs. All changes by MouseBelt are restricted until
-an open-sourcing contract is signed.
+Copyright (c) 2018 Knowledgr, Inc.
 
-Copyright (c) 2017 Steemit, Inc., and contributors.
+Original work: Copyright (c) 2017 Steemit, Inc., and contributors.
 
 The following license applies to code contained within this repository that
 is created by Knowledgrit, Inc. Other copy right holders have licensed dependencies such
