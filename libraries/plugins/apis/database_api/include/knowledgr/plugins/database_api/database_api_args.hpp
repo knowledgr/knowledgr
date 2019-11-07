@@ -41,6 +41,7 @@ enum sort_order_type
    by_root,
    by_parent,
    by_last_update,
+   by_last_comment,
    by_author_last_update,
    by_comment_voter,
    by_voter_comment,
@@ -627,6 +628,7 @@ FC_REFLECT_ENUM( knowledgr::plugins::database_api::sort_order_type,
    (by_root)
    (by_parent)
    (by_last_update)
+   (by_last_comment)
    (by_author_last_update)
    (by_comment_voter)
    (by_voter_comment)

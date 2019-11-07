@@ -655,6 +655,7 @@ namespace detail
                for( const auto& d : trending_disc )
                {
                   string key = d.author + "/" + d.permlink;
+                  std::cerr<<"******************** get state key : "<<key<<" -\n";
                   didx.created.push_back( key );
                   if( d.author.size() ) accounts.insert(d.author);
                   _state.content[key] = std::move(d);

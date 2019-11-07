@@ -210,13 +210,36 @@ DEFINE_API_IMPL( tags_api_impl, get_discussions_by_trending )
 DEFINE_API_IMPL( tags_api_impl, get_discussions_by_created )
 {
    args.validate();
-   auto tag = fc::to_lower( args.tag );
-   auto parent = get_parent( args );
+   // auto tag = fc::to_lower( args.tag );
+   // auto parent = get_parent( args );
 
-   const auto& tidx = _db.get_index< tags::tag_index, tags::by_parent_children >();
-   auto tidx_itr = tidx.lower_bound( boost::make_tuple( tag, parent ) );
+   // const auto& tidx = _db.get_index< tags::tag_index, tags::by_id>();
+   // const auto& tidx = _db.get_index< comment_index, by_last_comment >();
+   // auto tidx_itr = tidx.lower_bound( boost::make_tuple( tidx.begin() )  );
+   // auto tidx_itr = tidx.begin();
+   // return get_discussions( args, tag, parent, tidx, tidx_itr, args.truncate_body, filter_default, exit_default, tag_exit_default, true ); //~~~~~~ KNLG Update ~~~~~~~
+      get_discussions_by_author_before_date_return result;
+#ifndef IS_LOW_MEM
+      FC_ASSERT( args.limit <= 100 );
+      result.discussions.reserve( args.limit );
+      uint32_t count = 0;
+      const auto& didx = _db.get_index< comment_index, by_last_comment >();
 
-   return get_discussions( args, tag, parent, tidx, tidx_itr, args.truncate_body, filter_default, exit_default, tag_exit_default, true ); //~~~~~~ KNLG Update ~~~~~~~
+      // auto itr = didx.begin();
+      auto itr = didx.lower_bound( boost::make_tuple( time_point_sec::maximum() ) );
+
+      while( itr != didx.end() && count < args.limit )
+      {
+
+         result.discussions.push_back( discussion( *itr, _db ) );
+         set_pending_payout( result.discussions.back() );
+         result.discussions.back().active_votes = get_active_votes( get_active_votes_args( { itr->author, chain::to_string( itr->permlink ) } ) ).votes;
+         ++count;
+         ++itr;
+      }
+
+#endif
+      return result;
 }
 
 DEFINE_API_IMPL( tags_api_impl, get_discussions_by_active )
