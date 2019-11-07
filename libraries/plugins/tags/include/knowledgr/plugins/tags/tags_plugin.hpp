@@ -108,6 +108,7 @@ struct by_author_comment;
 struct by_reward_fund_net_rshares;
 struct by_comment;
 struct by_tag;
+struct by_created;
 
 
 typedef multi_index_container<
@@ -208,6 +209,13 @@ typedef multi_index_container<
                member< tag_object, tag_id_type, &tag_object::id >
             >,
             composite_key_compare< std::less<tag_name_type>, std::less< bool >,std::greater< int64_t >, std::less< tag_id_type > >
+      >,
+      ordered_unique< tag< by_created >,
+         composite_key< tag_object,
+            member< tag_object, tag_name_type, &tag_object::tag >,
+            member< tag_object, tag_id_type, &tag_object::id >
+         >,
+         composite_key_compare< std::less<tag_name_type>, std::less< tag_id_type > >
       >
    >,
    allocator< tag_object >

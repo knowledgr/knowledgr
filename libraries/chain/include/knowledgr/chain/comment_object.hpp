@@ -207,7 +207,8 @@ namespace knowledgr { namespace chain {
    struct by_parent;
    struct by_last_update; /// parent_auth, last_update
    struct by_author_last_update;
-
+   struct by_last_comment;
+   
    /**
     * @ingroup object_index
     */
@@ -253,6 +254,13 @@ namespace knowledgr { namespace chain {
                member< comment_object, comment_id_type, &comment_object::id >
             >,
             composite_key_compare< std::less< account_name_type >, std::greater< time_point_sec >, std::less< comment_id_type > >
+         >,
+         ordered_unique< tag< by_last_comment >,
+            composite_key< comment_object,
+               member< comment_object, time_point_sec, &comment_object::last_update >,
+               member< comment_object, comment_id_type, &comment_object::id >
+            >,
+            composite_key_compare< std::greater< time_point_sec >, std::less< comment_id_type > >
          >,
          ordered_unique< tag< by_author_last_update >,
             composite_key< comment_object,
