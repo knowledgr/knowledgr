@@ -254,6 +254,24 @@ DEFINE_API_IMPL( tags_api_impl, get_discussions_by_created )
       uint64_t filter_count = 0;
       uint64_t exc_count = 0;
       uint64_t max_itr_count = 10 * args.limit;
+
+      uint32_t tagIndex = 4;
+
+      if (tag.compare("observation") == 0) {
+         tagIndex = 0;
+      }
+      if (tag.compare("question") == 0) {
+         tagIndex = 1;
+      }
+      if (tag.compare("hypothesis") == 0) {
+         tagIndex = 2;
+      }
+      if (tag.compare("review") == 0) {
+         tagIndex = 3;
+      }
+      if (tag.compare("none") == 0) {
+         tagIndex = 4;
+      }
       while( count > 0 && tidx_itr != tidx.end() )
       {
          ++itr_count;
@@ -267,11 +285,13 @@ DEFINE_API_IMPL( tags_api_impl, get_discussions_by_created )
          
          try
          {
-            result.discussions.push_back( lookup_discussion( tidx_itr->id, args.truncate_body ) );
-            // result.discussions.back().promoted = asset(tidx_itr->promoted_balance, KNLG_SYMBOL/*SBD_SYMBOL*/ );
-            std::cerr<<"~~~ ################ tags api - tag2: "<<tag<<"\n";//~~~~~KNLG~~~~~
-            --count;
-            std::cerr<<"~~~ ################ tags api - tag4: "<<count<<"\n";//~~~~~KNLG~~~~~
+            if (tag.empty() || tidx_itr->type == tagIndex) {
+               result.discussions.push_back( lookup_discussion( tidx_itr->id, args.truncate_body ) );
+               // result.discussions.back().promoted = asset(tidx_itr->promoted_balance, KNLG_SYMBOL/*SBD_SYMBOL*/ );
+               std::cerr<<"~~~ ################ tags api - tag2: "<<tag<<"\n";//~~~~~KNLG~~~~~
+               --count;
+               std::cerr<<"~~~ ################ tags api - tag4: "<<count<<"\n";//~~~~~KNLG~~~~~
+            }
          }
          catch ( const fc::exception& e )
          {
